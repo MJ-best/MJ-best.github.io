@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://mj-best.github.io/JJY-simulator/sitemap.xml
