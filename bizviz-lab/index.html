@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>경영정보시각화 실기 랩</title>
-<meta name="description" content="경영정보시각화능력 실기(Power BI) 대비: 브라우저에서 DAX 식을 입력하면 바로 계산되는 DAX 시뮬레이터, 자동 채점 연습문제 32개, 문제1~3 작업 체크리스트, 퀴즈.">
+<meta name="description" content="경영정보시각화능력 실기(Power BI) 대비: 브라우저에서 DAX 식을 입력하면 바로 계산되는 DAX 시뮬레이터, 자동 채점 DAX 연습문제 116개, 20분 실전 세트, 풀이 시간 기록, DAX 퀴즈.">
 <meta property="og:title" content="경영정보시각화 실기 랩 — DAX 시뮬레이터">
 <meta property="og:description" content="Power BI 없이도 DAX 측정값·계산 열·계산 테이블을 연습하고 결과를 바로 확인하세요.">
 <meta name="theme-color" content="#12665a">
@@ -28,7 +28,6 @@
       <a href="#home">시험 개요</a>
       <a href="#lab">DAX 랩</a>
       <a href="#practice">연습문제</a>
-      <a href="#types">문제 유형</a>
       <a href="#patterns">패턴·함수</a>
       <a href="#quiz">퀴즈</a>
     </nav>
@@ -41,8 +40,8 @@
     <div class="panel hero">
       <span class="eyebrow">대한상공회의소 국가기술자격 · 실기 Power BI</span>
       <h2>Power BI를 켜지 않아도 DAX는 연습할 수 있습니다</h2>
-      <p class="lede">실기 시험의 계산식은 대부분 정해진 패턴(CALCULATE·FILTER, DATEADD, TOTALYTD, RANKX, DIVIDE…)에서 나옵니다. 이 사이트는 시험과 같은 구조의 판매 데이터 모델을 브라우저에 올려 두고, 식을 입력하면 행렬·슬라이서 필터 컨텍스트에서 바로 계산해 보여 줍니다. 화면 조작(서식·상호작용)은 체크리스트로 정리했습니다.</p>
-      <div class="row"><a class="btn primary" href="#lab">DAX 랩 열기</a><a class="btn" href="#practice">연습문제 풀기</a></div>
+      <p class="lede">실기 시험의 계산식은 대부분 정해진 패턴(CALCULATE·FILTER, DATEADD, TOTALYTD, RANKX, DIVIDE…)에서 나옵니다. 이 사이트는 시험과 같은 구조의 판매 데이터 모델을 브라우저에 올려 두고, 식을 입력하면 행렬·슬라이서 필터 컨텍스트에서 바로 계산해 보여 줍니다. 시간이 가장 많이 드는 DAX만 집중해서, 손에 익을 때까지 반복하도록 만들었습니다.</p>
+      <div class="row"><a class="btn primary" href="#lab">DAX 랩 열기</a><a class="btn" href="#practice">연습문제 116개 풀기</a></div>
     </div>
 
     <div class="grid2">
@@ -69,8 +68,8 @@
         <ol class="steps">
           <li><div><b>개념 4가지 읽기</b><br><span class="small muted">아래 '필터 컨텍스트 · 행 컨텍스트 · 컨텍스트 전환 · CALCULATE'만 이해하면 시험 DAX는 거의 다 풀립니다.</span></div></li>
           <li><div><b>DAX 랩에서 직접 바꿔 보기</b><br><span class="small muted">행·열·슬라이서를 바꾸며 같은 식의 값이 어떻게 달라지는지 보고, 셀을 눌러 그 셀의 필터를 확인하세요.</span></div></li>
-          <li><div><b>연습문제 자동 채점</b><br><span class="small muted">공식 모의문제 유형(매출_매장, 전월_매출, 연간_누계, 순위 등)을 포함한 32문제 — 측정값·계산 열·계산 테이블.</span></div></li>
-          <li><div><b>문제 유형 체크리스트로 Power BI에서 손으로 반복</b><br><span class="small muted">Power Query·서식·상호작용은 실제 프로그램에서 시간 재며 2~3회 반복하는 게 가장 효과적입니다.</span></div></li>
+          <li><div><b>연습문제 자동 채점</b><br><span class="small muted">공식 모의문제 유형(매출_매장, 전월_매출, 연간_누계, 순위 등)을 포함한 116문제. 풀이 시간이 기록되고, 미해결·틀린 문제만 골라 다시 풀 수 있습니다.</span></div></li>
+          <li><div><b>실전 세트로 속도 올리기</b><br><span class="small muted">측정값·계산 열·테이블 6문제를 20분 안에. 시험 DAX 소문항을 막힘없이 쓰는 속도를 목표로 반복하세요.</span></div></li>
         </ol>
       </div>
     </div>
@@ -155,21 +154,6 @@
     </div>
   </section>
 
-  <!-- 문제 유형 -->
-  <section class="view" id="v-types" hidden>
-    <div class="panel" style="display:grid;gap:10px">
-      <h2>문제 유형별 작업 체크리스트</h2>
-      <p class="lede">공식 모의문제의 소문항을 작업 단위로 쪼갰습니다. Power BI Desktop에서 직접 해 보고 할 수 있게 되면 체크하세요(이 기기에 저장). 70분 안에 끝내려면 서식은 '복사 후 필드 바꾸기', 측정값은 미리 외운 패턴으로 시간을 줄이는 게 핵심입니다.</p>
-      <div class="scorebar" role="img" aria-label="권장 시간 배분">
-        <div style="flex:15;background:#3a6ea5">문제1 ~15분</div>
-        <div style="flex:20;background:#4b8a3e">문제2 ~20분</div>
-        <div style="flex:30;background:#c06a12">문제3 ~30분</div>
-        <div style="flex:5;background:#6b737b">검토</div>
-      </div>
-    </div>
-    <div class="grid3" id="ckList" style="align-items:start"></div>
-  </section>
-
   <!-- 패턴·함수 -->
   <section class="view" id="v-patterns" hidden>
     <div class="panel" style="display:grid;gap:12px">
@@ -188,7 +172,7 @@
   <!-- 퀴즈 -->
   <section class="view" id="v-quiz" hidden>
     <div class="panel row" style="justify-content:space-between">
-      <div><h2>개념 퀴즈 20</h2><p class="small muted">Power Query·모델링·시각화 조작·DAX 개념을 섞었습니다.</p></div>
+      <div><h2>DAX 개념 퀴즈 20</h2><p class="small muted">결과를 예측하는 문제 위주입니다. 틀린 문항은 랩에서 직접 돌려 보세요.</p></div>
       <div class="row"><b id="qScore" class="mono"></b><button class="btn sm" id="qReset" type="button">다시 풀기</button></div>
     </div>
     <div class="quiz" id="quizList"></div>
@@ -203,6 +187,7 @@
 <script src="dax.js"></script>
 <script src="grid.js"></script>
 <script src="content.js"></script>
+<script src="problems.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

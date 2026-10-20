@@ -1428,9 +1428,14 @@
   tiTable("PARALLELPERIOD", 3, 3, function (ref, vis, a, e) {
     if (!vis.length) return [];
     const n = this.num(this.evalScalar(a[1], e)), u = String(this.kw(a[2]));
-    const s = this.periodRange(ref, vis[0], u, n), t = this.periodRange(ref, vis[vis.length - 1], u, n);
-    if (!s.length || !t.length) return [];
-    return this.allDates(ref).filter((d) => d >= s[0] && d <= t[t.length - 1]);
+    const months = u === "MONTH" ? n : u === "QUARTER" ? 3 * n : u === "YEAR" ? 12 * n : null;
+    if (months === null) throw new DaxError("PARALLELPERIOD의 단위는 MONTH, QUARTER, YEAR 중 하나입니다.");
+    const per = u === "MONTH" ? 1 : u === "QUARTER" ? 3 : 12;
+    const [y0, m0] = ymd(vis[0]), [y1, m1] = ymd(vis[vis.length - 1]);
+    const k0 = y0 * 12 + (m0 - 1) - ((m0 - 1) % per) + months;
+    const k1 = y1 * 12 + (m1 - 1) - ((m1 - 1) % per) + per - 1 + months;
+    const s = mk(Math.floor(k0 / 12), k0 % 12 + 1, 1), ey = Math.floor(k1 / 12), em = k1 % 12 + 1, t = mk(ey, em, lastDay(ey, em));
+    return this.allDates(ref).filter((d) => d >= s && d <= t);
   }, "PARALLELPERIOD(<날짜 열>, <개수>, <MONTH|QUARTER|YEAR>)", "이동한 기간 전체(월·분기·연 단위)");
   const prevNext = (name, unit, off, useLast) => tiTable(name, 1, 1, function (ref, vis) { if (!vis.length) return []; return this.periodRange(ref, useLast ? vis[vis.length - 1] : vis[0], unit, off); }, `${name}(<날짜 열>)`, (off < 0 ? "이전 " : "다음 ") + { DAY: "일", MONTH: "달", QUARTER: "분기", YEAR: "해" }[unit] + " 전체");
   prevNext("PREVIOUSDAY", "DAY", -1, false); prevNext("PREVIOUSMONTH", "MONTH", -1, false); prevNext("PREVIOUSQUARTER", "QUARTER", -1, false); prevNext("PREVIOUSYEAR", "YEAR", -1, true);

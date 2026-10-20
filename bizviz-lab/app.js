@@ -475,19 +475,85 @@
   }
 
   // ───────── 연습문제 ─────────
-  let solved = new Set(store.get("solved", []));
-  let curP = null, pEd;
+  let stats = store.get("stats", {});
+  (store.get("solved", []) || []).forEach((id) => { if (!stats[id]) stats[id] = { tries: 1, ok: true }; });
+  let curP = null, pEd, openedAt = Date.now(), tick = null;
+  let pFilter = store.get("pFilter", "all"), pQuery = "";
+  let pset = store.get("pset", null);
+  const st = (id) => stats[id] || (stats[id] = { tries: 0, ok: false, best: null, peek: false });
+  const saveStats = () => store.set("stats", stats);
   const LV = (n) => "★".repeat(n) + "☆".repeat(3 - n);
   const examTag = (e) => `<span class="tag ${e === "문제1" ? "q1" : e === "문제2" ? "q2" : "q3"}">${e} 유형</span>`;
+  const mmss = (s) => { s = Math.max(0, Math.round(s)); return String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0"); };
+  const SET_LIMIT = 20 * 60;
+  function visibleProblems() {
+    const q = pQuery.trim().toLowerCase();
+    return C.PROBLEMS.filter((p) => {
+      const s = stats[p.id];
+      if (pFilter === "todo" && s && s.ok) return false;
+      if (pFilter === "wrong" && !(s && s.tries > 0 && !s.ok)) return false;
+      if (pFilter === "peek" && !(s && s.peek)) return false;
+      if (q && !(p.title + " " + p.name + " " + p.task + " " + p.answer + " " + p.cat).toLowerCase().includes(q)) return false;
+      return true;
+    });
+  }
   function renderPList() {
+    const solvedN = C.PROBLEMS.filter((p) => stats[p.id] && stats[p.id].ok).length;
+    const pct = Math.round((solvedN / C.PROBLEMS.length) * 100);
+    const vis = visibleProblems();
     const cats = [...new Set(C.PROBLEMS.map((p) => p.cat))];
-    const pct = Math.round((solved.size / C.PROBLEMS.length) * 100);
-    $("#pList").innerHTML = `<div style="display:grid;gap:6px"><div class="row" style="justify-content:space-between"><b>연습문제</b><span class="small muted">${solved.size}/${C.PROBLEMS.length} 해결</span></div><div class="progress"><i style="width:${pct}%"></i></div></div>` +
-      cats.map((c) => `<div><h4>${esc(c)}</h4>${C.PROBLEMS.filter((p) => p.cat === c).map((p) => `<button type="button" data-p="${p.id}" aria-current="${curP && curP.id === p.id}"><span class="st ${solved.has(p.id) ? "done" : ""}">${solved.has(p.id) ? "✓" : ""}</span>${esc(p.title)}<span class="lv">${LV(p.lv)}</span></button>`).join("")}</div>`).join("");
+    const f = (k, l) => `<button type="button" data-f="${k}" aria-pressed="${pFilter === k}">${l}</button>`;
+    let h = `<div style="display:grid;gap:8px">
+      <div class="row" style="justify-content:space-between"><b>DAX 연습문제</b><span class="small muted">${solvedN}/${C.PROBLEMS.length} 해결</span></div>
+      <div class="progress"><i style="width:${pct}%"></i></div>
+      <div class="row"><button class="btn sm primary" type="button" id="pSetBtn">⏱ 실전 세트 (6문제·20분)</button><button class="btn sm" type="button" id="pRand">🎲 랜덤</button></div>
+      <div class="seg pf" role="group" aria-label="문제 필터">${f("all", "전체")}${f("todo", "미해결")}${f("wrong", "틀림")}${f("peek", "정답 봄")}</div>
+      <input type="search" id="pSearch" placeholder="검색 (예: DATEADD, 비중)" value="${esc(pQuery)}" aria-label="문제 검색">
+    </div>`;
+    for (const c of cats) {
+      const all = C.PROBLEMS.filter((p) => p.cat === c), items = vis.filter((p) => p.cat === c);
+      if (!items.length) continue;
+      const done = all.filter((p) => stats[p.id] && stats[p.id].ok).length;
+      h += `<div><h4>${esc(c)} <span class="muted" style="font-weight:400">${done}/${all.length}</span></h4>${items.map((p) => {
+        const s = stats[p.id] || {};
+        const cls = s.ok ? "done" : s.tries ? "tried" : "";
+        const mark = s.ok ? "✓" : s.tries ? "✕" : "";
+        return `<button type="button" data-p="${p.id}" aria-current="${curP && curP.id === p.id}"><span class="st ${cls}">${mark}</span><span class="pt">${esc(p.title)}</span>${s.best ? `<span class="tm">${mmss(s.best)}</span>` : ""}<span class="lv">${LV(p.lv)}</span></button>`;
+      }).join("")}</div>`;
+    }
+    if (!vis.length) h += `<p class="small muted">조건에 맞는 문제가 없습니다.</p>`;
+    $("#pList").innerHTML = h;
+    const si = $("#pSearch");
+    si.oninput = () => { pQuery = si.value; const pos = si.selectionStart; renderPList(); const n = $("#pSearch"); n.focus(); n.setSelectionRange(pos, pos); };
+  }
+  function nextIdAfter(p) {
+    if (pset && !pset.finished && pset.ids.includes(p.id)) {
+      const rest = pset.ids.filter((id) => !(id in pset.done) && id !== p.id);
+      return rest.length ? rest[0] : null;
+    }
+    const list = visibleProblems();
+    const i = list.findIndex((x) => x.id === p.id);
+    const after = list.slice(i + 1).concat(list.slice(0, Math.max(0, i)));
+    const un = after.find((x) => !(stats[x.id] && stats[x.id].ok));
+    return (un || after[0] || {}).id || null;
+  }
+  function setBanner() {
+    if (!pset || pset.finished || !curP || !pset.ids.includes(curP.id)) return "";
+    const left = SET_LIMIT - (Date.now() - pset.start) / 1000;
+    return `<div class="setbar"><b>실전 세트</b><span class="dots">${pset.ids.map((id, i) => `<button type="button" data-sp="${id}" class="${id in pset.done ? "ok" : ""} ${id === curP.id ? "cur" : ""}" title="${i + 1}번">${i + 1}</button>`).join("")}</span><span class="mono" id="setLeft">${left > 0 ? "남은 시간 " + mmss(left) : "시간 초과 +" + mmss(-left)}</span><button class="btn sm" type="button" id="setEnd">세트 끝내기</button></div>`;
+  }
+  function startTick() {
+    clearInterval(tick);
+    tick = setInterval(() => {
+      const t = $("#pTimer"); if (!t) { clearInterval(tick); return; }
+      t.textContent = "⏱ " + mmss((Date.now() - openedAt) / 1000);
+      const l = $("#setLeft");
+      if (l && pset) { const left = SET_LIMIT - (Date.now() - pset.start) / 1000; l.textContent = left > 0 ? "남은 시간 " + mmss(left) : "시간 초과 +" + mmss(-left); l.classList.toggle("over", left <= 0); }
+    }, 1000);
   }
   function openProblem(id, push) {
     const p = C.PROBLEMS.find((x) => x.id === id) || C.PROBLEMS[0];
-    curP = p;
+    curP = p; openedAt = Date.now();
     store.set("lastP", p.id);
     if (push) history.replaceState(null, "", "#practice/" + p.id);
     renderPList();
@@ -497,24 +563,33 @@
       if (p.rows) setup.push(`<span class="tag">행: ${esc(p.rows)}</span>`);
       if (p.cols) setup.push(`<span class="tag">열: ${esc(p.cols)}</span>`);
       Object.entries(p.slicers || {}).forEach(([k, v]) => setup.push(`<span class="tag">슬라이서: ${esc(k)} = ${esc(v.join(", "))}</span>`));
+      if (p.format) setup.push(`<span class="tag">서식: ${esc(p.format)}</span>`);
     } else if (p.mode === "column") setup.push(`<span class="tag">계산 열</span><span class="tag">테이블: ${esc(p.table)}</span>`);
     else setup.push(`<span class="tag">새 테이블</span>`);
-    $("#pDetail").innerHTML = `
+    const s = stats[p.id] || {};
+    const inSet = pset && !pset.finished && pset.ids.includes(p.id);
+    $("#pDetail").innerHTML = `${setBanner()}
       <div class="row" style="justify-content:space-between"><div class="row">${examTag(p.exam)}<span class="tag">${esc(p.cat)}</span><span class="tag" style="color:var(--hi)">${LV(p.lv)}</span></div>
-        <div class="row"><button class="btn sm" id="pPrev" type="button">← 이전</button><button class="btn sm" id="pNext" type="button">다음 →</button></div></div>
+        <div class="row"><span class="mono small muted" id="pTimer">⏱ 00:00</span>${inSet ? "" : '<button class="btn sm" id="pPrev" type="button">← 이전</button><button class="btn sm" id="pNext" type="button">다음 →</button>'}</div></div>
       <h2>${esc(p.title)}</h2>
       <p class="task">${esc(p.task)}</p>
       <div class="setup">${setup.join("")}</div>
+      <p class="small muted">${s.ok ? `✓ 해결함${s.best ? " · 최고 기록 " + mmss(s.best) : ""}` : s.tries ? `시도 ${s.tries}회 · 아직 미해결` : "처음 푸는 문제"}${s.peek ? " · 정답 확인함" : ""}</p>
       <div id="pEditor"></div>
-      <div class="toolbar"><button class="btn primary" id="pRun" type="button">채점 <kbd>Ctrl+Enter</kbd></button><button class="btn" id="pHint" type="button">힌트</button><button class="btn" id="pAns" type="button">정답 보기</button><button class="btn ghost" id="pLab" type="button">랩에서 열기</button></div>
-      <div id="pHintBox" class="note" hidden>${esc(p.hint)}</div>
+      <div class="toolbar"><button class="btn primary" id="pRun" type="button">채점 <kbd>Ctrl+Enter</kbd></button><button class="btn" id="pHint" type="button">힌트</button><button class="btn" id="pAns" type="button">정답 보기</button><button class="btn ghost" id="pClear" type="button">지우고 다시</button><button class="btn ghost" id="pLab" type="button">랩에서 열기</button></div>
+      <div id="pHintBox" class="note" hidden>${esc(p.hint || "정답 보기 전에 함수 목록(패턴·함수 탭)을 참고해 보세요.")}</div>
       <div id="pOut"></div>
-      <div id="pAnsBox" class="reveal" hidden><b>정답 예시</b><pre>${esc(p.name + " = " + p.answer)}</pre>${p.alt ? `<p class="small muted" style="margin-top:6px">다른 정답</p><pre>${esc(p.name + " = " + p.alt)}</pre>` : ""}<p style="margin-top:8px">${esc(p.explain)}</p></div>`;
+      <div id="pAnsBox" class="reveal" hidden><b>정답 예시</b><pre>${esc(p.name + " = " + p.answer)}</pre>${p.alt ? `<p class="small muted" style="margin-top:6px">다른 정답</p><pre>${esc(p.name + " = " + p.alt)}</pre>` : ""}${p.explain ? `<p style="margin-top:8px">${esc(p.explain)}</p>` : ""}</div>`;
     pEd = Editor($("#pEditor"), { onRun: gradeCur, minHeight: 90, placeholder: `${p.name} = `, onChange: () => store.set("code:" + p.id, pEd.get()) });
     pEd.set(store.get("code:" + p.id, `${p.name} = `));
     $("#pRun").onclick = gradeCur;
     $("#pHint").onclick = () => ($("#pHintBox").hidden = !$("#pHintBox").hidden);
-    $("#pAns").onclick = () => ($("#pAnsBox").hidden = !$("#pAnsBox").hidden);
+    $("#pAns").onclick = () => {
+      const box = $("#pAnsBox");
+      if (box.hidden && !(stats[p.id] && stats[p.id].ok)) { st(p.id).peek = true; saveStats(); renderPList(); }
+      box.hidden = !box.hidden;
+    };
+    $("#pClear").onclick = () => { pEd.set(`${p.name} = `); store.set("code:" + p.id, pEd.get()); openedAt = Date.now(); $("#pOut").innerHTML = ""; pEd.focus(); };
     $("#pLab").onclick = () => {
       setMode(p.mode, true);
       if (p.mode === "measure") { lab.rows = p.rows || ""; lab.cols = p.cols || ""; lab.slicers = JSON.parse(JSON.stringify(p.slicers || {})); lab.fmt = p.format && [...$("#fmtSel").options].some((o) => o.value === p.format) ? p.format : "auto"; $("#fmtSel").value = lab.fmt; syncViz(); }
@@ -523,59 +598,110 @@
       store.set("labCode:" + lab.mode, labEd.get());
       location.hash = "#lab"; setTimeout(runLab, 0);
     };
-    const i = C.PROBLEMS.indexOf(p);
-    $("#pPrev").disabled = i === 0; $("#pNext").disabled = i === C.PROBLEMS.length - 1;
-    $("#pPrev").onclick = () => openProblem(C.PROBLEMS[i - 1].id, true);
-    $("#pNext").onclick = () => openProblem(C.PROBLEMS[i + 1].id, true);
+    if (!inSet) {
+      const i = C.PROBLEMS.indexOf(p);
+      $("#pPrev").disabled = i === 0; $("#pNext").disabled = i === C.PROBLEMS.length - 1;
+      $("#pPrev").onclick = () => openProblem(C.PROBLEMS[i - 1].id, true);
+      $("#pNext").onclick = () => openProblem(C.PROBLEMS[i + 1].id, true);
+    }
+    startTick();
     if (window.innerWidth < 860 && push) $("#pDetail").scrollIntoView({ behavior: "smooth", block: "start" });
+    else if (push) pEd.focus();
   }
   function gradeCur() {
     const p = curP, text = pEd.get(), out = $("#pOut");
     const { name, expr, offset } = defParts(text);
-    if (!expr.trim()) { out.innerHTML = '<div class="err">식을 입력하세요.</div>'; return; }
+    if (!expr.trim() || (name && !expr.trim())) { out.innerHTML = '<div class="err">식을 입력하세요.</div>'; return; }
+    const s = st(p.id);
     try {
       DAX.parse(expr);
       const r = G.grade(model, engine, p, expr);
+      s.tries++;
       const nameNote = name && name.replace(/\s/g, "") !== p.name.replace(/\s/g, "") ? `<p class="small muted" style="margin-top:6px">※ 이름은 채점하지 않지만, 시험에서는 지시된 이름(<b>${esc(p.name)}</b>)과 정확히 같아야 합니다.</p>` : "";
       let html = "";
       if (r.ok) {
-        solved.add(p.id); store.set("solved", [...solved]); renderPList();
-        html = `<div class="ok">정답입니다! ${r.total.toLocaleString()}개 ${p.mode === "measure" ? "셀" : "행"}의 값이 모두 일치합니다.</div>${nameNote}`;
+        const sec = Math.round((Date.now() - openedAt) / 1000);
+        const first = !s.ok;
+        s.ok = true; if (!s.best || sec < s.best) s.best = sec;
+        if (pset && !pset.finished && pset.ids.includes(p.id) && !(p.id in pset.done)) { pset.done[p.id] = sec; store.set("pset", pset); }
+        const nx = nextIdAfter(p);
+        const setDone = pset && !pset.finished && pset.ids.includes(p.id) && pset.ids.every((id) => id in pset.done);
+        html = `<div class="ok row" style="justify-content:space-between"><span>정답! ${r.total.toLocaleString()}개 ${p.mode === "measure" ? "셀" : "행"} 일치 · ${mmss(sec)}${first ? "" : s.best === sec ? " · 최고 기록 갱신" : ""}</span>${setDone ? '<button class="btn sm primary" type="button" id="pGoNext">세트 결과 보기 →</button>' : nx ? '<button class="btn sm primary" type="button" id="pGoNext">다음 문제 →</button>' : ""}</div>${nameNote}`;
         if (r.diffs.length) html += `<p class="small muted">참고: ${esc(r.diffs.map((d) => d.where + " — 기대 " + d.expected + " / 입력 " + d.got).join("; "))}</p>`;
         $("#pAnsBox").hidden = false;
-      } else {
-        html = `<div class="err"><b>아직 달라요.</b> ${r.total.toLocaleString()}개 중 ${r.diffs.filter((d) => !d.soft).length.toLocaleString()}곳이 정답과 다릅니다.</div>${nameNote}`;
-        html += `<div class="tblwrap" style="max-height:260px"><table class="mx diffs"><thead><tr><th>위치</th><th>정답</th><th>내 결과</th></tr></thead><tbody>${r.diffs.slice(0, 15).map((d) => `<tr><td>${esc(d.where)}</td><td class="e">${esc(d.expected) || "(빈 값)"}</td><td class="g">${esc(d.got) || "(빈 값)"}</td></tr>`).join("")}</tbody></table></div>`;
+        saveStats(); renderPList();
+        if (pset && pset.ids.includes(p.id)) { const sb = $(".setbar"); if (sb) sb.outerHTML = setBanner(); }
+        out.innerHTML = html + measurePreview(p, expr, name);
+        const g = $("#pGoNext");
+        if (g) { g.onclick = () => (setDone ? finishSet() : openProblem(nx, true)); g.focus(); }
+        return;
       }
-      if (p.mode === "measure") {
-        const grid = G.computeGrid(model, engine, { rows: p.rows, cols: p.cols, slicers: p.slicers }, DAX.parse(expr));
-        html += `<p class="small muted" style="margin-top:10px">내 식의 결과 (행렬)</p>` + gridHTML(grid, p.format || undefined, { title: name || p.name });
-      }
-      out.innerHTML = html;
+      html = `<div class="err"><b>아직 달라요.</b> ${r.total.toLocaleString()}개 중 ${r.diffs.filter((d) => !d.soft).length.toLocaleString()}곳이 정답과 다릅니다.</div>${nameNote}`;
+      html += `<div class="tblwrap" style="max-height:260px"><table class="mx diffs"><thead><tr><th>위치</th><th>정답</th><th>내 결과</th></tr></thead><tbody>${r.diffs.slice(0, 15).map((d) => `<tr><td>${esc(d.where)}</td><td class="e">${esc(d.expected) || "(빈 값)"}</td><td class="g">${esc(d.got) || "(빈 값)"}</td></tr>`).join("")}</tbody></table></div>`;
+      saveStats(); renderPList();
+      out.innerHTML = html + measurePreview(p, expr, name);
     } catch (e) {
       pEd.markError(e.pos !== undefined ? e.pos + offset : undefined);
       out.innerHTML = errorHTML(e, text, offset);
     }
   }
-  function initPractice() {
-    $("#pList").addEventListener("click", (e) => { const b = e.target.closest("[data-p]"); if (b) openProblem(b.dataset.p, true); });
+  function measurePreview(p, expr, name) {
+    if (p.mode !== "measure") return "";
+    try {
+      const grid = G.computeGrid(model, engine, { rows: p.rows, cols: p.cols, slicers: p.slicers }, DAX.parse(expr));
+      return `<p class="small muted" style="margin-top:10px">내 식의 결과 (행렬)</p>` + gridHTML(grid, p.format || undefined, { title: name || p.name });
+    } catch (e) { return ""; }
   }
-
-  // ───────── 문제 유형 체크리스트 ─────────
-  function renderChecklist() {
-    const done = new Set(store.get("checks", []));
-    $("#ckList").innerHTML = C.CHECKLIST.map((s) => {
-      const n = s.items.filter((_, i) => done.has(s.id + ":" + i)).length;
-      return `<div class="panel" style="display:grid;gap:10px"><div class="row" style="justify-content:space-between"><h3>${esc(s.title)}</h3><span class="tag ${s.id}">${s.pts} · ${s.min}</span></div>
-        <div class="progress"><i style="width:${Math.round((n / s.items.length) * 100)}%"></i></div>
-        <div class="ck">${s.items.map(([t, d], i) => `<label><input type="checkbox" data-ck="${s.id}:${i}" ${done.has(s.id + ":" + i) ? "checked" : ""}><div><b>${esc(t)}</b><span>${esc(d)}</span></div></label>`).join("")}</div></div>`;
-    }).join("");
-    $("#ckList").onchange = (e) => {
-      const c = e.target.closest("[data-ck]"); if (!c) return;
-      const s = new Set(store.get("checks", []));
-      c.checked ? s.add(c.dataset.ck) : s.delete(c.dataset.ck);
-      store.set("checks", [...s]); renderChecklist();
-    };
+  // 실전 세트
+  function pickSet() {
+    const rnd = (arr) => arr[Math.floor(Math.random() * arr.length)];
+    const prefer = (arr) => { const un = arr.filter((p) => !(stats[p.id] && stats[p.id].ok)); return un.length ? un : arr; };
+    const used = new Set(), ids = [];
+    const take = (pred) => { const pool = prefer(C.PROBLEMS.filter((p) => pred(p) && !used.has(p.id))); if (!pool.length) return; const p = rnd(pool); used.add(p.id); ids.push(p.id); };
+    take((p) => p.mode !== "measure" && p.exam === "문제1");
+    take((p) => p.cat === "CALCULATE 필터" && p.lv >= 2);
+    take((p) => p.cat === "ALL·비중");
+    take((p) => p.cat === "시간 인텔리전스" && p.lv >= 2);
+    take((p) => p.cat === "순위·TOP N");
+    take((p) => ["시간 인텔리전스", "복합", "반복 함수", "논리·텍스트"].includes(p.cat) && p.lv >= 2);
+    return ids;
+  }
+  function startSet() {
+    if (pset && !pset.finished && !confirm("진행 중인 세트를 버리고 새로 시작할까요?")) return;
+    pset = { ids: pickSet(), start: Date.now(), done: {}, finished: false };
+    pset.ids.forEach((id) => store.set("code:" + id, `${C.PROBLEMS.find((p) => p.id === id).name} = `));
+    store.set("pset", pset);
+    openProblem(pset.ids[0], true);
+  }
+  function finishSet() {
+    if (!pset) return;
+    pset.finished = true; pset.end = pset.end || Date.now(); store.set("pset", pset);
+    const total = Math.round((pset.end - pset.start) / 1000);
+    const n = Object.keys(pset.done).length;
+    const hist = store.get("setHist", []);
+    if (!pset.logged) { hist.unshift({ at: pset.start, n, of: pset.ids.length, sec: total }); store.set("setHist", hist.slice(0, 20)); pset.logged = true; store.set("pset", pset); }
+    clearInterval(tick);
+    $("#pDetail").innerHTML = `<h2>실전 세트 결과</h2>
+      <div class="facts"><div><b>${n} / ${pset.ids.length}</b><span>정답</span></div><div><b>${mmss(total)}</b><span>걸린 시간 (목표 20:00)</span></div><div><b>${n ? mmss(Object.values(pset.done).reduce((a, b) => a + b, 0) / n) : "-"}</b><span>정답 문제 평균</span></div></div>
+      <div class="tblwrap"><table class="mx"><thead><tr><th>문제</th><th>분류</th><th>결과</th></tr></thead><tbody>${pset.ids.map((id) => { const p = C.PROBLEMS.find((x) => x.id === id); return `<tr><td><button type="button" class="btn sm ghost" data-p2="${id}">${esc(p.title)}</button></td><td style="text-align:left">${esc(p.cat)}</td><td>${id in pset.done ? "✓ " + mmss(pset.done[id]) : "✕ 미해결"}</td></tr>`; }).join("")}</tbody></table></div>
+      <div class="row"><button class="btn primary" type="button" id="setAgain">새 세트 시작</button>${n < pset.ids.length ? '<button class="btn" type="button" id="setRetry">못 푼 문제 다시 풀기</button>' : ""}</div>
+      ${hist.length > 1 ? `<div><p class="small muted">최근 세트 기록</p><p class="small mono">${hist.slice(0, 8).map((h) => `${new Date(h.at).toLocaleDateString("ko-KR", { month: "numeric", day: "numeric" })} ${h.n}/${h.of} ${mmss(h.sec)}`).join(" · ")}</p></div>` : ""}`;
+    $("#setAgain").onclick = startSet;
+    const rt = $("#setRetry"); if (rt) rt.onclick = () => { const id = pset.ids.find((x) => !(x in pset.done)); openProblem(id, true); };
+    $("#pDetail").onclick = (e) => { const b = e.target.closest("[data-p2]"); if (b) openProblem(b.dataset.p2, true); };
+    renderPList();
+  }
+  function initPractice() {
+    $("#pList").addEventListener("click", (e) => {
+      const b = e.target.closest("[data-p]"); if (b) { openProblem(b.dataset.p, true); return; }
+      const f = e.target.closest("[data-f]"); if (f) { pFilter = f.dataset.f; store.set("pFilter", pFilter); renderPList(); return; }
+      if (e.target.closest("#pRand")) { const list = visibleProblems().filter((p) => p.id !== (curP && curP.id)); const un = list.filter((p) => !(stats[p.id] && stats[p.id].ok)); const pool = un.length ? un : list; if (pool.length) openProblem(pool[Math.floor(Math.random() * pool.length)].id, true); return; }
+      if (e.target.closest("#pSetBtn")) startSet();
+    });
+    $("#pDetail").addEventListener("click", (e) => {
+      const sp = e.target.closest("[data-sp]"); if (sp) { openProblem(sp.dataset.sp, true); return; }
+      if (e.target.closest("#setEnd")) { if (confirm("세트를 끝내고 결과를 볼까요?")) finishSet(); }
+    });
   }
 
   // ───────── 패턴·함수 ─────────
@@ -643,7 +769,7 @@
   }
 
   // ───────── 라우팅·테마 ─────────
-  const VIEWS = ["home", "lab", "practice", "types", "patterns", "quiz"];
+  const VIEWS = ["home", "lab", "practice", "patterns", "quiz"];
   let inited = {};
   function route() {
     const h = location.hash.replace(/^#/, "");
@@ -651,10 +777,9 @@
     const view = VIEWS.includes(v) ? v : "home";
     VIEWS.forEach((x) => ($("#v-" + x).hidden = x !== view));
     $$("nav.tabs a").forEach((a) => a.setAttribute("aria-current", a.getAttribute("href") === "#" + view ? "page" : "false"));
-    document.title = { home: "경영정보시각화 실기 랩", lab: "DAX 랩 · 경영정보시각화 실기 랩", practice: "연습문제 · 경영정보시각화 실기 랩", types: "문제 유형 · 경영정보시각화 실기 랩", patterns: "DAX 패턴 · 경영정보시각화 실기 랩", quiz: "퀴즈 · 경영정보시각화 실기 랩" }[view];
+    document.title = { home: "경영정보시각화 실기 랩", lab: "DAX 랩 · 경영정보시각화 실기 랩", practice: "연습문제 · 경영정보시각화 실기 랩", patterns: "DAX 패턴 · 경영정보시각화 실기 랩", quiz: "퀴즈 · 경영정보시각화 실기 랩" }[view];
     if (view === "lab" && !inited.lab) { inited.lab = 1; initLab(); runLab(); }
     if (view === "practice") { if (!inited.practice) { inited.practice = 1; initPractice(); } if (!curP || (arg && arg !== curP.id)) openProblem(arg || store.get("lastP", C.PROBLEMS[0].id)); else renderPList(); store.set("lastP", curP.id); }
-    if (view === "types" && !inited.types) { inited.types = 1; renderChecklist(); }
     if (view === "patterns" && !inited.patterns) { inited.patterns = 1; renderPatterns(); }
     if (view === "quiz" && !inited.quiz) { inited.quiz = 1; initQuiz(); renderQuiz(); }
     if (view !== "lab") window.scrollTo(0, 0);

@@ -188,9 +188,9 @@ table.mx .bar{display:inline-block;height:8px;border-radius:2px;background:var(-
 .plist{display:grid;gap:12px;position:sticky;top:110px;max-height:calc(100vh - 130px);overflow:auto}
 @media (max-width:860px){.plist{position:static;max-height:none;order:2}}
 .plist h4{font-size:.78rem;color:var(--muted);margin:4px 0;letter-spacing:.04em}
-.plist button{display:flex;gap:8px;align-items:center;width:100%;text-align:left;border:1px solid transparent;background:transparent;border-radius:6px;padding:6px 8px;font-size:.9rem}
-.plist button:hover{background:var(--surface-2)}
-.plist button[aria-current="true"]{background:var(--accent-soft);border-color:var(--accent)}
+.plist button[data-p]{display:flex;gap:8px;align-items:center;width:100%;text-align:left;border:1px solid transparent;background:transparent;border-radius:6px;padding:6px 8px;font-size:.9rem}
+.plist button[data-p]:hover{background:var(--surface-2)}
+.plist button[data-p][aria-current="true"]{background:var(--accent-soft);border-color:var(--accent)}
 .plist .st{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--line);flex:0 0 18px;display:grid;place-items:center;font-size:.7rem;color:#fff}
 .plist .st.done{background:var(--ok);border-color:var(--ok)}
 .plist .lv{margin-left:auto;font-size:.7rem;color:var(--hi);letter-spacing:-1px}
@@ -235,3 +235,17 @@ footer a{color:inherit}
 
 .grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:14px}
 #relTable td,#relTable th{text-align:left}
+
+/* 연습: 필터·기록·실전 세트 */
+.seg.pf{display:flex}.seg.pf button{flex:1;padding:4px 6px;font-size:.8rem}
+.plist .st.tried{border-color:var(--bad);color:var(--bad)}
+.plist .pt{flex:1;min-width:0}
+.plist .tm{font-family:var(--f-mono);font-size:.7rem;color:var(--muted)}
+.plist .lv{margin-left:4px}
+.setbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:var(--hi-soft);border:1px solid var(--hi);border-radius:8px;padding:8px 12px;font-size:.9rem}
+.setbar .dots{display:flex;gap:4px}
+.setbar .dots button{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--line);background:var(--surface);font-size:.78rem;padding:0}
+.setbar .dots button.ok{background:var(--ok);border-color:var(--ok);color:#fff}
+.setbar .dots button.cur{border-color:var(--ink);font-weight:700}
+.setbar #setLeft{margin-left:auto}
+.setbar #setLeft.over{color:var(--bad);font-weight:600}

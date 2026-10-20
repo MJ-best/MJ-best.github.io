@@ -88,7 +88,7 @@
     if (rRef && cRef) res.colTot = colVals.map((cv) => ev(make(null, cv, false, true)));
     res.grand = ev(make(null, null, false, false));
     // 빈 행/열 숨기기 (Power BI 기본 동작)
-    const blank = (v) => v === null || v === undefined || v === "";
+    const blank = (v) => v === null || v === undefined;
     if (rRef) {
       const keep = res.cells.map((row, i) => row.some((v) => !blank(v)) || (cRef && !blank(res.rowTot[i])));
       res.rowVals = rowVals.filter((_, i) => keep[i]);
