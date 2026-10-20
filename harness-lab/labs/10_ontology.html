@@ -18,6 +18,7 @@
 <header class="topbar">
   <a class="brand" href="../index.html"><span class="logo">⟲</span> 하네스 워크북</a>
   <span class="crumb">Lab 10</span>
+  <a class="toplink" href="../resources.html">교재</a>
   <span class="progress-pill" data-progress-pill title="완료한 랩">0/11</span>
 </header>
 <main class="wrap" data-lab="10_ontology" data-has-exercise="true">
@@ -25,7 +26,7 @@
     <p class="eyebrow">Lab 10 · 약 40분</p>
     <h1>온톨로지: 에이전트에게 도메인 지도 입히기</h1>
     <ul class="points"><li>온톨로지 = 개념 · 관계 · 속성 · 해석 규칙을 명시한 도메인 지도.</li><li>데이터가 작으면 YAML 을 시스템 프롬프트에 통째로 — 누락 없음, 디버깅 쉬움.</li><li>커지면 조회 도구 → 그래프(multi-hop) 순으로 확장. 저장소보다 설계가 먼저.</li></ul>
-    <nav class="jump"><a href="#concept">개념</a><a href="#quiz">퀴즈</a><a href="#practice">실습</a><a href="#answer">정답</a></nav>
+    <nav class="jump"><a href="#concept">개념</a><a href="#examples">예제</a><a href="#quiz">퀴즈</a><a href="#practice">실습</a><a href="#answer">정답</a></nav>
   </section>
   <section class="card prose" id="concept">
     <h2><span class="step">1</span> 개념</h2>
@@ -45,8 +46,182 @@
 <h3>생각해볼 것</h3>
 <ul><li><code>ontology.yaml</code> 에 개념을 하나 추가해 보세요 (예: 반품). <code>validate</code> 가 무엇을 잡아주나요? (YAML 수정 후 <code>python scripts/yaml_to_json.py</code>)</li><li>잘 만든 YAML 은 그래프 스키마로 옮기기 쉽습니다. <code>edges()</code> 출력을 Cypher <code>CREATE</code> 문으로 바꿔 보세요.</li><li>GraphRAG: <code>find_path</code> 결과의 각 노드에 Lab 9 검색 결과를 붙여 돌려주는 도구를 만들어 보세요.</li></ul>
   </section>
+  <section class="card" id="examples">
+    <h2><span class="step">2</span> 따라 해보기</h2>
+    <p class="muted small">비유 → 짧은 코드 → 실제 출력. 아래 출력은 미리 실행해 둔 결과이고, <b>▶ 실행</b>을 누르면 브라우저 안 파이썬으로 다시 돌립니다(첫 실행 때 약 10MB 내려받음).</p>
+    <article class="example" data-ex="0">
+  <h3><span class="exn">예제 1</span> 카페 메뉴로 만드는 첫 온톨로지</h3>
+  <div class="exprose"><p>스탠퍼드의 고전 교재 <em>Ontology Development 101</em> 은 온톨로지를 이렇게 만들라고 합니다 — ① 범위 정하기 → ② 용어 모으기 → ③ 개념(클래스) 정하기 → ④ 속성 → ⑤ 관계 → ⑥ 규칙. 구매 업무 대신 <strong>카페 메뉴</strong>로 아주 작게 해 봅시다.</p><p>새 직원에게 "라떼는 에스프레소에 우유", "카페라테 = 라떼", "샷 추가는 에스프레소 1잔 더"를 알려주는 것과 같습니다.</p></div>
+  <pre class="code" data-excode><code class="language-python">import solution as onto_lab
+
+cafe = {
+    &quot;domain&quot;: &quot;카페&quot;, &quot;version&quot;: 1,
+    &quot;concepts&quot;: {
+        &quot;espresso&quot;: {&quot;label&quot;: &quot;에스프레소&quot;, &quot;synonyms&quot;: [&quot;샷&quot;], &quot;definition&quot;: &quot;곱게 간 원두에 고압으로 뽑은 진한 커피.&quot;, &quot;relations&quot;: []},
+        &quot;milk&quot;: {&quot;label&quot;: &quot;우유&quot;, &quot;synonyms&quot;: [&quot;밀크&quot;], &quot;definition&quot;: &quot;스팀으로 데운 우유.&quot;, &quot;relations&quot;: []},
+        &quot;latte&quot;: {&quot;label&quot;: &quot;라떼&quot;, &quot;synonyms&quot;: [&quot;카페라테&quot;, &quot;카페 라떼&quot;], &quot;definition&quot;: &quot;에스프레소에 스팀 우유를 넣은 음료.&quot;,
+                  &quot;relations&quot;: [{&quot;type&quot;: &quot;contains&quot;, &quot;target&quot;: &quot;espresso&quot;}, {&quot;type&quot;: &quot;contains&quot;, &quot;target&quot;: &quot;milk&quot;}]},
+        &quot;americano&quot;: {&quot;label&quot;: &quot;아메리카노&quot;, &quot;synonyms&quot;: [&quot;아아&quot;], &quot;definition&quot;: &quot;에스프레소에 물을 넣은 음료.&quot;,
+                      &quot;relations&quot;: [{&quot;type&quot;: &quot;contains&quot;, &quot;target&quot;: &quot;espresso&quot;}]},
+    },
+    &quot;rules&quot;: [{&quot;id&quot;: &quot;R1&quot;, &quot;text&quot;: &quot;&#x27;샷 추가&#x27;는 에스프레소 1잔을 더하는 것이며 500원이다.&quot;}],
+}
+print(&quot;설계 검사:&quot;, onto_lab.validate(cafe) or &quot;문제 없음&quot;)
+print(&quot;&#x27;카페 라떼&#x27; →&quot;, onto_lab.resolve(cafe, &quot;카페 라떼&quot;), &quot;/ &#x27;아아&#x27; →&quot;, onto_lab.resolve(cafe, &quot;아아&quot;))
+print()
+print(onto_lab.render_for_prompt(cafe))
+</code></pre>
+  <textarea class="editor small-editor" data-exedit hidden spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off"></textarea>
+  <div class="exbar">
+    <button class="btn small primary" data-exrun>▶ 실행</button>
+    <button class="btn small" data-exedit-toggle>✎ 고쳐 보기</button>
+    <button class="btn small" data-exreset hidden>되돌리기</button>
+    <span class="muted small" data-exstatus></span>
+  </div>
+  <div class="exout"><span class="exlabel" data-exlabel>실행 결과</span><pre data-exout>설계 검사: 문제 없음
+&#x27;카페 라떼&#x27; → latte / &#x27;아아&#x27; → americano
+
+&lt;ontology domain=&quot;카페&quot; version=&quot;1&quot;&gt;
+[espresso] 에스프레소 (= 샷)
+  정의: 곱게 간 원두에 고압으로 뽑은 진한 커피.
+
+[milk] 우유 (= 밀크)
+  정의: 스팀으로 데운 우유.
+
+[latte] 라떼 (= 카페라테, 카페 라떼)
+  정의: 에스프레소에 스팀 우유를 넣은 음료.
+  관계: contains → espresso(에스프레소); contains → milk(우유)
+
+[americano] 아메리카노 (= 아아)
+  정의: 에스프레소에 물을 넣은 음료.
+  관계: contains → espresso(에스프레소)
+
+해석 규칙:
+- R1: &#x27;샷 추가&#x27;는 에스프레소 1잔을 더하는 것이며 500원이다.
+&lt;/ontology&gt;
+</pre></div>
+  <p class="try">💡 바꿔 보기: <code>americano</code> 의 관계 target 을 <code>ice</code> 로 바꾸면 <code>validate</code> 가 무엇을 잡아내나요?</p>
+</article>
+<article class="example" data-ex="1">
+  <h3><span class="exn">예제 2</span> 조직 용어 번역기</h3>
+  <div class="exprose"><p>같은 것을 부서마다 다르게 부릅니다. 구매팀은 "PO", 현업은 "오더", 회계는 "구매오더". 온톨로지의 <strong>동의어</strong>가 이것을 하나의 개념으로 묶어 줍니다. 띄어쓰기·대소문자·하이픈도 무시합니다.</p></div>
+  <pre class="code" data-excode><code class="language-python">import solution as onto_lab
+
+onto = onto_lab.load_ontology()
+for term in [&quot;PO&quot;, &quot;오더&quot;, &quot;삼자 대사&quot;, &quot;3-way match&quot;, &quot;QC검사&quot;, &quot;세금계산서&quot;, &quot;협력사&quot;, &quot;마감&quot;]:
+    cid = onto_lab.resolve(onto, term)
+    label = onto[&quot;concepts&quot;][cid][&quot;label&quot;] if cid else &quot;❓ 모름 (개념이 아님)&quot;
+    print(f&quot;{term:&lt;12} → {cid or &#x27;-&#x27;:&lt;16} {label}&quot;)
+</code></pre>
+  <textarea class="editor small-editor" data-exedit hidden spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off"></textarea>
+  <div class="exbar">
+    <button class="btn small primary" data-exrun>▶ 실행</button>
+    <button class="btn small" data-exedit-toggle>✎ 고쳐 보기</button>
+    <button class="btn small" data-exreset hidden>되돌리기</button>
+    <span class="muted small" data-exstatus></span>
+  </div>
+  <div class="exout"><span class="exlabel" data-exlabel>실행 결과</span><pre data-exout>PO           → purchase_order   발주
+오더           → purchase_order   발주
+삼자 대사        → three_way_match  3-Way Match
+3-way match  → three_way_match  3-Way Match
+QC검사         → inspection       검수
+세금계산서        → invoice          송장
+협력사          → supplier         공급사
+마감           → -                ❓ 모름 (개념이 아님)
+</pre></div>
+  <p class="try">💡 바꿔 보기: 목록에 "벤더", "인보이스", "점심메뉴"를 넣어 보세요.</p>
+</article>
+<article class="example" data-ex="2">
+  <h3><span class="exn">예제 3</span> 지도에서 길 찾기: multi-hop 경로</h3>
+  <div class="exprose"><p>질문에 등장하지 않는 <strong>중간 개념</strong>도 관계를 따라가면 찾을 수 있습니다. 이게 RAG 가 놓친 고리를 온톨로지가 잡는 방법입니다.</p></div>
+  <pre class="code" data-excode><code class="language-python">import solution as onto_lab
+
+onto = onto_lab.load_ontology()
+for a, b in [(&quot;대금지급&quot;, &quot;검수&quot;), (&quot;송장&quot;, &quot;단가계약&quot;), (&quot;발주&quot;, &quot;대금지급&quot;)]:
+    path = onto_lab.find_path(onto, onto_lab.resolve(onto, a), onto_lab.resolve(onto, b))
+    print(f&quot;{a} ↔ {b}  ({len(path)}단계)&quot;)
+    print(&quot;   &quot; + onto_lab.explain_path(onto, path))
+</code></pre>
+  <textarea class="editor small-editor" data-exedit hidden spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off"></textarea>
+  <div class="exbar">
+    <button class="btn small primary" data-exrun>▶ 실행</button>
+    <button class="btn small" data-exedit-toggle>✎ 고쳐 보기</button>
+    <button class="btn small" data-exreset hidden>되돌리기</button>
+    <span class="muted small" data-exstatus></span>
+  </div>
+  <div class="exout"><span class="exlabel" data-exlabel>실행 결과</span><pre data-exout>대금지급 ↔ 검수  (3단계)
+   대금지급 -requires→ 3-Way Match  |  3-Way Match -compares→ 입고  |  입고 -requires→ 검수
+송장 ↔ 단가계약  (2단계)
+   송장 -issued_by→ 공급사  |  단가계약 -agreed_with→ 공급사
+발주 ↔ 대금지급  (2단계)
+   발주 -issued_to→ 공급사  |  대금지급 -pays→ 공급사
+</pre></div>
+  <p class="try">💡 바꿔 보기: ("supplier", "inspection") 경로를 찾아 보세요. 몇 단계인가요?</p>
+</article>
+<article class="example" data-ex="3">
+  <h3><span class="exn">예제 4</span> GraphRAG 맛보기: 지도로 검색어를 넓히기</h3>
+  <div class="exprose"><p>Lab 9 의 RAG 는 고리를 놓쳤습니다. 온톨로지 경로에 나온 개념 이름으로 <strong>검색어를 넓히면</strong> 필요한 문서가 모두 걸립니다. 관계는 그래프에서, 설명은 문서 검색에서 — 이것이 GraphRAG 의 가장 단순한 형태입니다.</p></div>
+  <pre class="code" data-excode><code class="language-python">import solution as onto_lab
+from common.labkit import load_lab
+
+rag = load_lab(&quot;09_rag&quot;)
+onto = onto_lab.load_ontology()
+index = rag.Index(rag.load_docs())
+q = &quot;대금지급 전에 검수가 끝나야 하나요?&quot;
+
+path = onto_lab.find_path(onto, &quot;payment&quot;, &quot;inspection&quot;)
+nodes = {n for s, _, d in path for n in (s, d)}
+expanded = q + &quot; &quot; + &quot; &quot;.join(onto[&quot;concepts&quot;][n][&quot;label&quot;] + &quot; &quot; + &quot; &quot;.join(onto[&quot;concepts&quot;][n][&quot;synonyms&quot;]) for n in sorted(nodes))
+
+before = sorted({c[&quot;source&quot;] for _, c in index.search(q, k=4)})
+after = sorted({c[&quot;source&quot;] for _, c in index.search(expanded, k=4)})
+print(&quot;넓힌 검색어:&quot;, expanded[:70], &quot;…\n&quot;)
+print(&quot;RAG 만      :&quot;, before)
+print(&quot;지도 + RAG  :&quot;, after)
+</code></pre>
+  <textarea class="editor small-editor" data-exedit hidden spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off"></textarea>
+  <div class="exbar">
+    <button class="btn small primary" data-exrun>▶ 실행</button>
+    <button class="btn small" data-exedit-toggle>✎ 고쳐 보기</button>
+    <button class="btn small" data-exreset hidden>되돌리기</button>
+    <span class="muted small" data-exstatus></span>
+  </div>
+  <div class="exout"><span class="exlabel" data-exlabel>실행 결과</span><pre data-exout>넓힌 검색어: 대금지급 전에 검수가 끝나야 하나요? 입고 GR 입고처리 입하 검수 수입검사 QC검사 품질검사 대금지급 지급 송금 결제 3-W …
+
+RAG 만      : [&#x27;03_수입검사_기준.md&#x27;, &#x27;04_송장_접수.md&#x27;, &#x27;06_대금지급_규정.md&#x27;]
+지도 + RAG  : [&#x27;02_입고_처리.md&#x27;, &#x27;03_수입검사_기준.md&#x27;, &#x27;05_대사_통제.md&#x27;, &#x27;06_대금지급_규정.md&#x27;]
+</pre></div>
+  
+</article>
+<article class="example" data-ex="4">
+  <h3><span class="exn">예제 5</span> 어느 단계로 갈까? 확장 판단표</h3>
+  <div class="exprose"><p>데이터가 작을 땐 <strong>전체 주입</strong>이 출발점입니다. 커지면 조회 도구, 인스턴스가 많고 관계 탐색이 핵심이면 그래프로 넘어갑니다.</p></div>
+  <pre class="code" data-excode><code class="language-python">import solution as onto_lab
+
+cases = [
+    (&quot;우리 구매 온톨로지 (지금)&quot;, 750, 0, False),
+    (&quot;개념 300개짜리 전사 용어집&quot;, 30_000, 0, False),
+    (&quot;발주 5만 건 + 공급망 추적&quot;, 3_000, 50_000, True),
+]
+for name, tokens, instances, hops in cases:
+    print(f&quot;{name:&lt;22} → {onto_lab.decide_strategy(tokens, 200_000, instances, hops)}&quot;)
+</code></pre>
+  <textarea class="editor small-editor" data-exedit hidden spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off"></textarea>
+  <div class="exbar">
+    <button class="btn small primary" data-exrun>▶ 실행</button>
+    <button class="btn small" data-exedit-toggle>✎ 고쳐 보기</button>
+    <button class="btn small" data-exreset hidden>되돌리기</button>
+    <span class="muted small" data-exstatus></span>
+  </div>
+  <div class="exout"><span class="exlabel" data-exlabel>실행 결과</span><pre data-exout>우리 구매 온톨로지 (지금)        → inject
+개념 300개짜리 전사 용어집       → lookup_tool
+발주 5만 건 + 공급망 추적       → graph
+</pre></div>
+  
+</article>
+  </section>
   <section class="card" id="quiz">
-    <h2><span class="step">2</span> 확인 퀴즈</h2>
+    <h2><span class="step">3</span> 확인 퀴즈</h2>
     <div class="quiz" data-answer="1" data-q="0">
   <p class="q"><span class="qn">Q1</span> 온톨로지가 작을 때 &#x27;전체 주입&#x27;이 검색보다 나은 이유는?</p>
   <div class="opts"><button class="opt" data-i="0">더 최신이라서</button><button class="opt" data-i="1">검색 누락이라는 실패 지점 자체가 없어서</button><button class="opt" data-i="2">토큰이 더 적어서</button></div>
@@ -62,7 +237,7 @@
 </div>
   </section>
   <section class="card practice" id="practice">
-  <h2><span class="step">3</span> 실습: <code>exercise.py</code> 채우기</h2>
+  <h2><span class="step">4</span> 실습: <code>exercise.py</code> 채우기</h2>
   <p class="muted small">TODO 표시 부분을 채우고 채점하세요. 입력 내용은 이 기기에 자동 저장됩니다.</p>
   <div class="toolbar">
     <button class="btn small" data-act="todo">TODO 찾기</button>
@@ -201,7 +376,7 @@ def find_path(onto, start, goal, max_depth=4):
 
 def explain_path(onto, path):
     lab = lambda cid: onto[&quot;concepts&quot;][cid][&quot;label&quot;]  # noqa: E731
-    return &quot; → &quot;.join(f&quot;{lab(s)} -{t}→ {lab(d)}&quot; for s, t, d in path)
+    return &quot;  |  &quot;.join(f&quot;{lab(s)} -{t}→ {lab(d)}&quot; for s, t, d in path)
 
 
 # --------------------------------------------------------------- 어떤 단계?
@@ -243,7 +418,7 @@ if __name__ == &quot;__main__&quot;:
   <div class="results" data-results></div>
 </section>
   <section class="card" id="answer">
-    <h2><span class="step">4</span> 정답과 테스트</h2>
+    <h2><span class="step">5</span> 정답과 테스트</h2>
     <details><summary>정답 코드 보기 (<code>solution.py</code>)</summary><pre class="code"><code class="language-python">#!/usr/bin/env python3
 &quot;&quot;&quot;Lab 10 — 온톨로지: 에이전트에게 &#x27;도메인 지도&#x27; 입히기.
 
@@ -425,7 +600,7 @@ def find_path(onto, start, goal, max_depth=4):
 
 def explain_path(onto, path):
     lab = lambda cid: onto[&quot;concepts&quot;][cid][&quot;label&quot;]  # noqa: E731
-    return &quot; → &quot;.join(f&quot;{lab(s)} -{t}→ {lab(d)}&quot; for s, t, d in path)
+    return &quot;  |  &quot;.join(f&quot;{lab(s)} -{t}→ {lab(d)}&quot; for s, t, d in path)
 
 
 # --------------------------------------------------------------- 어떤 단계?
@@ -567,9 +742,14 @@ if __name__ == &quot;__main__&quot;:
 </code></pre></details>
     <label class="donebox"><input type="checkbox" data-done> 이 랩을 완료로 표시</label>
   </section>
+  <section class="card" id="reading">
+    <h2>📚 더 읽을거리</h2>
+    <ul class="reading"><li><a href="https://isuruwijesiri.com/harness-engineering-101/" target="_blank" rel="noopener">Harness Engineering 101</a> <span class="muted small">· Isuru Wijesiri</span><br><span class="small">이 워크북의 뼈대가 된 온라인 책. 장마다 ‘무엇이 깨지나 → 패치 → 비용’ 구조로 300줄짜리 하네스를 키워 갑니다.</span></li><li><a href="https://bigstargithub.github.io/posts/AI-12/" target="_blank" rel="noopener">🇰🇷 그래서 Agent에 데이터를 어떻게 입히나요?</a> <span class="muted small">· 장한별</span><br><span class="small">데이터가 작을 땐 YAML 온톨로지를 통째로 주입하고, 커지면 조회 도구 → 그래프로. Lab 10의 단계 구분이 이 글에서 왔습니다.</span></li><li><a href="https://protege.stanford.edu/publications/ontology_development/ontology101-noy-mcguinness.html" target="_blank" rel="noopener">Ontology Development 101</a> <span class="muted small">· Natalya F. Noy · Deborah L. McGuinness (Stanford)</span><br><span class="small">온톨로지 설계의 고전 입문서. 범위 정하기→용어 모으기→클래스→속성→인스턴스 순서를 와인 예제로 설명합니다. Lab 10 카페 예제의 원형.</span></li><li><a href="https://www.microsoft.com/en-us/research/project/graphrag/" target="_blank" rel="noopener">GraphRAG</a> <span class="muted small">· Microsoft Research</span><br><span class="small">문서에서 지식 그래프를 자동으로 뽑아 검색에 쓰는 방식. Lab 10 예제 4(경로로 검색어 넓히기)의 본격 버전.</span></li></ul>
+    <p class="small"><a href="../resources.html">교재 전체 목록 →</a></p>
+  </section>
   <nav class="pager"><a href="09_rag.html">← 09 RAG</a><a class="next" href="11_capstone.html">11 캡스톤 →</a></nav>
 </main>
-<script type="application/json" id="lab-data">{"id": "10_ontology", "exercise": "#!/usr/bin/env python3\n\"\"\"[연습] Lab 10 — 온톨로지: 에이전트에게 '도메인 지도' 입히기.\n\nLLM 은 일반 지식은 많지만 \"우리 조직에서 '마감'이 뭘 뜻하는지\"는 모릅니다.\n온톨로지 = 개념 · 관계 · 속성 · 해석 규칙을 명시적으로 적은 문서.\n\n데이터가 작을 때의 출발점과 확장 순서:\n  1단계 전체 주입 : YAML 을 렌더링해 시스템 프롬프트에 '통째로'. 검색 누락이 원천적으로 없음.\n  2단계 조회 도구 : 커지면 ontology_lookup 도구로 필요한 섹션만 꺼내 보게 한다.\n  3단계 그래프   : 인스턴스가 많고 multi-hop 탐색이 잦으면 그래프 탐색(GraphDB/GraphRAG).\n저장소보다 먼저 '온톨로지 설계'가 중요합니다. 잘 만든 YAML 은 그래프 스키마로 옮기기 쉽습니다.\n\n실행:  python labs/10_ontology/solution.py            (렌더링 결과와 경로 탐색 예시 출력)\n\"\"\"\nimport json\nimport os\nimport sys\nfrom collections import deque\n\nROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), \"..\", \"..\"))\nsys.path.insert(0, ROOT)\nDATA = os.path.join(ROOT, \"data\", \"procurement\")\n\n\ndef load_ontology(path=os.path.join(DATA, \"ontology.yaml\")):\n    \"\"\"PyYAML 이 있으면 YAML, 없으면 같은 이름의 .json 을 읽는다.\"\"\"\n    try:\n        import yaml\n        with open(path, encoding=\"utf-8\") as f:\n            return yaml.safe_load(f)\n    except ImportError:\n        with open(os.path.splitext(path)[0] + \".json\", encoding=\"utf-8\") as f:\n            return json.load(f)\n\n\ndef _norm(term):\n    return term.lower().replace(\" \", \"\").replace(\"-\", \"\")\n\n\n# ------------------------------------------------------------------ 설계 검증\ndef validate(onto):\n    \"\"\"온톨로지의 설계 오류를 문자열 리스트로 반환 (없으면 []).\n    - 개념에 label 또는 definition 이 없음      → \"<id>: label/definition 누락\"\n    - 관계의 target 이 정의되지 않은 개념        → \"<id>: 알 수 없는 target <target>\"\n    - 같은 용어(label·synonym, _norm 기준)가 두 개념에 쓰임 → \"용어 충돌: <term>\"\n    \"\"\"\n    # TODO(1): 세 가지 검사를 구현하세요\n    raise NotImplementedError(\"10_ontology TODO(1)\")\n\n\ndef resolve(onto, term):\n    \"\"\"조직 용어(id·label·동의어, 대소문자/공백/하이픈 무시)를 개념 id 로. 없으면 None.\"\"\"\n    # TODO(2): _norm 으로 비교해 일치하는 개념 id 를 반환하세요\n    raise NotImplementedError(\"10_ontology TODO(2)\")\n\n\n# ----------------------------------------------------------- 1단계: 전체 주입\ndef render_concept(onto, cid):\n    c = onto[\"concepts\"][cid]\n    syn = f\" (= {', '.join(c['synonyms'])})\" if c.get(\"synonyms\") else \"\"\n    lines = [f\"[{cid}] {c['label']}{syn}\", f\"  정의: {c['definition']}\"]\n    if c.get(\"attributes\"):\n        lines.append(f\"  속성: {', '.join(c['attributes'])}\")\n    rels = [f\"{r['type']} → {r['target']}({onto['concepts'][r['target']]['label']})\"\n            for r in c.get(\"relations\") or []]\n    if rels:\n        lines.append(f\"  관계: {'; '.join(rels)}\")\n    return \"\\n\".join(lines)\n\n\ndef render_for_prompt(onto):\n    \"\"\"온톨로지 전체를 시스템 프롬프트용 텍스트로.\n    형식:\n        <ontology domain=\"...\" version=\"...\">\n        (개념마다 render_concept, 빈 줄로 구분)\n\n        해석 규칙:\n        - R1: ...\n        <\/ontology>\n    \"\"\"\n    # TODO(3): 위 형식대로 렌더링하세요\n    raise NotImplementedError(\"10_ontology TODO(3)\")\n\n\ndef build_system(base, onto):\n    return (f\"{base}\\n\\n아래 온톨로지는 이 조직의 용어 정의다. 일반 상식보다 이 정의를 우선하라.\"\n            f\"\\n\\n{render_for_prompt(onto)}\")\n\n\n# ----------------------------------------------------------- 2단계: 조회 도구\nONTOLOGY_TOOL = {\n    \"name\": \"ontology_lookup\",\n    \"description\": \"도메인 용어(동의어 가능)의 정의·속성·관계(들어오는 관계 포함)와 관련 규칙을 조회한다.\",\n    \"input_schema\": {\"type\": \"object\",\n                     \"properties\": {\"term\": {\"type\": \"string\"}},\n                     \"required\": [\"term\"]},\n}\n\n\ndef lookup(onto, term):\n    \"\"\"도구 결과 문자열. 모르는 용어면 \"UNKNOWN: <term> (알려진 개념: ...)\".\n    아는 용어면 render_concept + '들어오는 관계' 줄 + 개념 label 이 언급된 규칙들.\"\"\"\n    cid = resolve(onto, term)\n    if cid is None:\n        known = \", \".join(c[\"label\"] for c in onto[\"concepts\"].values())\n        return f\"UNKNOWN: {term} (알려진 개념: {known})\"\n    out = [render_concept(onto, cid)]\n    # TODO(4): 다른 개념에서 cid 로 향하는 관계를 \"  들어오는 관계: <src>(<label>) -<type>→\" 형식으로 모아 추가하고,\n    raise NotImplementedError(\"10_ontology TODO(4)\")\n\n\n# --------------------------------------------------------- 3단계: 그래프 탐색\ndef edges(onto):\n    \"\"\"[(src, type, dst), ...] 모든 관계.\"\"\"\n    return [(src, r[\"type\"], r[\"target\"])\n            for src, c in onto[\"concepts\"].items() for r in c.get(\"relations\") or []]\n\n\ndef find_path(onto, start, goal, max_depth=4):\n    \"\"\"관계를 '방향 무시'하고 BFS 로 start→goal 최단 경로를 찾는다.\n    반환: 원래 방향을 유지한 간선 리스트 [(src, type, dst), ...]. 없으면 None. start==goal 이면 [].\n    예) payment→inspection:\n        [(\"payment\",\"requires\",\"three_way_match\"),\n         (\"three_way_match\",\"compares\",\"goods_receipt\"),\n         (\"goods_receipt\",\"requires\",\"inspection\")]\"\"\"\n    # TODO(5): 인접 리스트(양방향)를 만들고 BFS 하세요. 경로 길이가 max_depth 를 넘으면 탐색하지 마세요\n    raise NotImplementedError(\"10_ontology TODO(5)\")\n\n\ndef explain_path(onto, path):\n    lab = lambda cid: onto[\"concepts\"][cid][\"label\"]  # noqa: E731\n    return \" → \".join(f\"{lab(s)} -{t}→ {lab(d)}\" for s, t, d in path)\n\n\n# --------------------------------------------------------------- 어떤 단계?\ndef decide_strategy(prompt_tokens, context_budget, n_instances=0, multi_hop_heavy=False):\n    \"\"\"확장 판단 (글의 순서를 단순화한 규칙):\n    - 인스턴스가 1만 개 이상이거나 multi-hop 탐색이 핵심이면  → \"graph\"\n    - 온톨로지 프롬프트가 컨텍스트 예산의 10% 를 넘으면      → \"lookup_tool\"\n    - 그 밖에는                                               → \"inject\"\n    \"\"\"\n    if n_instances >= 10_000 or multi_hop_heavy:\n        return \"graph\"\n    if prompt_tokens > context_budget * 0.10:\n        return \"lookup_tool\"\n    return \"inject\"\n\n\ndef make_ontology_executor(onto, base_execute):\n    def execute(name, args):\n        if name == \"ontology_lookup\":\n            return lookup(onto, args[\"term\"])\n        return base_execute(name, args)\n    return execute\n\n\nif __name__ == \"__main__\":\n    onto = load_ontology()\n    print(\"검증:\", validate(onto) or \"문제 없음\")\n    text = render_for_prompt(onto)\n    print(text)\n    toks = len(text) // 2  # 한글은 대략 글자 2개 ≈ 1토큰 (거친 추정)\n    print(f\"\\n~{toks} 토큰 → 전략: {decide_strategy(toks, 200_000)}\")\n    p = find_path(onto, resolve(onto, \"대금지급\"), resolve(onto, \"검수\"))\n    print(\"대금지급 ↔ 검수 경로:\", explain_path(onto, p))\n", "pyodide": "https://cdn.jsdelivr.net/npm/pyodide@0.29.5/", "labs": [{"id": "01_array", "n": 1, "title": "대화는 그냥 JSON 배열이다", "short": "대화 = 배열", "minutes": 20}, {"id": "02_tools", "n": 2, "title": "도구 = JSON 스키마 + 함수 디스패치", "short": "도구", "minutes": 25}, {"id": "03_agent_loop", "n": 3, "title": "에이전트 루프", "short": "에이전트 루프", "minutes": 25}, {"id": "04_context_budget", "n": 4, "title": "컨텍스트는 예산, 캐싱은 순서", "short": "예산과 캐싱", "minutes": 30}, {"id": "05_subagents", "n": 5, "title": "서브에이전트 = 컨텍스트 포크", "short": "서브에이전트", "minutes": 20}, {"id": "06_steering", "n": 6, "title": "돌고 있는 루프 조종하기", "short": "조종", "minutes": 25}, {"id": "07_guardrails", "n": 7, "title": "반사신경과 가드레일", "short": "가드레일", "minutes": 25}, {"id": "08_debugging", "n": 8, "title": "배열 디버깅", "short": "디버깅", "minutes": 20}, {"id": "09_rag", "n": 9, "title": "RAG는 원래 하네스 패턴이었다", "short": "RAG", "minutes": 35}, {"id": "10_ontology", "n": 10, "title": "온톨로지: 에이전트에게 도메인 지도 입히기", "short": "온톨로지", "minutes": 40}, {"id": "11_capstone", "n": 11, "title": "캡스톤: 미니 하네스", "short": "캡스톤", "minutes": 30}]}</script>
+<script type="application/json" id="lab-data">{"id": "10_ontology", "exercise": "#!/usr/bin/env python3\n\"\"\"[연습] Lab 10 — 온톨로지: 에이전트에게 '도메인 지도' 입히기.\n\nLLM 은 일반 지식은 많지만 \"우리 조직에서 '마감'이 뭘 뜻하는지\"는 모릅니다.\n온톨로지 = 개념 · 관계 · 속성 · 해석 규칙을 명시적으로 적은 문서.\n\n데이터가 작을 때의 출발점과 확장 순서:\n  1단계 전체 주입 : YAML 을 렌더링해 시스템 프롬프트에 '통째로'. 검색 누락이 원천적으로 없음.\n  2단계 조회 도구 : 커지면 ontology_lookup 도구로 필요한 섹션만 꺼내 보게 한다.\n  3단계 그래프   : 인스턴스가 많고 multi-hop 탐색이 잦으면 그래프 탐색(GraphDB/GraphRAG).\n저장소보다 먼저 '온톨로지 설계'가 중요합니다. 잘 만든 YAML 은 그래프 스키마로 옮기기 쉽습니다.\n\n실행:  python labs/10_ontology/solution.py            (렌더링 결과와 경로 탐색 예시 출력)\n\"\"\"\nimport json\nimport os\nimport sys\nfrom collections import deque\n\nROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), \"..\", \"..\"))\nsys.path.insert(0, ROOT)\nDATA = os.path.join(ROOT, \"data\", \"procurement\")\n\n\ndef load_ontology(path=os.path.join(DATA, \"ontology.yaml\")):\n    \"\"\"PyYAML 이 있으면 YAML, 없으면 같은 이름의 .json 을 읽는다.\"\"\"\n    try:\n        import yaml\n        with open(path, encoding=\"utf-8\") as f:\n            return yaml.safe_load(f)\n    except ImportError:\n        with open(os.path.splitext(path)[0] + \".json\", encoding=\"utf-8\") as f:\n            return json.load(f)\n\n\ndef _norm(term):\n    return term.lower().replace(\" \", \"\").replace(\"-\", \"\")\n\n\n# ------------------------------------------------------------------ 설계 검증\ndef validate(onto):\n    \"\"\"온톨로지의 설계 오류를 문자열 리스트로 반환 (없으면 []).\n    - 개념에 label 또는 definition 이 없음      → \"<id>: label/definition 누락\"\n    - 관계의 target 이 정의되지 않은 개념        → \"<id>: 알 수 없는 target <target>\"\n    - 같은 용어(label·synonym, _norm 기준)가 두 개념에 쓰임 → \"용어 충돌: <term>\"\n    \"\"\"\n    # TODO(1): 세 가지 검사를 구현하세요\n    raise NotImplementedError(\"10_ontology TODO(1)\")\n\n\ndef resolve(onto, term):\n    \"\"\"조직 용어(id·label·동의어, 대소문자/공백/하이픈 무시)를 개념 id 로. 없으면 None.\"\"\"\n    # TODO(2): _norm 으로 비교해 일치하는 개념 id 를 반환하세요\n    raise NotImplementedError(\"10_ontology TODO(2)\")\n\n\n# ----------------------------------------------------------- 1단계: 전체 주입\ndef render_concept(onto, cid):\n    c = onto[\"concepts\"][cid]\n    syn = f\" (= {', '.join(c['synonyms'])})\" if c.get(\"synonyms\") else \"\"\n    lines = [f\"[{cid}] {c['label']}{syn}\", f\"  정의: {c['definition']}\"]\n    if c.get(\"attributes\"):\n        lines.append(f\"  속성: {', '.join(c['attributes'])}\")\n    rels = [f\"{r['type']} → {r['target']}({onto['concepts'][r['target']]['label']})\"\n            for r in c.get(\"relations\") or []]\n    if rels:\n        lines.append(f\"  관계: {'; '.join(rels)}\")\n    return \"\\n\".join(lines)\n\n\ndef render_for_prompt(onto):\n    \"\"\"온톨로지 전체를 시스템 프롬프트용 텍스트로.\n    형식:\n        <ontology domain=\"...\" version=\"...\">\n        (개념마다 render_concept, 빈 줄로 구분)\n\n        해석 규칙:\n        - R1: ...\n        <\/ontology>\n    \"\"\"\n    # TODO(3): 위 형식대로 렌더링하세요\n    raise NotImplementedError(\"10_ontology TODO(3)\")\n\n\ndef build_system(base, onto):\n    return (f\"{base}\\n\\n아래 온톨로지는 이 조직의 용어 정의다. 일반 상식보다 이 정의를 우선하라.\"\n            f\"\\n\\n{render_for_prompt(onto)}\")\n\n\n# ----------------------------------------------------------- 2단계: 조회 도구\nONTOLOGY_TOOL = {\n    \"name\": \"ontology_lookup\",\n    \"description\": \"도메인 용어(동의어 가능)의 정의·속성·관계(들어오는 관계 포함)와 관련 규칙을 조회한다.\",\n    \"input_schema\": {\"type\": \"object\",\n                     \"properties\": {\"term\": {\"type\": \"string\"}},\n                     \"required\": [\"term\"]},\n}\n\n\ndef lookup(onto, term):\n    \"\"\"도구 결과 문자열. 모르는 용어면 \"UNKNOWN: <term> (알려진 개념: ...)\".\n    아는 용어면 render_concept + '들어오는 관계' 줄 + 개념 label 이 언급된 규칙들.\"\"\"\n    cid = resolve(onto, term)\n    if cid is None:\n        known = \", \".join(c[\"label\"] for c in onto[\"concepts\"].values())\n        return f\"UNKNOWN: {term} (알려진 개념: {known})\"\n    out = [render_concept(onto, cid)]\n    # TODO(4): 다른 개념에서 cid 로 향하는 관계를 \"  들어오는 관계: <src>(<label>) -<type>→\" 형식으로 모아 추가하고,\n    raise NotImplementedError(\"10_ontology TODO(4)\")\n\n\n# --------------------------------------------------------- 3단계: 그래프 탐색\ndef edges(onto):\n    \"\"\"[(src, type, dst), ...] 모든 관계.\"\"\"\n    return [(src, r[\"type\"], r[\"target\"])\n            for src, c in onto[\"concepts\"].items() for r in c.get(\"relations\") or []]\n\n\ndef find_path(onto, start, goal, max_depth=4):\n    \"\"\"관계를 '방향 무시'하고 BFS 로 start→goal 최단 경로를 찾는다.\n    반환: 원래 방향을 유지한 간선 리스트 [(src, type, dst), ...]. 없으면 None. start==goal 이면 [].\n    예) payment→inspection:\n        [(\"payment\",\"requires\",\"three_way_match\"),\n         (\"three_way_match\",\"compares\",\"goods_receipt\"),\n         (\"goods_receipt\",\"requires\",\"inspection\")]\"\"\"\n    # TODO(5): 인접 리스트(양방향)를 만들고 BFS 하세요. 경로 길이가 max_depth 를 넘으면 탐색하지 마세요\n    raise NotImplementedError(\"10_ontology TODO(5)\")\n\n\ndef explain_path(onto, path):\n    lab = lambda cid: onto[\"concepts\"][cid][\"label\"]  # noqa: E731\n    return \"  |  \".join(f\"{lab(s)} -{t}→ {lab(d)}\" for s, t, d in path)\n\n\n# --------------------------------------------------------------- 어떤 단계?\ndef decide_strategy(prompt_tokens, context_budget, n_instances=0, multi_hop_heavy=False):\n    \"\"\"확장 판단 (글의 순서를 단순화한 규칙):\n    - 인스턴스가 1만 개 이상이거나 multi-hop 탐색이 핵심이면  → \"graph\"\n    - 온톨로지 프롬프트가 컨텍스트 예산의 10% 를 넘으면      → \"lookup_tool\"\n    - 그 밖에는                                               → \"inject\"\n    \"\"\"\n    if n_instances >= 10_000 or multi_hop_heavy:\n        return \"graph\"\n    if prompt_tokens > context_budget * 0.10:\n        return \"lookup_tool\"\n    return \"inject\"\n\n\ndef make_ontology_executor(onto, base_execute):\n    def execute(name, args):\n        if name == \"ontology_lookup\":\n            return lookup(onto, args[\"term\"])\n        return base_execute(name, args)\n    return execute\n\n\nif __name__ == \"__main__\":\n    onto = load_ontology()\n    print(\"검증:\", validate(onto) or \"문제 없음\")\n    text = render_for_prompt(onto)\n    print(text)\n    toks = len(text) // 2  # 한글은 대략 글자 2개 ≈ 1토큰 (거친 추정)\n    print(f\"\\n~{toks} 토큰 → 전략: {decide_strategy(toks, 200_000)}\")\n    p = find_path(onto, resolve(onto, \"대금지급\"), resolve(onto, \"검수\"))\n    print(\"대금지급 ↔ 검수 경로:\", explain_path(onto, p))\n", "examples": ["import solution as onto_lab\n\ncafe = {\n    \"domain\": \"카페\", \"version\": 1,\n    \"concepts\": {\n        \"espresso\": {\"label\": \"에스프레소\", \"synonyms\": [\"샷\"], \"definition\": \"곱게 간 원두에 고압으로 뽑은 진한 커피.\", \"relations\": []},\n        \"milk\": {\"label\": \"우유\", \"synonyms\": [\"밀크\"], \"definition\": \"스팀으로 데운 우유.\", \"relations\": []},\n        \"latte\": {\"label\": \"라떼\", \"synonyms\": [\"카페라테\", \"카페 라떼\"], \"definition\": \"에스프레소에 스팀 우유를 넣은 음료.\",\n                  \"relations\": [{\"type\": \"contains\", \"target\": \"espresso\"}, {\"type\": \"contains\", \"target\": \"milk\"}]},\n        \"americano\": {\"label\": \"아메리카노\", \"synonyms\": [\"아아\"], \"definition\": \"에스프레소에 물을 넣은 음료.\",\n                      \"relations\": [{\"type\": \"contains\", \"target\": \"espresso\"}]},\n    },\n    \"rules\": [{\"id\": \"R1\", \"text\": \"'샷 추가'는 에스프레소 1잔을 더하는 것이며 500원이다.\"}],\n}\nprint(\"설계 검사:\", onto_lab.validate(cafe) or \"문제 없음\")\nprint(\"'카페 라떼' →\", onto_lab.resolve(cafe, \"카페 라떼\"), \"/ '아아' →\", onto_lab.resolve(cafe, \"아아\"))\nprint()\nprint(onto_lab.render_for_prompt(cafe))\n", "import solution as onto_lab\n\nonto = onto_lab.load_ontology()\nfor term in [\"PO\", \"오더\", \"삼자 대사\", \"3-way match\", \"QC검사\", \"세금계산서\", \"협력사\", \"마감\"]:\n    cid = onto_lab.resolve(onto, term)\n    label = onto[\"concepts\"][cid][\"label\"] if cid else \"❓ 모름 (개념이 아님)\"\n    print(f\"{term:<12} → {cid or '-':<16} {label}\")\n", "import solution as onto_lab\n\nonto = onto_lab.load_ontology()\nfor a, b in [(\"대금지급\", \"검수\"), (\"송장\", \"단가계약\"), (\"발주\", \"대금지급\")]:\n    path = onto_lab.find_path(onto, onto_lab.resolve(onto, a), onto_lab.resolve(onto, b))\n    print(f\"{a} ↔ {b}  ({len(path)}단계)\")\n    print(\"   \" + onto_lab.explain_path(onto, path))\n", "import solution as onto_lab\nfrom common.labkit import load_lab\n\nrag = load_lab(\"09_rag\")\nonto = onto_lab.load_ontology()\nindex = rag.Index(rag.load_docs())\nq = \"대금지급 전에 검수가 끝나야 하나요?\"\n\npath = onto_lab.find_path(onto, \"payment\", \"inspection\")\nnodes = {n for s, _, d in path for n in (s, d)}\nexpanded = q + \" \" + \" \".join(onto[\"concepts\"][n][\"label\"] + \" \" + \" \".join(onto[\"concepts\"][n][\"synonyms\"]) for n in sorted(nodes))\n\nbefore = sorted({c[\"source\"] for _, c in index.search(q, k=4)})\nafter = sorted({c[\"source\"] for _, c in index.search(expanded, k=4)})\nprint(\"넓힌 검색어:\", expanded[:70], \"…\\n\")\nprint(\"RAG 만      :\", before)\nprint(\"지도 + RAG  :\", after)\n", "import solution as onto_lab\n\ncases = [\n    (\"우리 구매 온톨로지 (지금)\", 750, 0, False),\n    (\"개념 300개짜리 전사 용어집\", 30_000, 0, False),\n    (\"발주 5만 건 + 공급망 추적\", 3_000, 50_000, True),\n]\nfor name, tokens, instances, hops in cases:\n    print(f\"{name:<22} → {onto_lab.decide_strategy(tokens, 200_000, instances, hops)}\")\n"], "pyodide": "https://cdn.jsdelivr.net/npm/pyodide@0.29.5/", "labs": [{"id": "01_array", "n": 1, "title": "대화는 그냥 JSON 배열이다", "short": "대화 = 배열", "minutes": 20}, {"id": "02_tools", "n": 2, "title": "도구 = JSON 스키마 + 함수 디스패치", "short": "도구", "minutes": 25}, {"id": "03_agent_loop", "n": 3, "title": "에이전트 루프", "short": "에이전트 루프", "minutes": 25}, {"id": "04_context_budget", "n": 4, "title": "컨텍스트는 예산, 캐싱은 순서", "short": "예산과 캐싱", "minutes": 30}, {"id": "05_subagents", "n": 5, "title": "서브에이전트 = 컨텍스트 포크", "short": "서브에이전트", "minutes": 20}, {"id": "06_steering", "n": 6, "title": "돌고 있는 루프 조종하기", "short": "조종", "minutes": 25}, {"id": "07_guardrails", "n": 7, "title": "반사신경과 가드레일", "short": "가드레일", "minutes": 25}, {"id": "08_debugging", "n": 8, "title": "배열 디버깅", "short": "디버깅", "minutes": 20}, {"id": "09_rag", "n": 9, "title": "RAG는 원래 하네스 패턴이었다", "short": "RAG", "minutes": 35}, {"id": "10_ontology", "n": 10, "title": "온톨로지: 에이전트에게 도메인 지도 입히기", "short": "온톨로지", "minutes": 40}, {"id": "11_capstone", "n": 11, "title": "캡스톤: 미니 하네스", "short": "캡스톤", "minutes": 30}]}</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <script src="../assets/app.js"></script>
 </body>

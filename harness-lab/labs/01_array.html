@@ -18,6 +18,7 @@
 <header class="topbar">
   <a class="brand" href="../index.html"><span class="logo">⟲</span> 하네스 워크북</a>
   <span class="crumb">Lab 01</span>
+  <a class="toplink" href="../resources.html">교재</a>
   <span class="progress-pill" data-progress-pill title="완료한 랩">0/11</span>
 </header>
 <main class="wrap" data-lab="01_array" data-has-exercise="true">
@@ -25,7 +26,7 @@
     <p class="eyebrow">Lab 01 · 약 20분</p>
     <h1>대화는 그냥 JSON 배열이다</h1>
     <ul class="points"><li>LLM API는 상태가 없다. 매 요청에 대화 전체를 배열로 보낸다.</li><li>응답의 content 블록은 텍스트만 뽑지 말고 통째로 저장한다.</li><li>세션이란 이 배열을 파일에 저장한 것일 뿐이다.</li></ul>
-    <nav class="jump"><a href="#concept">개념</a><a href="#quiz">퀴즈</a><a href="#practice">실습</a><a href="#answer">정답</a></nav>
+    <nav class="jump"><a href="#concept">개념</a><a href="#examples">예제</a><a href="#quiz">퀴즈</a><a href="#practice">실습</a><a href="#answer">정답</a></nav>
   </section>
   <section class="card prose" id="concept">
     <h2><span class="step">1</span> 개념</h2>
@@ -42,8 +43,126 @@
 <h3>생각해볼 것</h3>
 <ul><li><code>python labs/01_array/exercise.py s.json</code> 로 대화한 뒤 <code>s.json</code> 을 열어보고, 손으로 assistant 답을 바꾼 다음 다시 실행해 보세요. 모델은 '자기가 그렇게 말했다'고 믿습니다.</li><li><code>/clear</code> 는 왜 한 줄로 끝날까요?</li></ul>
   </section>
+  <section class="card" id="examples">
+    <h2><span class="step">2</span> 따라 해보기</h2>
+    <p class="muted small">비유 → 짧은 코드 → 실제 출력. 아래 출력은 미리 실행해 둔 결과이고, <b>▶ 실행</b>을 누르면 브라우저 안 파이썬으로 다시 돌립니다(첫 실행 때 약 10MB 내려받음).</p>
+    <article class="example" data-ex="0">
+  <h3><span class="exn">예제 1</span> 금붕어 기억력: 모델은 지난 말을 모른다</h3>
+  <div class="exprose"><p><strong>비유</strong> — 콜센터에 전화할 때마다 <em>처음 보는 상담원</em>이 받습니다. 지난 통화 내용을 알려주려면 통화 기록 전체를 매번 다시 읽어줘야 하죠. LLM API가 딱 그렇습니다.</p><p>아래 두뇌는 "배열 안에서만" 이름을 찾습니다. 마지막 말만 보내면 모르고, 배열 전체를 보내면 압니다.</p></div>
+  <pre class="code" data-excode><code class="language-python">from common.brain import reply, text
+
+
+def brain(request):
+    &quot;&quot;&quot;배열에 &#x27;내 이름은 ~&#x27; 이 있을 때만 이름을 아는 아주 단순한 두뇌&quot;&quot;&quot;
+    for m in request[&quot;messages&quot;]:
+        if isinstance(m[&quot;content&quot;], str) and m[&quot;content&quot;].startswith(&quot;내 이름은 &quot;):
+            return reply(text(f&quot;당신은 {m[&#x27;content&#x27;][6:].rstrip(&#x27;.&#x27;)}님이죠!&quot;))
+    return reply(text(&quot;죄송해요, 이름을 들은 적이 없어요.&quot;))
+
+
+history = [
+    {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;내 이름은 지수.&quot;},
+    {&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: [{&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: &quot;반가워요!&quot;}]},
+    {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;내 이름이 뭐게?&quot;},
+]
+print(&quot;① 마지막 말만 보내면 →&quot;, brain({&quot;messages&quot;: history[-1:]})[&quot;content&quot;][0][&quot;text&quot;])
+print(&quot;② 배열 전체를 보내면 →&quot;, brain({&quot;messages&quot;: history})[&quot;content&quot;][0][&quot;text&quot;])
+</code></pre>
+  <textarea class="editor small-editor" data-exedit hidden spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off"></textarea>
+  <div class="exbar">
+    <button class="btn small primary" data-exrun>▶ 실행</button>
+    <button class="btn small" data-exedit-toggle>✎ 고쳐 보기</button>
+    <button class="btn small" data-exreset hidden>되돌리기</button>
+    <span class="muted small" data-exstatus></span>
+  </div>
+  <div class="exout"><span class="exlabel" data-exlabel>실행 결과</span><pre data-exout>① 마지막 말만 보내면 → 죄송해요, 이름을 들은 적이 없어요.
+② 배열 전체를 보내면 → 당신은 지수님이죠!
+</pre></div>
+  <p class="try">💡 바꿔 보기: <code>history</code> 의 첫 메시지를 지우고 실행하면 ② 도 모른다고 답합니다.</p>
+</article>
+<article class="example" data-ex="1">
+  <h3><span class="exn">예제 2</span> 세 턴 동안 배열이 자라는 모습</h3>
+  <div class="exprose"><p><code>chat_once</code> 를 세 번 부르면 배열은 user/assistant 가 번갈아 6칸이 됩니다. 두뇌에게 보낸 메시지 수는 <strong>1 → 3 → 5</strong> 로 늘어납니다. 대화가 길어질수록 요청이 커지는 이유입니다.</p></div>
+  <pre class="code" data-excode><code class="language-python">import solution as lab
+from common.brain import FakeBrain
+from common.show import show
+
+fake, sizes = FakeBrain(), []
+
+
+def counting_brain(request):
+    sizes.append(len(request[&quot;messages&quot;]))     # 이번 요청에 실린 메시지 수 기록
+    return fake(request)
+
+
+messages = []
+for said in [&quot;안녕&quot;, &quot;오늘 날씨 어때?&quot;, &quot;고마워&quot;]:
+    lab.chat_once(counting_brain, messages, said)
+
+print(&quot;매 호출에 보낸 메시지 수:&quot;, sizes)
+show(messages, &quot;3턴 뒤의 배열&quot;)
+</code></pre>
+  <textarea class="editor small-editor" data-exedit hidden spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off"></textarea>
+  <div class="exbar">
+    <button class="btn small primary" data-exrun>▶ 실행</button>
+    <button class="btn small" data-exedit-toggle>✎ 고쳐 보기</button>
+    <button class="btn small" data-exreset hidden>되돌리기</button>
+    <span class="muted small" data-exstatus></span>
+  </div>
+  <div class="exout"><span class="exlabel" data-exlabel>실행 결과</span><pre data-exout>매 호출에 보낸 메시지 수: [1, 3, 5]
+── 3턴 뒤의 배열 ──
+[0] user      &quot;안녕&quot;
+[1] assistant text &quot;[fake] 메시지 1개를 받았어요. 마지막: &#x27;안녕&#x27;&quot;
+[2] user      &quot;오늘 날씨 어때?&quot;
+[3] assistant text &quot;[fake] 메시지 3개를 받았어요. 마지막: &#x27;오늘 날씨 어때?&#x27;&quot;
+[4] user      &quot;고마워&quot;
+[5] assistant text &quot;[fake] 메시지 5개를 받았어요. 마지막: &#x27;고마워&#x27;&quot;
+</pre></div>
+  <p class="try">💡 바꿔 보기: 리스트에 말을 하나 더 넣어 보세요. 보낸 메시지 수가 몇이 될까요?</p>
+</article>
+<article class="example" data-ex="2">
+  <h3><span class="exn">예제 3</span> 역사 고쳐 쓰기: 배열이 곧 진실</h3>
+  <div class="exprose"><p>세션 파일은 그냥 JSON 입니다. 파일 속 assistant 답을 몰래 바꾸면, 모델은 <strong>자기가 그렇게 말했다고 믿습니다.</strong> 모델이 아는 '과거'는 배열뿐이니까요.</p><p>(그래서 하네스는 배열을 함부로 고치면 안 되고, 디버깅할 땐 배열부터 봐야 합니다.)</p></div>
+  <pre class="code" data-excode><code class="language-python">import os
+import tempfile
+import solution as lab
+from common.brain import reply, text
+
+
+def parrot(request):
+    &quot;&quot;&quot;자기가 &#x27;마지막으로 한 말&#x27;을 배열에서 찾아 인용하는 두뇌&quot;&quot;&quot;
+    said = [b[&quot;text&quot;] for m in request[&quot;messages&quot;] if m[&quot;role&quot;] == &quot;assistant&quot;
+            for b in m[&quot;content&quot;]]
+    return reply(text(f&quot;제가 아까 &#x27;{said[-1]}&#x27; 라고 했잖아요.&quot; if said else &quot;처음 뵙겠습니다.&quot;))
+
+
+path = os.path.join(tempfile.mkdtemp(), &quot;session.json&quot;)
+messages = []
+print(&quot;턴 1:&quot;, lab.chat_once(parrot, messages, &quot;안녕&quot;))
+lab.save_session(path, messages)
+
+data = lab.load_session(path)                     # 파일을 열어
+data[1][&quot;content&quot;][0][&quot;text&quot;] = &quot;저는 사실 고양이예요&quot;  # assistant 답을 바꿔치기
+lab.save_session(path, data)
+
+messages = lab.load_session(path)                 # 다시 불러와 대화를 이어가면
+print(&quot;턴 2:&quot;, lab.chat_once(parrot, messages, &quot;아까 뭐라고 했죠?&quot;))
+</code></pre>
+  <textarea class="editor small-editor" data-exedit hidden spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off"></textarea>
+  <div class="exbar">
+    <button class="btn small primary" data-exrun>▶ 실행</button>
+    <button class="btn small" data-exedit-toggle>✎ 고쳐 보기</button>
+    <button class="btn small" data-exreset hidden>되돌리기</button>
+    <span class="muted small" data-exstatus></span>
+  </div>
+  <div class="exout"><span class="exlabel" data-exlabel>실행 결과</span><pre data-exout>턴 1: 처음 뵙겠습니다.
+턴 2: 제가 아까 &#x27;저는 사실 고양이예요&#x27; 라고 했잖아요.
+</pre></div>
+  <p class="try">💡 바꿔 보기: 바꿔치기할 문장을 다른 말로 고쳐 실행해 보세요.</p>
+</article>
+  </section>
   <section class="card" id="quiz">
-    <h2><span class="step">2</span> 확인 퀴즈</h2>
+    <h2><span class="step">3</span> 확인 퀴즈</h2>
     <div class="quiz" data-answer="2" data-q="0">
   <p class="q"><span class="qn">Q1</span> 두 번째 사용자 발화를 보낼 때 요청의 messages 에는 몇 개의 메시지가 들어가나요?</p>
   <div class="opts"><button class="opt" data-i="0">1개 (방금 한 말만)</button><button class="opt" data-i="1">2개 (직전 왕복)</button><button class="opt" data-i="2">3개 (user, assistant, user)</button><button class="opt" data-i="3">서버가 기억하므로 0개</button></div>
@@ -55,7 +174,7 @@
 </div>
   </section>
   <section class="card practice" id="practice">
-  <h2><span class="step">3</span> 실습: <code>exercise.py</code> 채우기</h2>
+  <h2><span class="step">4</span> 실습: <code>exercise.py</code> 채우기</h2>
   <p class="muted small">TODO 표시 부분을 채우고 채점하세요. 입력 내용은 이 기기에 자동 저장됩니다.</p>
   <div class="toolbar">
     <button class="btn small" data-act="todo">TODO 찾기</button>
@@ -158,7 +277,7 @@ if __name__ == &quot;__main__&quot;:
   <div class="results" data-results></div>
 </section>
   <section class="card" id="answer">
-    <h2><span class="step">4</span> 정답과 테스트</h2>
+    <h2><span class="step">5</span> 정답과 테스트</h2>
     <details><summary>정답 코드 보기 (<code>solution.py</code>)</summary><pre class="code"><code class="language-python">#!/usr/bin/env python3
 &quot;&quot;&quot;Lab 1 — 대화는 그냥 JSON 배열이다.
 
@@ -314,9 +433,14 @@ if __name__ == &quot;__main__&quot;:
 </code></pre></details>
     <label class="donebox"><input type="checkbox" data-done> 이 랩을 완료로 표시</label>
   </section>
+  <section class="card" id="reading">
+    <h2>📚 더 읽을거리</h2>
+    <ul class="reading"><li><a href="https://isuruwijesiri.com/harness-engineering-101/" target="_blank" rel="noopener">Harness Engineering 101</a> <span class="muted small">· Isuru Wijesiri</span><br><span class="small">이 워크북의 뼈대가 된 온라인 책. 장마다 ‘무엇이 깨지나 → 패치 → 비용’ 구조로 300줄짜리 하네스를 키워 갑니다.</span></li><li><a href="https://microsoft.github.io/ai-agents-for-beginners/translations/ko/" target="_blank" rel="noopener">🇰🇷 AI Agents for Beginners (한국어 번역)</a> <span class="muted small">· Microsoft</span><br><span class="small">에이전트 개념을 강의 단위로 차근차근. 도구 사용·계획·다중 에이전트 패턴을 한국어로 훑기 좋습니다.</span></li></ul>
+    <p class="small"><a href="../resources.html">교재 전체 목록 →</a></p>
+  </section>
   <nav class="pager"><a href="../index.html">← 목차</a><a class="next" href="02_tools.html">02 도구 →</a></nav>
 </main>
-<script type="application/json" id="lab-data">{"id": "01_array", "exercise": "#!/usr/bin/env python3\n\"\"\"[연습] Lab 1 — 대화는 그냥 JSON 배열이다.\n\nLLM API는 상태가 없습니다. 매 턴마다 '대화 전체'를 배열로 다시 보내고,\n돌아온 응답을 배열 끝에 붙입니다. 세션 = 이 배열을 파일에 저장한 것.\n\n실행:  python labs/01_array/solution.py [session.json]\n\"\"\"\nimport json\nimport os\nimport sys\n\nsys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), \"..\", \"..\")))\nfrom common.brain import get_brain  # noqa: E402\n\nSYSTEM = \"너는 간결하게 답하는 조수다.\"\n\n\ndef add_user(messages, text):\n    \"\"\"사용자 발화를 배열 끝에 붙이고 배열을 반환한다.\"\"\"\n    # TODO(1): {\"role\": \"user\", \"content\": text} 를 messages 끝에 추가하세요\n    raise NotImplementedError(\"01_array TODO(1)\")\n    return messages\n\n\ndef add_assistant(messages, response):\n    \"\"\"API 응답의 content '블록 리스트 전체'를 assistant 메시지로 붙인다.\n    (텍스트만 뽑아 넣으면 나중에 tool_use 블록이 사라져 대화가 깨집니다)\"\"\"\n    # TODO(2): response[\"content\"] 를 그대로 담은 assistant 메시지를 추가하세요\n    raise NotImplementedError(\"01_array TODO(2)\")\n    return messages\n\n\ndef text_of(response):\n    \"\"\"응답에서 text 블록들의 글자만 이어 붙인다.\"\"\"\n    # TODO(3): type == \"text\" 인 블록의 \"text\" 를 모두 이어 붙여 반환하세요\n    raise NotImplementedError(\"01_array TODO(3)\")\n\n\ndef build_request(messages, system=SYSTEM):\n    \"\"\"두뇌에게 보낼 요청 dict. 모델은 이것 '만' 봅니다.\"\"\"\n    return {\"system\": system, \"messages\": messages}\n\n\ndef chat_once(brain, messages, user_text):\n    \"\"\"한 턴: 사용자 발화 추가 → 배열 전체 전송 → 응답 추가 → 텍스트 반환.\"\"\"\n    # TODO(4): 위의 세 함수와 build_request 를 이용해 한 턴을 완성하세요\n    raise NotImplementedError(\"01_array TODO(4)\")\n\n\ndef save_session(path, messages):\n    \"\"\"세션 = 배열을 JSON 파일로 저장한 것.\"\"\"\n    # TODO(5): messages 를 path 에 JSON으로 저장하세요 (ensure_ascii=False, indent=2 권장)\n    raise NotImplementedError(\"01_array TODO(5)\")\n\n\ndef load_session(path):\n    \"\"\"파일이 없으면 빈 배열(새 대화).\"\"\"\n    # TODO(6): 파일이 있으면 JSON을 읽어 반환, 없으면 [] 를 반환하세요\n    raise NotImplementedError(\"01_array TODO(6)\")\n\n\ndef main():\n    path = sys.argv[1] if len(sys.argv) > 1 else None\n    brain = get_brain()\n    messages = load_session(path) if path else []\n    print(\"명령: /quit 종료, /clear 새 대화, /dump 배열 보기\")\n    while True:\n        try:\n            user_text = input(\"\\nyou> \").strip()\n        except EOFError:\n            break\n        if user_text in (\"/quit\", \"\"):\n            break\n        if user_text == \"/clear\":\n            messages = []\n            continue\n        if user_text == \"/dump\":\n            print(json.dumps(messages, ensure_ascii=False, indent=2))\n            continue\n        print(f\"\\nassistant> {chat_once(brain, messages, user_text)}\")\n        if path:\n            save_session(path, messages)\n\n\nif __name__ == \"__main__\":\n    main()\n", "pyodide": "https://cdn.jsdelivr.net/npm/pyodide@0.29.5/", "labs": [{"id": "01_array", "n": 1, "title": "대화는 그냥 JSON 배열이다", "short": "대화 = 배열", "minutes": 20}, {"id": "02_tools", "n": 2, "title": "도구 = JSON 스키마 + 함수 디스패치", "short": "도구", "minutes": 25}, {"id": "03_agent_loop", "n": 3, "title": "에이전트 루프", "short": "에이전트 루프", "minutes": 25}, {"id": "04_context_budget", "n": 4, "title": "컨텍스트는 예산, 캐싱은 순서", "short": "예산과 캐싱", "minutes": 30}, {"id": "05_subagents", "n": 5, "title": "서브에이전트 = 컨텍스트 포크", "short": "서브에이전트", "minutes": 20}, {"id": "06_steering", "n": 6, "title": "돌고 있는 루프 조종하기", "short": "조종", "minutes": 25}, {"id": "07_guardrails", "n": 7, "title": "반사신경과 가드레일", "short": "가드레일", "minutes": 25}, {"id": "08_debugging", "n": 8, "title": "배열 디버깅", "short": "디버깅", "minutes": 20}, {"id": "09_rag", "n": 9, "title": "RAG는 원래 하네스 패턴이었다", "short": "RAG", "minutes": 35}, {"id": "10_ontology", "n": 10, "title": "온톨로지: 에이전트에게 도메인 지도 입히기", "short": "온톨로지", "minutes": 40}, {"id": "11_capstone", "n": 11, "title": "캡스톤: 미니 하네스", "short": "캡스톤", "minutes": 30}]}</script>
+<script type="application/json" id="lab-data">{"id": "01_array", "exercise": "#!/usr/bin/env python3\n\"\"\"[연습] Lab 1 — 대화는 그냥 JSON 배열이다.\n\nLLM API는 상태가 없습니다. 매 턴마다 '대화 전체'를 배열로 다시 보내고,\n돌아온 응답을 배열 끝에 붙입니다. 세션 = 이 배열을 파일에 저장한 것.\n\n실행:  python labs/01_array/solution.py [session.json]\n\"\"\"\nimport json\nimport os\nimport sys\n\nsys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), \"..\", \"..\")))\nfrom common.brain import get_brain  # noqa: E402\n\nSYSTEM = \"너는 간결하게 답하는 조수다.\"\n\n\ndef add_user(messages, text):\n    \"\"\"사용자 발화를 배열 끝에 붙이고 배열을 반환한다.\"\"\"\n    # TODO(1): {\"role\": \"user\", \"content\": text} 를 messages 끝에 추가하세요\n    raise NotImplementedError(\"01_array TODO(1)\")\n    return messages\n\n\ndef add_assistant(messages, response):\n    \"\"\"API 응답의 content '블록 리스트 전체'를 assistant 메시지로 붙인다.\n    (텍스트만 뽑아 넣으면 나중에 tool_use 블록이 사라져 대화가 깨집니다)\"\"\"\n    # TODO(2): response[\"content\"] 를 그대로 담은 assistant 메시지를 추가하세요\n    raise NotImplementedError(\"01_array TODO(2)\")\n    return messages\n\n\ndef text_of(response):\n    \"\"\"응답에서 text 블록들의 글자만 이어 붙인다.\"\"\"\n    # TODO(3): type == \"text\" 인 블록의 \"text\" 를 모두 이어 붙여 반환하세요\n    raise NotImplementedError(\"01_array TODO(3)\")\n\n\ndef build_request(messages, system=SYSTEM):\n    \"\"\"두뇌에게 보낼 요청 dict. 모델은 이것 '만' 봅니다.\"\"\"\n    return {\"system\": system, \"messages\": messages}\n\n\ndef chat_once(brain, messages, user_text):\n    \"\"\"한 턴: 사용자 발화 추가 → 배열 전체 전송 → 응답 추가 → 텍스트 반환.\"\"\"\n    # TODO(4): 위의 세 함수와 build_request 를 이용해 한 턴을 완성하세요\n    raise NotImplementedError(\"01_array TODO(4)\")\n\n\ndef save_session(path, messages):\n    \"\"\"세션 = 배열을 JSON 파일로 저장한 것.\"\"\"\n    # TODO(5): messages 를 path 에 JSON으로 저장하세요 (ensure_ascii=False, indent=2 권장)\n    raise NotImplementedError(\"01_array TODO(5)\")\n\n\ndef load_session(path):\n    \"\"\"파일이 없으면 빈 배열(새 대화).\"\"\"\n    # TODO(6): 파일이 있으면 JSON을 읽어 반환, 없으면 [] 를 반환하세요\n    raise NotImplementedError(\"01_array TODO(6)\")\n\n\ndef main():\n    path = sys.argv[1] if len(sys.argv) > 1 else None\n    brain = get_brain()\n    messages = load_session(path) if path else []\n    print(\"명령: /quit 종료, /clear 새 대화, /dump 배열 보기\")\n    while True:\n        try:\n            user_text = input(\"\\nyou> \").strip()\n        except EOFError:\n            break\n        if user_text in (\"/quit\", \"\"):\n            break\n        if user_text == \"/clear\":\n            messages = []\n            continue\n        if user_text == \"/dump\":\n            print(json.dumps(messages, ensure_ascii=False, indent=2))\n            continue\n        print(f\"\\nassistant> {chat_once(brain, messages, user_text)}\")\n        if path:\n            save_session(path, messages)\n\n\nif __name__ == \"__main__\":\n    main()\n", "examples": ["from common.brain import reply, text\n\n\ndef brain(request):\n    \"\"\"배열에 '내 이름은 ~' 이 있을 때만 이름을 아는 아주 단순한 두뇌\"\"\"\n    for m in request[\"messages\"]:\n        if isinstance(m[\"content\"], str) and m[\"content\"].startswith(\"내 이름은 \"):\n            return reply(text(f\"당신은 {m['content'][6:].rstrip('.')}님이죠!\"))\n    return reply(text(\"죄송해요, 이름을 들은 적이 없어요.\"))\n\n\nhistory = [\n    {\"role\": \"user\", \"content\": \"내 이름은 지수.\"},\n    {\"role\": \"assistant\", \"content\": [{\"type\": \"text\", \"text\": \"반가워요!\"}]},\n    {\"role\": \"user\", \"content\": \"내 이름이 뭐게?\"},\n]\nprint(\"① 마지막 말만 보내면 →\", brain({\"messages\": history[-1:]})[\"content\"][0][\"text\"])\nprint(\"② 배열 전체를 보내면 →\", brain({\"messages\": history})[\"content\"][0][\"text\"])\n", "import solution as lab\nfrom common.brain import FakeBrain\nfrom common.show import show\n\nfake, sizes = FakeBrain(), []\n\n\ndef counting_brain(request):\n    sizes.append(len(request[\"messages\"]))     # 이번 요청에 실린 메시지 수 기록\n    return fake(request)\n\n\nmessages = []\nfor said in [\"안녕\", \"오늘 날씨 어때?\", \"고마워\"]:\n    lab.chat_once(counting_brain, messages, said)\n\nprint(\"매 호출에 보낸 메시지 수:\", sizes)\nshow(messages, \"3턴 뒤의 배열\")\n", "import os\nimport tempfile\nimport solution as lab\nfrom common.brain import reply, text\n\n\ndef parrot(request):\n    \"\"\"자기가 '마지막으로 한 말'을 배열에서 찾아 인용하는 두뇌\"\"\"\n    said = [b[\"text\"] for m in request[\"messages\"] if m[\"role\"] == \"assistant\"\n            for b in m[\"content\"]]\n    return reply(text(f\"제가 아까 '{said[-1]}' 라고 했잖아요.\" if said else \"처음 뵙겠습니다.\"))\n\n\npath = os.path.join(tempfile.mkdtemp(), \"session.json\")\nmessages = []\nprint(\"턴 1:\", lab.chat_once(parrot, messages, \"안녕\"))\nlab.save_session(path, messages)\n\ndata = lab.load_session(path)                     # 파일을 열어\ndata[1][\"content\"][0][\"text\"] = \"저는 사실 고양이예요\"  # assistant 답을 바꿔치기\nlab.save_session(path, data)\n\nmessages = lab.load_session(path)                 # 다시 불러와 대화를 이어가면\nprint(\"턴 2:\", lab.chat_once(parrot, messages, \"아까 뭐라고 했죠?\"))\n"], "pyodide": "https://cdn.jsdelivr.net/npm/pyodide@0.29.5/", "labs": [{"id": "01_array", "n": 1, "title": "대화는 그냥 JSON 배열이다", "short": "대화 = 배열", "minutes": 20}, {"id": "02_tools", "n": 2, "title": "도구 = JSON 스키마 + 함수 디스패치", "short": "도구", "minutes": 25}, {"id": "03_agent_loop", "n": 3, "title": "에이전트 루프", "short": "에이전트 루프", "minutes": 25}, {"id": "04_context_budget", "n": 4, "title": "컨텍스트는 예산, 캐싱은 순서", "short": "예산과 캐싱", "minutes": 30}, {"id": "05_subagents", "n": 5, "title": "서브에이전트 = 컨텍스트 포크", "short": "서브에이전트", "minutes": 20}, {"id": "06_steering", "n": 6, "title": "돌고 있는 루프 조종하기", "short": "조종", "minutes": 25}, {"id": "07_guardrails", "n": 7, "title": "반사신경과 가드레일", "short": "가드레일", "minutes": 25}, {"id": "08_debugging", "n": 8, "title": "배열 디버깅", "short": "디버깅", "minutes": 20}, {"id": "09_rag", "n": 9, "title": "RAG는 원래 하네스 패턴이었다", "short": "RAG", "minutes": 35}, {"id": "10_ontology", "n": 10, "title": "온톨로지: 에이전트에게 도메인 지도 입히기", "short": "온톨로지", "minutes": 40}, {"id": "11_capstone", "n": 11, "title": "캡스톤: 미니 하네스", "short": "캡스톤", "minutes": 30}]}</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <script src="../assets/app.js"></script>
 </body>

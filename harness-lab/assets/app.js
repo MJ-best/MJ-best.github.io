@@ -97,21 +97,25 @@
         if (savedEl) savedEl.textContent = "자동 저장됨 " + new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" });
       }, 400);
     });
-    ed.addEventListener("keydown", function (e) {
-      if (e.key === "Tab") { e.preventDefault(); insertAtCursor("    "); }
+    bindKeys(ed);
+  }
+  function bindKeys(el) {
+    el.addEventListener("keydown", function (e) {
+      if (e.key === "Tab") { e.preventDefault(); insertInto(el, "    "); }
       if (e.key === "Enter" && !e.shiftKey && !e.isComposing) {          // 자동 들여쓰기
-        var before = ed.value.slice(0, ed.selectionStart);
+        var before = el.value.slice(0, el.selectionStart);
         var line = before.slice(before.lastIndexOf("\n") + 1);
         var indent = (line.match(/^\s*/) || [""])[0] + (/:\s*$/.test(line) ? "    " : "");
-        e.preventDefault(); insertAtCursor("\n" + indent);
+        e.preventDefault(); insertInto(el, "\n" + indent);
       }
     });
   }
-  function insertAtCursor(text) {
-    var s = ed.selectionStart, e = ed.selectionEnd;
-    ed.setRangeText(text, s, e, "end");
-    ed.dispatchEvent(new Event("input"));
+  function insertInto(el, text) {
+    var s = el.selectionStart, e = el.selectionEnd;
+    el.setRangeText(text, s, e, "end");
+    el.dispatchEvent(new Event("input"));
   }
+  function insertAtCursor(text) { insertInto(ed, text); }
   function findTodo() {
     var re = /TODO\(\d+\)|raise NotImplementedError|TODO/g;
     var from = ed.selectionEnd, v = ed.value;
@@ -136,6 +140,43 @@
         if (savedEl) savedEl.textContent = "초기화했어요";
       }
       if (act === "run") runTests(b);
+    });
+  });
+
+  // ------------------------------------------------------------ 따라 해보기 예제
+  document.querySelectorAll(".example").forEach(function (ex) {
+    var i = +ex.getAttribute("data-ex"), orig = (data.examples || [])[i] || "";
+    var pre = ex.querySelector("[data-excode]"), ta = ex.querySelector("[data-exedit]");
+    var runB = ex.querySelector("[data-exrun]"), editB = ex.querySelector("[data-exedit-toggle]");
+    var resetB = ex.querySelector("[data-exreset]"), out = ex.querySelector("[data-exout]");
+    var label = ex.querySelector("[data-exlabel]"), st = ex.querySelector("[data-exstatus]");
+    var key = "ex:" + labId + ":" + i, saved = store.get(key, null);
+    function fit() { ta.rows = Math.min(28, Math.max(6, ta.value.split("\n").length + 1)); }
+    function openEditor() { ta.hidden = false; pre.hidden = true; resetB.hidden = false; editB.hidden = true; fit(); }
+    ta.value = saved !== null ? saved : orig;
+    if (saved !== null) openEditor();
+    bindKeys(ta);
+    ta.addEventListener("input", function () { if (ta.value === orig) store.del(key); else store.set(key, ta.value); fit(); });
+    editB.addEventListener("click", function () { openEditor(); ta.focus(); });
+    resetB.addEventListener("click", function () {
+      ta.value = orig; store.del(key);
+      ta.hidden = true; pre.hidden = false; resetB.hidden = true; editB.hidden = false;
+    });
+    runB.addEventListener("click", async function () {
+      runB.disabled = true;
+      try {
+        var env = await getPy(function (t) { st.textContent = t; });
+        st.textContent = "실행 중…";
+        env.py.globals.set("_lab", labId);
+        env.py.globals.set("_code", ta.hidden ? orig : ta.value);
+        var r = env.py.runPython("run_snippet(_lab, _code)");
+        out.textContent = r || "(출력 없음)";
+        label.textContent = ta.hidden ? "방금 실행한 결과" : "고친 코드의 실행 결과";
+        ex.classList.add("ran");
+        st.textContent = "";
+      } catch (e) {
+        out.textContent = String(e && e.message || e); st.textContent = "";
+      } finally { runB.disabled = false; }
     });
   });
 

@@ -18,6 +18,7 @@
 <header class="topbar">
   <a class="brand" href="../index.html"><span class="logo">⟲</span> 하네스 워크북</a>
   <span class="crumb">Lab 03</span>
+  <a class="toplink" href="../resources.html">교재</a>
   <span class="progress-pill" data-progress-pill title="완료한 랩">0/11</span>
 </header>
 <main class="wrap" data-lab="03_agent_loop" data-has-exercise="true">
@@ -25,7 +26,7 @@
     <p class="eyebrow">Lab 03 · 약 25분</p>
     <h1>에이전트 루프</h1>
     <ul class="points"><li>stop_reason 이 tool_use 인 동안 [호출 → 실행 → 결과 덧붙이기]를 반복한다.</li><li>한 응답의 병렬 tool_use 결과는 하나의 user 메시지에 모은다.</li><li>MAX_ROUNDS 로 폭주를 막는다. 이게 &#x27;에이전트&#x27;의 전부다.</li></ul>
-    <nav class="jump"><a href="#concept">개념</a><a href="#quiz">퀴즈</a><a href="#practice">실습</a><a href="#answer">정답</a></nav>
+    <nav class="jump"><a href="#concept">개념</a><a href="#examples">예제</a><a href="#quiz">퀴즈</a><a href="#practice">실습</a><a href="#answer">정답</a></nav>
   </section>
   <section class="card prose" id="concept">
     <h2><span class="step">1</span> 개념</h2>
@@ -42,8 +43,135 @@
 <h3>생각해볼 것</h3>
 <ul><li>진짜 모델로 '이 폴더에 hello.py 를 만들고 실행해서 결과를 알려줘'를 시켜보세요.</li><li><code>MAX_ROUNDS=2</code> 로 바꾸면 어떻게 끝나나요? 모델에게 그 사실을 알려줘야 할까요?</li></ul>
   </section>
+  <section class="card" id="examples">
+    <h2><span class="step">2</span> 따라 해보기</h2>
+    <p class="muted small">비유 → 짧은 코드 → 실제 출력. 아래 출력은 미리 실행해 둔 결과이고, <b>▶ 실행</b>을 누르면 브라우저 안 파이썬으로 다시 돌립니다(첫 실행 때 약 10MB 내려받음).</p>
+    <article class="example" data-ex="0">
+  <h3><span class="exn">예제 1</span> 생각 → 행동 → 관찰, 라운드마다 찍어 보기</h3>
+  <div class="exprose"><p>에이전트 강의에서 말하는 <strong>Thought → Action → Observation</strong> 순환은 코드로는 <code>while stop_reason == "tool_use"</code> 한 줄입니다.</p><p>아래 두뇌는 대본(ScriptedBrain)대로 말하지만, 도구는 <strong>진짜로</strong> 실행됩니다. 목록 보기 → 파일 읽기 → 답하기, 세 라운드를 지켜보세요.</p></div>
+  <pre class="code" data-excode><code class="language-python">import solution as lab
+from common.brain import ScriptedBrain, reply, text, tool_use
+
+script = ScriptedBrain([
+    reply(text(&quot;어떤 문서가 있는지 먼저 볼게요.&quot;),
+          tool_use(&quot;run_command&quot;, {&quot;command&quot;: &quot;ls data/procurement/docs&quot;}, id=&quot;t1&quot;)),
+    reply(text(&quot;대금지급 규정이 있네요. 읽어 보겠습니다.&quot;),
+          tool_use(&quot;read_file&quot;, {&quot;path&quot;: &quot;data/procurement/docs/06_대금지급_규정.md&quot;}, id=&quot;t2&quot;)),
+    reply(text(&quot;규정상 어음 지급은 하지 않습니다. (06_대금지급_규정.md)&quot;)),
+])
+rounds = 0
+
+
+def narrated(request):
+    global rounds
+    rounds += 1
+    r = script(request)
+    thought = &quot;&quot;.join(b[&quot;text&quot;] for b in r[&quot;content&quot;] if b[&quot;type&quot;] == &quot;text&quot;)
+    print(f&quot;🧠 라운드 {rounds}  생각: {thought}&quot;)
+    print(f&quot;   stop_reason = {r[&#x27;stop_reason&#x27;]}&quot;)
+    return r
+
+
+def observed(name, args):
+    out = lab.execute_tool(name, args)
+    print(f&quot;   🔧 행동: {name}  →  👀 관찰: {out.strip().splitlines()[0]} …&quot;)
+    return out
+
+
+messages = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;어음으로 지급해도 돼?&quot;}]
+answer = lab.run_turn(narrated, messages, execute=observed, log=lambda *a: None)
+print(&quot;\n최종 답:&quot;, answer)
+print(&quot;배열 길이:&quot;, len(messages), &quot;(user 1 + 왕복 2번×2 + 마지막 답 1)&quot;)
+</code></pre>
+  <textarea class="editor small-editor" data-exedit hidden spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off"></textarea>
+  <div class="exbar">
+    <button class="btn small primary" data-exrun>▶ 실행</button>
+    <button class="btn small" data-exedit-toggle>✎ 고쳐 보기</button>
+    <button class="btn small" data-exreset hidden>되돌리기</button>
+    <span class="muted small" data-exstatus></span>
+  </div>
+  <div class="exout"><span class="exlabel" data-exlabel>실행 결과</span><pre data-exout>🧠 라운드 1  생각: 어떤 문서가 있는지 먼저 볼게요.
+   stop_reason = tool_use
+   🔧 행동: run_command  →  👀 관찰: 01_발주_가이드.md …
+🧠 라운드 2  생각: 대금지급 규정이 있네요. 읽어 보겠습니다.
+   stop_reason = tool_use
+   🔧 행동: read_file  →  👀 관찰: # 대금지급 규정 …
+🧠 라운드 3  생각: 규정상 어음 지급은 하지 않습니다. (06_대금지급_규정.md)
+   stop_reason = end_turn
+
+최종 답: 규정상 어음 지급은 하지 않습니다. (06_대금지급_규정.md)
+배열 길이: 6 (user 1 + 왕복 2번×2 + 마지막 답 1)
+</pre></div>
+  <p class="try">💡 바꿔 보기: 두 번째 대본의 파일을 <code>05_대사_통제.md</code> 로 바꾸면 관찰 결과가 어떻게 달라지나요?</p>
+</article>
+<article class="example" data-ex="1">
+  <h3><span class="exn">예제 2</span> 고집 센 모델과 안전장치 MAX_ROUNDS</h3>
+  <div class="exprose"><p>모델이 끝없이 도구만 부르면? 루프는 영원히 돌고 요금은 계속 나갑니다. 그래서 <strong>라운드 상한</strong>이 필요합니다. 상한에 걸리면 하네스가 정중하게 턴을 끝냅니다.</p></div>
+  <pre class="code" data-excode><code class="language-python">import solution as lab
+from common.brain import ScriptedBrain, reply, tool_use
+
+stubborn = ScriptedBrain([reply(tool_use(&quot;run_command&quot;, {&quot;command&quot;: &quot;echo 한 번만 더&quot;}, id=f&quot;s{i}&quot;))
+                          for i in range(10)])
+messages = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;아무거나 해 봐&quot;}]
+print(lab.run_turn(stubborn, messages, max_rounds=3,
+                   execute=lambda n, a: &quot;ok&quot;, log=print))
+print(&quot;두뇌 호출 횟수:&quot;, len(stubborn.requests))
+</code></pre>
+  <textarea class="editor small-editor" data-exedit hidden spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off"></textarea>
+  <div class="exbar">
+    <button class="btn small primary" data-exrun>▶ 실행</button>
+    <button class="btn small" data-exedit-toggle>✎ 고쳐 보기</button>
+    <button class="btn small" data-exreset hidden>되돌리기</button>
+    <span class="muted small" data-exstatus></span>
+  </div>
+  <div class="exout"><span class="exlabel" data-exlabel>실행 결과</span><pre data-exout>  [tool] run_command({&#x27;command&#x27;: &#x27;echo 한 번만 더&#x27;})
+  [tool] run_command({&#x27;command&#x27;: &#x27;echo 한 번만 더&#x27;})
+  [tool] run_command({&#x27;command&#x27;: &#x27;echo 한 번만 더&#x27;})
+[harness] MAX_ROUNDS(3) 도달 — 이번 턴을 중단합니다.
+두뇌 호출 횟수: 3
+</pre></div>
+  <p class="try">💡 바꿔 보기: <code>max_rounds</code> 를 5 로 바꿔 보세요.</p>
+</article>
+<article class="example" data-ex="2">
+  <h3><span class="exn">예제 3</span> 도구 3개면 코딩 에이전트 (Thorsten Ball 의 'How to Build an Agent' 축소판)</h3>
+  <div class="exprose"><p>Thorsten Ball 은 "에이전트에는 비밀이 없다 — LLM + 루프 + 도구 몇 개"라고 보여 줬습니다. 파일 쓰기와 읽기만으로도 '만들고 → 확인하는' 작업이 됩니다.</p></div>
+  <pre class="code" data-excode><code class="language-python">import os
+import tempfile
+import solution as lab
+from common.brain import ScriptedBrain, reply, text, tool_use
+
+os.chdir(tempfile.mkdtemp())          # 빈 작업 폴더에서
+brain = ScriptedBrain([
+    reply(text(&quot;메모 파일을 만들게요.&quot;),
+          tool_use(&quot;write_file&quot;, {&quot;path&quot;: &quot;todo.md&quot;, &quot;content&quot;: &quot;- [ ] 발주서 검토\n- [ ] 송장 대사&quot;}, id=&quot;w1&quot;)),
+    reply(text(&quot;잘 써졌는지 확인합니다.&quot;),
+          tool_use(&quot;run_command&quot;, {&quot;command&quot;: &quot;cat todo.md&quot;}, id=&quot;c1&quot;)),
+    reply(text(&quot;todo.md 에 할 일 2개를 적었습니다.&quot;)),
+])
+messages = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;할 일 메모 파일 만들어 줘&quot;}]
+print(lab.run_turn(brain, messages))
+print(&quot;\n실제로 만들어진 파일:\n&quot; + open(&quot;todo.md&quot;, encoding=&quot;utf-8&quot;).read())
+</code></pre>
+  <textarea class="editor small-editor" data-exedit hidden spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off"></textarea>
+  <div class="exbar">
+    <button class="btn small primary" data-exrun>▶ 실행</button>
+    <button class="btn small" data-exedit-toggle>✎ 고쳐 보기</button>
+    <button class="btn small" data-exreset hidden>되돌리기</button>
+    <span class="muted small" data-exstatus></span>
+  </div>
+  <div class="exout"><span class="exlabel" data-exlabel>실행 결과</span><pre data-exout>  [tool] write_file({&#x27;path&#x27;: &#x27;todo.md&#x27;, &#x27;content&#x27;: &#x27;- [ ] 발주서 검토\n- [ ] 송장 대사&#x27;})
+  [tool] run_command({&#x27;command&#x27;: &#x27;cat todo.md&#x27;})
+todo.md 에 할 일 2개를 적었습니다.
+
+실제로 만들어진 파일:
+- [ ] 발주서 검토
+- [ ] 송장 대사
+</pre></div>
+  <p class="try">💡 바꿔 보기: 대본에 <code>run_command</code> 로 <code>ls</code> 하는 라운드를 하나 더 넣어 보세요.</p>
+</article>
+  </section>
   <section class="card" id="quiz">
-    <h2><span class="step">2</span> 확인 퀴즈</h2>
+    <h2><span class="step">3</span> 확인 퀴즈</h2>
     <div class="quiz" data-answer="1" data-q="0">
   <p class="q"><span class="qn">Q1</span> 루프를 멈추는 조건은?</p>
   <div class="opts"><button class="opt" data-i="0">응답에 텍스트가 있을 때</button><button class="opt" data-i="1">stop_reason 이 tool_use 가 아닐 때</button><button class="opt" data-i="2">도구를 3번 썼을 때</button></div>
@@ -55,7 +183,7 @@
 </div>
   </section>
   <section class="card practice" id="practice">
-  <h2><span class="step">3</span> 실습: <code>exercise.py</code> 채우기</h2>
+  <h2><span class="step">4</span> 실습: <code>exercise.py</code> 채우기</h2>
   <p class="muted small">TODO 표시 부분을 채우고 채점하세요. 입력 내용은 이 기기에 자동 저장됩니다.</p>
   <div class="toolbar">
     <button class="btn small" data-act="todo">TODO 찾기</button>
@@ -121,7 +249,7 @@ if __name__ == &quot;__main__&quot;:
   <div class="results" data-results></div>
 </section>
   <section class="card" id="answer">
-    <h2><span class="step">4</span> 정답과 테스트</h2>
+    <h2><span class="step">5</span> 정답과 테스트</h2>
     <details><summary>정답 코드 보기 (<code>solution.py</code>)</summary><pre class="code"><code class="language-python">#!/usr/bin/env python3
 &quot;&quot;&quot;Lab 3 — 에이전트 루프: 호출 → 실행 → 덧붙이기 → 반복.
 
@@ -253,9 +381,14 @@ if __name__ == &quot;__main__&quot;:
 </code></pre></details>
     <label class="donebox"><input type="checkbox" data-done> 이 랩을 완료로 표시</label>
   </section>
+  <section class="card" id="reading">
+    <h2>📚 더 읽을거리</h2>
+    <ul class="reading"><li><a href="https://isuruwijesiri.com/harness-engineering-101/" target="_blank" rel="noopener">Harness Engineering 101</a> <span class="muted small">· Isuru Wijesiri</span><br><span class="small">이 워크북의 뼈대가 된 온라인 책. 장마다 ‘무엇이 깨지나 → 패치 → 비용’ 구조로 300줄짜리 하네스를 키워 갑니다.</span></li><li><a href="https://microsoft.github.io/ai-agents-for-beginners/translations/ko/" target="_blank" rel="noopener">🇰🇷 AI Agents for Beginners (한국어 번역)</a> <span class="muted small">· Microsoft</span><br><span class="small">에이전트 개념을 강의 단위로 차근차근. 도구 사용·계획·다중 에이전트 패턴을 한국어로 훑기 좋습니다.</span></li><li><a href="https://www.anthropic.com/research/building-effective-agents" target="_blank" rel="noopener">Building effective agents</a> <span class="muted small">· Anthropic</span><br><span class="small">‘워크플로’와 ‘에이전트’를 구분하고, 단순한 조합부터 시작하라는 실무 지침. 프롬프트 체이닝·라우팅·오케스트레이터 패턴이 그림으로 나옵니다.</span></li><li><a href="https://ampcode.com/how-to-build-an-agent" target="_blank" rel="noopener">How to Build an Agent</a> <span class="muted small">· Thorsten Ball (Amp)</span><br><span class="small">“비밀은 없다: LLM + 루프 + 도구 몇 개”. read_file·list_files·edit_file 세 도구로 코딩 에이전트를 만드는 과정을 따라갑니다. Lab 3 예제 3의 원형.</span></li><li><a href="https://huggingface.co/learn/agents-course/en/unit1/agent-steps-and-structure" target="_blank" rel="noopener">Hugging Face Agents Course — Thought·Action·Observation</a> <span class="muted small">· Hugging Face</span><br><span class="small">날씨 비서 예제로 생각→행동→관찰 순환을 설명합니다. Lab 2·3 예제의 날씨 도구가 여기서 왔습니다.</span></li><li><a href="https://github.com/SWE-agent/mini-swe-agent" target="_blank" rel="noopener">mini-swe-agent</a> <span class="muted small">· SWE-agent 팀 (Princeton·Stanford)</span><br><span class="small">bash 하나만 도구로 쓰는 아주 작은 코딩 에이전트. 캡스톤 이후 ‘진짜 쓰이는 최소 하네스’를 읽어 보기에 좋습니다.</span></li><li><a href="https://github.com/humanlayer/12-factor-agents" target="_blank" rel="noopener">12-Factor Agents</a> <span class="muted small">· HumanLayer</span><br><span class="small">프로덕션 에이전트 설계 원칙 12가지. ‘컨텍스트 창을 직접 소유하라’, ‘사람에게 묻는 것도 도구다’ 같은 원칙이 Lab 6·7과 맞닿아 있습니다.</span></li></ul>
+    <p class="small"><a href="../resources.html">교재 전체 목록 →</a></p>
+  </section>
   <nav class="pager"><a href="02_tools.html">← 02 도구</a><a class="next" href="04_context_budget.html">04 예산과 캐싱 →</a></nav>
 </main>
-<script type="application/json" id="lab-data">{"id": "03_agent_loop", "exercise": "#!/usr/bin/env python3\n\"\"\"[연습] Lab 3 — 에이전트 루프: 호출 → 실행 → 덧붙이기 → 반복.\n\nLab 2는 도구를 한 번만 허용했습니다. 실제 작업은 \"파일 목록 보기 → 읽기 → 고치기 →\n테스트\" 처럼 여러 번 필요하죠. 해법은 while 루프 하나입니다.\n\"에이전트\"란 결국 stop_reason 이 tool_use 인 동안 도는 이 루프입니다.\n\n실행:  python labs/03_agent_loop/solution.py\n\"\"\"\nimport os\nimport sys\n\nsys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), \"..\", \"..\")))\nfrom common.brain import get_brain  # noqa: E402\nfrom common.toolbox import BASE_TOOLS, execute_tool  # noqa: E402\n\nSYSTEM = (\"너는 로컬 머신에서 일하는 엔지니어링 에이전트다. \"\n          \"도구로 작업을 끝낸 뒤 한 일을 요약하라.\")\nMAX_ROUNDS = 50\n\n\ndef run_turn(brain, messages, tools=BASE_TOOLS, system=SYSTEM,\n             execute=execute_tool, max_rounds=MAX_ROUNDS, log=print):\n    \"\"\"사용자 한 턴 = 작업이 끝날 때까지 필요한 만큼의 모델/도구 왕복.\n\n    규칙\n    1. 매 라운드: 두뇌 호출 → 응답 content 전체를 assistant 메시지로 추가\n    2. stop_reason 이 \"tool_use\" 가 아니면 → 응답 텍스트를 반환하고 끝\n    3. 응답 속 '모든' tool_use 를 실행 → tool_result 들을 '하나의' user 메시지로 추가\n    4. max_rounds 를 넘으면 멈추고 \"[harness]\" 로 시작하는 문자열 반환 (폭주 방지)\n    \"\"\"\n    # TODO(1): 위 규칙대로 루프를 구현하세요 (log 로 도구 호출을 출력하면 보기 좋습니다)\n    raise NotImplementedError(\"03_agent_loop TODO(1)\")\n\n\ndef main():\n    brain, messages = get_brain(), []\n    while True:\n        try:\n            user_text = input(\"\\nyou> \").strip()\n        except EOFError:\n            break\n        if user_text in (\"/quit\", \"\"):\n            break\n        messages.append({\"role\": \"user\", \"content\": user_text})\n        print(f\"\\nassistant> {run_turn(brain, messages)}\")\n\n\nif __name__ == \"__main__\":\n    main()\n", "pyodide": "https://cdn.jsdelivr.net/npm/pyodide@0.29.5/", "labs": [{"id": "01_array", "n": 1, "title": "대화는 그냥 JSON 배열이다", "short": "대화 = 배열", "minutes": 20}, {"id": "02_tools", "n": 2, "title": "도구 = JSON 스키마 + 함수 디스패치", "short": "도구", "minutes": 25}, {"id": "03_agent_loop", "n": 3, "title": "에이전트 루프", "short": "에이전트 루프", "minutes": 25}, {"id": "04_context_budget", "n": 4, "title": "컨텍스트는 예산, 캐싱은 순서", "short": "예산과 캐싱", "minutes": 30}, {"id": "05_subagents", "n": 5, "title": "서브에이전트 = 컨텍스트 포크", "short": "서브에이전트", "minutes": 20}, {"id": "06_steering", "n": 6, "title": "돌고 있는 루프 조종하기", "short": "조종", "minutes": 25}, {"id": "07_guardrails", "n": 7, "title": "반사신경과 가드레일", "short": "가드레일", "minutes": 25}, {"id": "08_debugging", "n": 8, "title": "배열 디버깅", "short": "디버깅", "minutes": 20}, {"id": "09_rag", "n": 9, "title": "RAG는 원래 하네스 패턴이었다", "short": "RAG", "minutes": 35}, {"id": "10_ontology", "n": 10, "title": "온톨로지: 에이전트에게 도메인 지도 입히기", "short": "온톨로지", "minutes": 40}, {"id": "11_capstone", "n": 11, "title": "캡스톤: 미니 하네스", "short": "캡스톤", "minutes": 30}]}</script>
+<script type="application/json" id="lab-data">{"id": "03_agent_loop", "exercise": "#!/usr/bin/env python3\n\"\"\"[연습] Lab 3 — 에이전트 루프: 호출 → 실행 → 덧붙이기 → 반복.\n\nLab 2는 도구를 한 번만 허용했습니다. 실제 작업은 \"파일 목록 보기 → 읽기 → 고치기 →\n테스트\" 처럼 여러 번 필요하죠. 해법은 while 루프 하나입니다.\n\"에이전트\"란 결국 stop_reason 이 tool_use 인 동안 도는 이 루프입니다.\n\n실행:  python labs/03_agent_loop/solution.py\n\"\"\"\nimport os\nimport sys\n\nsys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), \"..\", \"..\")))\nfrom common.brain import get_brain  # noqa: E402\nfrom common.toolbox import BASE_TOOLS, execute_tool  # noqa: E402\n\nSYSTEM = (\"너는 로컬 머신에서 일하는 엔지니어링 에이전트다. \"\n          \"도구로 작업을 끝낸 뒤 한 일을 요약하라.\")\nMAX_ROUNDS = 50\n\n\ndef run_turn(brain, messages, tools=BASE_TOOLS, system=SYSTEM,\n             execute=execute_tool, max_rounds=MAX_ROUNDS, log=print):\n    \"\"\"사용자 한 턴 = 작업이 끝날 때까지 필요한 만큼의 모델/도구 왕복.\n\n    규칙\n    1. 매 라운드: 두뇌 호출 → 응답 content 전체를 assistant 메시지로 추가\n    2. stop_reason 이 \"tool_use\" 가 아니면 → 응답 텍스트를 반환하고 끝\n    3. 응답 속 '모든' tool_use 를 실행 → tool_result 들을 '하나의' user 메시지로 추가\n    4. max_rounds 를 넘으면 멈추고 \"[harness]\" 로 시작하는 문자열 반환 (폭주 방지)\n    \"\"\"\n    # TODO(1): 위 규칙대로 루프를 구현하세요 (log 로 도구 호출을 출력하면 보기 좋습니다)\n    raise NotImplementedError(\"03_agent_loop TODO(1)\")\n\n\ndef main():\n    brain, messages = get_brain(), []\n    while True:\n        try:\n            user_text = input(\"\\nyou> \").strip()\n        except EOFError:\n            break\n        if user_text in (\"/quit\", \"\"):\n            break\n        messages.append({\"role\": \"user\", \"content\": user_text})\n        print(f\"\\nassistant> {run_turn(brain, messages)}\")\n\n\nif __name__ == \"__main__\":\n    main()\n", "examples": ["import solution as lab\nfrom common.brain import ScriptedBrain, reply, text, tool_use\n\nscript = ScriptedBrain([\n    reply(text(\"어떤 문서가 있는지 먼저 볼게요.\"),\n          tool_use(\"run_command\", {\"command\": \"ls data/procurement/docs\"}, id=\"t1\")),\n    reply(text(\"대금지급 규정이 있네요. 읽어 보겠습니다.\"),\n          tool_use(\"read_file\", {\"path\": \"data/procurement/docs/06_대금지급_규정.md\"}, id=\"t2\")),\n    reply(text(\"규정상 어음 지급은 하지 않습니다. (06_대금지급_규정.md)\")),\n])\nrounds = 0\n\n\ndef narrated(request):\n    global rounds\n    rounds += 1\n    r = script(request)\n    thought = \"\".join(b[\"text\"] for b in r[\"content\"] if b[\"type\"] == \"text\")\n    print(f\"🧠 라운드 {rounds}  생각: {thought}\")\n    print(f\"   stop_reason = {r['stop_reason']}\")\n    return r\n\n\ndef observed(name, args):\n    out = lab.execute_tool(name, args)\n    print(f\"   🔧 행동: {name}  →  👀 관찰: {out.strip().splitlines()[0]} …\")\n    return out\n\n\nmessages = [{\"role\": \"user\", \"content\": \"어음으로 지급해도 돼?\"}]\nanswer = lab.run_turn(narrated, messages, execute=observed, log=lambda *a: None)\nprint(\"\\n최종 답:\", answer)\nprint(\"배열 길이:\", len(messages), \"(user 1 + 왕복 2번×2 + 마지막 답 1)\")\n", "import solution as lab\nfrom common.brain import ScriptedBrain, reply, tool_use\n\nstubborn = ScriptedBrain([reply(tool_use(\"run_command\", {\"command\": \"echo 한 번만 더\"}, id=f\"s{i}\"))\n                          for i in range(10)])\nmessages = [{\"role\": \"user\", \"content\": \"아무거나 해 봐\"}]\nprint(lab.run_turn(stubborn, messages, max_rounds=3,\n                   execute=lambda n, a: \"ok\", log=print))\nprint(\"두뇌 호출 횟수:\", len(stubborn.requests))\n", "import os\nimport tempfile\nimport solution as lab\nfrom common.brain import ScriptedBrain, reply, text, tool_use\n\nos.chdir(tempfile.mkdtemp())          # 빈 작업 폴더에서\nbrain = ScriptedBrain([\n    reply(text(\"메모 파일을 만들게요.\"),\n          tool_use(\"write_file\", {\"path\": \"todo.md\", \"content\": \"- [ ] 발주서 검토\\n- [ ] 송장 대사\"}, id=\"w1\")),\n    reply(text(\"잘 써졌는지 확인합니다.\"),\n          tool_use(\"run_command\", {\"command\": \"cat todo.md\"}, id=\"c1\")),\n    reply(text(\"todo.md 에 할 일 2개를 적었습니다.\")),\n])\nmessages = [{\"role\": \"user\", \"content\": \"할 일 메모 파일 만들어 줘\"}]\nprint(lab.run_turn(brain, messages))\nprint(\"\\n실제로 만들어진 파일:\\n\" + open(\"todo.md\", encoding=\"utf-8\").read())\n"], "pyodide": "https://cdn.jsdelivr.net/npm/pyodide@0.29.5/", "labs": [{"id": "01_array", "n": 1, "title": "대화는 그냥 JSON 배열이다", "short": "대화 = 배열", "minutes": 20}, {"id": "02_tools", "n": 2, "title": "도구 = JSON 스키마 + 함수 디스패치", "short": "도구", "minutes": 25}, {"id": "03_agent_loop", "n": 3, "title": "에이전트 루프", "short": "에이전트 루프", "minutes": 25}, {"id": "04_context_budget", "n": 4, "title": "컨텍스트는 예산, 캐싱은 순서", "short": "예산과 캐싱", "minutes": 30}, {"id": "05_subagents", "n": 5, "title": "서브에이전트 = 컨텍스트 포크", "short": "서브에이전트", "minutes": 20}, {"id": "06_steering", "n": 6, "title": "돌고 있는 루프 조종하기", "short": "조종", "minutes": 25}, {"id": "07_guardrails", "n": 7, "title": "반사신경과 가드레일", "short": "가드레일", "minutes": 25}, {"id": "08_debugging", "n": 8, "title": "배열 디버깅", "short": "디버깅", "minutes": 20}, {"id": "09_rag", "n": 9, "title": "RAG는 원래 하네스 패턴이었다", "short": "RAG", "minutes": 35}, {"id": "10_ontology", "n": 10, "title": "온톨로지: 에이전트에게 도메인 지도 입히기", "short": "온톨로지", "minutes": 40}, {"id": "11_capstone", "n": 11, "title": "캡스톤: 미니 하네스", "short": "캡스톤", "minutes": 30}]}</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <script src="../assets/app.js"></script>
 </body>

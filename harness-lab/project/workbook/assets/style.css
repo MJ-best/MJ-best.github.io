@@ -29,6 +29,7 @@
 }
 
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 html { -webkit-text-size-adjust: 100%; scroll-padding-top: 64px; }
 body {
   margin: 0; background: var(--paper); color: var(--ink);
@@ -206,3 +207,24 @@ details[open] > summary { border-bottom: 1px solid var(--line); margin-bottom: .
   .editor { font-size: 14px; }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+
+/* ---------- 따라 해보기 예제 */
+.example { border-top: 1px dashed var(--line); padding-top: 1rem; margin-top: 1.2rem; }
+.example:first-of-type { border-top: 0; margin-top: .4rem; padding-top: 0; }
+.example h3 { margin: .2rem 0 .5rem; line-height: 1.45; }
+.exn { display: inline-block; font: 700 .72rem/1 var(--mono); color: var(--accent); background: var(--accent-soft); padding: .3rem .5rem; border-radius: 6px; margin-right: .3rem; vertical-align: .15em; }
+.exprose p { margin: .4rem 0; font-size: .97rem; }
+.exbar { display: flex; gap: .4rem; align-items: center; flex-wrap: wrap; margin: .5rem 0; }
+.small-editor { min-height: 0; font-size: 12.5px; }
+.exout { position: relative; margin-top: .4rem; border-radius: 12px; border: 1px solid var(--line); background: #1b1d22; overflow: hidden; }
+.exout pre { margin: 0; padding: 1.7rem .9rem .9rem; color: #e6e6e1; font: 12.5px/1.55 var(--mono); overflow-x: auto; white-space: pre-wrap; word-break: break-all; max-height: 460px; -webkit-overflow-scrolling: touch; }
+.exlabel { position: absolute; top: .45rem; left: .9rem; font: 600 .7rem/1 var(--mono); color: #9aa0a8; letter-spacing: .04em; }
+.example.ran .exlabel { color: #6fd28f; }
+.try { margin: .6rem 0 0; padding: .55rem .8rem; border-radius: 10px; background: var(--accent-soft); font-size: .92rem; }
+.toplink { font-size: .85rem; font-weight: 600; text-decoration: none; padding: .3rem .55rem; border-radius: 8px; border: 1px solid var(--line); color: var(--ink-2); white-space: nowrap; }
+.reading, .reslist { list-style: none; padding: 0; margin: .4rem 0; display: grid; gap: .8rem; }
+.reading li, .res { line-height: 1.55; }
+.res { padding-bottom: .8rem; border-bottom: 1px dashed var(--line); }
+.res:last-child { border-bottom: 0; padding-bottom: 0; }
+.restitle { font-weight: 700; font-size: 1.02rem; }
+.res p { margin: .3rem 0 0; font-size: .95rem; color: var(--ink-2); }

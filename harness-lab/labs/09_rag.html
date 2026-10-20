@@ -18,6 +18,7 @@
 <header class="topbar">
   <a class="brand" href="../index.html"><span class="logo">⟲</span> 하네스 워크북</a>
   <span class="crumb">Lab 09</span>
+  <a class="toplink" href="../resources.html">교재</a>
   <span class="progress-pill" data-progress-pill title="완료한 랩">0/11</span>
 </header>
 <main class="wrap" data-lab="09_rag" data-has-exercise="true">
@@ -25,7 +26,7 @@
     <p class="eyebrow">Lab 09 · 약 35분</p>
     <h1>RAG는 원래 하네스 패턴이었다</h1>
     <ul class="points"><li>RAG도 &#x27;배열에 무엇을 넣을지&#x27; 고르는 하네스 코드다.</li><li>사전 주입(하네스가 검색) vs 검색 도구(모델이 검색) 두 방식.</li><li>청크로 쪼개는 순간 관계가 흩어지고, top-k 는 연결 고리를 놓칠 수 있다.</li></ul>
-    <nav class="jump"><a href="#concept">개념</a><a href="#quiz">퀴즈</a><a href="#practice">실습</a><a href="#answer">정답</a></nav>
+    <nav class="jump"><a href="#concept">개념</a><a href="#examples">예제</a><a href="#quiz">퀴즈</a><a href="#practice">실습</a><a href="#answer">정답</a></nav>
   </section>
   <section class="card prose" id="concept">
     <h2><span class="step">1</span> 개념</h2>
@@ -43,8 +44,148 @@
 <h3>생각해볼 것</h3>
 <ul><li>데이터가 문서 8개뿐이라면, 검색을 하는 게 오히려 '누락'이라는 새 실패 지점을 만드는 건 아닐까요?</li><li>청크 앞에 문서 제목을 붙이면(contextual chunk) 무엇이 좋아질까요?</li></ul>
   </section>
+  <section class="card" id="examples">
+    <h2><span class="step">2</span> 따라 해보기</h2>
+    <p class="muted small">비유 → 짧은 코드 → 실제 출력. 아래 출력은 미리 실행해 둔 결과이고, <b>▶ 실행</b>을 누르면 브라우저 안 파이썬으로 다시 돌립니다(첫 실행 때 약 10MB 내려받음).</p>
+    <article class="example" data-ex="0">
+  <h3><span class="exn">예제 1</span> 오픈북 시험: RAG 한 장 요약</h3>
+  <div class="exprose"><p><strong>비유</strong> — RAG 는 <em>오픈북 시험</em>입니다. 책 전체를 외우게 하는 대신(학습), 시험 문제와 관련된 <strong>페이지 몇 장만 펴서</strong> 옆에 놓아 줍니다(검색 → 주입).</p><p>핵심은 "어떤 페이지를 펴 줄 것인가"이고, 그건 모델이 아니라 <strong>하네스 코드</strong>가 정합니다.</p></div>
+  <pre class="code" data-excode><code class="language-python">import solution as rag
+
+index = rag.Index(rag.load_docs())
+question = &quot;어음으로 지급해도 되나요?&quot;
+print(f&quot;책(청크) {len(index.chunks)}장 중에서 관련 페이지를 고릅니다.\n&quot;)
+q_tokens = set(rag.tokenize(question))
+for score, chunk in index.search(question, k=2):
+    # 청크에서 질문과 가장 많이 겹치는 문장을 보여 준다
+    best = max(chunk[&quot;text&quot;].splitlines(), key=lambda line: len(set(rag.tokenize(line)) &amp; q_tokens))
+    print(f&quot;📄 {chunk[&#x27;id&#x27;]}  (점수 {score:.2f})&quot;)
+    print(&quot;   &quot; + best[:60] + &quot;\n&quot;)
+</code></pre>
+  <textarea class="editor small-editor" data-exedit hidden spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off"></textarea>
+  <div class="exbar">
+    <button class="btn small primary" data-exrun>▶ 실행</button>
+    <button class="btn small" data-exedit-toggle>✎ 고쳐 보기</button>
+    <button class="btn small" data-exreset hidden>되돌리기</button>
+    <span class="muted small" data-exstatus></span>
+  </div>
+  <div class="exout"><span class="exlabel" data-exlabel>실행 결과</span><pre data-exout>책(청크) 8장 중에서 관련 페이지를 고릅니다.
+
+📄 06_대금지급_규정.md#0  (점수 5.72)
+   지급은 계좌 송금을 원칙으로 하며, 어음 지급은 하지 않습니다.
+
+📄 01_발주_가이드.md#0  (점수 0.24)
+   발주(PO)는 공급사에 품목, 수량, 단가, 납기를 확정해서 보내는 문서입니다. 발주번호는 시스템이 자동으로
+</pre></div>
+  <p class="try">💡 바꿔 보기: 질문을 "식당은 몇 시까지 해?"로 바꿔 보세요. 구매 문서 대신 식당 공지가 뽑힙니다.</p>
+</article>
+<article class="example" data-ex="1">
+  <h3><span class="exn">예제 2</span> 한국어 검색의 요령: 글자 바이그램</h3>
+  <div class="exprose"><p>"대금지급은"과 "지급"은 형태소 분석기 없이는 일치하지 않습니다. 단어를 <strong>두 글자씩 겹쳐 자르면</strong>(바이그램) "지급"이 공통 조각으로 잡힙니다.</p></div>
+  <pre class="code" data-excode><code class="language-python">import solution as rag
+
+for w in [&quot;대금지급은&quot;, &quot;지급&quot;, &quot;3-Way Match 통제&quot;]:
+    print(f&quot;{w!r:20} → {rag.tokenize(w)}&quot;)
+common = set(rag.tokenize(&quot;대금지급은&quot;)) &amp; set(rag.tokenize(&quot;지급&quot;))
+print(&quot;\n공통 조각:&quot;, common)
+</code></pre>
+  <textarea class="editor small-editor" data-exedit hidden spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off"></textarea>
+  <div class="exbar">
+    <button class="btn small primary" data-exrun>▶ 실행</button>
+    <button class="btn small" data-exedit-toggle>✎ 고쳐 보기</button>
+    <button class="btn small" data-exreset hidden>되돌리기</button>
+    <span class="muted small" data-exstatus></span>
+  </div>
+  <div class="exout"><span class="exlabel" data-exlabel>실행 결과</span><pre data-exout>&#x27;대금지급은&#x27;              → [&#x27;대금&#x27;, &#x27;금지&#x27;, &#x27;지급&#x27;, &#x27;급은&#x27;]
+&#x27;지급&#x27;                 → [&#x27;지급&#x27;]
+&#x27;3-Way Match 통제&#x27;     → [&#x27;3&#x27;, &#x27;way&#x27;, &#x27;match&#x27;, &#x27;통제&#x27;]
+
+공통 조각: {&#x27;지급&#x27;}
+</pre></div>
+  <p class="try">💡 바꿔 보기: 자기 이름이나 회사 용어를 넣어 어떻게 쪼개지는지 보세요.</p>
+</article>
+<article class="example" data-ex="2">
+  <h3><span class="exn">예제 3</span> BM25 점수표: 드문 단어가 점수를 만든다</h3>
+  <div class="exprose"><p>BM25 는 "질문의 단어가 이 청크에 얼마나 나오나" × "그 단어가 얼마나 <strong>드문가</strong>(idf)"를 더합니다. 모든 문서에 나오는 어미 "니다"나 여러 문서에 나오는 "송장"보다, 한 문서에만 나오는 "어음"이 훨씬 강한 단서입니다.</p></div>
+  <pre class="code" data-excode><code class="language-python">import solution as rag
+
+index = rag.Index(rag.load_docs())
+for term in [&quot;어음&quot;, &quot;송장&quot;, &quot;발주&quot;, &quot;니다&quot;]:
+    print(f&quot;&#x27;{term}&#x27;  문서빈도 {index.df.get(term, 0)}/{len(index.chunks)}   idf {index.idf(term):.2f}&quot;)
+</code></pre>
+  <textarea class="editor small-editor" data-exedit hidden spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off"></textarea>
+  <div class="exbar">
+    <button class="btn small primary" data-exrun>▶ 실행</button>
+    <button class="btn small" data-exedit-toggle>✎ 고쳐 보기</button>
+    <button class="btn small" data-exreset hidden>되돌리기</button>
+    <span class="muted small" data-exstatus></span>
+  </div>
+  <div class="exout"><span class="exlabel" data-exlabel>실행 결과</span><pre data-exout>&#x27;어음&#x27;  문서빈도 1/8   idf 1.79
+&#x27;송장&#x27;  문서빈도 3/8   idf 0.94
+&#x27;발주&#x27;  문서빈도 4/8   idf 0.69
+&#x27;니다&#x27;  문서빈도 8/8   idf 0.06
+</pre></div>
+  <p class="try">💡 바꿔 보기: "입고", "공급" 같은 단어를 넣어 문서빈도와 idf 를 비교해 보세요.</p>
+</article>
+<article class="example" data-ex="3">
+  <h3><span class="exn">예제 4</span> 같은 정보, 두 가지 주입 방식</h3>
+  <div class="exprose"><p><strong>사전 주입</strong> — 하네스가 먼저 검색해 질문 앞에 붙입니다. 모델은 검색이 있었는지도 모릅니다.</p><p><strong>검색 도구</strong> — <code>search_docs</code> 도구를 주면 모델이 검색어를 직접 골라 여러 번 찾을 수 있습니다(agentic RAG). 아래는 사전 주입된 user 메시지의 실제 모습입니다.</p></div>
+  <pre class="code" data-excode><code class="language-python">import solution as rag
+
+index = rag.Index(rag.load_docs())
+print(rag.augment(index, &quot;송장에 발주번호가 없으면?&quot;, k=1))
+</code></pre>
+  <textarea class="editor small-editor" data-exedit hidden spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off"></textarea>
+  <div class="exbar">
+    <button class="btn small primary" data-exrun>▶ 실행</button>
+    <button class="btn small" data-exedit-toggle>✎ 고쳐 보기</button>
+    <button class="btn small" data-exreset hidden>되돌리기</button>
+    <span class="muted small" data-exstatus></span>
+  </div>
+  <div class="exout"><span class="exlabel" data-exlabel>실행 결과</span><pre data-exout>&lt;retrieved&gt;
+&lt;doc id=&quot;04_송장_접수.md#0&quot;&gt;
+# 송장 접수 안내
+
+공급사는 대금 청구를 위해 세금계산서(송장)를 발행합니다. 송장에는 반드시 발주번호를 기재해야 합니다.
+
+발주번호가 없는 송장은 접수하지 않고 공급사에 반려합니다.
+
+송장의 공급가액과 세액은 시스템에 그대로 입력하며, 임의로 수정하지 않습니다.
+&lt;/doc&gt;
+&lt;/retrieved&gt;
+
+질문: 송장에 발주번호가 없으면?
+</pre></div>
+  
+</article>
+<article class="example" data-ex="4">
+  <h3><span class="exn">예제 5</span> 연결 고리를 놓치는 RAG</h3>
+  <div class="exprose"><p>"대금지급 전에 검수가 끝나야 하나요?" — 답하려면 <strong>대금지급 → 삼자대사 → 입고 → 검수</strong> 를 이어야 합니다. 그런데 질문에 없는 중간 단어(삼자대사·입고) 문서는 top-3 에 잘 안 뽑힙니다. 청크 검색의 구조적 한계이고, Lab 10 의 온톨로지가 이 틈을 메웁니다.</p></div>
+  <pre class="code" data-excode><code class="language-python">import solution as rag
+
+index = rag.Index(rag.load_docs())
+need = {&quot;06_대금지급_규정.md&quot;, &quot;05_대사_통제.md&quot;, &quot;02_입고_처리.md&quot;, &quot;03_수입검사_기준.md&quot;}
+got = {c[&quot;source&quot;] for _, c in index.search(&quot;대금지급 전에 검수가 끝나야 하나요?&quot;, k=3)}
+print(&quot;필요한 문서:&quot;, sorted(need))
+print(&quot;top-3 결과 :&quot;, sorted(got))
+print(&quot;놓친 고리  :&quot;, sorted(need - got))
+</code></pre>
+  <textarea class="editor small-editor" data-exedit hidden spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off"></textarea>
+  <div class="exbar">
+    <button class="btn small primary" data-exrun>▶ 실행</button>
+    <button class="btn small" data-exedit-toggle>✎ 고쳐 보기</button>
+    <button class="btn small" data-exreset hidden>되돌리기</button>
+    <span class="muted small" data-exstatus></span>
+  </div>
+  <div class="exout"><span class="exlabel" data-exlabel>실행 결과</span><pre data-exout>필요한 문서: [&#x27;02_입고_처리.md&#x27;, &#x27;03_수입검사_기준.md&#x27;, &#x27;05_대사_통제.md&#x27;, &#x27;06_대금지급_규정.md&#x27;]
+top-3 결과 : [&#x27;03_수입검사_기준.md&#x27;, &#x27;04_송장_접수.md&#x27;, &#x27;06_대금지급_규정.md&#x27;]
+놓친 고리  : [&#x27;02_입고_처리.md&#x27;, &#x27;05_대사_통제.md&#x27;]
+</pre></div>
+  
+</article>
+  </section>
   <section class="card" id="quiz">
-    <h2><span class="step">2</span> 확인 퀴즈</h2>
+    <h2><span class="step">3</span> 확인 퀴즈</h2>
     <div class="quiz" data-answer="2" data-q="0">
   <p class="q"><span class="qn">Q1</span> &#x27;대금지급 전에 검수가 끝나야 하나요?&#x27; 에 RAG top-3 가 놓친 것은?</p>
   <div class="opts"><button class="opt" data-i="0">대금지급 규정</button><button class="opt" data-i="1">수입검사 기준</button><button class="opt" data-i="2">삼자대사·입고 문서 (두 개념을 잇는 고리)</button></div>
@@ -56,7 +197,7 @@
 </div>
   </section>
   <section class="card practice" id="practice">
-  <h2><span class="step">3</span> 실습: <code>exercise.py</code> 채우기</h2>
+  <h2><span class="step">4</span> 실습: <code>exercise.py</code> 채우기</h2>
   <p class="muted small">TODO 표시 부분을 채우고 채점하세요. 입력 내용은 이 기기에 자동 저장됩니다.</p>
   <div class="toolbar">
     <button class="btn small" data-act="todo">TODO 찾기</button>
@@ -206,7 +347,7 @@ if __name__ == &quot;__main__&quot;:
   <div class="results" data-results></div>
 </section>
   <section class="card" id="answer">
-    <h2><span class="step">4</span> 정답과 테스트</h2>
+    <h2><span class="step">5</span> 정답과 테스트</h2>
     <details><summary>정답 코드 보기 (<code>solution.py</code>)</summary><pre class="code"><code class="language-python">#!/usr/bin/env python3
 &quot;&quot;&quot;Lab 9 — RAG는 원래 하네스 패턴이었다.
 
@@ -432,9 +573,14 @@ if __name__ == &quot;__main__&quot;:
 </code></pre></details>
     <label class="donebox"><input type="checkbox" data-done> 이 랩을 완료로 표시</label>
   </section>
+  <section class="card" id="reading">
+    <h2>📚 더 읽을거리</h2>
+    <ul class="reading"><li><a href="https://isuruwijesiri.com/harness-engineering-101/" target="_blank" rel="noopener">Harness Engineering 101</a> <span class="muted small">· Isuru Wijesiri</span><br><span class="small">이 워크북의 뼈대가 된 온라인 책. 장마다 ‘무엇이 깨지나 → 패치 → 비용’ 구조로 300줄짜리 하네스를 키워 갑니다.</span></li><li><a href="https://wikidocs.net/book/16865" target="_blank" rel="noopener">🇰🇷 테디노트의 RAG 비법노트: RAG 시작하기</a> <span class="muted small">· 테디노트 (위키독스)</span><br><span class="small">문서 로딩→분할→임베딩→검색→생성 파이프라인을 한국어 예제로. Lab 9의 BM25를 벡터 검색으로 바꿔 볼 때 좋습니다.</span></li><li><a href="https://wikidocs.net/231565" target="_blank" rel="noopener">🇰🇷 랭체인(LangChain) 입문부터 응용까지</a> <span class="muted small">· 위키독스</span><br><span class="small">프레임워크로 같은 일을 하면 어떻게 되는지. ‘모든 프레임워크는 결국 배열을 감싼 것’임을 확인해 보세요.</span></li><li><a href="https://www.anthropic.com/news/contextual-retrieval" target="_blank" rel="noopener">Introducing Contextual Retrieval</a> <span class="muted small">· Anthropic</span><br><span class="small">청크에 문서 맥락을 덧붙이고 BM25와 임베딩을 함께 쓰면 검색 실패가 크게 줄어든다는 실험. Lab 9의 ‘놓친 고리’ 문제에 대한 한 가지 답.</span></li></ul>
+    <p class="small"><a href="../resources.html">교재 전체 목록 →</a></p>
+  </section>
   <nav class="pager"><a href="08_debugging.html">← 08 디버깅</a><a class="next" href="10_ontology.html">10 온톨로지 →</a></nav>
 </main>
-<script type="application/json" id="lab-data">{"id": "09_rag", "exercise": "#!/usr/bin/env python3\n\"\"\"[연습] Lab 9 — RAG는 원래 하네스 패턴이었다.\n\nRAG(검색 증강 생성)도 결국 \"배열에 무엇을 넣을지\" 고르는 하네스 코드입니다.\n  색인  : 문서를 청크로 쪼개고 검색할 수 있게 만든다\n  검색  : 질문과 비슷한 청크 top-k 를 고른다\n  주입  : 두 가지 방식\n          (a) 사전 주입 — 하네스가 먼저 검색해 user 메시지에 붙인다 (모델은 검색을 모름)\n          (b) 도구 방식 — search_docs 도구를 주고 모델이 필요할 때 검색한다 (agentic RAG)\n\n외부 라이브러리 없이 BM25 + 한글 글자 바이그램으로 구현합니다.\n(임베딩 벡터 검색으로 바꿔도 하네스 쪽 구조는 똑같습니다)\n\n실패 지점: 청크로 쪼개는 순간 문서 사이의 '관계'가 흩어지고, top-k 가 연결 고리를\n놓칠 수 있습니다. 이 한계를 Lab 10 온톨로지와 비교합니다.\n\n실행:  python labs/09_rag/solution.py \"대금지급 조건이 뭐야?\"\n\"\"\"\nimport glob\nimport math\nimport os\nimport re\nimport sys\nfrom collections import Counter\n\nROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), \"..\", \"..\"))\nsys.path.insert(0, ROOT)\nDOCS_DIR = os.path.join(ROOT, \"data\", \"procurement\", \"docs\")\n\n\n# --------------------------------------------------------------- 토큰화 (제공)\ndef tokenize(text):\n    \"\"\"영숫자 단어는 그대로, 한글 단어는 글자 바이그램으로 쪼갠다.\n    '대금지급은' → ['대금', '금지', '지급', '급은']  (형태소 분석기 없이도 부분 일치 가능)\"\"\"\n    tokens = []\n    for w in re.findall(r\"[가-힣]+|[a-zA-Z0-9]+\", text.lower()):\n        if re.match(r\"[가-힣]\", w) and len(w) >= 2:\n            tokens += [w[i:i + 2] for i in range(len(w) - 1)]\n        else:\n            tokens.append(w)\n    return tokens\n\n\n# ------------------------------------------------------------------ 청크 나누기\ndef chunk_text(text, source, max_chars=200):\n    \"\"\"빈 줄로 문단을 나누고, 문단을 순서대로 이어 붙이다가 max_chars 를 넘으면 새 청크를 시작한다.\n    (문단 하나가 max_chars 보다 길면 그 문단 혼자 한 청크)\n    반환: [{\"id\": f\"{source}#{i}\", \"source\": source, \"text\": ...}, ...]  (i 는 0부터)\n    문단 사이는 \"\\\\n\\\\n\" 으로 잇는다.\"\"\"\n    # TODO(1): 문단 단위로 묶어 청크 리스트를 만드세요\n    raise NotImplementedError(\"09_rag TODO(1)\")\n\n\ndef load_docs(docs_dir=DOCS_DIR, max_chars=200):\n    chunks = []\n    for path in sorted(glob.glob(os.path.join(docs_dir, \"*.md\"))):\n        with open(path, encoding=\"utf-8\") as f:\n            chunks += chunk_text(f.read(), os.path.basename(path), max_chars)\n    return chunks\n\n\n# ----------------------------------------------------------------------- 색인\nclass Index:\n    K1, B = 1.5, 0.75\n\n    def __init__(self, chunks):\n        self.chunks = chunks\n        self.tfs = [Counter(tokenize(c[\"text\"])) for c in chunks]\n        self.lens = [sum(tf.values()) for tf in self.tfs]\n        self.avglen = sum(self.lens) / max(len(self.lens), 1)\n        self.df = Counter(t for tf in self.tfs for t in tf)\n\n    def idf(self, term):\n        n, df = len(self.chunks), self.df.get(term, 0)\n        return math.log(1 + (n - df + 0.5) / (df + 0.5))\n\n    def score(self, query_tokens, i):\n        \"\"\"BM25 점수:  Σ_t idf(t) · tf·(K1+1) / (tf + K1·(1 − B + B·len/avglen))\n        t 는 질문 토큰(중복 제거), tf 는 청크 i 에서 t 의 빈도. tf=0 이면 기여 0.\"\"\"\n        # TODO(2): 위 공식을 구현하세요\n        raise NotImplementedError(\"09_rag TODO(2)\")\n\n    def search(self, query, k=3):\n        \"\"\"점수가 0 보다 큰 청크를 점수 내림차순으로 k 개. [(score, chunk), ...]\"\"\"\n        # TODO(3): 모든 청크를 채점하고 정렬해 상위 k 개를 반환하세요\n        raise NotImplementedError(\"09_rag TODO(3)\")\n\n\ndef format_hits(hits):\n    \"\"\"검색 결과를 모델이 출처를 인용할 수 있는 형태로.\"\"\"\n    if not hits:\n        return \"(검색 결과 없음)\"\n    return \"\\n\\n\".join(f'<doc id=\"{c[\"id\"]}\">\\n{c[\"text\"]}\\n<\/doc>' for _, c in hits)\n\n\n# ------------------------------------------------------- 하네스에 끼우는 두 방식\ndef augment(index, question, k=3):\n    \"\"\"(a) 사전 주입: 검색 결과를 <retrieved> 로 감싸 질문 '앞'에 붙인 user 메시지 문자열.\n    형식:\n        <retrieved>\n        {format_hits(...)}\n        <\/retrieved>\n\n        질문: {question}\n    \"\"\"\n    # TODO(4): 위 형식대로 문자열을 만드세요\n    raise NotImplementedError(\"09_rag TODO(4)\")\n\n\nSEARCH_TOOL = {\n    \"name\": \"search_docs\",\n    \"description\": \"사내 구매 규정 문서를 키워드로 검색해 관련 단락을 출처 id와 함께 돌려준다.\",\n    \"input_schema\": {\"type\": \"object\",\n                     \"properties\": {\"query\": {\"type\": \"string\"},\n                                    \"k\": {\"type\": \"integer\"}},\n                     \"required\": [\"query\"]},\n}\n\n\ndef make_search_executor(index, base_execute):\n    \"\"\"(b) 도구 방식: search_docs 는 index 로, 나머지는 base_execute 로.\"\"\"\n    def execute(name, args):\n        if name == \"search_docs\":\n            return format_hits(index.search(args[\"query\"], int(args.get(\"k\", 3))))\n        return base_execute(name, args)\n    return execute\n\n\nif __name__ == \"__main__\":\n    q = \" \".join(sys.argv[1:]) or \"대금지급 전에 검수가 끝나야 하나요?\"\n    idx = Index(load_docs())\n    print(f\"청크 {len(idx.chunks)}개 색인 / 질문: {q}\\n\")\n    for s, c in idx.search(q, k=3):\n        print(f\"{s:6.2f}  {c['id']}  {c['text'][:60].replace(chr(10), ' ')}…\")\n", "pyodide": "https://cdn.jsdelivr.net/npm/pyodide@0.29.5/", "labs": [{"id": "01_array", "n": 1, "title": "대화는 그냥 JSON 배열이다", "short": "대화 = 배열", "minutes": 20}, {"id": "02_tools", "n": 2, "title": "도구 = JSON 스키마 + 함수 디스패치", "short": "도구", "minutes": 25}, {"id": "03_agent_loop", "n": 3, "title": "에이전트 루프", "short": "에이전트 루프", "minutes": 25}, {"id": "04_context_budget", "n": 4, "title": "컨텍스트는 예산, 캐싱은 순서", "short": "예산과 캐싱", "minutes": 30}, {"id": "05_subagents", "n": 5, "title": "서브에이전트 = 컨텍스트 포크", "short": "서브에이전트", "minutes": 20}, {"id": "06_steering", "n": 6, "title": "돌고 있는 루프 조종하기", "short": "조종", "minutes": 25}, {"id": "07_guardrails", "n": 7, "title": "반사신경과 가드레일", "short": "가드레일", "minutes": 25}, {"id": "08_debugging", "n": 8, "title": "배열 디버깅", "short": "디버깅", "minutes": 20}, {"id": "09_rag", "n": 9, "title": "RAG는 원래 하네스 패턴이었다", "short": "RAG", "minutes": 35}, {"id": "10_ontology", "n": 10, "title": "온톨로지: 에이전트에게 도메인 지도 입히기", "short": "온톨로지", "minutes": 40}, {"id": "11_capstone", "n": 11, "title": "캡스톤: 미니 하네스", "short": "캡스톤", "minutes": 30}]}</script>
+<script type="application/json" id="lab-data">{"id": "09_rag", "exercise": "#!/usr/bin/env python3\n\"\"\"[연습] Lab 9 — RAG는 원래 하네스 패턴이었다.\n\nRAG(검색 증강 생성)도 결국 \"배열에 무엇을 넣을지\" 고르는 하네스 코드입니다.\n  색인  : 문서를 청크로 쪼개고 검색할 수 있게 만든다\n  검색  : 질문과 비슷한 청크 top-k 를 고른다\n  주입  : 두 가지 방식\n          (a) 사전 주입 — 하네스가 먼저 검색해 user 메시지에 붙인다 (모델은 검색을 모름)\n          (b) 도구 방식 — search_docs 도구를 주고 모델이 필요할 때 검색한다 (agentic RAG)\n\n외부 라이브러리 없이 BM25 + 한글 글자 바이그램으로 구현합니다.\n(임베딩 벡터 검색으로 바꿔도 하네스 쪽 구조는 똑같습니다)\n\n실패 지점: 청크로 쪼개는 순간 문서 사이의 '관계'가 흩어지고, top-k 가 연결 고리를\n놓칠 수 있습니다. 이 한계를 Lab 10 온톨로지와 비교합니다.\n\n실행:  python labs/09_rag/solution.py \"대금지급 조건이 뭐야?\"\n\"\"\"\nimport glob\nimport math\nimport os\nimport re\nimport sys\nfrom collections import Counter\n\nROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), \"..\", \"..\"))\nsys.path.insert(0, ROOT)\nDOCS_DIR = os.path.join(ROOT, \"data\", \"procurement\", \"docs\")\n\n\n# --------------------------------------------------------------- 토큰화 (제공)\ndef tokenize(text):\n    \"\"\"영숫자 단어는 그대로, 한글 단어는 글자 바이그램으로 쪼갠다.\n    '대금지급은' → ['대금', '금지', '지급', '급은']  (형태소 분석기 없이도 부분 일치 가능)\"\"\"\n    tokens = []\n    for w in re.findall(r\"[가-힣]+|[a-zA-Z0-9]+\", text.lower()):\n        if re.match(r\"[가-힣]\", w) and len(w) >= 2:\n            tokens += [w[i:i + 2] for i in range(len(w) - 1)]\n        else:\n            tokens.append(w)\n    return tokens\n\n\n# ------------------------------------------------------------------ 청크 나누기\ndef chunk_text(text, source, max_chars=200):\n    \"\"\"빈 줄로 문단을 나누고, 문단을 순서대로 이어 붙이다가 max_chars 를 넘으면 새 청크를 시작한다.\n    (문단 하나가 max_chars 보다 길면 그 문단 혼자 한 청크)\n    반환: [{\"id\": f\"{source}#{i}\", \"source\": source, \"text\": ...}, ...]  (i 는 0부터)\n    문단 사이는 \"\\\\n\\\\n\" 으로 잇는다.\"\"\"\n    # TODO(1): 문단 단위로 묶어 청크 리스트를 만드세요\n    raise NotImplementedError(\"09_rag TODO(1)\")\n\n\ndef load_docs(docs_dir=DOCS_DIR, max_chars=200):\n    chunks = []\n    for path in sorted(glob.glob(os.path.join(docs_dir, \"*.md\"))):\n        with open(path, encoding=\"utf-8\") as f:\n            chunks += chunk_text(f.read(), os.path.basename(path), max_chars)\n    return chunks\n\n\n# ----------------------------------------------------------------------- 색인\nclass Index:\n    K1, B = 1.5, 0.75\n\n    def __init__(self, chunks):\n        self.chunks = chunks\n        self.tfs = [Counter(tokenize(c[\"text\"])) for c in chunks]\n        self.lens = [sum(tf.values()) for tf in self.tfs]\n        self.avglen = sum(self.lens) / max(len(self.lens), 1)\n        self.df = Counter(t for tf in self.tfs for t in tf)\n\n    def idf(self, term):\n        n, df = len(self.chunks), self.df.get(term, 0)\n        return math.log(1 + (n - df + 0.5) / (df + 0.5))\n\n    def score(self, query_tokens, i):\n        \"\"\"BM25 점수:  Σ_t idf(t) · tf·(K1+1) / (tf + K1·(1 − B + B·len/avglen))\n        t 는 질문 토큰(중복 제거), tf 는 청크 i 에서 t 의 빈도. tf=0 이면 기여 0.\"\"\"\n        # TODO(2): 위 공식을 구현하세요\n        raise NotImplementedError(\"09_rag TODO(2)\")\n\n    def search(self, query, k=3):\n        \"\"\"점수가 0 보다 큰 청크를 점수 내림차순으로 k 개. [(score, chunk), ...]\"\"\"\n        # TODO(3): 모든 청크를 채점하고 정렬해 상위 k 개를 반환하세요\n        raise NotImplementedError(\"09_rag TODO(3)\")\n\n\ndef format_hits(hits):\n    \"\"\"검색 결과를 모델이 출처를 인용할 수 있는 형태로.\"\"\"\n    if not hits:\n        return \"(검색 결과 없음)\"\n    return \"\\n\\n\".join(f'<doc id=\"{c[\"id\"]}\">\\n{c[\"text\"]}\\n<\/doc>' for _, c in hits)\n\n\n# ------------------------------------------------------- 하네스에 끼우는 두 방식\ndef augment(index, question, k=3):\n    \"\"\"(a) 사전 주입: 검색 결과를 <retrieved> 로 감싸 질문 '앞'에 붙인 user 메시지 문자열.\n    형식:\n        <retrieved>\n        {format_hits(...)}\n        <\/retrieved>\n\n        질문: {question}\n    \"\"\"\n    # TODO(4): 위 형식대로 문자열을 만드세요\n    raise NotImplementedError(\"09_rag TODO(4)\")\n\n\nSEARCH_TOOL = {\n    \"name\": \"search_docs\",\n    \"description\": \"사내 구매 규정 문서를 키워드로 검색해 관련 단락을 출처 id와 함께 돌려준다.\",\n    \"input_schema\": {\"type\": \"object\",\n                     \"properties\": {\"query\": {\"type\": \"string\"},\n                                    \"k\": {\"type\": \"integer\"}},\n                     \"required\": [\"query\"]},\n}\n\n\ndef make_search_executor(index, base_execute):\n    \"\"\"(b) 도구 방식: search_docs 는 index 로, 나머지는 base_execute 로.\"\"\"\n    def execute(name, args):\n        if name == \"search_docs\":\n            return format_hits(index.search(args[\"query\"], int(args.get(\"k\", 3))))\n        return base_execute(name, args)\n    return execute\n\n\nif __name__ == \"__main__\":\n    q = \" \".join(sys.argv[1:]) or \"대금지급 전에 검수가 끝나야 하나요?\"\n    idx = Index(load_docs())\n    print(f\"청크 {len(idx.chunks)}개 색인 / 질문: {q}\\n\")\n    for s, c in idx.search(q, k=3):\n        print(f\"{s:6.2f}  {c['id']}  {c['text'][:60].replace(chr(10), ' ')}…\")\n", "examples": ["import solution as rag\n\nindex = rag.Index(rag.load_docs())\nquestion = \"어음으로 지급해도 되나요?\"\nprint(f\"책(청크) {len(index.chunks)}장 중에서 관련 페이지를 고릅니다.\\n\")\nq_tokens = set(rag.tokenize(question))\nfor score, chunk in index.search(question, k=2):\n    # 청크에서 질문과 가장 많이 겹치는 문장을 보여 준다\n    best = max(chunk[\"text\"].splitlines(), key=lambda line: len(set(rag.tokenize(line)) & q_tokens))\n    print(f\"📄 {chunk['id']}  (점수 {score:.2f})\")\n    print(\"   \" + best[:60] + \"\\n\")\n", "import solution as rag\n\nfor w in [\"대금지급은\", \"지급\", \"3-Way Match 통제\"]:\n    print(f\"{w!r:20} → {rag.tokenize(w)}\")\ncommon = set(rag.tokenize(\"대금지급은\")) & set(rag.tokenize(\"지급\"))\nprint(\"\\n공통 조각:\", common)\n", "import solution as rag\n\nindex = rag.Index(rag.load_docs())\nfor term in [\"어음\", \"송장\", \"발주\", \"니다\"]:\n    print(f\"'{term}'  문서빈도 {index.df.get(term, 0)}/{len(index.chunks)}   idf {index.idf(term):.2f}\")\n", "import solution as rag\n\nindex = rag.Index(rag.load_docs())\nprint(rag.augment(index, \"송장에 발주번호가 없으면?\", k=1))\n", "import solution as rag\n\nindex = rag.Index(rag.load_docs())\nneed = {\"06_대금지급_규정.md\", \"05_대사_통제.md\", \"02_입고_처리.md\", \"03_수입검사_기준.md\"}\ngot = {c[\"source\"] for _, c in index.search(\"대금지급 전에 검수가 끝나야 하나요?\", k=3)}\nprint(\"필요한 문서:\", sorted(need))\nprint(\"top-3 결과 :\", sorted(got))\nprint(\"놓친 고리  :\", sorted(need - got))\n"], "pyodide": "https://cdn.jsdelivr.net/npm/pyodide@0.29.5/", "labs": [{"id": "01_array", "n": 1, "title": "대화는 그냥 JSON 배열이다", "short": "대화 = 배열", "minutes": 20}, {"id": "02_tools", "n": 2, "title": "도구 = JSON 스키마 + 함수 디스패치", "short": "도구", "minutes": 25}, {"id": "03_agent_loop", "n": 3, "title": "에이전트 루프", "short": "에이전트 루프", "minutes": 25}, {"id": "04_context_budget", "n": 4, "title": "컨텍스트는 예산, 캐싱은 순서", "short": "예산과 캐싱", "minutes": 30}, {"id": "05_subagents", "n": 5, "title": "서브에이전트 = 컨텍스트 포크", "short": "서브에이전트", "minutes": 20}, {"id": "06_steering", "n": 6, "title": "돌고 있는 루프 조종하기", "short": "조종", "minutes": 25}, {"id": "07_guardrails", "n": 7, "title": "반사신경과 가드레일", "short": "가드레일", "minutes": 25}, {"id": "08_debugging", "n": 8, "title": "배열 디버깅", "short": "디버깅", "minutes": 20}, {"id": "09_rag", "n": 9, "title": "RAG는 원래 하네스 패턴이었다", "short": "RAG", "minutes": 35}, {"id": "10_ontology", "n": 10, "title": "온톨로지: 에이전트에게 도메인 지도 입히기", "short": "온톨로지", "minutes": 40}, {"id": "11_capstone", "n": 11, "title": "캡스톤: 미니 하네스", "short": "캡스톤", "minutes": 30}]}</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <script src="../assets/app.js"></script>
 </body>

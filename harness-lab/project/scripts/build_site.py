@@ -16,6 +16,9 @@ import shutil
 import sys
 import zipfile
 
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+from common.examples import parse as parse_examples, run_cell  # noqa: E402
+
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 OUT = os.path.join(ROOT, "site")
 WB = os.path.join(ROOT, "workbook")
@@ -34,7 +37,7 @@ def inline(s):
         return f"\x00{len(codes) - 1}\x00"
     s = re.sub(r"`([^`]+)`", keep, s)
     s = re.sub(r"\*\*([^*]+)\*\*", r"<strong>\1</strong>", s)
-    s = re.sub(r"(?<![\w*])\*([^*\s][^*]*)\*(?![\w*])", r"<em>\1</em>", s)
+    s = re.sub(r"(?<!\*)\*([^*\s][^*]*?)\*(?!\*)", r"<em>\1</em>", s)
 
     def link(m):
         text, url = m.group(1), m.group(2)
@@ -145,6 +148,7 @@ def topbar(depth, label="", lab_id=""):
     return f"""<header class="topbar">
   <a class="brand" href="{up}index.html"><span class="logo">⟲</span> 하네스 워크북</a>
   <span class="crumb">{html.escape(label)}</span>
+  <a class="toplink" href="{up}resources.html">교재</a>
   <span class="progress-pill" data-progress-pill title="완료한 랩">0/11</span>
 </header>"""
 
@@ -154,8 +158,57 @@ def lab_title(readme):
     return m.group(1).strip() if m else readme.splitlines()[0].lstrip("# ")
 
 
+def prose_html(lines):
+    return "".join(f"<p>{inline(line)}</p>" for line in lines if line)
+
+
+def examples_html(lab_dir):
+    path = os.path.join(lab_dir, "examples.py")
+    if not os.path.exists(path):
+        return "", []
+    cells = parse_examples(path)
+    parts, codes = [], []
+    for i, c in enumerate(cells):
+        rc, out = run_cell(lab_dir, c["code"])
+        if rc != 0:
+            raise SystemExit(f"예제 실행 실패: {lab_dir} #{i + 1}\n{out}")
+        codes.append(c["code"])
+        tries = "".join(f'<p class="try">💡 {inline(t)}</p>' for t in c["try"])
+        parts.append(f"""<article class="example" data-ex="{i}">
+  <h3><span class="exn">예제 {i + 1}</span> {inline(c['title'])}</h3>
+  <div class="exprose">{prose_html(c['prose'])}</div>
+  <pre class="code" data-excode><code class="language-python">{html.escape(c['code'])}</code></pre>
+  <textarea class="editor small-editor" data-exedit hidden spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off"></textarea>
+  <div class="exbar">
+    <button class="btn small primary" data-exrun>▶ 실행</button>
+    <button class="btn small" data-exedit-toggle>✎ 고쳐 보기</button>
+    <button class="btn small" data-exreset hidden>되돌리기</button>
+    <span class="muted small" data-exstatus></span>
+  </div>
+  <div class="exout"><span class="exlabel" data-exlabel>실행 결과</span><pre data-exout>{html.escape(out)}</pre></div>
+  {tries}
+</article>""")
+    return "\n".join(parts), codes
+
+
+def readings_html(resources, n, depth=1):
+    items = [it for g in resources["groups"] for it in g["items"] if n in it["labs"]]
+    if not items:
+        return ""
+    lis = "".join(
+        f'<li><a href="{it["url"]}" target="_blank" rel="noopener">{"🇰🇷 " if it["lang"] == "ko" else ""}{html.escape(it["title"])}</a>'
+        f' <span class="muted small">· {html.escape(it["by"])}</span><br><span class="small">{html.escape(it["why"])}</span></li>'
+        for it in items)
+    return f"""<section class="card" id="reading">
+    <h2>📚 더 읽을거리</h2>
+    <ul class="reading">{lis}</ul>
+    <p class="small"><a href="{'../' * depth}resources.html">교재 전체 목록 →</a></p>
+  </section>"""
+
+
 def build():
     content = json.load(open(os.path.join(WB, "content.json"), encoding="utf-8"))
+    resources = json.load(open(os.path.join(WB, "resources.json"), encoding="utf-8"))
     lab_dirs = sorted(d for d in glob.glob(os.path.join(ROOT, "labs", "[0-9][0-9]_*")))
     labs = []
     for d in lab_dirs:
@@ -205,10 +258,11 @@ def build():
   <section class="hero">
     <p class="eyebrow">Harness Engineering · 실습 워크북</p>
     <h1>LLM은 두뇌,<br>하네스는 몸.</h1>
-    <p class="lede">{html.escape(content['subtitle'])} 각 랩은 <b>개념 → 확인 퀴즈 → 브라우저에서 코드 채우기 → 자동 채점</b> 순서로 진행됩니다. 휴대폰에서도 됩니다.</p>
+    <p class="lede">{html.escape(content['subtitle'])} 각 랩은 <b>개념 → 따라 해보기 예제 → 확인 퀴즈 → 브라우저에서 코드 채우기 → 자동 채점</b> 순서로 진행됩니다. 휴대폰에서도 됩니다.</p>
     <div class="cta">
       <a class="btn primary" data-continue href="labs/01_array.html">시작하기</a>
-      <a class="btn" href="harness-lab.zip" download>전체 코드 내려받기</a>
+      <a class="btn" href="resources.html">추천 교재</a>
+      <a class="btn" href="harness-lab.zip" download>전체 코드</a>
     </div>
     <div class="bar"><span data-progress-bar></span></div>
     <p class="muted small" data-progress-text>진행 상황은 이 기기 브라우저에 저장됩니다.</p>
@@ -221,7 +275,9 @@ def build():
   <section class="card">
     <h2>공부하는 법</h2>
     <ol>
-      <li><b>개념</b>을 읽고 <b>확인 퀴즈</b>를 풉니다.</li>
+      <li><b>개념</b>을 읽습니다. 랩마다 "무엇이 깨지나 → 패치 → 비용" 세 단락입니다.</li>
+      <li><b>따라 해보기</b> 예제를 봅니다. 비유와 함께 짧은 코드와 <b>실제 출력</b>이 있고, <b>▶ 실행</b>·<b>✎ 고쳐 보기</b>로 직접 바꿔 볼 수 있습니다. 💡 표시가 바꿔 볼 거리입니다.</li>
+      <li><b>확인 퀴즈</b>로 핵심을 점검합니다.</li>
       <li><b>실습</b> 편집기에서 <code>TODO</code> 를 채웁니다. <kbd>TODO 찾기</kbd> 버튼이 다음 빈칸으로 데려갑니다.</li>
       <li><b>▶ 채점</b>을 누르면 브라우저 안의 파이썬(Pyodide)이 테스트를 돌립니다. 처음 한 번은 10MB 정도를 내려받습니다.</li>
       <li>막히면 <b>정답 보기</b>로 비교하세요. 작성한 코드는 자동 저장됩니다.</li>
@@ -247,6 +303,7 @@ def build():
         solution = open(os.path.join(d, sol_name), encoding="utf-8").read()
         exercise = open(os.path.join(d, "exercise.py"), encoding="utf-8").read() if has_ex else ""
         tests = open(os.path.join(d, "test_lab.py"), encoding="utf-8").read()
+        ex_html, ex_codes = examples_html(d)
         prev_l = labs[k - 1] if k else None
         next_l = labs[k + 1] if k + 1 < len(labs) else None
 
@@ -262,7 +319,7 @@ def build():
 
         if has_ex:
             practice = f"""<section class="card practice" id="practice">
-  <h2><span class="step">3</span> 실습: <code>exercise.py</code> 채우기</h2>
+  <h2><span class="step">4</span> 실습: <code>exercise.py</code> 채우기</h2>
   <p class="muted small">TODO 표시 부분을 채우고 채점하세요. 입력 내용은 이 기기에 자동 저장됩니다.</p>
   <div class="toolbar">
     <button class="btn small" data-act="todo">TODO 찾기</button>
@@ -279,7 +336,7 @@ def build():
 </section>"""
         else:
             practice = f"""<section class="card practice" id="practice">
-  <h2><span class="step">3</span> 실습: 내 코드로 조립해서 통합 테스트</h2>
+  <h2><span class="step">4</span> 실습: 내 코드로 조립해서 통합 테스트</h2>
   <p>Lab 1~10 에서 작성한 코드를 모아 <code>mini_harness.py</code> 를 조립하고 통합 시나리오를 채점합니다. 아직 풀지 않은 랩은 정답 코드로 대신 채웁니다.</p>
   <ul class="assembly" data-assembly></ul>
   <div class="runrow">
@@ -302,28 +359,60 @@ def build():
     <p class="eyebrow">Lab {l['n']:02d} · 약 {l['minutes']}분</p>
     <h1>{html.escape(l['title'])}</h1>
     <ul class="points">{''.join(f'<li>{html.escape(p)}</li>' for p in l['points'])}</ul>
-    <nav class="jump"><a href="#concept">개념</a><a href="#quiz">퀴즈</a><a href="#practice">실습</a><a href="#answer">정답</a></nav>
+    <nav class="jump"><a href="#concept">개념</a><a href="#examples">예제</a><a href="#quiz">퀴즈</a><a href="#practice">실습</a><a href="#answer">정답</a></nav>
   </section>
   <section class="card prose" id="concept">
     <h2><span class="step">1</span> 개념</h2>
     {markdown(l['readme'])}
   </section>
+  <section class="card" id="examples">
+    <h2><span class="step">2</span> 따라 해보기</h2>
+    <p class="muted small">비유 → 짧은 코드 → 실제 출력. 아래 출력은 미리 실행해 둔 결과이고, <b>▶ 실행</b>을 누르면 브라우저 안 파이썬으로 다시 돌립니다(첫 실행 때 약 10MB 내려받음).</p>
+    {ex_html}
+  </section>
   <section class="card" id="quiz">
-    <h2><span class="step">2</span> 확인 퀴즈</h2>
+    <h2><span class="step">3</span> 확인 퀴즈</h2>
     {''.join(quiz_html)}
   </section>
   {practice}
   <section class="card" id="answer">
-    <h2><span class="step">4</span> 정답과 테스트</h2>
+    <h2><span class="step">5</span> 정답과 테스트</h2>
     <details><summary>정답 코드 보기 (<code>{sol_name}</code>)</summary><pre class="code"><code class="language-python">{html.escape(solution)}</code></pre></details>
     <details><summary>채점 테스트 보기 (<code>test_lab.py</code>)</summary><pre class="code"><code class="language-python">{html.escape(tests)}</code></pre></details>
     <label class="donebox"><input type="checkbox" data-done> 이 랩을 완료로 표시</label>
   </section>
+  {readings_html(resources, l['n'])}
   {nav}
 </main>
-<script type="application/json" id="lab-data">{json.dumps({"id": l["id"], "exercise": exercise, "pyodide": PYODIDE, "labs": meta}, ensure_ascii=False).replace("</", "<\\/")}</script>"""
+<script type="application/json" id="lab-data">{json.dumps({"id": l["id"], "exercise": exercise, "examples": ex_codes, "pyodide": PYODIDE, "labs": meta}, ensure_ascii=False).replace("</", "<\\/")}</script>"""
         open(os.path.join(OUT, "labs", f"{l['id']}.html"), "w", encoding="utf-8").write(
             page(f"Lab {l['n']:02d} {l['title']} · 하네스 워크북", body, 1, l["points"][0]))
+
+    # ---- 교재 페이지
+    groups = []
+    for g in resources["groups"]:
+        lis = []
+        for it in g["items"]:
+            labs_txt = ", ".join(f'<a href="labs/{labs[n - 1]["id"]}.html">{n:02d}</a>' for n in it["labs"]) \
+                if len(it["labs"]) < 11 else "전체"
+            lis.append(f"""<li class="res">
+  <a class="restitle" href="{it['url']}" target="_blank" rel="noopener">{'🇰🇷 ' if it['lang'] == 'ko' else ''}{html.escape(it['title'])}</a>
+  <div class="muted small">{html.escape(it['by'])} · {html.escape(it['level'])} · 언제 읽나: Lab {labs_txt}</div>
+  <p>{html.escape(it['why'])}</p>
+</li>""")
+        groups.append(f'<section class="card"><h2>{html.escape(g["name"])}</h2><ul class="reslist">{"".join(lis)}</ul></section>')
+    res_body = f"""{topbar(0, "추천 교재")}
+<main class="wrap">
+  <section class="hero">
+    <p class="eyebrow">Reading list</p>
+    <h1>추천 교재와 글</h1>
+    <p class="lede">{html.escape(resources['intro'])}</p>
+  </section>
+  {''.join(groups)}
+  <nav class="pager"><a href="index.html">← 목차</a><a class="next" href="labs/01_array.html">Lab 01 시작 →</a></nav>
+</main>"""
+    open(os.path.join(OUT, "resources.html"), "w", encoding="utf-8").write(
+        page("추천 교재 · 하네스 워크북", res_body, 0, resources["intro"]))
 
     # ---- PWA manifest
     json.dump({"name": content["title"], "short_name": "하네스 워크북", "start_url": "./index.html",

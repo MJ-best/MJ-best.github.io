@@ -18,6 +18,7 @@
 <header class="topbar">
   <a class="brand" href="../index.html"><span class="logo">⟲</span> 하네스 워크북</a>
   <span class="crumb">Lab 11</span>
+  <a class="toplink" href="../resources.html">교재</a>
   <span class="progress-pill" data-progress-pill title="완료한 랩">0/11</span>
 </header>
 <main class="wrap" data-lab="11_capstone" data-has-exercise="false">
@@ -25,7 +26,7 @@
     <p class="eyebrow">Lab 11 · 약 30분</p>
     <h1>캡스톤: 미니 하네스</h1>
     <ul class="points"><li>지금까지의 패치를 하나의 몸으로 조립한다.</li><li>도구 파이프라인: todo → 온톨로지 → 문서 검색 → 가드레일 → 기본 도구 → 자르기.</li><li>두뇌 파이프라인: 캐시 표시 → (디버그 캡처) → 두뇌.</li></ul>
-    <nav class="jump"><a href="#concept">개념</a><a href="#quiz">퀴즈</a><a href="#practice">실습</a><a href="#answer">정답</a></nav>
+    <nav class="jump"><a href="#concept">개념</a><a href="#examples">예제</a><a href="#quiz">퀴즈</a><a href="#practice">실습</a><a href="#answer">정답</a></nav>
   </section>
   <section class="card prose" id="concept">
     <h2><span class="step">1</span> 개념</h2>
@@ -44,10 +45,112 @@ LAB_IMPL=exercise python labs/11_capstone/mini_harness.py   # 내가 푼 코드�
 <h3>채점</h3>
 <p><code>python run_tests.py 11</code> 은 <strong>내 exercise.py 들로</strong> 조립해서 통합 시나리오를 검사합니다. 1~10을 모두 풀면 통과합니다.</p>
 <h3>다음</h3>
-<p>루트 README 의 *도전 과제*로.</p>
+<p>루트 README 의 <em>도전 과제</em>로.</p>
+  </section>
+  <section class="card" id="examples">
+    <h2><span class="step">2</span> 따라 해보기</h2>
+    <p class="muted small">비유 → 짧은 코드 → 실제 출력. 아래 출력은 미리 실행해 둔 결과이고, <b>▶ 실행</b>을 누르면 브라우저 안 파이썬으로 다시 돌립니다(첫 실행 때 약 10MB 내려받음).</p>
+    <article class="example" data-ex="0">
+  <h3><span class="exn">예제 1</span> 한 턴 해부: 모든 패치가 한꺼번에 일하는 장면</h3>
+  <div class="exprose"><p>질문 하나에 todo(Lab 6) → 문서 검색(Lab 9) → 가드레일 거부(Lab 7) → 온톨로지 조회(Lab 10) → 답변이 차례로 일어납니다. 각 줄 앞의 번호가 어느 랩의 부품인지 보세요.</p></div>
+  <pre class="code" data-excode><code class="language-python">import json
+import mini_harness as mh
+from common.brain import ScriptedBrain, reply, text, tool_use
+
+brain = ScriptedBrain([
+    reply(tool_use(&quot;todo_write&quot;, {&quot;items&quot;: &quot;규정 찾기\n용어 확인\n답변&quot;}, id=&quot;a&quot;)),
+    reply(tool_use(&quot;search_docs&quot;, {&quot;query&quot;: &quot;어음 지급&quot;, &quot;k&quot;: 1}, id=&quot;b&quot;)),
+    reply(tool_use(&quot;write_file&quot;, {&quot;path&quot;: &quot;.env&quot;, &quot;content&quot;: &quot;x&quot;}, id=&quot;c&quot;)),
+    reply(tool_use(&quot;ontology_lookup&quot;, {&quot;term&quot;: &quot;삼자대사&quot;}, id=&quot;d&quot;)),
+    reply(text(&quot;어음 지급은 안 됩니다. 삼자대사(발주·입고·송장 대조)를 마친 송장만 계좌로 지급합니다.&quot;)),
+])
+LAB_OF = {&quot;todo_write&quot;: &quot;Lab 6&quot;, &quot;search_docs&quot;: &quot;Lab 9&quot;, &quot;write_file&quot;: &quot;Lab 7&quot;,
+          &quot;ontology_lookup&quot;: &quot;Lab 10&quot;, &quot;agent&quot;: &quot;Lab 5&quot;}
+
+
+def on_event(kind, data):
+    if kind == &quot;tool&quot;:
+        print(f&quot;[{LAB_OF.get(data[&#x27;name&#x27;], &#x27;Lab 2&#x27;)}] {data[&#x27;name&#x27;]}({json.dumps(data[&#x27;input&#x27;], ensure_ascii=False)})&quot;)
+    elif kind == &quot;text&quot;:
+        print(f&quot;\n💬 {data}&quot;)
+
+
+h = mh.MiniHarness(brain, approve=lambda c: False, memory_path=&quot;없음.md&quot;)
+messages = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;어음으로 지급해도 돼?&quot;}]
+h.run_turn(messages, on_event=on_event)
+
+results = [b for m in messages if isinstance(m[&quot;content&quot;], list)
+           for b in m[&quot;content&quot;] if b.get(&quot;type&quot;) == &quot;tool_result&quot;]
+print(&quot;\n도구 결과 첫 줄들:&quot;)
+for r in results:
+    print(&quot; -&quot;, r[&quot;content&quot;].splitlines()[0][:60])
+</code></pre>
+  <textarea class="editor small-editor" data-exedit hidden spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off"></textarea>
+  <div class="exbar">
+    <button class="btn small primary" data-exrun>▶ 실행</button>
+    <button class="btn small" data-exedit-toggle>✎ 고쳐 보기</button>
+    <button class="btn small" data-exreset hidden>되돌리기</button>
+    <span class="muted small" data-exstatus></span>
+  </div>
+  <div class="exout"><span class="exlabel" data-exlabel>실행 결과</span><pre data-exout>[Lab 6] todo_write({&quot;items&quot;: &quot;규정 찾기\n용어 확인\n답변&quot;})
+[Lab 9] search_docs({&quot;query&quot;: &quot;어음 지급&quot;, &quot;k&quot;: 1})
+[Lab 7] write_file({&quot;path&quot;: &quot;.env&quot;, &quot;content&quot;: &quot;x&quot;})
+[Lab 10] ontology_lookup({&quot;term&quot;: &quot;삼자대사&quot;})
+
+💬 어음 지급은 안 됩니다. 삼자대사(발주·입고·송장 대조)를 마친 송장만 계좌로 지급합니다.
+
+도구 결과 첫 줄들:
+ - todo 갱신: 0/3 완료
+ - &lt;doc id=&quot;06_대금지급_규정.md#0&quot;&gt;
+ - BLOCKED: .env 는 보호된 경로입니다.
+ - [three_way_match] 3-Way Match (= 삼자대사, 3자 대사, 쓰리웨이매치)
+</pre></div>
+  <p class="try">💡 바꿔 보기: 대본에서 <code>.env</code> 쓰기를 <code>memo.txt</code> 쓰기로 바꾸면 가드레일이 통과시킵니다.</p>
+</article>
+<article class="example" data-ex="1">
+  <h3><span class="exn">예제 2</span> AGENTS.md 는 백과사전이 아니라 지도</h3>
+  <div class="exprose"><p>OpenAI 의 'Harness engineering' 글은 에이전트용 안내 파일을 <strong>약 100줄짜리 목차</strong>로 유지하라고 권합니다. 1,000쪽 매뉴얼은 작업 맥락을 밀어내고 금방 낡기 때문입니다. 미니 하네스는 <code>AGENT.md</code> 를 시스템 프롬프트 끝에 붙입니다.</p></div>
+  <pre class="code" data-excode><code class="language-python">import os
+import tempfile
+import mini_harness as mh
+from common.brain import FakeBrain
+from common.show import rough_tokens
+
+os.chdir(tempfile.mkdtemp())
+memo = &quot;AGENT.md&quot;
+open(memo, &quot;w&quot;, encoding=&quot;utf-8&quot;).write(
+    &quot;# 이 저장소 지도\n&quot;
+    &quot;- 규정 문서: data/procurement/docs/ (search_docs 로 찾기)\n&quot;
+    &quot;- 용어 정의: data/procurement/ontology.yaml (시스템 프롬프트에 이미 있음)\n&quot;
+    &quot;- 테스트: python run_tests.py\n&quot;
+    &quot;- 금지: .env 수정, 운영 DB 접속\n&quot;)
+h = mh.MiniHarness(FakeBrain(), approve=lambda c: False, memory_path=memo)
+print(&quot;시스템 프롬프트 ~&quot;, rough_tokens(h.system), &quot;토큰 중 마지막 부분:\n&quot;)
+print(h.system[h.system.index(&quot;&lt;project-memory&quot;):])
+</code></pre>
+  <textarea class="editor small-editor" data-exedit hidden spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off"></textarea>
+  <div class="exbar">
+    <button class="btn small primary" data-exrun>▶ 실행</button>
+    <button class="btn small" data-exedit-toggle>✎ 고쳐 보기</button>
+    <button class="btn small" data-exreset hidden>되돌리기</button>
+    <span class="muted small" data-exstatus></span>
+  </div>
+  <div class="exout"><span class="exlabel" data-exlabel>실행 결과</span><pre data-exout>시스템 프롬프트 ~ 491 토큰 중 마지막 부분:
+
+&lt;project-memory path=&#x27;AGENT.md&#x27;&gt;
+# 이 저장소 지도
+- 규정 문서: data/procurement/docs/ (search_docs 로 찾기)
+- 용어 정의: data/procurement/ontology.yaml (시스템 프롬프트에 이미 있음)
+- 테스트: python run_tests.py
+- 금지: .env 수정, 운영 DB 접속
+
+&lt;/project-memory&gt;
+</pre></div>
+  <p class="try">💡 바꿔 보기: 메모리 파일에 한 줄을 더 넣고 시스템 프롬프트 토큰 수 변화를 보세요.</p>
+</article>
   </section>
   <section class="card" id="quiz">
-    <h2><span class="step">2</span> 확인 퀴즈</h2>
+    <h2><span class="step">3</span> 확인 퀴즈</h2>
     <div class="quiz" data-answer="1" data-q="0">
   <p class="q"><span class="qn">Q1</span> 온톨로지를 시스템 프롬프트에 넣는 것이 캐시에 유리한 이유는?</p>
   <div class="opts"><button class="opt" data-i="0">짧아서</button><button class="opt" data-i="1">매 요청 바뀌지 않는 고정 prefix 라서</button><button class="opt" data-i="2">모델이 먼저 읽어서</button></div>
@@ -55,7 +158,7 @@ LAB_IMPL=exercise python labs/11_capstone/mini_harness.py   # 내가 푼 코드�
 </div>
   </section>
   <section class="card practice" id="practice">
-  <h2><span class="step">3</span> 실습: 내 코드로 조립해서 통합 테스트</h2>
+  <h2><span class="step">4</span> 실습: 내 코드로 조립해서 통합 테스트</h2>
   <p>Lab 1~10 에서 작성한 코드를 모아 <code>mini_harness.py</code> 를 조립하고 통합 시나리오를 채점합니다. 아직 풀지 않은 랩은 정답 코드로 대신 채웁니다.</p>
   <ul class="assembly" data-assembly></ul>
   <div class="runrow">
@@ -65,7 +168,7 @@ LAB_IMPL=exercise python labs/11_capstone/mini_harness.py   # 내가 푼 코드�
   <div class="results" data-results></div>
 </section>
   <section class="card" id="answer">
-    <h2><span class="step">4</span> 정답과 테스트</h2>
+    <h2><span class="step">5</span> 정답과 테스트</h2>
     <details><summary>정답 코드 보기 (<code>mini_harness.py</code>)</summary><pre class="code"><code class="language-python">#!/usr/bin/env python3
 &quot;&quot;&quot;Lab 11 — 캡스톤: 지금까지 만든 패치를 한 몸에 조립한 미니 하네스.
 
@@ -258,9 +361,14 @@ if __name__ == &quot;__main__&quot;:
 </code></pre></details>
     <label class="donebox"><input type="checkbox" data-done> 이 랩을 완료로 표시</label>
   </section>
+  <section class="card" id="reading">
+    <h2>📚 더 읽을거리</h2>
+    <ul class="reading"><li><a href="https://isuruwijesiri.com/harness-engineering-101/" target="_blank" rel="noopener">Harness Engineering 101</a> <span class="muted small">· Isuru Wijesiri</span><br><span class="small">이 워크북의 뼈대가 된 온라인 책. 장마다 ‘무엇이 깨지나 → 패치 → 비용’ 구조로 300줄짜리 하네스를 키워 갑니다.</span></li><li><a href="https://github.com/SWE-agent/mini-swe-agent" target="_blank" rel="noopener">mini-swe-agent</a> <span class="muted small">· SWE-agent 팀 (Princeton·Stanford)</span><br><span class="small">bash 하나만 도구로 쓰는 아주 작은 코딩 에이전트. 캡스톤 이후 ‘진짜 쓰이는 최소 하네스’를 읽어 보기에 좋습니다.</span></li><li><a href="https://github.com/humanlayer/12-factor-agents" target="_blank" rel="noopener">12-Factor Agents</a> <span class="muted small">· HumanLayer</span><br><span class="small">프로덕션 에이전트 설계 원칙 12가지. ‘컨텍스트 창을 직접 소유하라’, ‘사람에게 묻는 것도 도구다’ 같은 원칙이 Lab 6·7과 맞닿아 있습니다.</span></li><li><a href="https://openai.com/index/harness-engineering/" target="_blank" rel="noopener">Harness engineering: leveraging Codex in an agent-first world</a> <span class="muted small">· Ryan Lopopolo, OpenAI (2026)</span><br><span class="small">에이전트로 약 100만 줄의 제품을 만든 팀의 기록. AGENTS.md는 ‘지도’로 짧게, 규칙은 린터로 기계적으로 강제, 로그·지표를 에이전트에게 열어 주는 피드백 루프.</span></li></ul>
+    <p class="small"><a href="../resources.html">교재 전체 목록 →</a></p>
+  </section>
   <nav class="pager"><a href="10_ontology.html">← 10 온톨로지</a><a class="next" href="../index.html">목차로 →</a></nav>
 </main>
-<script type="application/json" id="lab-data">{"id": "11_capstone", "exercise": "", "pyodide": "https://cdn.jsdelivr.net/npm/pyodide@0.29.5/", "labs": [{"id": "01_array", "n": 1, "title": "대화는 그냥 JSON 배열이다", "short": "대화 = 배열", "minutes": 20}, {"id": "02_tools", "n": 2, "title": "도구 = JSON 스키마 + 함수 디스패치", "short": "도구", "minutes": 25}, {"id": "03_agent_loop", "n": 3, "title": "에이전트 루프", "short": "에이전트 루프", "minutes": 25}, {"id": "04_context_budget", "n": 4, "title": "컨텍스트는 예산, 캐싱은 순서", "short": "예산과 캐싱", "minutes": 30}, {"id": "05_subagents", "n": 5, "title": "서브에이전트 = 컨텍스트 포크", "short": "서브에이전트", "minutes": 20}, {"id": "06_steering", "n": 6, "title": "돌고 있는 루프 조종하기", "short": "조종", "minutes": 25}, {"id": "07_guardrails", "n": 7, "title": "반사신경과 가드레일", "short": "가드레일", "minutes": 25}, {"id": "08_debugging", "n": 8, "title": "배열 디버깅", "short": "디버깅", "minutes": 20}, {"id": "09_rag", "n": 9, "title": "RAG는 원래 하네스 패턴이었다", "short": "RAG", "minutes": 35}, {"id": "10_ontology", "n": 10, "title": "온톨로지: 에이전트에게 도메인 지도 입히기", "short": "온톨로지", "minutes": 40}, {"id": "11_capstone", "n": 11, "title": "캡스톤: 미니 하네스", "short": "캡스톤", "minutes": 30}]}</script>
+<script type="application/json" id="lab-data">{"id": "11_capstone", "exercise": "", "examples": ["import json\nimport mini_harness as mh\nfrom common.brain import ScriptedBrain, reply, text, tool_use\n\nbrain = ScriptedBrain([\n    reply(tool_use(\"todo_write\", {\"items\": \"규정 찾기\\n용어 확인\\n답변\"}, id=\"a\")),\n    reply(tool_use(\"search_docs\", {\"query\": \"어음 지급\", \"k\": 1}, id=\"b\")),\n    reply(tool_use(\"write_file\", {\"path\": \".env\", \"content\": \"x\"}, id=\"c\")),\n    reply(tool_use(\"ontology_lookup\", {\"term\": \"삼자대사\"}, id=\"d\")),\n    reply(text(\"어음 지급은 안 됩니다. 삼자대사(발주·입고·송장 대조)를 마친 송장만 계좌로 지급합니다.\")),\n])\nLAB_OF = {\"todo_write\": \"Lab 6\", \"search_docs\": \"Lab 9\", \"write_file\": \"Lab 7\",\n          \"ontology_lookup\": \"Lab 10\", \"agent\": \"Lab 5\"}\n\n\ndef on_event(kind, data):\n    if kind == \"tool\":\n        print(f\"[{LAB_OF.get(data['name'], 'Lab 2')}] {data['name']}({json.dumps(data['input'], ensure_ascii=False)})\")\n    elif kind == \"text\":\n        print(f\"\\n💬 {data}\")\n\n\nh = mh.MiniHarness(brain, approve=lambda c: False, memory_path=\"없음.md\")\nmessages = [{\"role\": \"user\", \"content\": \"어음으로 지급해도 돼?\"}]\nh.run_turn(messages, on_event=on_event)\n\nresults = [b for m in messages if isinstance(m[\"content\"], list)\n           for b in m[\"content\"] if b.get(\"type\") == \"tool_result\"]\nprint(\"\\n도구 결과 첫 줄들:\")\nfor r in results:\n    print(\" -\", r[\"content\"].splitlines()[0][:60])\n", "import os\nimport tempfile\nimport mini_harness as mh\nfrom common.brain import FakeBrain\nfrom common.show import rough_tokens\n\nos.chdir(tempfile.mkdtemp())\nmemo = \"AGENT.md\"\nopen(memo, \"w\", encoding=\"utf-8\").write(\n    \"# 이 저장소 지도\\n\"\n    \"- 규정 문서: data/procurement/docs/ (search_docs 로 찾기)\\n\"\n    \"- 용어 정의: data/procurement/ontology.yaml (시스템 프롬프트에 이미 있음)\\n\"\n    \"- 테스트: python run_tests.py\\n\"\n    \"- 금지: .env 수정, 운영 DB 접속\\n\")\nh = mh.MiniHarness(FakeBrain(), approve=lambda c: False, memory_path=memo)\nprint(\"시스템 프롬프트 ~\", rough_tokens(h.system), \"토큰 중 마지막 부분:\\n\")\nprint(h.system[h.system.index(\"<project-memory\"):])\n"], "pyodide": "https://cdn.jsdelivr.net/npm/pyodide@0.29.5/", "labs": [{"id": "01_array", "n": 1, "title": "대화는 그냥 JSON 배열이다", "short": "대화 = 배열", "minutes": 20}, {"id": "02_tools", "n": 2, "title": "도구 = JSON 스키마 + 함수 디스패치", "short": "도구", "minutes": 25}, {"id": "03_agent_loop", "n": 3, "title": "에이전트 루프", "short": "에이전트 루프", "minutes": 25}, {"id": "04_context_budget", "n": 4, "title": "컨텍스트는 예산, 캐싱은 순서", "short": "예산과 캐싱", "minutes": 30}, {"id": "05_subagents", "n": 5, "title": "서브에이전트 = 컨텍스트 포크", "short": "서브에이전트", "minutes": 20}, {"id": "06_steering", "n": 6, "title": "돌고 있는 루프 조종하기", "short": "조종", "minutes": 25}, {"id": "07_guardrails", "n": 7, "title": "반사신경과 가드레일", "short": "가드레일", "minutes": 25}, {"id": "08_debugging", "n": 8, "title": "배열 디버깅", "short": "디버깅", "minutes": 20}, {"id": "09_rag", "n": 9, "title": "RAG는 원래 하네스 패턴이었다", "short": "RAG", "minutes": 35}, {"id": "10_ontology", "n": 10, "title": "온톨로지: 에이전트에게 도메인 지도 입히기", "short": "온톨로지", "minutes": 40}, {"id": "11_capstone", "n": 11, "title": "캡스톤: 미니 하네스", "short": "캡스톤", "minutes": 30}]}</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <script src="../assets/app.js"></script>
 </body>

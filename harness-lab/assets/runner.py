@@ -41,11 +41,22 @@ def _fake_run(cmd, shell=False, capture_output=False, text=False, timeout=None, 
 subprocess.run = _fake_run
 
 
+def run_snippet(lab, code):
+    """'따라 해보기' 예제 한 칸을 실행하고 출력 문자열을 돌려준다 (정답 구현 사용)."""
+    _reset_modules()
+    os.environ.update(LAB_IMPL="solution", HARNESS_BRAIN="fake")
+    os.environ.pop("HARNESS_DEBUG", None)
+    sys.path[:0] = [f"{ROOT}/labs/{lab}", ROOT]
+    os.chdir(ROOT)
+    from common.examples import run_cell_inprocess
+    return run_cell_inprocess(code)
+
+
 def _reset_modules():
     for name in list(sys.modules):
         if (name in ("test_lab", "solution", "exercise", "mini_harness")
                 or name == "common" or name.startswith("common.")
-                or name.startswith("cap_") or name.endswith(("_exercise", "_solution"))):
+                or name.startswith(("cap_", "lab_")) or name.endswith(("_exercise", "_solution"))):
             del sys.modules[name]
     sys.path[:] = [p for p in sys.path if not p.startswith(ROOT)]
 

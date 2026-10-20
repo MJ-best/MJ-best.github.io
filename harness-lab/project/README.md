@@ -60,7 +60,19 @@ python labs/03_agent_loop/exercise.py       # 내가 만든 에이전트!
 | 10 | `10_ontology` | 모델은 우리 *용어*를 모른다 | YAML 온톨로지, 전체 주입 → 조회 도구 → 그래프 | 블로그 |
 | 11 | `11_capstone` | — | 전부 조립한 미니 하네스 | 16장 |
 
-권장 진행: 하루 1~2개 랩. 각 랩 폴더의 `README.md` → `exercise.py`의 TODO → `python run_tests.py N`.
+권장 진행: 하루 1~2개 랩. 각 랩 폴더의 `README.md` → `examples.py`(따라 해보기) → `exercise.py`의 TODO → `python run_tests.py N`.
+
+### 따라 해보기 예제 (`labs/*/examples.py`)
+
+랩마다 2~5개, 모두 34개의 짧고 구체적인 예제가 있습니다. 비유 한 줄, 20~40줄 코드, 실제 출력, "바꿔 보기" 과제로 구성됩니다.
+예: 금붕어 기억력(Lab 1), 날씨 도구(Lab 2), 로그 2만 줄 자르기·캐시 비용 계산(Lab 4), 거부 이유를 읽고 스스로 고치는 모델(Lab 7), 오픈북 시험 RAG(Lab 9), 카페 메뉴 온톨로지·GraphRAG 맛보기(Lab 10).
+
+```bash
+python labs/04_context_budget/examples.py   # 그 랩의 예제를 모두 실행
+python run_tests.py --examples              # 모든 예제가 돌아가는지 확인
+```
+
+추천 교재 목록은 워크북 사이트의 **교재** 페이지(`workbook/resources.json`)에 있습니다.
 
 ---
 

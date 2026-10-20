@@ -18,6 +18,7 @@
 <header class="topbar">
   <a class="brand" href="../index.html"><span class="logo">⟲</span> 하네스 워크북</a>
   <span class="crumb">Lab 04</span>
+  <a class="toplink" href="../resources.html">교재</a>
   <span class="progress-pill" data-progress-pill title="완료한 랩">0/11</span>
 </header>
 <main class="wrap" data-lab="04_context_budget" data-has-exercise="true">
@@ -25,7 +26,7 @@
     <p class="eyebrow">Lab 04 · 약 30분</p>
     <h1>컨텍스트는 예산, 캐싱은 순서</h1>
     <ul class="points"><li>큰 도구 결과는 들어오는 순간 잘라야 한다.</li><li>캐시는 앞부분(prefix)이 바이트 단위로 같을 때만 적중한다 → 배열은 append-only.</li><li>옛 결과를 지우면 공간은 생기지만 캐시가 깨진다. 공간과 비용의 트레이드오프.</li></ul>
-    <nav class="jump"><a href="#concept">개념</a><a href="#quiz">퀴즈</a><a href="#practice">실습</a><a href="#answer">정답</a></nav>
+    <nav class="jump"><a href="#concept">개념</a><a href="#examples">예제</a><a href="#quiz">퀴즈</a><a href="#practice">실습</a><a href="#answer">정답</a></nav>
   </section>
   <section class="card prose" id="concept">
     <h2><span class="step">1</span> 개념</h2>
@@ -42,8 +43,158 @@
 <h3>생각해볼 것</h3>
 <ul><li>시스템 프롬프트에 현재 시각을 넣으면 캐시는 어떻게 될까요?</li><li>원문 5장(caching)도 함께 읽어 보세요.</li></ul>
   </section>
+  <section class="card" id="examples">
+    <h2><span class="step">2</span> 따라 해보기</h2>
+    <p class="muted small">비유 → 짧은 코드 → 실제 출력. 아래 출력은 미리 실행해 둔 결과이고, <b>▶ 실행</b>을 누르면 브라우저 안 파이썬으로 다시 돌립니다(첫 실행 때 약 10MB 내려받음).</p>
+    <article class="example" data-ex="0">
+  <h3><span class="exn">예제 1</span> 로그 2만 줄을 통째로 넣으면?</h3>
+  <div class="exprose"><p><code>cat server.log</code> 결과가 2만 줄이면 그대로 배열에 들어가 컨텍스트를 다 먹어 버립니다. 그래서 결과는 <strong>들어오는 순간</strong> 자릅니다.</p><p>앞뒤를 남기는 이유: 에러는 보통 <strong>맨 끝</strong>에 있고, 파일의 성격은 <strong>맨 앞</strong>에서 드러나기 때문입니다.</p></div>
+  <pre class="code" data-excode><code class="language-python">import solution as lab
+
+log = &quot;\n&quot;.join(f&quot;line {i}: OK&quot; for i in range(1, 20_001)) + &quot;\nline 20001: ERROR disk full&quot;
+cut = lab.truncate(log, limit=160)
+
+print(f&quot;원본 {len(log):,}자 (~{len(log)//4:,} 토큰) → 자른 뒤 {len(cut)}자&quot;)
+print(&quot;── 모델이 보게 될 내용 ──&quot;)
+print(cut)
+</code></pre>
+  <textarea class="editor small-editor" data-exedit hidden spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off"></textarea>
+  <div class="exbar">
+    <button class="btn small primary" data-exrun>▶ 실행</button>
+    <button class="btn small" data-exedit-toggle>✎ 고쳐 보기</button>
+    <button class="btn small" data-exreset hidden>되돌리기</button>
+    <span class="muted small" data-exstatus></span>
+  </div>
+  <div class="exout"><span class="exlabel" data-exlabel>실행 결과</span><pre data-exout>원본 288,921자 (~72,230 토큰) → 자른 뒤 192자
+── 모델이 보게 될 내용 ──
+line 1: OK
+line 2: OK
+line 3: OK
+line 4: OK
+line 5: OK
+line 6: OK
+line 7: OK
+lin
+...[288761 chars truncated]...
+997: OK
+line 19998: OK
+line 19999: OK
+line 20000: OK
+line 20001: ERROR disk full
+</pre></div>
+  <p class="try">💡 바꿔 보기: <code>limit</code> 을 400 으로 늘리면 무엇이 더 보이나요?</p>
+</article>
+<article class="example" data-ex="1">
+  <h3><span class="exn">예제 2</span> 캐시는 '앞부분이 같을 때'만 — 10라운드 비용 계산</h3>
+  <div class="exprose"><p><strong>비유</strong> — 책을 매번 처음부터 읽는 대신 <em>책갈피</em>를 꽂아 두면, 이미 읽은 부분은 훑기만 하면 됩니다. 단, 앞 페이지가 한 글자라도 바뀌면 책갈피는 무효입니다.</p><p>Anthropic 문서 기준으로 캐시 <strong>쓰기는 1.25배, 읽기는 0.1배</strong> 요금입니다. 시스템 프롬프트+도구 1만 토큰에 라운드마다 2천 토큰씩 늘어나는 에이전트를 계산해 봅시다.</p></div>
+  <pre class="code" data-excode><code class="language-python">BASE, GROW, ROUNDS = 10_000, 2_000, 10
+no_cache = with_cache = 0
+for r in range(ROUNDS):
+    total = BASE + GROW * r                     # 이번 요청의 입력 토큰
+    no_cache += total                           # 캐시 없음: 매번 전부 정가
+    if r == 0:
+        with_cache += total * 1.25              # 첫 요청: 전부 캐시에 쓰기
+    else:
+        prev = BASE + GROW * (r - 1)
+        with_cache += prev * 0.1 + (total - prev) * 1.25   # 앞부분 읽기 + 새 부분 쓰기
+    print(f&quot;라운드 {r+1:&gt;2}: 입력 {total:&gt;6,} 토큰&quot;)
+print(f&quot;\n캐시 없음 : {no_cache:&gt;9,.0f} 토큰 요금&quot;)
+print(f&quot;캐시 사용 : {with_cache:&gt;9,.0f} 토큰 요금  (약 {1 - with_cache/no_cache:.0%} 절약)&quot;)
+</code></pre>
+  <textarea class="editor small-editor" data-exedit hidden spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off"></textarea>
+  <div class="exbar">
+    <button class="btn small primary" data-exrun>▶ 실행</button>
+    <button class="btn small" data-exedit-toggle>✎ 고쳐 보기</button>
+    <button class="btn small" data-exreset hidden>되돌리기</button>
+    <span class="muted small" data-exstatus></span>
+  </div>
+  <div class="exout"><span class="exlabel" data-exlabel>실행 결과</span><pre data-exout>라운드  1: 입력 10,000 토큰
+라운드  2: 입력 12,000 토큰
+라운드  3: 입력 14,000 토큰
+라운드  4: 입력 16,000 토큰
+라운드  5: 입력 18,000 토큰
+라운드  6: 입력 20,000 토큰
+라운드  7: 입력 22,000 토큰
+라운드  8: 입력 24,000 토큰
+라운드  9: 입력 26,000 토큰
+라운드 10: 입력 28,000 토큰
+
+캐시 없음 :   190,000 토큰 요금
+캐시 사용 :    51,200 토큰 요금  (약 73% 절약)
+</pre></div>
+  <p class="try">💡 바꿔 보기: <code>ROUNDS</code> 를 30 으로 늘리면 절감률이 어떻게 되나요?</p>
+</article>
+<article class="example" data-ex="2">
+  <h3><span class="exn">예제 3</span> 책갈피(cache_control)는 맨 끝에</h3>
+  <div class="exprose"><p>하네스는 요청을 보낼 때마다 <strong>마지막 블록</strong>에 <code>cache_control</code> 을 붙입니다. 그러면 "여기까지는 다음에 다시 쓸 거예요"라는 표시가 됩니다. 원본 배열은 건드리지 않고 <strong>사본</strong>에만 붙이는 게 핵심입니다.</p></div>
+  <pre class="code" data-excode><code class="language-python">import solution as lab
+from common.show import show
+
+messages = [
+    {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;규정 문서 요약해 줘&quot;},
+    {&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: [{&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: &quot;목록부터 볼게요.&quot;},
+                                      {&quot;type&quot;: &quot;tool_use&quot;, &quot;id&quot;: &quot;t1&quot;, &quot;name&quot;: &quot;run_command&quot;,
+                                       &quot;input&quot;: {&quot;command&quot;: &quot;ls docs&quot;}}]},
+    {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: [{&quot;type&quot;: &quot;tool_result&quot;, &quot;tool_use_id&quot;: &quot;t1&quot;, &quot;content&quot;: &quot;01.md 02.md&quot;}]},
+]
+sent = lab.with_cache_breakpoint({&quot;messages&quot;: messages})
+show(sent[&quot;messages&quot;], &quot;보낸 사본 (📌 = cache_control)&quot;)
+show(messages, &quot;원본 배열 (그대로)&quot;)
+</code></pre>
+  <textarea class="editor small-editor" data-exedit hidden spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off"></textarea>
+  <div class="exbar">
+    <button class="btn small primary" data-exrun>▶ 실행</button>
+    <button class="btn small" data-exedit-toggle>✎ 고쳐 보기</button>
+    <button class="btn small" data-exreset hidden>되돌리기</button>
+    <span class="muted small" data-exstatus></span>
+  </div>
+  <div class="exout"><span class="exlabel" data-exlabel>실행 결과</span><pre data-exout>── 보낸 사본 (📌 = cache_control) ──
+[0] user      &quot;규정 문서 요약해 줘&quot;
+[1] assistant text &quot;목록부터 볼게요.&quot;
+              tool_use[t1] run_command({&quot;command&quot;: &quot;ls docs&quot;})
+[2] user      tool_result[t1] &quot;01.md 02.md&quot; 📌
+
+── 원본 배열 (그대로) ──
+[0] user      &quot;규정 문서 요약해 줘&quot;
+[1] assistant text &quot;목록부터 볼게요.&quot;
+              tool_use[t1] run_command({&quot;command&quot;: &quot;ls docs&quot;})
+[2] user      tool_result[t1] &quot;01.md 02.md&quot;
+</pre></div>
+  
+</article>
+<article class="example" data-ex="3">
+  <h3><span class="exn">예제 4</span> 공간 vs 비용: 옛 도구 결과 지우기</h3>
+  <div class="exprose"><p>창이 꽉 차면 오래된 도구 결과를 <code>[생략]</code> 으로 바꿔 공간을 만들 수 있습니다. 하지만 <strong>앞부분이 바뀌므로 캐시가 깨집니다.</strong> 공짜 점심은 없습니다 — Lab 8 에서 이 깨짐을 탐지합니다.</p></div>
+  <pre class="code" data-excode><code class="language-python">import solution as lab
+from common.show import show
+
+def result(i, body):
+    return {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: [{&quot;type&quot;: &quot;tool_result&quot;, &quot;tool_use_id&quot;: f&quot;t{i}&quot;, &quot;content&quot;: body}]}
+
+messages = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;로그 분석해 줘&quot;},
+            result(1, &quot;로그 A 3만 자…&quot;), result(2, &quot;로그 B 2만 자…&quot;),
+            result(3, &quot;로그 C 1만 자…&quot;), result(4, &quot;방금 읽은 로그 D&quot;)]
+show(lab.elide_old_tool_results(messages, keep_last=2), &quot;keep_last=2 로 정리한 배열&quot;)
+</code></pre>
+  <textarea class="editor small-editor" data-exedit hidden spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off"></textarea>
+  <div class="exbar">
+    <button class="btn small primary" data-exrun>▶ 실행</button>
+    <button class="btn small" data-exedit-toggle>✎ 고쳐 보기</button>
+    <button class="btn small" data-exreset hidden>되돌리기</button>
+    <span class="muted small" data-exstatus></span>
+  </div>
+  <div class="exout"><span class="exlabel" data-exlabel>실행 결과</span><pre data-exout>── keep_last=2 로 정리한 배열 ──
+[0] user      &quot;로그 분석해 줘&quot;
+[1] user      tool_result[t1] &quot;[이전 도구 결과 생략됨]&quot;
+[2] user      tool_result[t2] &quot;[이전 도구 결과 생략됨]&quot;
+[3] user      tool_result[t3] &quot;로그 C 1만 자…&quot;
+[4] user      tool_result[t4] &quot;방금 읽은 로그 D&quot;
+</pre></div>
+  
+</article>
+  </section>
   <section class="card" id="quiz">
-    <h2><span class="step">2</span> 확인 퀴즈</h2>
+    <h2><span class="step">3</span> 확인 퀴즈</h2>
     <div class="quiz" data-answer="1" data-q="0">
   <p class="q"><span class="qn">Q1</span> 캐시 친화적인 배열 조작은?</p>
   <div class="opts"><button class="opt" data-i="0">오래된 메시지 내용을 요약으로 바꾼다</button><button class="opt" data-i="1">새 메시지를 끝에 덧붙이기만 한다</button><button class="opt" data-i="2">시스템 프롬프트에 현재 시각을 넣는다</button></div>
@@ -55,7 +206,7 @@
 </div>
   </section>
   <section class="card practice" id="practice">
-  <h2><span class="step">3</span> 실습: <code>exercise.py</code> 채우기</h2>
+  <h2><span class="step">4</span> 실습: <code>exercise.py</code> 채우기</h2>
   <p class="muted small">TODO 표시 부분을 채우고 채점하세요. 입력 내용은 이 기기에 자동 저장됩니다.</p>
   <div class="toolbar">
     <button class="btn small" data-act="todo">TODO 찾기</button>
@@ -133,7 +284,7 @@ if __name__ == &quot;__main__&quot;:
   <div class="results" data-results></div>
 </section>
   <section class="card" id="answer">
-    <h2><span class="step">4</span> 정답과 테스트</h2>
+    <h2><span class="step">5</span> 정답과 테스트</h2>
     <details><summary>정답 코드 보기 (<code>solution.py</code>)</summary><pre class="code"><code class="language-python">#!/usr/bin/env python3
 &quot;&quot;&quot;Lab 4 — 컨텍스트는 &#x27;예산&#x27;이다 + 캐싱은 &#x27;순서&#x27;에 달려 있다.
 
@@ -276,9 +427,14 @@ if __name__ == &quot;__main__&quot;:
 </code></pre></details>
     <label class="donebox"><input type="checkbox" data-done> 이 랩을 완료로 표시</label>
   </section>
+  <section class="card" id="reading">
+    <h2>📚 더 읽을거리</h2>
+    <ul class="reading"><li><a href="https://isuruwijesiri.com/harness-engineering-101/" target="_blank" rel="noopener">Harness Engineering 101</a> <span class="muted small">· Isuru Wijesiri</span><br><span class="small">이 워크북의 뼈대가 된 온라인 책. 장마다 ‘무엇이 깨지나 → 패치 → 비용’ 구조로 300줄짜리 하네스를 키워 갑니다.</span></li><li><a href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents" target="_blank" rel="noopener">Effective context engineering for AI agents</a> <span class="muted small">· Anthropic</span><br><span class="small">컨텍스트를 ‘유한한 예산’으로 보고, 압축·메모·서브에이전트로 관리하는 방법. Lab 4~6의 이론 편.</span></li><li><a href="https://news.hada.io/topic?id=23483" target="_blank" rel="noopener">🇰🇷 [요약 번역] AI 에이전트를 위한 효과적 컨텍스트 엔지니어링</a> <span class="muted small">· GeekNews</span><br><span class="small">위 글의 한국어 요약. 먼저 이걸로 큰 줄기를 잡고 원문을 읽으면 빠릅니다.</span></li><li><a href="https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching" target="_blank" rel="noopener">Prompt caching (공식 문서)</a> <span class="muted small">· Anthropic</span><br><span class="small">cache_control 위치, 캐시 쓰기·읽기 요금, usage 필드 읽는 법. Lab 4 예제 2의 비용 계산 근거.</span></li><li><a href="https://openai.com/index/harness-engineering/" target="_blank" rel="noopener">Harness engineering: leveraging Codex in an agent-first world</a> <span class="muted small">· Ryan Lopopolo, OpenAI (2026)</span><br><span class="small">에이전트로 약 100만 줄의 제품을 만든 팀의 기록. AGENTS.md는 ‘지도’로 짧게, 규칙은 린터로 기계적으로 강제, 로그·지표를 에이전트에게 열어 주는 피드백 루프.</span></li></ul>
+    <p class="small"><a href="../resources.html">교재 전체 목록 →</a></p>
+  </section>
   <nav class="pager"><a href="03_agent_loop.html">← 03 에이전트 루프</a><a class="next" href="05_subagents.html">05 서브에이전트 →</a></nav>
 </main>
-<script type="application/json" id="lab-data">{"id": "04_context_budget", "exercise": "#!/usr/bin/env python3\n\"\"\"[연습] Lab 4 — 컨텍스트는 '예산'이다 + 캐싱은 '순서'에 달려 있다.\n\n배열을 매번 통째로 보내니 (1) 비용이 쌓이고 (2) 창(window)이 가득 찹니다.\n- 캐싱: 앞부분(prefix)이 이전 요청과 '바이트 단위로 같으면' 싸게 재사용됩니다.\n        그래서 배열은 append-only 로 다뤄야 하고, 캐시 표시는 맨 끝에 둡니다.\n- 예산: 큰 도구 결과는 '들어오는 시점에' 잘라야 합니다. 나중에 옛 결과를 지우면\n        공간은 생기지만 prefix 가 바뀌어 캐시가 깨집니다 (비용 ↔ 공간 트레이드오프).\n\"\"\"\nimport copy\nimport json\nimport os\nimport sys\n\nsys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), \"..\", \"..\")))\n\nMAX_RESULT_CHARS = 2_000\nELIDED = \"[이전 도구 결과 생략됨]\"\n\n\ndef truncate(text, limit=MAX_RESULT_CHARS):\n    \"\"\"limit 보다 길면 앞 절반 + 표시 + 뒤 절반만 남긴다.\n    표시 형식: \"\\\\n...[N chars truncated]...\\\\n\"  (N = 잘라낸 글자 수)\n    짧으면 그대로 반환.\"\"\"\n    # TODO(1): 앞/뒤를 limit//2 씩 남기고 가운데를 표시로 바꾸세요\n    raise NotImplementedError(\"04_context_budget TODO(1)\")\n\n\ndef estimate_tokens(obj):\n    \"\"\"아주 거친 추정: JSON 글자 수 / 4. (정확한 값은 API 응답의 usage 로 확인)\"\"\"\n    return len(json.dumps(obj, ensure_ascii=False)) // 4\n\n\ndef with_cache_breakpoint(request):\n    \"\"\"요청의 '사본'을 만들어 마지막 메시지의 마지막 블록에\n    \"cache_control\": {\"type\": \"ephemeral\"} 를 붙여 반환한다.\n    - 마지막 메시지 content 가 문자열이면 [{\"type\":\"text\",\"text\":...}] 로 바꿔서 붙인다.\n    - 원본 request/messages 는 절대 바꾸지 않는다 (append-only 배열 보호).\"\"\"\n    # TODO(2): deepcopy 후 마지막 블록에 cache_control 을 붙여 반환하세요\n    raise NotImplementedError(\"04_context_budget TODO(2)\")\n\n\ndef elide_old_tool_results(messages, keep_last=2):\n    \"\"\"마지막 keep_last 개를 제외한 옛 tool_result 의 content 를 ELIDED 로 바꾼 '새 배열'을 반환.\n    (원본은 그대로. 이 함수를 쓰면 공간은 생기지만 캐시 prefix 가 깨진다는 걸 Lab 8에서 확인합니다)\"\"\"\n    # TODO(3): 모든 tool_result 블록 위치를 모은 뒤, 뒤에서 keep_last 개를 빼고 내용을 바꾸세요\n    raise NotImplementedError(\"04_context_budget TODO(3)\")\n\n\ndef load_memory(path=\"AGENT.md\"):\n    \"\"\"프로젝트 메모리 파일이 있으면 시스템 프롬프트에 붙일 문자열로, 없으면 \"\".\"\"\"\n    if not os.path.exists(path):\n        return \"\"\n    with open(path, encoding=\"utf-8\") as f:\n        return f\"\\n\\n<project-memory path={path!r}>\\n{f.read()}\\n<\/project-memory>\"\n\n\nif __name__ == \"__main__\":\n    big = \"x\" * 10_000\n    print(\"원본\", len(big), \"→ 자른 뒤\", len(truncate(big)))\n    req = {\"system\": \"s\", \"messages\": [{\"role\": \"user\", \"content\": \"hi\"}]}\n    print(json.dumps(with_cache_breakpoint(req), ensure_ascii=False, indent=1))\n", "pyodide": "https://cdn.jsdelivr.net/npm/pyodide@0.29.5/", "labs": [{"id": "01_array", "n": 1, "title": "대화는 그냥 JSON 배열이다", "short": "대화 = 배열", "minutes": 20}, {"id": "02_tools", "n": 2, "title": "도구 = JSON 스키마 + 함수 디스패치", "short": "도구", "minutes": 25}, {"id": "03_agent_loop", "n": 3, "title": "에이전트 루프", "short": "에이전트 루프", "minutes": 25}, {"id": "04_context_budget", "n": 4, "title": "컨텍스트는 예산, 캐싱은 순서", "short": "예산과 캐싱", "minutes": 30}, {"id": "05_subagents", "n": 5, "title": "서브에이전트 = 컨텍스트 포크", "short": "서브에이전트", "minutes": 20}, {"id": "06_steering", "n": 6, "title": "돌고 있는 루프 조종하기", "short": "조종", "minutes": 25}, {"id": "07_guardrails", "n": 7, "title": "반사신경과 가드레일", "short": "가드레일", "minutes": 25}, {"id": "08_debugging", "n": 8, "title": "배열 디버깅", "short": "디버깅", "minutes": 20}, {"id": "09_rag", "n": 9, "title": "RAG는 원래 하네스 패턴이었다", "short": "RAG", "minutes": 35}, {"id": "10_ontology", "n": 10, "title": "온톨로지: 에이전트에게 도메인 지도 입히기", "short": "온톨로지", "minutes": 40}, {"id": "11_capstone", "n": 11, "title": "캡스톤: 미니 하네스", "short": "캡스톤", "minutes": 30}]}</script>
+<script type="application/json" id="lab-data">{"id": "04_context_budget", "exercise": "#!/usr/bin/env python3\n\"\"\"[연습] Lab 4 — 컨텍스트는 '예산'이다 + 캐싱은 '순서'에 달려 있다.\n\n배열을 매번 통째로 보내니 (1) 비용이 쌓이고 (2) 창(window)이 가득 찹니다.\n- 캐싱: 앞부분(prefix)이 이전 요청과 '바이트 단위로 같으면' 싸게 재사용됩니다.\n        그래서 배열은 append-only 로 다뤄야 하고, 캐시 표시는 맨 끝에 둡니다.\n- 예산: 큰 도구 결과는 '들어오는 시점에' 잘라야 합니다. 나중에 옛 결과를 지우면\n        공간은 생기지만 prefix 가 바뀌어 캐시가 깨집니다 (비용 ↔ 공간 트레이드오프).\n\"\"\"\nimport copy\nimport json\nimport os\nimport sys\n\nsys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), \"..\", \"..\")))\n\nMAX_RESULT_CHARS = 2_000\nELIDED = \"[이전 도구 결과 생략됨]\"\n\n\ndef truncate(text, limit=MAX_RESULT_CHARS):\n    \"\"\"limit 보다 길면 앞 절반 + 표시 + 뒤 절반만 남긴다.\n    표시 형식: \"\\\\n...[N chars truncated]...\\\\n\"  (N = 잘라낸 글자 수)\n    짧으면 그대로 반환.\"\"\"\n    # TODO(1): 앞/뒤를 limit//2 씩 남기고 가운데를 표시로 바꾸세요\n    raise NotImplementedError(\"04_context_budget TODO(1)\")\n\n\ndef estimate_tokens(obj):\n    \"\"\"아주 거친 추정: JSON 글자 수 / 4. (정확한 값은 API 응답의 usage 로 확인)\"\"\"\n    return len(json.dumps(obj, ensure_ascii=False)) // 4\n\n\ndef with_cache_breakpoint(request):\n    \"\"\"요청의 '사본'을 만들어 마지막 메시지의 마지막 블록에\n    \"cache_control\": {\"type\": \"ephemeral\"} 를 붙여 반환한다.\n    - 마지막 메시지 content 가 문자열이면 [{\"type\":\"text\",\"text\":...}] 로 바꿔서 붙인다.\n    - 원본 request/messages 는 절대 바꾸지 않는다 (append-only 배열 보호).\"\"\"\n    # TODO(2): deepcopy 후 마지막 블록에 cache_control 을 붙여 반환하세요\n    raise NotImplementedError(\"04_context_budget TODO(2)\")\n\n\ndef elide_old_tool_results(messages, keep_last=2):\n    \"\"\"마지막 keep_last 개를 제외한 옛 tool_result 의 content 를 ELIDED 로 바꾼 '새 배열'을 반환.\n    (원본은 그대로. 이 함수를 쓰면 공간은 생기지만 캐시 prefix 가 깨진다는 걸 Lab 8에서 확인합니다)\"\"\"\n    # TODO(3): 모든 tool_result 블록 위치를 모은 뒤, 뒤에서 keep_last 개를 빼고 내용을 바꾸세요\n    raise NotImplementedError(\"04_context_budget TODO(3)\")\n\n\ndef load_memory(path=\"AGENT.md\"):\n    \"\"\"프로젝트 메모리 파일이 있으면 시스템 프롬프트에 붙일 문자열로, 없으면 \"\".\"\"\"\n    if not os.path.exists(path):\n        return \"\"\n    with open(path, encoding=\"utf-8\") as f:\n        return f\"\\n\\n<project-memory path={path!r}>\\n{f.read()}\\n<\/project-memory>\"\n\n\nif __name__ == \"__main__\":\n    big = \"x\" * 10_000\n    print(\"원본\", len(big), \"→ 자른 뒤\", len(truncate(big)))\n    req = {\"system\": \"s\", \"messages\": [{\"role\": \"user\", \"content\": \"hi\"}]}\n    print(json.dumps(with_cache_breakpoint(req), ensure_ascii=False, indent=1))\n", "examples": ["import solution as lab\n\nlog = \"\\n\".join(f\"line {i}: OK\" for i in range(1, 20_001)) + \"\\nline 20001: ERROR disk full\"\ncut = lab.truncate(log, limit=160)\n\nprint(f\"원본 {len(log):,}자 (~{len(log)//4:,} 토큰) → 자른 뒤 {len(cut)}자\")\nprint(\"── 모델이 보게 될 내용 ──\")\nprint(cut)\n", "BASE, GROW, ROUNDS = 10_000, 2_000, 10\nno_cache = with_cache = 0\nfor r in range(ROUNDS):\n    total = BASE + GROW * r                     # 이번 요청의 입력 토큰\n    no_cache += total                           # 캐시 없음: 매번 전부 정가\n    if r == 0:\n        with_cache += total * 1.25              # 첫 요청: 전부 캐시에 쓰기\n    else:\n        prev = BASE + GROW * (r - 1)\n        with_cache += prev * 0.1 + (total - prev) * 1.25   # 앞부분 읽기 + 새 부분 쓰기\n    print(f\"라운드 {r+1:>2}: 입력 {total:>6,} 토큰\")\nprint(f\"\\n캐시 없음 : {no_cache:>9,.0f} 토큰 요금\")\nprint(f\"캐시 사용 : {with_cache:>9,.0f} 토큰 요금  (약 {1 - with_cache/no_cache:.0%} 절약)\")\n", "import solution as lab\nfrom common.show import show\n\nmessages = [\n    {\"role\": \"user\", \"content\": \"규정 문서 요약해 줘\"},\n    {\"role\": \"assistant\", \"content\": [{\"type\": \"text\", \"text\": \"목록부터 볼게요.\"},\n                                      {\"type\": \"tool_use\", \"id\": \"t1\", \"name\": \"run_command\",\n                                       \"input\": {\"command\": \"ls docs\"}}]},\n    {\"role\": \"user\", \"content\": [{\"type\": \"tool_result\", \"tool_use_id\": \"t1\", \"content\": \"01.md 02.md\"}]},\n]\nsent = lab.with_cache_breakpoint({\"messages\": messages})\nshow(sent[\"messages\"], \"보낸 사본 (📌 = cache_control)\")\nshow(messages, \"원본 배열 (그대로)\")\n", "import solution as lab\nfrom common.show import show\n\ndef result(i, body):\n    return {\"role\": \"user\", \"content\": [{\"type\": \"tool_result\", \"tool_use_id\": f\"t{i}\", \"content\": body}]}\n\nmessages = [{\"role\": \"user\", \"content\": \"로그 분석해 줘\"},\n            result(1, \"로그 A 3만 자…\"), result(2, \"로그 B 2만 자…\"),\n            result(3, \"로그 C 1만 자…\"), result(4, \"방금 읽은 로그 D\")]\nshow(lab.elide_old_tool_results(messages, keep_last=2), \"keep_last=2 로 정리한 배열\")\n"], "pyodide": "https://cdn.jsdelivr.net/npm/pyodide@0.29.5/", "labs": [{"id": "01_array", "n": 1, "title": "대화는 그냥 JSON 배열이다", "short": "대화 = 배열", "minutes": 20}, {"id": "02_tools", "n": 2, "title": "도구 = JSON 스키마 + 함수 디스패치", "short": "도구", "minutes": 25}, {"id": "03_agent_loop", "n": 3, "title": "에이전트 루프", "short": "에이전트 루프", "minutes": 25}, {"id": "04_context_budget", "n": 4, "title": "컨텍스트는 예산, 캐싱은 순서", "short": "예산과 캐싱", "minutes": 30}, {"id": "05_subagents", "n": 5, "title": "서브에이전트 = 컨텍스트 포크", "short": "서브에이전트", "minutes": 20}, {"id": "06_steering", "n": 6, "title": "돌고 있는 루프 조종하기", "short": "조종", "minutes": 25}, {"id": "07_guardrails", "n": 7, "title": "반사신경과 가드레일", "short": "가드레일", "minutes": 25}, {"id": "08_debugging", "n": 8, "title": "배열 디버깅", "short": "디버깅", "minutes": 20}, {"id": "09_rag", "n": 9, "title": "RAG는 원래 하네스 패턴이었다", "short": "RAG", "minutes": 35}, {"id": "10_ontology", "n": 10, "title": "온톨로지: 에이전트에게 도메인 지도 입히기", "short": "온톨로지", "minutes": 40}, {"id": "11_capstone", "n": 11, "title": "캡스톤: 미니 하네스", "short": "캡스톤", "minutes": 30}]}</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <script src="../assets/app.js"></script>
 </body>

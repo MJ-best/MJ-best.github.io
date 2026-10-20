@@ -18,6 +18,7 @@
 <header class="topbar">
   <a class="brand" href="../index.html"><span class="logo">⟲</span> 하네스 워크북</a>
   <span class="crumb">Lab 02</span>
+  <a class="toplink" href="../resources.html">교재</a>
   <span class="progress-pill" data-progress-pill title="완료한 랩">0/11</span>
 </header>
 <main class="wrap" data-lab="02_tools" data-has-exercise="true">
@@ -25,7 +26,7 @@
     <p class="eyebrow">Lab 02 · 약 25분</p>
     <h1>도구 = JSON 스키마 + 함수 디스패치</h1>
     <ul class="points"><li>도구 = 모델에게 보여줄 JSON 스키마 + 하네스가 실행할 함수.</li><li>모델은 tool_use 블록을 &#x27;쓰기&#x27;만 하고, 실행과 결과 전달은 하네스 몫이다.</li><li>실패도 &#x27;ERROR: ...&#x27; 문자열로 돌려줘야 모델이 읽고 대처한다.</li></ul>
-    <nav class="jump"><a href="#concept">개념</a><a href="#quiz">퀴즈</a><a href="#practice">실습</a><a href="#answer">정답</a></nav>
+    <nav class="jump"><a href="#concept">개념</a><a href="#examples">예제</a><a href="#quiz">퀴즈</a><a href="#practice">실습</a><a href="#answer">정답</a></nav>
   </section>
   <section class="card prose" id="concept">
     <h2><span class="step">1</span> 개념</h2>
@@ -42,8 +43,126 @@
 <h3>생각해볼 것</h3>
 <ul><li><code>ask_with_tools</code> 는 도구를 딱 한 번만 허용합니다. '파일 목록을 보고 가장 큰 파일을 읽어줘' 같은 작업은 왜 실패할까요? → Lab 3</li><li>도구 description 을 일부러 모호하게 바꾸고 진짜 모델로 실행해 보세요.</li></ul>
   </section>
+  <section class="card" id="examples">
+    <h2><span class="step">2</span> 따라 해보기</h2>
+    <p class="muted small">비유 → 짧은 코드 → 실제 출력. 아래 출력은 미리 실행해 둔 결과이고, <b>▶ 실행</b>을 누르면 브라우저 안 파이썬으로 다시 돌립니다(첫 실행 때 약 10MB 내려받음).</p>
+    <article class="example" data-ex="0">
+  <h3><span class="exn">예제 1</span> 날씨 도구 하나로 보는 도구 호출의 3단계</h3>
+  <div class="exprose"><p>Hugging Face 에이전트 코스의 날씨 비서 예제를 하네스 쪽에서 본 모습입니다.</p><p><strong>비유</strong> — 모델은 <em>전화로만 일하는 비서</em>입니다. 직접 창밖을 볼 수 없으니 "부산 날씨 좀 확인해 주세요"라는 <strong>메모(tool_use)</strong> 를 건넵니다. 하네스가 실제로 확인하고, 같은 메모 번호(id)를 붙여 <strong>답장(tool_result)</strong> 을 돌려줍니다.</p></div>
+  <pre class="code" data-excode><code class="language-python">from common.brain import reply, text, tool_use
+from common.show import show
+
+WEATHER = {&quot;서울&quot;: &quot;맑음 18°C&quot;, &quot;부산&quot;: &quot;흐림 21°C&quot;}       # 가짜 날씨 서버
+weather_tool = {                                          # ① 모델에게 보여줄 스키마
+    &quot;name&quot;: &quot;get_weather&quot;,
+    &quot;description&quot;: &quot;도시의 현재 날씨를 알려준다.&quot;,
+    &quot;input_schema&quot;: {&quot;type&quot;: &quot;object&quot;,
+                     &quot;properties&quot;: {&quot;city&quot;: {&quot;type&quot;: &quot;string&quot;}},
+                     &quot;required&quot;: [&quot;city&quot;]},
+}
+
+
+def get_weather(city):                                    # ② 하네스가 실행할 함수
+    return WEATHER.get(city, f&quot;ERROR: &#x27;{city}&#x27; 날씨 정보가 없습니다&quot;)
+
+
+# 모델이 &#x27;쓴&#x27; 응답 — 직접 실행하지 못하고 부탁만 한다
+response = reply(text(&quot;날씨를 확인해 볼게요.&quot;),
+                 tool_use(&quot;get_weather&quot;, {&quot;city&quot;: &quot;부산&quot;}, id=&quot;toolu_01&quot;))
+call = response[&quot;content&quot;][1]
+print(&quot;1) 모델의 부탁  :&quot;, call[&quot;name&quot;], call[&quot;input&quot;])
+
+result = get_weather(**call[&quot;input&quot;])                     # 하네스가 실제로 실행
+print(&quot;2) 하네스 실행  :&quot;, result)
+
+messages = [                                              # 같은 id 로 결과를 돌려준다
+    {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;부산 날씨 어때?&quot;},
+    {&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: response[&quot;content&quot;]},
+    {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: [{&quot;type&quot;: &quot;tool_result&quot;,
+                                  &quot;tool_use_id&quot;: call[&quot;id&quot;], &quot;content&quot;: result}]},
+]
+print(&quot;3) 다음 요청에 실릴 배열:&quot;)
+show(messages)
+</code></pre>
+  <textarea class="editor small-editor" data-exedit hidden spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off"></textarea>
+  <div class="exbar">
+    <button class="btn small primary" data-exrun>▶ 실행</button>
+    <button class="btn small" data-exedit-toggle>✎ 고쳐 보기</button>
+    <button class="btn small" data-exreset hidden>되돌리기</button>
+    <span class="muted small" data-exstatus></span>
+  </div>
+  <div class="exout"><span class="exlabel" data-exlabel>실행 결과</span><pre data-exout>1) 모델의 부탁  : get_weather {&#x27;city&#x27;: &#x27;부산&#x27;}
+2) 하네스 실행  : 흐림 21°C
+3) 다음 요청에 실릴 배열:
+[0] user      &quot;부산 날씨 어때?&quot;
+[1] assistant text &quot;날씨를 확인해 볼게요.&quot;
+              tool_use[toolu_01] get_weather({&quot;city&quot;: &quot;부산&quot;})
+[2] user      tool_result[toolu_01] &quot;흐림 21°C&quot;
+</pre></div>
+  <p class="try">💡 바꿔 보기: 도시를 "제주"로 바꾸면 어떤 결과가 돌아가나요? 에러도 문자열로 돌아가는 걸 확인하세요.</p>
+</article>
+<article class="example" data-ex="1">
+  <h3><span class="exn">예제 2</span> 에러도 '관찰'이다</h3>
+  <div class="exprose"><p>도구가 실패해도 하네스는 죽으면 안 됩니다. 실패 내용을 문자열로 돌려주면 모델이 읽고 "경로를 고쳐서 다시 읽어볼게요" 하고 스스로 복구합니다.</p></div>
+  <pre class="code" data-excode><code class="language-python">import solution as lab
+
+calls = [
+    (&quot;run_command&quot;, {&quot;command&quot;: &quot;echo 안녕 하네스&quot;}),
+    (&quot;read_file&quot;, {&quot;path&quot;: &quot;없는파일.txt&quot;}),
+    (&quot;read_file&quot;, {&quot;wrong&quot;: &quot;인자 이름이 틀림&quot;}),
+    (&quot;fly_to_moon&quot;, {}),
+]
+for name, args in calls:
+    print(f&quot;{name:12} → {lab.execute_tool(name, args).strip()}&quot;)
+</code></pre>
+  <textarea class="editor small-editor" data-exedit hidden spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off"></textarea>
+  <div class="exbar">
+    <button class="btn small primary" data-exrun>▶ 실행</button>
+    <button class="btn small" data-exedit-toggle>✎ 고쳐 보기</button>
+    <button class="btn small" data-exreset hidden>되돌리기</button>
+    <span class="muted small" data-exstatus></span>
+  </div>
+  <div class="exout"><span class="exlabel" data-exlabel>실행 결과</span><pre data-exout>run_command  → 안녕 하네스
+read_file    → ERROR: FileNotFoundError: [Errno 2] No such file or directory: &#x27;없는파일.txt&#x27;
+read_file    → ERROR: TypeError: _read_file() got an unexpected keyword argument &#x27;wrong&#x27;
+fly_to_moon  → ERROR: unknown tool fly_to_moon
+</pre></div>
+  <p class="try">💡 바꿔 보기: <code>read_file</code> 경로를 <code>README.md</code> 로 바꿔 성공 결과를 보세요.</p>
+</article>
+<article class="example" data-ex="2">
+  <h3><span class="exn">예제 3</span> 왜 도구 한 번으론 부족할까?</h3>
+  <div class="exprose"><p>Lab 2 의 <code>ask_with_tools</code> 는 도구를 <strong>딱 한 번만</strong> 실행합니다. 그런데 모델은 "목록을 보고 → 파일을 읽고 → 답하기"처럼 여러 번 필요할 때가 많습니다. 두 번째 부탁은 실행되지 못하고 버려집니다. 이걸 고치는 게 Lab 3 의 에이전트 루프입니다.</p></div>
+  <pre class="code" data-excode><code class="language-python">import solution as lab
+from common.brain import ScriptedBrain, reply, text, tool_use
+
+brain = ScriptedBrain([
+    reply(text(&quot;먼저 목록을 볼게요.&quot;),
+          tool_use(&quot;run_command&quot;, {&quot;command&quot;: &quot;ls data/procurement/docs&quot;}, id=&quot;toolu_a&quot;)),
+    reply(text(&quot;이제 대금지급 규정을 읽어야겠어요.&quot;),
+          tool_use(&quot;read_file&quot;, {&quot;path&quot;: &quot;data/procurement/docs/06_대금지급_규정.md&quot;}, id=&quot;toolu_b&quot;)),
+])
+messages = []
+answer = lab.ask_with_tools(brain, messages, &quot;어음으로 지급해도 돼?&quot;)
+print(&quot;사용자가 받은 답:&quot;, answer)
+print(&quot;마지막 응답의 stop_reason:&quot;, &quot;tool_use&quot;, &quot;← 아직 도구를 원하는데 대화가 끝나버림&quot;)
+print(&quot;⚠️ toolu_b (파일 읽기)는 실행되지 않았습니다.&quot;)
+</code></pre>
+  <textarea class="editor small-editor" data-exedit hidden spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off"></textarea>
+  <div class="exbar">
+    <button class="btn small primary" data-exrun>▶ 실행</button>
+    <button class="btn small" data-exedit-toggle>✎ 고쳐 보기</button>
+    <button class="btn small" data-exreset hidden>되돌리기</button>
+    <span class="muted small" data-exstatus></span>
+  </div>
+  <div class="exout"><span class="exlabel" data-exlabel>실행 결과</span><pre data-exout>사용자가 받은 답: 이제 대금지급 규정을 읽어야겠어요.
+마지막 응답의 stop_reason: tool_use ← 아직 도구를 원하는데 대화가 끝나버림
+⚠️ toolu_b (파일 읽기)는 실행되지 않았습니다.
+</pre></div>
+  
+</article>
+  </section>
   <section class="card" id="quiz">
-    <h2><span class="step">2</span> 확인 퀴즈</h2>
+    <h2><span class="step">3</span> 확인 퀴즈</h2>
     <div class="quiz" data-answer="1" data-q="0">
   <p class="q"><span class="qn">Q1</span> tool_result 블록이 반드시 가져야 하는 것은?</p>
   <div class="opts"><button class="opt" data-i="0">도구 이름</button><button class="opt" data-i="1">대응하는 tool_use 블록의 id</button><button class="opt" data-i="2">실행 시간</button><button class="opt" data-i="3">모델 이름</button></div>
@@ -55,7 +174,7 @@
 </div>
   </section>
   <section class="card practice" id="practice">
-  <h2><span class="step">3</span> 실습: <code>exercise.py</code> 채우기</h2>
+  <h2><span class="step">4</span> 실습: <code>exercise.py</code> 채우기</h2>
   <p class="muted small">TODO 표시 부분을 채우고 채점하세요. 입력 내용은 이 기기에 자동 저장됩니다.</p>
   <div class="toolbar">
     <button class="btn small" data-act="todo">TODO 찾기</button>
@@ -168,7 +287,7 @@ if __name__ == &quot;__main__&quot;:
   <div class="results" data-results></div>
 </section>
   <section class="card" id="answer">
-    <h2><span class="step">4</span> 정답과 테스트</h2>
+    <h2><span class="step">5</span> 정답과 테스트</h2>
     <details><summary>정답 코드 보기 (<code>solution.py</code>)</summary><pre class="code"><code class="language-python">#!/usr/bin/env python3
 &quot;&quot;&quot;Lab 2 — 도구 = JSON 스키마 + 함수 디스패치.
 
@@ -344,9 +463,14 @@ if __name__ == &quot;__main__&quot;:
 </code></pre></details>
     <label class="donebox"><input type="checkbox" data-done> 이 랩을 완료로 표시</label>
   </section>
+  <section class="card" id="reading">
+    <h2>📚 더 읽을거리</h2>
+    <ul class="reading"><li><a href="https://isuruwijesiri.com/harness-engineering-101/" target="_blank" rel="noopener">Harness Engineering 101</a> <span class="muted small">· Isuru Wijesiri</span><br><span class="small">이 워크북의 뼈대가 된 온라인 책. 장마다 ‘무엇이 깨지나 → 패치 → 비용’ 구조로 300줄짜리 하네스를 키워 갑니다.</span></li><li><a href="https://microsoft.github.io/ai-agents-for-beginners/translations/ko/" target="_blank" rel="noopener">🇰🇷 AI Agents for Beginners (한국어 번역)</a> <span class="muted small">· Microsoft</span><br><span class="small">에이전트 개념을 강의 단위로 차근차근. 도구 사용·계획·다중 에이전트 패턴을 한국어로 훑기 좋습니다.</span></li><li><a href="https://ampcode.com/how-to-build-an-agent" target="_blank" rel="noopener">How to Build an Agent</a> <span class="muted small">· Thorsten Ball (Amp)</span><br><span class="small">“비밀은 없다: LLM + 루프 + 도구 몇 개”. read_file·list_files·edit_file 세 도구로 코딩 에이전트를 만드는 과정을 따라갑니다. Lab 3 예제 3의 원형.</span></li><li><a href="https://huggingface.co/learn/agents-course/en/unit1/agent-steps-and-structure" target="_blank" rel="noopener">Hugging Face Agents Course — Thought·Action·Observation</a> <span class="muted small">· Hugging Face</span><br><span class="small">날씨 비서 예제로 생각→행동→관찰 순환을 설명합니다. Lab 2·3 예제의 날씨 도구가 여기서 왔습니다.</span></li><li><a href="https://www.anthropic.com/engineering/writing-tools-for-agents" target="_blank" rel="noopener">Writing effective tools for agents</a> <span class="muted small">· Anthropic</span><br><span class="small">도구 이름·설명·응답 형식을 어떻게 써야 모델이 잘 쓰는지. ‘도구 설명이 곧 프롬프트’라는 Lab 2의 메시지를 깊게 다룹니다.</span></li></ul>
+    <p class="small"><a href="../resources.html">교재 전체 목록 →</a></p>
+  </section>
   <nav class="pager"><a href="01_array.html">← 01 대화 = 배열</a><a class="next" href="03_agent_loop.html">03 에이전트 루프 →</a></nav>
 </main>
-<script type="application/json" id="lab-data">{"id": "02_tools", "exercise": "#!/usr/bin/env python3\n\"\"\"[연습] Lab 2 — 도구 = JSON 스키마 + 함수 디스패치.\n\n두뇌는 세상을 만질 수 없습니다. 할 수 있는 건 \"이 도구를 이 인자로 불러줘\"라는\ntool_use 블록을 '쓰는' 것뿐. 실제 실행은 하네스(몸)가 합니다.\n\n실행:  python labs/02_tools/solution.py      (FakeBrain에서 'read README.md' 입력해보기)\n\"\"\"\nimport os\nimport subprocess\nimport sys\n\nsys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), \"..\", \"..\")))\nfrom common.brain import get_brain  # noqa: E402\n\nSYSTEM = \"너는 도구를 쓸 수 있는 조수다. 필요하면 도구를 호출하라.\"\n\nTOOLS = [\n    {\"name\": \"read_file\",\n     \"description\": \"텍스트 파일을 읽어 내용을 반환한다.\",\n     \"input_schema\": {\"type\": \"object\",\n                      \"properties\": {\"path\": {\"type\": \"string\"}},\n                      \"required\": [\"path\"]}},\n    {\"name\": \"run_command\",\n     \"description\": \"셸 명령을 실행하고 stdout+stderr를 반환한다.\",\n     \"input_schema\": {\"type\": \"object\",\n                      \"properties\": {\"command\": {\"type\": \"string\"}},\n                      \"required\": [\"command\"]}},\n]\n\n# TODO(1): write_file 도구 스키마를 TOOLS 에 추가하세요 (path, content 둘 다 필수 문자열)\n\n\ndef _read_file(path):\n    with open(path, encoding=\"utf-8\") as f:\n        return f.read()\n\n\ndef _write_file(path, content):\n    with open(path, \"w\", encoding=\"utf-8\") as f:\n        f.write(content)\n    return f\"wrote {len(content)} chars to {path}\"\n\n\ndef _run_command(command):\n    out = subprocess.run(command, shell=True, capture_output=True, text=True, timeout=120)\n    return (out.stdout + out.stderr) or \"(no output)\"\n\n\nHANDLERS = {\"read_file\": _read_file, \"write_file\": _write_file,\n            \"run_command\": _run_command}\n\n\ndef execute_tool(name, args):\n    \"\"\"디스패치. 규칙:\n    - 모르는 도구  → \"ERROR: unknown tool <name>\"\n    - 실행 중 예외 → 예외를 던지지 말고 \"ERROR: ...\" 로 시작하는 문자열 반환\n    \"\"\"\n    # TODO(2): HANDLERS 로 디스패치하고, 위 규칙대로 에러를 문자열로 바꾸세요\n    raise NotImplementedError(\"02_tools TODO(2)\")\n\n\ndef tool_results_for(response):\n    \"\"\"응답 속 '모든' tool_use 블록을 실행해서 tool_result 블록 리스트를 만든다.\n    각 결과의 tool_use_id 는 해당 tool_use 블록의 id 와 같아야 한다.\"\"\"\n    # TODO(3): {\"type\": \"tool_result\", \"tool_use_id\": ..., \"content\": ...} 리스트를 반환하세요\n    raise NotImplementedError(\"02_tools TODO(3)\")\n\n\ndef ask_with_tools(brain, messages, user_text):\n    \"\"\"도구를 '딱 한 번만' 허용하는 버전. 첫 응답이 도구를 원하면 실행하고\n    결과를 user 메시지로 붙여 한 번 더 호출한다. → 왜 이걸로 부족한지가 Lab 3의 출발점.\"\"\"\n    messages.append({\"role\": \"user\", \"content\": user_text})\n    request = {\"system\": SYSTEM, \"messages\": messages, \"tools\": TOOLS}\n    response = brain(request)\n    messages.append({\"role\": \"assistant\", \"content\": response[\"content\"]})\n    if response[\"stop_reason\"] == \"tool_use\":\n        messages.append({\"role\": \"user\", \"content\": tool_results_for(response)})\n        response = brain(request)\n        messages.append({\"role\": \"assistant\", \"content\": response[\"content\"]})\n    return \"\".join(b[\"text\"] for b in response[\"content\"] if b[\"type\"] == \"text\")\n\n\ndef main():\n    brain, messages = get_brain(), []\n    while True:\n        try:\n            user_text = input(\"\\nyou> \").strip()\n        except EOFError:\n            break\n        if user_text in (\"/quit\", \"\"):\n            break\n        print(f\"\\nassistant> {ask_with_tools(brain, messages, user_text)}\")\n\n\nif __name__ == \"__main__\":\n    main()\n", "pyodide": "https://cdn.jsdelivr.net/npm/pyodide@0.29.5/", "labs": [{"id": "01_array", "n": 1, "title": "대화는 그냥 JSON 배열이다", "short": "대화 = 배열", "minutes": 20}, {"id": "02_tools", "n": 2, "title": "도구 = JSON 스키마 + 함수 디스패치", "short": "도구", "minutes": 25}, {"id": "03_agent_loop", "n": 3, "title": "에이전트 루프", "short": "에이전트 루프", "minutes": 25}, {"id": "04_context_budget", "n": 4, "title": "컨텍스트는 예산, 캐싱은 순서", "short": "예산과 캐싱", "minutes": 30}, {"id": "05_subagents", "n": 5, "title": "서브에이전트 = 컨텍스트 포크", "short": "서브에이전트", "minutes": 20}, {"id": "06_steering", "n": 6, "title": "돌고 있는 루프 조종하기", "short": "조종", "minutes": 25}, {"id": "07_guardrails", "n": 7, "title": "반사신경과 가드레일", "short": "가드레일", "minutes": 25}, {"id": "08_debugging", "n": 8, "title": "배열 디버깅", "short": "디버깅", "minutes": 20}, {"id": "09_rag", "n": 9, "title": "RAG는 원래 하네스 패턴이었다", "short": "RAG", "minutes": 35}, {"id": "10_ontology", "n": 10, "title": "온톨로지: 에이전트에게 도메인 지도 입히기", "short": "온톨로지", "minutes": 40}, {"id": "11_capstone", "n": 11, "title": "캡스톤: 미니 하네스", "short": "캡스톤", "minutes": 30}]}</script>
+<script type="application/json" id="lab-data">{"id": "02_tools", "exercise": "#!/usr/bin/env python3\n\"\"\"[연습] Lab 2 — 도구 = JSON 스키마 + 함수 디스패치.\n\n두뇌는 세상을 만질 수 없습니다. 할 수 있는 건 \"이 도구를 이 인자로 불러줘\"라는\ntool_use 블록을 '쓰는' 것뿐. 실제 실행은 하네스(몸)가 합니다.\n\n실행:  python labs/02_tools/solution.py      (FakeBrain에서 'read README.md' 입력해보기)\n\"\"\"\nimport os\nimport subprocess\nimport sys\n\nsys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), \"..\", \"..\")))\nfrom common.brain import get_brain  # noqa: E402\n\nSYSTEM = \"너는 도구를 쓸 수 있는 조수다. 필요하면 도구를 호출하라.\"\n\nTOOLS = [\n    {\"name\": \"read_file\",\n     \"description\": \"텍스트 파일을 읽어 내용을 반환한다.\",\n     \"input_schema\": {\"type\": \"object\",\n                      \"properties\": {\"path\": {\"type\": \"string\"}},\n                      \"required\": [\"path\"]}},\n    {\"name\": \"run_command\",\n     \"description\": \"셸 명령을 실행하고 stdout+stderr를 반환한다.\",\n     \"input_schema\": {\"type\": \"object\",\n                      \"properties\": {\"command\": {\"type\": \"string\"}},\n                      \"required\": [\"command\"]}},\n]\n\n# TODO(1): write_file 도구 스키마를 TOOLS 에 추가하세요 (path, content 둘 다 필수 문자열)\n\n\ndef _read_file(path):\n    with open(path, encoding=\"utf-8\") as f:\n        return f.read()\n\n\ndef _write_file(path, content):\n    with open(path, \"w\", encoding=\"utf-8\") as f:\n        f.write(content)\n    return f\"wrote {len(content)} chars to {path}\"\n\n\ndef _run_command(command):\n    out = subprocess.run(command, shell=True, capture_output=True, text=True, timeout=120)\n    return (out.stdout + out.stderr) or \"(no output)\"\n\n\nHANDLERS = {\"read_file\": _read_file, \"write_file\": _write_file,\n            \"run_command\": _run_command}\n\n\ndef execute_tool(name, args):\n    \"\"\"디스패치. 규칙:\n    - 모르는 도구  → \"ERROR: unknown tool <name>\"\n    - 실행 중 예외 → 예외를 던지지 말고 \"ERROR: ...\" 로 시작하는 문자열 반환\n    \"\"\"\n    # TODO(2): HANDLERS 로 디스패치하고, 위 규칙대로 에러를 문자열로 바꾸세요\n    raise NotImplementedError(\"02_tools TODO(2)\")\n\n\ndef tool_results_for(response):\n    \"\"\"응답 속 '모든' tool_use 블록을 실행해서 tool_result 블록 리스트를 만든다.\n    각 결과의 tool_use_id 는 해당 tool_use 블록의 id 와 같아야 한다.\"\"\"\n    # TODO(3): {\"type\": \"tool_result\", \"tool_use_id\": ..., \"content\": ...} 리스트를 반환하세요\n    raise NotImplementedError(\"02_tools TODO(3)\")\n\n\ndef ask_with_tools(brain, messages, user_text):\n    \"\"\"도구를 '딱 한 번만' 허용하는 버전. 첫 응답이 도구를 원하면 실행하고\n    결과를 user 메시지로 붙여 한 번 더 호출한다. → 왜 이걸로 부족한지가 Lab 3의 출발점.\"\"\"\n    messages.append({\"role\": \"user\", \"content\": user_text})\n    request = {\"system\": SYSTEM, \"messages\": messages, \"tools\": TOOLS}\n    response = brain(request)\n    messages.append({\"role\": \"assistant\", \"content\": response[\"content\"]})\n    if response[\"stop_reason\"] == \"tool_use\":\n        messages.append({\"role\": \"user\", \"content\": tool_results_for(response)})\n        response = brain(request)\n        messages.append({\"role\": \"assistant\", \"content\": response[\"content\"]})\n    return \"\".join(b[\"text\"] for b in response[\"content\"] if b[\"type\"] == \"text\")\n\n\ndef main():\n    brain, messages = get_brain(), []\n    while True:\n        try:\n            user_text = input(\"\\nyou> \").strip()\n        except EOFError:\n            break\n        if user_text in (\"/quit\", \"\"):\n            break\n        print(f\"\\nassistant> {ask_with_tools(brain, messages, user_text)}\")\n\n\nif __name__ == \"__main__\":\n    main()\n", "examples": ["from common.brain import reply, text, tool_use\nfrom common.show import show\n\nWEATHER = {\"서울\": \"맑음 18°C\", \"부산\": \"흐림 21°C\"}       # 가짜 날씨 서버\nweather_tool = {                                          # ① 모델에게 보여줄 스키마\n    \"name\": \"get_weather\",\n    \"description\": \"도시의 현재 날씨를 알려준다.\",\n    \"input_schema\": {\"type\": \"object\",\n                     \"properties\": {\"city\": {\"type\": \"string\"}},\n                     \"required\": [\"city\"]},\n}\n\n\ndef get_weather(city):                                    # ② 하네스가 실행할 함수\n    return WEATHER.get(city, f\"ERROR: '{city}' 날씨 정보가 없습니다\")\n\n\n# 모델이 '쓴' 응답 — 직접 실행하지 못하고 부탁만 한다\nresponse = reply(text(\"날씨를 확인해 볼게요.\"),\n                 tool_use(\"get_weather\", {\"city\": \"부산\"}, id=\"toolu_01\"))\ncall = response[\"content\"][1]\nprint(\"1) 모델의 부탁  :\", call[\"name\"], call[\"input\"])\n\nresult = get_weather(**call[\"input\"])                     # 하네스가 실제로 실행\nprint(\"2) 하네스 실행  :\", result)\n\nmessages = [                                              # 같은 id 로 결과를 돌려준다\n    {\"role\": \"user\", \"content\": \"부산 날씨 어때?\"},\n    {\"role\": \"assistant\", \"content\": response[\"content\"]},\n    {\"role\": \"user\", \"content\": [{\"type\": \"tool_result\",\n                                  \"tool_use_id\": call[\"id\"], \"content\": result}]},\n]\nprint(\"3) 다음 요청에 실릴 배열:\")\nshow(messages)\n", "import solution as lab\n\ncalls = [\n    (\"run_command\", {\"command\": \"echo 안녕 하네스\"}),\n    (\"read_file\", {\"path\": \"없는파일.txt\"}),\n    (\"read_file\", {\"wrong\": \"인자 이름이 틀림\"}),\n    (\"fly_to_moon\", {}),\n]\nfor name, args in calls:\n    print(f\"{name:12} → {lab.execute_tool(name, args).strip()}\")\n", "import solution as lab\nfrom common.brain import ScriptedBrain, reply, text, tool_use\n\nbrain = ScriptedBrain([\n    reply(text(\"먼저 목록을 볼게요.\"),\n          tool_use(\"run_command\", {\"command\": \"ls data/procurement/docs\"}, id=\"toolu_a\")),\n    reply(text(\"이제 대금지급 규정을 읽어야겠어요.\"),\n          tool_use(\"read_file\", {\"path\": \"data/procurement/docs/06_대금지급_규정.md\"}, id=\"toolu_b\")),\n])\nmessages = []\nanswer = lab.ask_with_tools(brain, messages, \"어음으로 지급해도 돼?\")\nprint(\"사용자가 받은 답:\", answer)\nprint(\"마지막 응답의 stop_reason:\", \"tool_use\", \"← 아직 도구를 원하는데 대화가 끝나버림\")\nprint(\"⚠️ toolu_b (파일 읽기)는 실행되지 않았습니다.\")\n"], "pyodide": "https://cdn.jsdelivr.net/npm/pyodide@0.29.5/", "labs": [{"id": "01_array", "n": 1, "title": "대화는 그냥 JSON 배열이다", "short": "대화 = 배열", "minutes": 20}, {"id": "02_tools", "n": 2, "title": "도구 = JSON 스키마 + 함수 디스패치", "short": "도구", "minutes": 25}, {"id": "03_agent_loop", "n": 3, "title": "에이전트 루프", "short": "에이전트 루프", "minutes": 25}, {"id": "04_context_budget", "n": 4, "title": "컨텍스트는 예산, 캐싱은 순서", "short": "예산과 캐싱", "minutes": 30}, {"id": "05_subagents", "n": 5, "title": "서브에이전트 = 컨텍스트 포크", "short": "서브에이전트", "minutes": 20}, {"id": "06_steering", "n": 6, "title": "돌고 있는 루프 조종하기", "short": "조종", "minutes": 25}, {"id": "07_guardrails", "n": 7, "title": "반사신경과 가드레일", "short": "가드레일", "minutes": 25}, {"id": "08_debugging", "n": 8, "title": "배열 디버깅", "short": "디버깅", "minutes": 20}, {"id": "09_rag", "n": 9, "title": "RAG는 원래 하네스 패턴이었다", "short": "RAG", "minutes": 35}, {"id": "10_ontology", "n": 10, "title": "온톨로지: 에이전트에게 도메인 지도 입히기", "short": "온톨로지", "minutes": 40}, {"id": "11_capstone", "n": 11, "title": "캡스톤: 미니 하네스", "short": "캡스톤", "minutes": 30}]}</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <script src="../assets/app.js"></script>
 </body>

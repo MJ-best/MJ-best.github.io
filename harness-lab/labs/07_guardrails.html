@@ -18,6 +18,7 @@
 <header class="topbar">
   <a class="brand" href="../index.html"><span class="logo">⟲</span> 하네스 워크북</a>
   <span class="crumb">Lab 07</span>
+  <a class="toplink" href="../resources.html">교재</a>
   <span class="progress-pill" data-progress-pill title="완료한 랩">0/11</span>
 </header>
 <main class="wrap" data-lab="07_guardrails" data-has-exercise="true">
@@ -25,7 +26,7 @@
     <p class="eyebrow">Lab 07 · 약 25분</p>
     <h1>반사신경과 가드레일</h1>
     <ul class="points"><li>프롬프트의 &#x27;조심해&#x27;는 부탁, 하네스 코드는 규칙.</li><li>보호 경로, 읽고 나서 쓰기, 위험 명령 승인 게이트.</li><li>거부는 BLOCKED: 이유 문자열로 돌려줘서 모델이 다른 길을 찾게 한다.</li></ul>
-    <nav class="jump"><a href="#concept">개념</a><a href="#quiz">퀴즈</a><a href="#practice">실습</a><a href="#answer">정답</a></nav>
+    <nav class="jump"><a href="#concept">개념</a><a href="#examples">예제</a><a href="#quiz">퀴즈</a><a href="#practice">실습</a><a href="#answer">정답</a></nav>
   </section>
   <section class="card prose" id="concept">
     <h2><span class="step">1</span> 개념</h2>
@@ -42,8 +43,97 @@
 <h3>생각해볼 것</h3>
 <ul><li><code>DANGEROUS</code> 패턴을 우회하는 명령을 떠올려 보세요. 무엇으로 보완할까요?</li><li>부록 C(플랜 모드)는 이 아이디어를 '상태'로 확장합니다.</li></ul>
   </section>
+  <section class="card" id="examples">
+    <h2><span class="step">2</span> 따라 해보기</h2>
+    <p class="muted small">비유 → 짧은 코드 → 실제 출력. 아래 출력은 미리 실행해 둔 결과이고, <b>▶ 실행</b>을 누르면 브라우저 안 파이썬으로 다시 돌립니다(첫 실행 때 약 10MB 내려받음).</p>
+    <article class="example" data-ex="0">
+  <h3><span class="exn">예제 1</span> 확신에 찬 사고 3종 세트</h3>
+  <div class="exprose"><p>모델은 악의가 없어도 "설정 정리할게요" 하며 <code>.env</code> 를 덮어쓰거나, 읽지도 않은 파일을 추측으로 통째로 다시 씁니다. 프롬프트의 "조심해"는 부탁이지만, 가드레일은 <strong>코드로 된 규칙</strong>입니다.</p></div>
+  <pre class="code" data-excode><code class="language-python">import os
+import tempfile
+import solution as lab
+
+os.chdir(tempfile.mkdtemp())
+open(&quot;발주목록.csv&quot;, &quot;w&quot;).write(&quot;PO-001,볼트,100\nPO-002,너트,200\n&quot;)
+
+guard = lab.Guard(approve=lambda cmd: print(f&quot;   🙋 사람에게 확인 요청: {cmd} → 거절&quot;) or False)
+run = guard.executor()
+attempts = [
+    (&quot;write_file&quot;, {&quot;path&quot;: &quot;.env&quot;, &quot;content&quot;: &quot;API_KEY=&quot;}),
+    (&quot;write_file&quot;, {&quot;path&quot;: &quot;발주목록.csv&quot;, &quot;content&quot;: &quot;PO-001,볼트,100\n&quot;}),
+    (&quot;run_command&quot;, {&quot;command&quot;: &quot;rm -rf ./*&quot;}),
+]
+for name, args in attempts:
+    print(f&quot;{name}({list(args.values())[0]}) → {run(name, args)}&quot;)
+
+print(&quot;\n발주목록.csv 는 무사합니다:&quot;, open(&quot;발주목록.csv&quot;).read().count(&quot;\n&quot;), &quot;줄&quot;)
+</code></pre>
+  <textarea class="editor small-editor" data-exedit hidden spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off"></textarea>
+  <div class="exbar">
+    <button class="btn small primary" data-exrun>▶ 실행</button>
+    <button class="btn small" data-exedit-toggle>✎ 고쳐 보기</button>
+    <button class="btn small" data-exreset hidden>되돌리기</button>
+    <span class="muted small" data-exstatus></span>
+  </div>
+  <div class="exout"><span class="exlabel" data-exlabel>실행 결과</span><pre data-exout>write_file(.env) → BLOCKED: .env 는 보호된 경로입니다.
+write_file(발주목록.csv) → BLOCKED: 발주목록.csv 는 이미 존재합니다. 덮어쓰기 전에 read_file 로 먼저 읽으세요.
+   🙋 사람에게 확인 요청: rm -rf ./* → 거절
+run_command(rm -rf ./*) → BLOCKED: 사용자가 위험한 명령 실행을 거부했습니다.
+
+발주목록.csv 는 무사합니다: 2 줄
+</pre></div>
+  <p class="try">💡 바꿔 보기: <code>approve=lambda c: True</code> 로 바꾸면 세 번째 명령은 통과합니다(실제로 지워지니 빈 폴더에서만!).</p>
+</article>
+<article class="example" data-ex="1">
+  <h3><span class="exn">예제 2</span> 거부 이유를 읽고 스스로 고치는 모델</h3>
+  <div class="exprose"><p>가드레일이 예외로 하네스를 멈추면 작업이 끝나 버립니다. 대신 <code>BLOCKED: 이유</code> 를 돌려주면, 모델이 읽고 <strong>올바른 순서(읽기 → 쓰기)</strong> 로 다시 시도합니다.</p></div>
+  <pre class="code" data-excode><code class="language-python">import os
+import tempfile
+import solution as lab
+from common.brain import ScriptedBrain, reply, text, tool_use
+from common.loop import run_loop
+from common.show import show
+
+os.chdir(tempfile.mkdtemp())
+open(&quot;단가표.txt&quot;, &quot;w&quot;).write(&quot;볼트 120원\n너트 80원\n&quot;)
+guard = lab.Guard(approve=lambda c: False)
+
+brain = ScriptedBrain([
+    reply(tool_use(&quot;write_file&quot;, {&quot;path&quot;: &quot;단가표.txt&quot;, &quot;content&quot;: &quot;볼트 130원\n&quot;}, id=&quot;w1&quot;)),
+    reply(text(&quot;먼저 읽어야 하는군요.&quot;), tool_use(&quot;read_file&quot;, {&quot;path&quot;: &quot;단가표.txt&quot;}, id=&quot;r1&quot;)),
+    reply(tool_use(&quot;write_file&quot;, {&quot;path&quot;: &quot;단가표.txt&quot;, &quot;content&quot;: &quot;볼트 130원\n너트 80원\n&quot;}, id=&quot;w2&quot;)),
+    reply(text(&quot;볼트 단가만 130원으로 고쳤습니다. 너트는 그대로입니다.&quot;)),
+])
+messages = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;볼트 단가 130원으로 올려줘&quot;}]
+print(run_loop(brain, messages, [], &quot;sys&quot;, execute=guard.executor()))
+show(messages)
+print(&quot;최종 파일:&quot;, open(&quot;단가표.txt&quot;).read().replace(&quot;\n&quot;, &quot; / &quot;))
+</code></pre>
+  <textarea class="editor small-editor" data-exedit hidden spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off"></textarea>
+  <div class="exbar">
+    <button class="btn small primary" data-exrun>▶ 실행</button>
+    <button class="btn small" data-exedit-toggle>✎ 고쳐 보기</button>
+    <button class="btn small" data-exreset hidden>되돌리기</button>
+    <span class="muted small" data-exstatus></span>
+  </div>
+  <div class="exout"><span class="exlabel" data-exlabel>실행 결과</span><pre data-exout>볼트 단가만 130원으로 고쳤습니다. 너트는 그대로입니다.
+[0] user      &quot;볼트 단가 130원으로 올려줘&quot;
+[1] assistant tool_use[w1] write_file({&quot;path&quot;: &quot;단가표.txt&quot;, &quot;content&quot;: &quot;볼트 130원\n&quot;})
+[2] user      tool_result[w1] &quot;BLOCKED: 단가표.txt 는 이미 존재합니다. 덮어쓰기 전에 re…&quot;
+[3] assistant text &quot;먼저 읽어야 하는군요.&quot;
+              tool_use[r1] read_file({&quot;path&quot;: &quot;단가표.txt&quot;})
+[4] user      tool_result[r1] &quot;볼트 120원⏎너트 80원⏎&quot;
+[5] assistant tool_use[w2] write_file({&quot;path&quot;: &quot;단가표.txt&quot;, &quot;content&quot;: &quot;볼트 130원\n너트…)
+[6] user      tool_result[w2] &quot;wrote 15 chars to 단가표.txt&quot;
+[7] assistant text &quot;볼트 단가만 130원으로 고쳤습니다. 너트는 그대로입니다.&quot;
+
+최종 파일: 볼트 130원 / 너트 80원 /
+</pre></div>
+  
+</article>
+  </section>
   <section class="card" id="quiz">
-    <h2><span class="step">2</span> 확인 퀴즈</h2>
+    <h2><span class="step">3</span> 확인 퀴즈</h2>
     <div class="quiz" data-answer="1" data-q="0">
   <p class="q"><span class="qn">Q1</span> &#x27;읽지 않은 기존 파일 덮어쓰기 금지&#x27; 규칙이 막는 사고는?</p>
   <div class="opts"><button class="opt" data-i="0">디스크 부족</button><button class="opt" data-i="1">모델이 내용을 모른 채 파일을 통째로 날리는 것</button><button class="opt" data-i="2">네트워크 오류</button></div>
@@ -55,7 +145,7 @@
 </div>
   </section>
   <section class="card practice" id="practice">
-  <h2><span class="step">3</span> 실습: <code>exercise.py</code> 채우기</h2>
+  <h2><span class="step">4</span> 실습: <code>exercise.py</code> 채우기</h2>
   <p class="muted small">TODO 표시 부분을 채우고 채점하세요. 입력 내용은 이 기기에 자동 저장됩니다.</p>
   <div class="toolbar">
     <button class="btn small" data-act="todo">TODO 찾기</button>
@@ -131,7 +221,7 @@ if __name__ == &quot;__main__&quot;:
   <div class="results" data-results></div>
 </section>
   <section class="card" id="answer">
-    <h2><span class="step">4</span> 정답과 테스트</h2>
+    <h2><span class="step">5</span> 정답과 테스트</h2>
     <details><summary>정답 코드 보기 (<code>solution.py</code>)</summary><pre class="code"><code class="language-python">#!/usr/bin/env python3
 &quot;&quot;&quot;Lab 7 — 반사신경과 가드레일: 루프는 언젠가 멍청한 짓을 한다.
 
@@ -268,9 +358,14 @@ if __name__ == &quot;__main__&quot;:
 </code></pre></details>
     <label class="donebox"><input type="checkbox" data-done> 이 랩을 완료로 표시</label>
   </section>
+  <section class="card" id="reading">
+    <h2>📚 더 읽을거리</h2>
+    <ul class="reading"><li><a href="https://isuruwijesiri.com/harness-engineering-101/" target="_blank" rel="noopener">Harness Engineering 101</a> <span class="muted small">· Isuru Wijesiri</span><br><span class="small">이 워크북의 뼈대가 된 온라인 책. 장마다 ‘무엇이 깨지나 → 패치 → 비용’ 구조로 300줄짜리 하네스를 키워 갑니다.</span></li><li><a href="https://github.com/humanlayer/12-factor-agents" target="_blank" rel="noopener">12-Factor Agents</a> <span class="muted small">· HumanLayer</span><br><span class="small">프로덕션 에이전트 설계 원칙 12가지. ‘컨텍스트 창을 직접 소유하라’, ‘사람에게 묻는 것도 도구다’ 같은 원칙이 Lab 6·7과 맞닿아 있습니다.</span></li><li><a href="https://www.anthropic.com/engineering/writing-tools-for-agents" target="_blank" rel="noopener">Writing effective tools for agents</a> <span class="muted small">· Anthropic</span><br><span class="small">도구 이름·설명·응답 형식을 어떻게 써야 모델이 잘 쓰는지. ‘도구 설명이 곧 프롬프트’라는 Lab 2의 메시지를 깊게 다룹니다.</span></li><li><a href="https://openai.com/index/harness-engineering/" target="_blank" rel="noopener">Harness engineering: leveraging Codex in an agent-first world</a> <span class="muted small">· Ryan Lopopolo, OpenAI (2026)</span><br><span class="small">에이전트로 약 100만 줄의 제품을 만든 팀의 기록. AGENTS.md는 ‘지도’로 짧게, 규칙은 린터로 기계적으로 강제, 로그·지표를 에이전트에게 열어 주는 피드백 루프.</span></li></ul>
+    <p class="small"><a href="../resources.html">교재 전체 목록 →</a></p>
+  </section>
   <nav class="pager"><a href="06_steering.html">← 06 조종</a><a class="next" href="08_debugging.html">08 디버깅 →</a></nav>
 </main>
-<script type="application/json" id="lab-data">{"id": "07_guardrails", "exercise": "#!/usr/bin/env python3\n\"\"\"[연습] Lab 7 — 반사신경과 가드레일: 루프는 언젠가 멍청한 짓을 한다.\n\n프롬프트에 \"조심해\"라고 쓰는 건 부탁일 뿐입니다. 가드레일은 하네스 코드 안의 '규칙'이라\n모델이 아무리 확신해도 통과할 수 없습니다. 거부할 땐 예외 대신 이유를 문자열로 돌려줘서\n모델이 읽고 다른 길을 찾게 합니다.\n  1. 보호 경로   : .env, .git/, .ssh/ 등에는 쓰기 금지\n  2. 읽고 나서 쓰기: 이미 있는 파일을 이번 세션에 읽지 않고 덮어쓰기 금지\n  3. 승인 게이트 : 위험한 명령은 사람에게 물어보고 실행\n\"\"\"\nimport os\nimport re\nimport sys\n\nsys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), \"..\", \"..\")))\nfrom common.toolbox import execute_tool  # noqa: E402\n\nPROTECTED = (\".env\", \".git/\", \".ssh/\", \"id_rsa\")\nDANGEROUS = [r\"\\brm\\s+-[a-zA-Z]*r[a-zA-Z]*f\", r\"\\brm\\s+-[a-zA-Z]*f[a-zA-Z]*r\",\n             r\"git\\s+push\\s+.*--force\", r\"curl[^|]*\\|\\s*(ba)?sh\", r\"\\bmkfs\\b\",\n             r\"\\bdd\\s+if=\"]\n\n\ndef is_protected(path):\n    p = path.replace(\"\\\\\", \"/\")\n    return any(mark in p for mark in PROTECTED)\n\n\ndef is_dangerous(command):\n    return any(re.search(pat, command) for pat in DANGEROUS)\n\n\nclass Guard:\n    def __init__(self, approve=None):\n        \"\"\"approve(command) -> bool : 사람에게 묻는 함수. 기본은 터미널 입력.\"\"\"\n        self.approve = approve or (lambda cmd: input(f\"\\n⚠️  실행할까요? {cmd} [y/N] \").lower() == \"y\")\n        self.read_paths = set()\n\n    def check(self, name, args):\n        \"\"\"허용이면 None, 거부면 \"BLOCKED: <이유>\" 문자열을 반환.\"\"\"\n        # TODO(1): 세 규칙을 구현하세요\n        raise NotImplementedError(\"07_guardrails TODO(1)\")\n\n    def executor(self, base_execute=execute_tool):\n        def execute(name, args):\n            verdict = self.check(name, args)\n            if verdict:\n                return verdict\n            result = base_execute(name, args)\n            if name == \"read_file\" and not str(result).startswith(\"ERROR\"):\n                self.read_paths.add(os.path.abspath(args[\"path\"]))\n            return result\n        return execute\n\n\nif __name__ == \"__main__\":\n    g = Guard(approve=lambda c: False)\n    ex = g.executor()\n    print(ex(\"write_file\", {\"path\": \".env\", \"content\": \"KEY=1\"}))\n    print(ex(\"run_command\", {\"command\": \"rm -rf /tmp/whatever\"}))\n", "pyodide": "https://cdn.jsdelivr.net/npm/pyodide@0.29.5/", "labs": [{"id": "01_array", "n": 1, "title": "대화는 그냥 JSON 배열이다", "short": "대화 = 배열", "minutes": 20}, {"id": "02_tools", "n": 2, "title": "도구 = JSON 스키마 + 함수 디스패치", "short": "도구", "minutes": 25}, {"id": "03_agent_loop", "n": 3, "title": "에이전트 루프", "short": "에이전트 루프", "minutes": 25}, {"id": "04_context_budget", "n": 4, "title": "컨텍스트는 예산, 캐싱은 순서", "short": "예산과 캐싱", "minutes": 30}, {"id": "05_subagents", "n": 5, "title": "서브에이전트 = 컨텍스트 포크", "short": "서브에이전트", "minutes": 20}, {"id": "06_steering", "n": 6, "title": "돌고 있는 루프 조종하기", "short": "조종", "minutes": 25}, {"id": "07_guardrails", "n": 7, "title": "반사신경과 가드레일", "short": "가드레일", "minutes": 25}, {"id": "08_debugging", "n": 8, "title": "배열 디버깅", "short": "디버깅", "minutes": 20}, {"id": "09_rag", "n": 9, "title": "RAG는 원래 하네스 패턴이었다", "short": "RAG", "minutes": 35}, {"id": "10_ontology", "n": 10, "title": "온톨로지: 에이전트에게 도메인 지도 입히기", "short": "온톨로지", "minutes": 40}, {"id": "11_capstone", "n": 11, "title": "캡스톤: 미니 하네스", "short": "캡스톤", "minutes": 30}]}</script>
+<script type="application/json" id="lab-data">{"id": "07_guardrails", "exercise": "#!/usr/bin/env python3\n\"\"\"[연습] Lab 7 — 반사신경과 가드레일: 루프는 언젠가 멍청한 짓을 한다.\n\n프롬프트에 \"조심해\"라고 쓰는 건 부탁일 뿐입니다. 가드레일은 하네스 코드 안의 '규칙'이라\n모델이 아무리 확신해도 통과할 수 없습니다. 거부할 땐 예외 대신 이유를 문자열로 돌려줘서\n모델이 읽고 다른 길을 찾게 합니다.\n  1. 보호 경로   : .env, .git/, .ssh/ 등에는 쓰기 금지\n  2. 읽고 나서 쓰기: 이미 있는 파일을 이번 세션에 읽지 않고 덮어쓰기 금지\n  3. 승인 게이트 : 위험한 명령은 사람에게 물어보고 실행\n\"\"\"\nimport os\nimport re\nimport sys\n\nsys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), \"..\", \"..\")))\nfrom common.toolbox import execute_tool  # noqa: E402\n\nPROTECTED = (\".env\", \".git/\", \".ssh/\", \"id_rsa\")\nDANGEROUS = [r\"\\brm\\s+-[a-zA-Z]*r[a-zA-Z]*f\", r\"\\brm\\s+-[a-zA-Z]*f[a-zA-Z]*r\",\n             r\"git\\s+push\\s+.*--force\", r\"curl[^|]*\\|\\s*(ba)?sh\", r\"\\bmkfs\\b\",\n             r\"\\bdd\\s+if=\"]\n\n\ndef is_protected(path):\n    p = path.replace(\"\\\\\", \"/\")\n    return any(mark in p for mark in PROTECTED)\n\n\ndef is_dangerous(command):\n    return any(re.search(pat, command) for pat in DANGEROUS)\n\n\nclass Guard:\n    def __init__(self, approve=None):\n        \"\"\"approve(command) -> bool : 사람에게 묻는 함수. 기본은 터미널 입력.\"\"\"\n        self.approve = approve or (lambda cmd: input(f\"\\n⚠️  실행할까요? {cmd} [y/N] \").lower() == \"y\")\n        self.read_paths = set()\n\n    def check(self, name, args):\n        \"\"\"허용이면 None, 거부면 \"BLOCKED: <이유>\" 문자열을 반환.\"\"\"\n        # TODO(1): 세 규칙을 구현하세요\n        raise NotImplementedError(\"07_guardrails TODO(1)\")\n\n    def executor(self, base_execute=execute_tool):\n        def execute(name, args):\n            verdict = self.check(name, args)\n            if verdict:\n                return verdict\n            result = base_execute(name, args)\n            if name == \"read_file\" and not str(result).startswith(\"ERROR\"):\n                self.read_paths.add(os.path.abspath(args[\"path\"]))\n            return result\n        return execute\n\n\nif __name__ == \"__main__\":\n    g = Guard(approve=lambda c: False)\n    ex = g.executor()\n    print(ex(\"write_file\", {\"path\": \".env\", \"content\": \"KEY=1\"}))\n    print(ex(\"run_command\", {\"command\": \"rm -rf /tmp/whatever\"}))\n", "examples": ["import os\nimport tempfile\nimport solution as lab\n\nos.chdir(tempfile.mkdtemp())\nopen(\"발주목록.csv\", \"w\").write(\"PO-001,볼트,100\\nPO-002,너트,200\\n\")\n\nguard = lab.Guard(approve=lambda cmd: print(f\"   🙋 사람에게 확인 요청: {cmd} → 거절\") or False)\nrun = guard.executor()\nattempts = [\n    (\"write_file\", {\"path\": \".env\", \"content\": \"API_KEY=\"}),\n    (\"write_file\", {\"path\": \"발주목록.csv\", \"content\": \"PO-001,볼트,100\\n\"}),\n    (\"run_command\", {\"command\": \"rm -rf ./*\"}),\n]\nfor name, args in attempts:\n    print(f\"{name}({list(args.values())[0]}) → {run(name, args)}\")\n\nprint(\"\\n발주목록.csv 는 무사합니다:\", open(\"발주목록.csv\").read().count(\"\\n\"), \"줄\")\n", "import os\nimport tempfile\nimport solution as lab\nfrom common.brain import ScriptedBrain, reply, text, tool_use\nfrom common.loop import run_loop\nfrom common.show import show\n\nos.chdir(tempfile.mkdtemp())\nopen(\"단가표.txt\", \"w\").write(\"볼트 120원\\n너트 80원\\n\")\nguard = lab.Guard(approve=lambda c: False)\n\nbrain = ScriptedBrain([\n    reply(tool_use(\"write_file\", {\"path\": \"단가표.txt\", \"content\": \"볼트 130원\\n\"}, id=\"w1\")),\n    reply(text(\"먼저 읽어야 하는군요.\"), tool_use(\"read_file\", {\"path\": \"단가표.txt\"}, id=\"r1\")),\n    reply(tool_use(\"write_file\", {\"path\": \"단가표.txt\", \"content\": \"볼트 130원\\n너트 80원\\n\"}, id=\"w2\")),\n    reply(text(\"볼트 단가만 130원으로 고쳤습니다. 너트는 그대로입니다.\")),\n])\nmessages = [{\"role\": \"user\", \"content\": \"볼트 단가 130원으로 올려줘\"}]\nprint(run_loop(brain, messages, [], \"sys\", execute=guard.executor()))\nshow(messages)\nprint(\"최종 파일:\", open(\"단가표.txt\").read().replace(\"\\n\", \" / \"))\n"], "pyodide": "https://cdn.jsdelivr.net/npm/pyodide@0.29.5/", "labs": [{"id": "01_array", "n": 1, "title": "대화는 그냥 JSON 배열이다", "short": "대화 = 배열", "minutes": 20}, {"id": "02_tools", "n": 2, "title": "도구 = JSON 스키마 + 함수 디스패치", "short": "도구", "minutes": 25}, {"id": "03_agent_loop", "n": 3, "title": "에이전트 루프", "short": "에이전트 루프", "minutes": 25}, {"id": "04_context_budget", "n": 4, "title": "컨텍스트는 예산, 캐싱은 순서", "short": "예산과 캐싱", "minutes": 30}, {"id": "05_subagents", "n": 5, "title": "서브에이전트 = 컨텍스트 포크", "short": "서브에이전트", "minutes": 20}, {"id": "06_steering", "n": 6, "title": "돌고 있는 루프 조종하기", "short": "조종", "minutes": 25}, {"id": "07_guardrails", "n": 7, "title": "반사신경과 가드레일", "short": "가드레일", "minutes": 25}, {"id": "08_debugging", "n": 8, "title": "배열 디버깅", "short": "디버깅", "minutes": 20}, {"id": "09_rag", "n": 9, "title": "RAG는 원래 하네스 패턴이었다", "short": "RAG", "minutes": 35}, {"id": "10_ontology", "n": 10, "title": "온톨로지: 에이전트에게 도메인 지도 입히기", "short": "온톨로지", "minutes": 40}, {"id": "11_capstone", "n": 11, "title": "캡스톤: 미니 하네스", "short": "캡스톤", "minutes": 30}]}</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <script src="../assets/app.js"></script>
 </body>

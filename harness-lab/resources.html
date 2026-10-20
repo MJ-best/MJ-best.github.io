@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>추천 교재 · 하네스 워크북</title>
+<meta name="description" content="워크북과 함께 보면 좋은 교재와 글입니다. ‘언제 읽나’에 적힌 랩을 마친 뒤 읽으면 가장 잘 들어옵니다. 🇰🇷 표시는 한국어 자료입니다.">
+<meta name="theme-color" content="#f6f3ec" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#16181c" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" media="(prefers-color-scheme: light)">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="(prefers-color-scheme: dark)">
+
+</head>
+<body data-root="">
+<header class="topbar">
+  <a class="brand" href="index.html"><span class="logo">⟲</span> 하네스 워크북</a>
+  <span class="crumb">추천 교재</span>
+  <a class="toplink" href="resources.html">교재</a>
+  <span class="progress-pill" data-progress-pill title="완료한 랩">0/11</span>
+</header>
+<main class="wrap">
+  <section class="hero">
+    <p class="eyebrow">Reading list</p>
+    <h1>추천 교재와 글</h1>
+    <p class="lede">워크북과 함께 보면 좋은 교재와 글입니다. ‘언제 읽나’에 적힌 랩을 마친 뒤 읽으면 가장 잘 들어옵니다. 🇰🇷 표시는 한국어 자료입니다.</p>
+  </section>
+  <section class="card"><h2>먼저 볼 것 — 전체 그림</h2><ul class="reslist"><li class="res">
+  <a class="restitle" href="https://isuruwijesiri.com/harness-engineering-101/" target="_blank" rel="noopener">Harness Engineering 101</a>
+  <div class="muted small">Isuru Wijesiri · 입문~중급 · 언제 읽나: Lab 전체</div>
+  <p>이 워크북의 뼈대가 된 온라인 책. 장마다 ‘무엇이 깨지나 → 패치 → 비용’ 구조로 300줄짜리 하네스를 키워 갑니다.</p>
+</li><li class="res">
+  <a class="restitle" href="https://microsoft.github.io/ai-agents-for-beginners/translations/ko/" target="_blank" rel="noopener">🇰🇷 AI Agents for Beginners (한국어 번역)</a>
+  <div class="muted small">Microsoft · 입문 · 언제 읽나: Lab <a href="labs/01_array.html">01</a>, <a href="labs/02_tools.html">02</a>, <a href="labs/03_agent_loop.html">03</a>, <a href="labs/05_subagents.html">05</a></div>
+  <p>에이전트 개념을 강의 단위로 차근차근. 도구 사용·계획·다중 에이전트 패턴을 한국어로 훑기 좋습니다.</p>
+</li><li class="res">
+  <a class="restitle" href="https://www.anthropic.com/research/building-effective-agents" target="_blank" rel="noopener">Building effective agents</a>
+  <div class="muted small">Anthropic · 입문 · 언제 읽나: Lab <a href="labs/03_agent_loop.html">03</a>, <a href="labs/05_subagents.html">05</a></div>
+  <p>‘워크플로’와 ‘에이전트’를 구분하고, 단순한 조합부터 시작하라는 실무 지침. 프롬프트 체이닝·라우팅·오케스트레이터 패턴이 그림으로 나옵니다.</p>
+</li></ul></section><section class="card"><h2>직접 만들어 보기 — 작은 에이전트 코드</h2><ul class="reslist"><li class="res">
+  <a class="restitle" href="https://ampcode.com/how-to-build-an-agent" target="_blank" rel="noopener">How to Build an Agent</a>
+  <div class="muted small">Thorsten Ball (Amp) · 입문 · 언제 읽나: Lab <a href="labs/02_tools.html">02</a>, <a href="labs/03_agent_loop.html">03</a></div>
+  <p>“비밀은 없다: LLM + 루프 + 도구 몇 개”. read_file·list_files·edit_file 세 도구로 코딩 에이전트를 만드는 과정을 따라갑니다. Lab 3 예제 3의 원형.</p>
+</li><li class="res">
+  <a class="restitle" href="https://huggingface.co/learn/agents-course/en/unit1/agent-steps-and-structure" target="_blank" rel="noopener">Hugging Face Agents Course — Thought·Action·Observation</a>
+  <div class="muted small">Hugging Face · 입문 · 언제 읽나: Lab <a href="labs/02_tools.html">02</a>, <a href="labs/03_agent_loop.html">03</a></div>
+  <p>날씨 비서 예제로 생각→행동→관찰 순환을 설명합니다. Lab 2·3 예제의 날씨 도구가 여기서 왔습니다.</p>
+</li><li class="res">
+  <a class="restitle" href="https://github.com/SWE-agent/mini-swe-agent" target="_blank" rel="noopener">mini-swe-agent</a>
+  <div class="muted small">SWE-agent 팀 (Princeton·Stanford) · 중급 · 언제 읽나: Lab <a href="labs/03_agent_loop.html">03</a>, <a href="labs/11_capstone.html">11</a></div>
+  <p>bash 하나만 도구로 쓰는 아주 작은 코딩 에이전트. 캡스톤 이후 ‘진짜 쓰이는 최소 하네스’를 읽어 보기에 좋습니다.</p>
+</li><li class="res">
+  <a class="restitle" href="https://github.com/humanlayer/12-factor-agents" target="_blank" rel="noopener">12-Factor Agents</a>
+  <div class="muted small">HumanLayer · 중급 · 언제 읽나: Lab <a href="labs/03_agent_loop.html">03</a>, <a href="labs/06_steering.html">06</a>, <a href="labs/07_guardrails.html">07</a>, <a href="labs/11_capstone.html">11</a></div>
+  <p>프로덕션 에이전트 설계 원칙 12가지. ‘컨텍스트 창을 직접 소유하라’, ‘사람에게 묻는 것도 도구다’ 같은 원칙이 Lab 6·7과 맞닿아 있습니다.</p>
+</li></ul></section><section class="card"><h2>컨텍스트·도구·캐시 깊이 보기</h2><ul class="reslist"><li class="res">
+  <a class="restitle" href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents" target="_blank" rel="noopener">Effective context engineering for AI agents</a>
+  <div class="muted small">Anthropic · 중급 · 언제 읽나: Lab <a href="labs/04_context_budget.html">04</a>, <a href="labs/05_subagents.html">05</a>, <a href="labs/06_steering.html">06</a></div>
+  <p>컨텍스트를 ‘유한한 예산’으로 보고, 압축·메모·서브에이전트로 관리하는 방법. Lab 4~6의 이론 편.</p>
+</li><li class="res">
+  <a class="restitle" href="https://news.hada.io/topic?id=23483" target="_blank" rel="noopener">🇰🇷 [요약 번역] AI 에이전트를 위한 효과적 컨텍스트 엔지니어링</a>
+  <div class="muted small">GeekNews · 중급 · 언제 읽나: Lab <a href="labs/04_context_budget.html">04</a>, <a href="labs/05_subagents.html">05</a>, <a href="labs/06_steering.html">06</a></div>
+  <p>위 글의 한국어 요약. 먼저 이걸로 큰 줄기를 잡고 원문을 읽으면 빠릅니다.</p>
+</li><li class="res">
+  <a class="restitle" href="https://www.anthropic.com/engineering/writing-tools-for-agents" target="_blank" rel="noopener">Writing effective tools for agents</a>
+  <div class="muted small">Anthropic · 중급 · 언제 읽나: Lab <a href="labs/02_tools.html">02</a>, <a href="labs/07_guardrails.html">07</a></div>
+  <p>도구 이름·설명·응답 형식을 어떻게 써야 모델이 잘 쓰는지. ‘도구 설명이 곧 프롬프트’라는 Lab 2의 메시지를 깊게 다룹니다.</p>
+</li><li class="res">
+  <a class="restitle" href="https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching" target="_blank" rel="noopener">Prompt caching (공식 문서)</a>
+  <div class="muted small">Anthropic · 중급 · 언제 읽나: Lab <a href="labs/04_context_budget.html">04</a>, <a href="labs/08_debugging.html">08</a></div>
+  <p>cache_control 위치, 캐시 쓰기·읽기 요금, usage 필드 읽는 법. Lab 4 예제 2의 비용 계산 근거.</p>
+</li></ul></section><section class="card"><h2>하네스 엔지니어링 실전기</h2><ul class="reslist"><li class="res">
+  <a class="restitle" href="https://openai.com/index/harness-engineering/" target="_blank" rel="noopener">Harness engineering: leveraging Codex in an agent-first world</a>
+  <div class="muted small">Ryan Lopopolo, OpenAI (2026) · 중급~고급 · 언제 읽나: Lab <a href="labs/04_context_budget.html">04</a>, <a href="labs/07_guardrails.html">07</a>, <a href="labs/08_debugging.html">08</a>, <a href="labs/11_capstone.html">11</a></div>
+  <p>에이전트로 약 100만 줄의 제품을 만든 팀의 기록. AGENTS.md는 ‘지도’로 짧게, 규칙은 린터로 기계적으로 강제, 로그·지표를 에이전트에게 열어 주는 피드백 루프.</p>
+</li></ul></section><section class="card"><h2>RAG</h2><ul class="reslist"><li class="res">
+  <a class="restitle" href="https://wikidocs.net/book/16865" target="_blank" rel="noopener">🇰🇷 테디노트의 RAG 비법노트: RAG 시작하기</a>
+  <div class="muted small">테디노트 (위키독스) · 입문 · 언제 읽나: Lab <a href="labs/09_rag.html">09</a></div>
+  <p>문서 로딩→분할→임베딩→검색→생성 파이프라인을 한국어 예제로. Lab 9의 BM25를 벡터 검색으로 바꿔 볼 때 좋습니다.</p>
+</li><li class="res">
+  <a class="restitle" href="https://wikidocs.net/231565" target="_blank" rel="noopener">🇰🇷 랭체인(LangChain) 입문부터 응용까지</a>
+  <div class="muted small">위키독스 · 입문~중급 · 언제 읽나: Lab <a href="labs/09_rag.html">09</a></div>
+  <p>프레임워크로 같은 일을 하면 어떻게 되는지. ‘모든 프레임워크는 결국 배열을 감싼 것’임을 확인해 보세요.</p>
+</li><li class="res">
+  <a class="restitle" href="https://www.anthropic.com/news/contextual-retrieval" target="_blank" rel="noopener">Introducing Contextual Retrieval</a>
+  <div class="muted small">Anthropic · 중급 · 언제 읽나: Lab <a href="labs/09_rag.html">09</a></div>
+  <p>청크에 문서 맥락을 덧붙이고 BM25와 임베딩을 함께 쓰면 검색 실패가 크게 줄어든다는 실험. Lab 9의 ‘놓친 고리’ 문제에 대한 한 가지 답.</p>
+</li></ul></section><section class="card"><h2>온톨로지 · GraphRAG</h2><ul class="reslist"><li class="res">
+  <a class="restitle" href="https://bigstargithub.github.io/posts/AI-12/" target="_blank" rel="noopener">🇰🇷 그래서 Agent에 데이터를 어떻게 입히나요?</a>
+  <div class="muted small">장한별 · 입문~중급 · 언제 읽나: Lab <a href="labs/10_ontology.html">10</a></div>
+  <p>데이터가 작을 땐 YAML 온톨로지를 통째로 주입하고, 커지면 조회 도구 → 그래프로. Lab 10의 단계 구분이 이 글에서 왔습니다.</p>
+</li><li class="res">
+  <a class="restitle" href="https://protege.stanford.edu/publications/ontology_development/ontology101-noy-mcguinness.html" target="_blank" rel="noopener">Ontology Development 101</a>
+  <div class="muted small">Natalya F. Noy · Deborah L. McGuinness (Stanford) · 입문 · 언제 읽나: Lab <a href="labs/10_ontology.html">10</a></div>
+  <p>온톨로지 설계의 고전 입문서. 범위 정하기→용어 모으기→클래스→속성→인스턴스 순서를 와인 예제로 설명합니다. Lab 10 카페 예제의 원형.</p>
+</li><li class="res">
+  <a class="restitle" href="https://www.microsoft.com/en-us/research/project/graphrag/" target="_blank" rel="noopener">GraphRAG</a>
+  <div class="muted small">Microsoft Research · 고급 · 언제 읽나: Lab <a href="labs/10_ontology.html">10</a></div>
+  <p>문서에서 지식 그래프를 자동으로 뽑아 검색에 쓰는 방식. Lab 10 예제 4(경로로 검색어 넓히기)의 본격 버전.</p>
+</li></ul></section>
+  <nav class="pager"><a href="index.html">← 목차</a><a class="next" href="labs/01_array.html">Lab 01 시작 →</a></nav>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

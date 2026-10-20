@@ -129,7 +129,7 @@ def find_path(onto, start, goal, max_depth=4):
 
 def explain_path(onto, path):
     lab = lambda cid: onto["concepts"][cid]["label"]  # noqa: E731
-    return " → ".join(f"{lab(s)} -{t}→ {lab(d)}" for s, t, d in path)
+    return "  |  ".join(f"{lab(s)} -{t}→ {lab(d)}" for s, t, d in path)
 
 
 # --------------------------------------------------------------- 어떤 단계?
