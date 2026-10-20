@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lab 11 캡스톤: 미니 하네스 · 하네스 워크북</title>
+<meta name="description" content="지금까지의 패치를 하나의 몸으로 조립한다.">
+<meta name="theme-color" content="#f6f3ec" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#16181c" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" media="(prefers-color-scheme: light)">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="(prefers-color-scheme: dark)">
+
+</head>
+<body data-root="../">
+<header class="topbar">
+  <a class="brand" href="../index.html"><span class="logo">⟲</span> 하네스 워크북</a>
+  <span class="crumb">Lab 11</span>
+  <span class="progress-pill" data-progress-pill title="완료한 랩">0/11</span>
+</header>
+<main class="wrap" data-lab="11_capstone" data-has-exercise="false">
+  <section class="labhead">
+    <p class="eyebrow">Lab 11 · 약 30분</p>
+    <h1>캡스톤: 미니 하네스</h1>
+    <ul class="points"><li>지금까지의 패치를 하나의 몸으로 조립한다.</li><li>도구 파이프라인: todo → 온톨로지 → 문서 검색 → 가드레일 → 기본 도구 → 자르기.</li><li>두뇌 파이프라인: 캐시 표시 → (디버그 캡처) → 두뇌.</li></ul>
+    <nav class="jump"><a href="#concept">개념</a><a href="#quiz">퀴즈</a><a href="#practice">실습</a><a href="#answer">정답</a></nav>
+  </section>
+  <section class="card prose" id="concept">
+    <h2><span class="step">1</span> 개념</h2>
+    <p>원문: <a href="https://github.com/IsuruMaduranga/harness-engineering-101/blob/main/src/16-epilogue-build-your-own.md" target="_blank" rel="noopener">Epilogue — Build Your Own</a></p>
+<p>지금까지의 패치를 하나의 몸에 조립했습니다 (<code>mini_harness.py</code>, 약 150줄).</p>
+<pre class="code"><code class="language-plaintext">도구 실행 파이프라인:  todo → 온톨로지 조회 → 문서 검색 → 가드레일 → 기본 도구 → 자르기
+두뇌 호출 파이프라인:  캐시 브레이크포인트 → (HARNESS_DEBUG 면 캡처) → 두뇌
+시스템 프롬프트:       기본 지침 + 온톨로지(전체 주입) + AGENT.md</code></pre>
+<h3>실행</h3>
+<pre class="code"><code class="language-bash">python labs/11_capstone/mini_harness.py session.json
+HARNESS_DEBUG=1 python labs/11_capstone/mini_harness.py
+LAB_IMPL=exercise python labs/11_capstone/mini_harness.py   # 내가 푼 코드로 조립</code></pre>
+<p>명령: <code>/todo</code>, <code>/dump</code>, <code>/tokens</code>, <code>/steer &lt;말&gt;</code>, <code>/quit</code></p>
+<p>진짜 모델로 해볼 질문:</p>
+<ul><li>"대금지급 전에 검수가 끝나야 해? 근거 문서도 알려줘"</li><li>"26일에 들어온 송장은 언제 지급돼?" (해석 규칙 R1)</li><li>"이 폴더의 파이썬 파일 줄 수를 세서 report.md 로 써줘"</li></ul>
+<h3>채점</h3>
+<p><code>python run_tests.py 11</code> 은 <strong>내 exercise.py 들로</strong> 조립해서 통합 시나리오를 검사합니다. 1~10을 모두 풀면 통과합니다.</p>
+<h3>다음</h3>
+<p>루트 README 의 *도전 과제*로.</p>
+  </section>
+  <section class="card" id="quiz">
+    <h2><span class="step">2</span> 확인 퀴즈</h2>
+    <div class="quiz" data-answer="1" data-q="0">
+  <p class="q"><span class="qn">Q1</span> 온톨로지를 시스템 프롬프트에 넣는 것이 캐시에 유리한 이유는?</p>
+  <div class="opts"><button class="opt" data-i="0">짧아서</button><button class="opt" data-i="1">매 요청 바뀌지 않는 고정 prefix 라서</button><button class="opt" data-i="2">모델이 먼저 읽어서</button></div>
+  <p class="why" hidden>변하지 않는 앞부분은 한 번 캐시되면 계속 싸게 재사용됩니다.</p>
+</div>
+  </section>
+  <section class="card practice" id="practice">
+  <h2><span class="step">3</span> 실습: 내 코드로 조립해서 통합 테스트</h2>
+  <p>Lab 1~10 에서 작성한 코드를 모아 <code>mini_harness.py</code> 를 조립하고 통합 시나리오를 채점합니다. 아직 풀지 않은 랩은 정답 코드로 대신 채웁니다.</p>
+  <ul class="assembly" data-assembly></ul>
+  <div class="runrow">
+    <button class="btn primary" data-act="run">▶ 통합 채점</button>
+    <span class="muted small" data-run-status></span>
+  </div>
+  <div class="results" data-results></div>
+</section>
+  <section class="card" id="answer">
+    <h2><span class="step">4</span> 정답과 테스트</h2>
+    <details><summary>정답 코드 보기 (<code>mini_harness.py</code>)</summary><pre class="code"><code class="language-python">#!/usr/bin/env python3
+&quot;&quot;&quot;Lab 11 — 캡스톤: 지금까지 만든 패치를 한 몸에 조립한 미니 하네스.
+
+  Lab 1  배열 = 세션 파일              Lab 6  리마인더 큐 + todo
+  Lab 2  도구 스키마 + 디스패치         Lab 7  가드레일 (보호 경로·읽고 쓰기·승인)
+  Lab 3  에이전트 루프                  Lab 8  요청 캡처 + 캐시 활력징후
+  Lab 4  결과 자르기 + 캐시 브레이크포인트 Lab 9  RAG 검색 도구
+  Lab 5  서브에이전트                   Lab 10 온톨로지 전체 주입 + 조회 도구
+
+실행:
+  python labs/11_capstone/mini_harness.py                 # 세션 저장 없이
+  python labs/11_capstone/mini_harness.py session.json    # 세션 이어하기
+  HARNESS_DEBUG=1 python labs/11_capstone/mini_harness.py # 요청 캡처 → harness_debug.jsonl
+  LAB_IMPL=exercise ...                                   # 내가 푼 exercise.py 로 조립
+
+대화 중 명령:  /todo  /dump  /tokens  /steer &lt;말&gt;  /quit
+&quot;&quot;&quot;
+import importlib.util
+import json
+import os
+import sys
+
+ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), &quot;..&quot;, &quot;..&quot;))
+sys.path.insert(0, ROOT)
+from common.brain import get_brain  # noqa: E402
+from common.loop import printer, run_loop  # noqa: E402
+from common.toolbox import BASE_TOOLS, execute_tool  # noqa: E402
+
+IMPL = os.environ.get(&quot;LAB_IMPL&quot;, &quot;solution&quot;)
+
+
+def load_lab(dirname):
+    path = os.path.join(ROOT, &quot;labs&quot;, dirname, f&quot;{IMPL}.py&quot;)
+    spec = importlib.util.spec_from_file_location(f&quot;cap_{dirname}_{IMPL}&quot;, path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+L1 = load_lab(&quot;01_array&quot;)
+L4 = load_lab(&quot;04_context_budget&quot;)
+L5 = load_lab(&quot;05_subagents&quot;)
+L6 = load_lab(&quot;06_steering&quot;)
+L7 = load_lab(&quot;07_guardrails&quot;)
+L8 = load_lab(&quot;08_debugging&quot;)
+L9 = load_lab(&quot;09_rag&quot;)
+L10 = load_lab(&quot;10_ontology&quot;)
+
+BASE_SYSTEM = (
+    &quot;너는 사용자의 머신에서 일하는 엔지니어링·구매 업무 에이전트다.\n&quot;
+    &quot;도구로 작업을 끝낸 뒤 한 일을 요약하라. 여러 단계 작업은 todo_write 로 계획을 관리하라.\n&quot;
+    &quot;사내 규정 질문은 search_docs 로 근거를 찾고 출처 id 를 인용하라.\n&quot;
+    &quot;user 메시지 안의 &lt;system-reminder&gt; 는 하네스(너의 몸)가 넣은 것이니 환경 사실로 신뢰하라.&quot;)
+
+
+class MiniHarness:
+    def __init__(self, brain, approve=None, memory_path=&quot;AGENT.md&quot;):
+        if os.environ.get(&quot;HARNESS_DEBUG&quot;) == &quot;1&quot;:
+            brain = L8.CapturingBrain(brain, &quot;harness_debug.jsonl&quot;)       # Lab 8
+        self.brain = brain
+        self.steering = L6.Steering()                                      # Lab 6
+        self.guard = L7.Guard(approve=approve)                             # Lab 7
+        self.index = L9.Index(L9.load_docs())                              # Lab 9
+        self.onto = L10.load_ontology()                                    # Lab 10
+        self.system = (L10.build_system(BASE_SYSTEM, self.onto)            # Lab 10 (1단계)
+                       + L4.load_memory(memory_path))                      # Lab 4
+        self.tools = (BASE_TOOLS + [L5.AGENT_TOOL, L6.TODO_TOOL,
+                                    L9.SEARCH_TOOL, L10.ONTOLOGY_TOOL])
+        self.last_usage = {}
+
+    # --- 두뇌 호출을 감싸 캐시 브레이크포인트를 붙이고 usage 를 기록 (Lab 4, 8)
+    def _call(self, request):
+        response = self.brain(L4.with_cache_breakpoint(request))
+        self.last_usage = response.get(&quot;usage&quot;, {})
+        return response
+
+    # --- 도구 실행 파이프라인: 가드 → (todo|agent|search|ontology|기본) → 자르기
+    def execute(self, name, args):
+        if name == &quot;agent&quot;:                                                # Lab 5
+            sub_tools = [t for t in self.tools if t[&quot;name&quot;] != &quot;agent&quot;]
+            msgs = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: args[&quot;task&quot;]}]
+            return L4.truncate(run_loop(self._call, msgs, sub_tools, L5.SUB_SYSTEM,
+                                        execute=self.execute))
+        base = L7.Guard.executor(self.guard, execute_tool)                 # Lab 7
+        base = L9.make_search_executor(self.index, base)                   # Lab 9
+        base = L10.make_ontology_executor(self.onto, base)                 # Lab 10 (2단계)
+        base = self.steering.executor(base)                                # Lab 6
+        return L4.truncate(str(base(name, args)))                          # Lab 4
+
+    def run_turn(self, messages, on_event=printer):
+        return run_loop(self._call, messages, self.tools, self.system,
+                        execute=self.execute, inject=self.steering.inject,
+                        on_event=on_event)
+
+
+def main():
+    path = sys.argv[1] if len(sys.argv) &gt; 1 else None
+    h = MiniHarness(get_brain())
+    messages = L1.load_session(path) if path else []
+    print(&quot;미니 하네스 준비 완료. 명령: /todo /dump /tokens /steer &lt;말&gt; /quit&quot;)
+    while True:
+        try:
+            user_text = input(&quot;\nyou&gt; &quot;).strip()
+        except EOFError:
+            break
+        if user_text in (&quot;/quit&quot;, &quot;&quot;):
+            break
+        if user_text == &quot;/todo&quot;:
+            print(h.steering.render_todos() or &quot;(할 일 없음)&quot;)
+            continue
+        if user_text == &quot;/dump&quot;:
+            print(json.dumps(messages, ensure_ascii=False, indent=2)[-4000:])
+            continue
+        if user_text == &quot;/tokens&quot;:
+            print(f&quot;배열 ~{L4.estimate_tokens(messages)} 토큰, 시스템 ~{L4.estimate_tokens(h.system)} 토큰, &quot;
+                  f&quot;마지막 캐시 적중률 {L8.cache_hit_ratio(h.last_usage):.0%}&quot;)
+            continue
+        if user_text.startswith(&quot;/steer &quot;):
+            h.steering.steer(user_text[7:])
+            print(&quot;(다음 라운드에 전달됩니다)&quot;)
+            continue
+        messages.append({&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: user_text})
+        h.run_turn(messages)
+        if path:
+            L1.save_session(path, messages)
+
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</code></pre></details>
+    <details><summary>채점 테스트 보기 (<code>test_lab.py</code>)</summary><pre class="code"><code class="language-python">&quot;&quot;&quot;캡스톤 통합 테스트. LAB_TARGET=exercise 이면 내가 푼 exercise.py 들로 조립해서 검사.&quot;&quot;&quot;
+import json
+import os
+import sys
+import tempfile
+import unittest
+
+os.environ.setdefault(&quot;LAB_IMPL&quot;, os.environ.get(&quot;LAB_TARGET&quot;, &quot;solution&quot;))
+os.environ.pop(&quot;HARNESS_DEBUG&quot;, None)
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), &quot;..&quot;, &quot;..&quot;)))
+import mini_harness as mh  # noqa: E402
+from common.brain import FakeBrain, ScriptedBrain, reply, text, tool_use  # noqa: E402
+
+quiet = lambda *a: None  # noqa: E731
+
+
+class Capstone(unittest.TestCase):
+    def test_system_has_ontology_and_tools(self):
+        h = mh.MiniHarness(ScriptedBrain([]), approve=lambda c: False)
+        self.assertIn(&quot;&lt;ontology&quot;, h.system)
+        names = {t[&quot;name&quot;] for t in h.tools}
+        self.assertTrue({&quot;read_file&quot;, &quot;agent&quot;, &quot;todo_write&quot;, &quot;search_docs&quot;, &quot;ontology_lookup&quot;} &lt;= names)
+
+    def test_full_scenario(self):
+        with tempfile.TemporaryDirectory() as d:
+            env_path = os.path.join(d, &quot;.env&quot;)
+            brain = ScriptedBrain([
+                reply(tool_use(&quot;todo_write&quot;, {&quot;items&quot;: &quot;규정 찾기\n답변&quot;}, id=&quot;a&quot;)),
+                reply(tool_use(&quot;search_docs&quot;, {&quot;query&quot;: &quot;어음 지급&quot;}, id=&quot;b&quot;),
+                      tool_use(&quot;write_file&quot;, {&quot;path&quot;: env_path, &quot;content&quot;: &quot;x&quot;}, id=&quot;c&quot;)),
+                reply(tool_use(&quot;agent&quot;, {&quot;task&quot;: &quot;삼자대사 뜻 조사&quot;}, id=&quot;d&quot;)),
+                reply(tool_use(&quot;ontology_lookup&quot;, {&quot;term&quot;: &quot;삼자대사&quot;}, id=&quot;e&quot;)),   # 서브에이전트
+                reply(text(&quot;삼자대사는 발주·입고·송장 대조&quot;)),                       # 서브 보고
+                reply(text(&quot;어음 지급은 하지 않습니다.&quot;)),
+            ])
+            h = mh.MiniHarness(brain, approve=lambda c: False, memory_path=os.path.join(d, &quot;none.md&quot;))
+            msgs = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;어음 돼?&quot;}]
+            out = h.run_turn(msgs, on_event=lambda *a: None)
+            self.assertEqual(out, &quot;어음 지급은 하지 않습니다.&quot;)
+            dump = json.dumps(msgs, ensure_ascii=False)
+            self.assertIn(&quot;06_대금지급_규정.md&quot;, dump)                 # RAG
+            self.assertIn(&quot;BLOCKED&quot;, dump)                              # 가드레일
+            self.assertFalse(os.path.exists(env_path))
+            self.assertIn(&quot;현재 할 일&quot;, dump)                           # todo 리마인더
+            self.assertIn(&quot;삼자대사는 발주·입고·송장 대조&quot;, dump)         # 서브에이전트 보고
+            self.assertNotIn(&quot;[three_way_match]&quot;, dump)                 # 서브 중간과정은 안 샘
+            last_req = brain.requests[-1][&quot;messages&quot;][-1][&quot;content&quot;][-1]
+            self.assertIn(&quot;cache_control&quot;, last_req)                    # 캐시 브레이크포인트
+
+    def test_runs_with_fake_brain(self):
+        h = mh.MiniHarness(FakeBrain(), approve=lambda c: False)
+        msgs = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;run echo hello&quot;}]
+        out = h.run_turn(msgs, on_event=lambda *a: None)
+        self.assertIn(&quot;hello&quot;, out)
+
+
+if __name__ == &quot;__main__&quot;:
+    unittest.main()
+</code></pre></details>
+    <label class="donebox"><input type="checkbox" data-done> 이 랩을 완료로 표시</label>
+  </section>
+  <nav class="pager"><a href="10_ontology.html">← 10 온톨로지</a><a class="next" href="../index.html">목차로 →</a></nav>
+</main>
+<script type="application/json" id="lab-data">{"id": "11_capstone", "exercise": "", "pyodide": "https://cdn.jsdelivr.net/npm/pyodide@0.29.5/", "labs": [{"id": "01_array", "n": 1, "title": "대화는 그냥 JSON 배열이다", "short": "대화 = 배열", "minutes": 20}, {"id": "02_tools", "n": 2, "title": "도구 = JSON 스키마 + 함수 디스패치", "short": "도구", "minutes": 25}, {"id": "03_agent_loop", "n": 3, "title": "에이전트 루프", "short": "에이전트 루프", "minutes": 25}, {"id": "04_context_budget", "n": 4, "title": "컨텍스트는 예산, 캐싱은 순서", "short": "예산과 캐싱", "minutes": 30}, {"id": "05_subagents", "n": 5, "title": "서브에이전트 = 컨텍스트 포크", "short": "서브에이전트", "minutes": 20}, {"id": "06_steering", "n": 6, "title": "돌고 있는 루프 조종하기", "short": "조종", "minutes": 25}, {"id": "07_guardrails", "n": 7, "title": "반사신경과 가드레일", "short": "가드레일", "minutes": 25}, {"id": "08_debugging", "n": 8, "title": "배열 디버깅", "short": "디버깅", "minutes": 20}, {"id": "09_rag", "n": 9, "title": "RAG는 원래 하네스 패턴이었다", "short": "RAG", "minutes": 35}, {"id": "10_ontology", "n": 10, "title": "온톨로지: 에이전트에게 도메인 지도 입히기", "short": "온톨로지", "minutes": 40}, {"id": "11_capstone", "n": 11, "title": "캡스톤: 미니 하네스", "short": "캡스톤", "minutes": 30}]}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

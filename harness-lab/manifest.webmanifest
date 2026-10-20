@@ -1,0 +1,1 @@
+{"name": "하네스 엔지니어링 워크북", "short_name": "하네스 워크북", "start_url": "./index.html", "display": "standalone", "background_color": "#f6f3ec", "theme_color": "#f6f3ec", "icons": [{"src": "assets/icon.svg", "sizes": "any", "type": "image/svg+xml"}]}

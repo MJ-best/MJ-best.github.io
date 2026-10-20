@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lab 04 컨텍스트는 예산, 캐싱은 순서 · 하네스 워크북</title>
+<meta name="description" content="큰 도구 결과는 들어오는 순간 잘라야 한다.">
+<meta name="theme-color" content="#f6f3ec" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#16181c" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" media="(prefers-color-scheme: light)">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="(prefers-color-scheme: dark)">
+
+</head>
+<body data-root="../">
+<header class="topbar">
+  <a class="brand" href="../index.html"><span class="logo">⟲</span> 하네스 워크북</a>
+  <span class="crumb">Lab 04</span>
+  <span class="progress-pill" data-progress-pill title="완료한 랩">0/11</span>
+</header>
+<main class="wrap" data-lab="04_context_budget" data-has-exercise="true">
+  <section class="labhead">
+    <p class="eyebrow">Lab 04 · 약 30분</p>
+    <h1>컨텍스트는 예산, 캐싱은 순서</h1>
+    <ul class="points"><li>큰 도구 결과는 들어오는 순간 잘라야 한다.</li><li>캐시는 앞부분(prefix)이 바이트 단위로 같을 때만 적중한다 → 배열은 append-only.</li><li>옛 결과를 지우면 공간은 생기지만 캐시가 깨진다. 공간과 비용의 트레이드오프.</li></ul>
+    <nav class="jump"><a href="#concept">개념</a><a href="#quiz">퀴즈</a><a href="#practice">실습</a><a href="#answer">정답</a></nav>
+  </section>
+  <section class="card prose" id="concept">
+    <h2><span class="step">1</span> 개념</h2>
+    <p>원문: <a href="https://github.com/IsuruMaduranga/harness-engineering-101/blob/main/src/06-context-is-a-budget.md" target="_blank" rel="noopener">06-context-is-a-budget.md</a></p>
+<h3>무엇이 깨지나</h3>
+<p>배열이 비싸지고(매번 전체 전송), 결국 컨텍스트 창이 가득 찬다.</p>
+<h3>패치</h3>
+<p>(1) 큰 도구 결과는 들어오는 순간 자른다. (2) 배열을 append-only 로 다루고 마지막 블록에 <code>cache_control</code> 을 붙여 prefix 를 캐시한다. (3) 프로젝트 메모리(AGENT.md)는 시스템 프롬프트에 고정으로.</p>
+<h3>비용</h3>
+<p>옛 결과를 지우면(<code>elide_old_tool_results</code>) 공간은 생기지만 prefix 가 바뀌어 캐시가 깨진다 — Lab 8 에서 눈으로 확인.</p>
+<h3>할 일 (<code>exercise.py</code>)</h3>
+<ul><li><code>truncate</code></li><li><code>with_cache_breakpoint</code> — 원본 불변!</li><li><code>elide_old_tool_results</code></li></ul>
+<pre class="code"><code class="language-bash">python run_tests.py 4 -v</code></pre>
+<h3>생각해볼 것</h3>
+<ul><li>시스템 프롬프트에 현재 시각을 넣으면 캐시는 어떻게 될까요?</li><li>원문 5장(caching)도 함께 읽어 보세요.</li></ul>
+  </section>
+  <section class="card" id="quiz">
+    <h2><span class="step">2</span> 확인 퀴즈</h2>
+    <div class="quiz" data-answer="1" data-q="0">
+  <p class="q"><span class="qn">Q1</span> 캐시 친화적인 배열 조작은?</p>
+  <div class="opts"><button class="opt" data-i="0">오래된 메시지 내용을 요약으로 바꾼다</button><button class="opt" data-i="1">새 메시지를 끝에 덧붙이기만 한다</button><button class="opt" data-i="2">시스템 프롬프트에 현재 시각을 넣는다</button></div>
+  <p class="why" hidden>앞부분이 바뀌면 그 뒤 전체가 캐시 미스가 됩니다.</p>
+</div><div class="quiz" data-answer="1" data-q="1">
+  <p class="q"><span class="qn">Q2</span> cache_control 표시는 어디에 두나요?</p>
+  <div class="opts"><button class="opt" data-i="0">첫 메시지</button><button class="opt" data-i="1">마지막 메시지의 마지막 블록</button><button class="opt" data-i="2">모든 블록</button></div>
+  <p class="why" hidden>거기까지의 prefix 전체를 다음 요청에서 재사용할 수 있게 됩니다.</p>
+</div>
+  </section>
+  <section class="card practice" id="practice">
+  <h2><span class="step">3</span> 실습: <code>exercise.py</code> 채우기</h2>
+  <p class="muted small">TODO 표시 부분을 채우고 채점하세요. 입력 내용은 이 기기에 자동 저장됩니다.</p>
+  <div class="toolbar">
+    <button class="btn small" data-act="todo">TODO 찾기</button>
+    <button class="btn small" data-act="indent" title="들여쓰기 4칸">⇥</button>
+    <button class="btn small" data-act="reset">초기화</button>
+    <span class="saved muted small" data-saved></span>
+  </div>
+  <textarea class="editor" data-editor spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off">#!/usr/bin/env python3
+&quot;&quot;&quot;[연습] Lab 4 — 컨텍스트는 &#x27;예산&#x27;이다 + 캐싱은 &#x27;순서&#x27;에 달려 있다.
+
+배열을 매번 통째로 보내니 (1) 비용이 쌓이고 (2) 창(window)이 가득 찹니다.
+- 캐싱: 앞부분(prefix)이 이전 요청과 &#x27;바이트 단위로 같으면&#x27; 싸게 재사용됩니다.
+        그래서 배열은 append-only 로 다뤄야 하고, 캐시 표시는 맨 끝에 둡니다.
+- 예산: 큰 도구 결과는 &#x27;들어오는 시점에&#x27; 잘라야 합니다. 나중에 옛 결과를 지우면
+        공간은 생기지만 prefix 가 바뀌어 캐시가 깨집니다 (비용 ↔ 공간 트레이드오프).
+&quot;&quot;&quot;
+import copy
+import json
+import os
+import sys
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), &quot;..&quot;, &quot;..&quot;)))
+
+MAX_RESULT_CHARS = 2_000
+ELIDED = &quot;[이전 도구 결과 생략됨]&quot;
+
+
+def truncate(text, limit=MAX_RESULT_CHARS):
+    &quot;&quot;&quot;limit 보다 길면 앞 절반 + 표시 + 뒤 절반만 남긴다.
+    표시 형식: &quot;\\n...[N chars truncated]...\\n&quot;  (N = 잘라낸 글자 수)
+    짧으면 그대로 반환.&quot;&quot;&quot;
+    # TODO(1): 앞/뒤를 limit//2 씩 남기고 가운데를 표시로 바꾸세요
+    raise NotImplementedError(&quot;04_context_budget TODO(1)&quot;)
+
+
+def estimate_tokens(obj):
+    &quot;&quot;&quot;아주 거친 추정: JSON 글자 수 / 4. (정확한 값은 API 응답의 usage 로 확인)&quot;&quot;&quot;
+    return len(json.dumps(obj, ensure_ascii=False)) // 4
+
+
+def with_cache_breakpoint(request):
+    &quot;&quot;&quot;요청의 &#x27;사본&#x27;을 만들어 마지막 메시지의 마지막 블록에
+    &quot;cache_control&quot;: {&quot;type&quot;: &quot;ephemeral&quot;} 를 붙여 반환한다.
+    - 마지막 메시지 content 가 문자열이면 [{&quot;type&quot;:&quot;text&quot;,&quot;text&quot;:...}] 로 바꿔서 붙인다.
+    - 원본 request/messages 는 절대 바꾸지 않는다 (append-only 배열 보호).&quot;&quot;&quot;
+    # TODO(2): deepcopy 후 마지막 블록에 cache_control 을 붙여 반환하세요
+    raise NotImplementedError(&quot;04_context_budget TODO(2)&quot;)
+
+
+def elide_old_tool_results(messages, keep_last=2):
+    &quot;&quot;&quot;마지막 keep_last 개를 제외한 옛 tool_result 의 content 를 ELIDED 로 바꾼 &#x27;새 배열&#x27;을 반환.
+    (원본은 그대로. 이 함수를 쓰면 공간은 생기지만 캐시 prefix 가 깨진다는 걸 Lab 8에서 확인합니다)&quot;&quot;&quot;
+    # TODO(3): 모든 tool_result 블록 위치를 모은 뒤, 뒤에서 keep_last 개를 빼고 내용을 바꾸세요
+    raise NotImplementedError(&quot;04_context_budget TODO(3)&quot;)
+
+
+def load_memory(path=&quot;AGENT.md&quot;):
+    &quot;&quot;&quot;프로젝트 메모리 파일이 있으면 시스템 프롬프트에 붙일 문자열로, 없으면 &quot;&quot;.&quot;&quot;&quot;
+    if not os.path.exists(path):
+        return &quot;&quot;
+    with open(path, encoding=&quot;utf-8&quot;) as f:
+        return f&quot;\n\n&lt;project-memory path={path!r}&gt;\n{f.read()}\n&lt;/project-memory&gt;&quot;
+
+
+if __name__ == &quot;__main__&quot;:
+    big = &quot;x&quot; * 10_000
+    print(&quot;원본&quot;, len(big), &quot;→ 자른 뒤&quot;, len(truncate(big)))
+    req = {&quot;system&quot;: &quot;s&quot;, &quot;messages&quot;: [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;hi&quot;}]}
+    print(json.dumps(with_cache_breakpoint(req), ensure_ascii=False, indent=1))
+</textarea>
+  <div class="runrow">
+    <button class="btn primary" data-act="run">▶ 채점</button>
+    <span class="muted small" data-run-status></span>
+  </div>
+  <div class="results" data-results></div>
+</section>
+  <section class="card" id="answer">
+    <h2><span class="step">4</span> 정답과 테스트</h2>
+    <details><summary>정답 코드 보기 (<code>solution.py</code>)</summary><pre class="code"><code class="language-python">#!/usr/bin/env python3
+&quot;&quot;&quot;Lab 4 — 컨텍스트는 &#x27;예산&#x27;이다 + 캐싱은 &#x27;순서&#x27;에 달려 있다.
+
+배열을 매번 통째로 보내니 (1) 비용이 쌓이고 (2) 창(window)이 가득 찹니다.
+- 캐싱: 앞부분(prefix)이 이전 요청과 &#x27;바이트 단위로 같으면&#x27; 싸게 재사용됩니다.
+        그래서 배열은 append-only 로 다뤄야 하고, 캐시 표시는 맨 끝에 둡니다.
+- 예산: 큰 도구 결과는 &#x27;들어오는 시점에&#x27; 잘라야 합니다. 나중에 옛 결과를 지우면
+        공간은 생기지만 prefix 가 바뀌어 캐시가 깨집니다 (비용 ↔ 공간 트레이드오프).
+&quot;&quot;&quot;
+import copy
+import json
+import os
+import sys
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), &quot;..&quot;, &quot;..&quot;)))
+
+MAX_RESULT_CHARS = 2_000
+ELIDED = &quot;[이전 도구 결과 생략됨]&quot;
+
+
+def truncate(text, limit=MAX_RESULT_CHARS):
+    &quot;&quot;&quot;limit 보다 길면 앞 절반 + 표시 + 뒤 절반만 남긴다.
+    표시 형식: &quot;\\n...[N chars truncated]...\\n&quot;  (N = 잘라낸 글자 수)
+    짧으면 그대로 반환.&quot;&quot;&quot;
+    # &gt;&gt;&gt; TODO: 앞/뒤를 limit//2 씩 남기고 가운데를 표시로 바꾸세요
+    if len(text) &lt;= limit:
+        return text
+    half = limit // 2
+    cut = len(text) - 2 * half
+    return f&quot;{text[:half]}\n...[{cut} chars truncated]...\n{text[-half:]}&quot;
+    # &lt;&lt;&lt; TODO
+
+
+def estimate_tokens(obj):
+    &quot;&quot;&quot;아주 거친 추정: JSON 글자 수 / 4. (정확한 값은 API 응답의 usage 로 확인)&quot;&quot;&quot;
+    return len(json.dumps(obj, ensure_ascii=False)) // 4
+
+
+def with_cache_breakpoint(request):
+    &quot;&quot;&quot;요청의 &#x27;사본&#x27;을 만들어 마지막 메시지의 마지막 블록에
+    &quot;cache_control&quot;: {&quot;type&quot;: &quot;ephemeral&quot;} 를 붙여 반환한다.
+    - 마지막 메시지 content 가 문자열이면 [{&quot;type&quot;:&quot;text&quot;,&quot;text&quot;:...}] 로 바꿔서 붙인다.
+    - 원본 request/messages 는 절대 바꾸지 않는다 (append-only 배열 보호).&quot;&quot;&quot;
+    # &gt;&gt;&gt; TODO: deepcopy 후 마지막 블록에 cache_control 을 붙여 반환하세요
+    req = copy.deepcopy(request)
+    if not req.get(&quot;messages&quot;):
+        return req
+    last = req[&quot;messages&quot;][-1]
+    if isinstance(last[&quot;content&quot;], str):
+        last[&quot;content&quot;] = [{&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: last[&quot;content&quot;]}]
+    last[&quot;content&quot;][-1][&quot;cache_control&quot;] = {&quot;type&quot;: &quot;ephemeral&quot;}
+    return req
+    # &lt;&lt;&lt; TODO
+
+
+def elide_old_tool_results(messages, keep_last=2):
+    &quot;&quot;&quot;마지막 keep_last 개를 제외한 옛 tool_result 의 content 를 ELIDED 로 바꾼 &#x27;새 배열&#x27;을 반환.
+    (원본은 그대로. 이 함수를 쓰면 공간은 생기지만 캐시 prefix 가 깨진다는 걸 Lab 8에서 확인합니다)&quot;&quot;&quot;
+    # &gt;&gt;&gt; TODO: 모든 tool_result 블록 위치를 모은 뒤, 뒤에서 keep_last 개를 빼고 내용을 바꾸세요
+    out = copy.deepcopy(messages)
+    spots = [b for m in out if isinstance(m[&quot;content&quot;], list)
+             for b in m[&quot;content&quot;] if b.get(&quot;type&quot;) == &quot;tool_result&quot;]
+    for b in spots[:max(len(spots) - keep_last, 0)]:
+        b[&quot;content&quot;] = ELIDED
+    return out
+    # &lt;&lt;&lt; TODO
+
+
+def load_memory(path=&quot;AGENT.md&quot;):
+    &quot;&quot;&quot;프로젝트 메모리 파일이 있으면 시스템 프롬프트에 붙일 문자열로, 없으면 &quot;&quot;.&quot;&quot;&quot;
+    if not os.path.exists(path):
+        return &quot;&quot;
+    with open(path, encoding=&quot;utf-8&quot;) as f:
+        return f&quot;\n\n&lt;project-memory path={path!r}&gt;\n{f.read()}\n&lt;/project-memory&gt;&quot;
+
+
+if __name__ == &quot;__main__&quot;:
+    big = &quot;x&quot; * 10_000
+    print(&quot;원본&quot;, len(big), &quot;→ 자른 뒤&quot;, len(truncate(big)))
+    req = {&quot;system&quot;: &quot;s&quot;, &quot;messages&quot;: [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;hi&quot;}]}
+    print(json.dumps(with_cache_breakpoint(req), ensure_ascii=False, indent=1))
+</code></pre></details>
+    <details><summary>채점 테스트 보기 (<code>test_lab.py</code>)</summary><pre class="code"><code class="language-python">import copy
+import os
+import sys
+import unittest
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), &quot;..&quot;, &quot;..&quot;)))
+from common.labkit import load_target  # noqa: E402
+
+lab = load_target(__file__)
+
+
+def tr(i, content=&quot;결과&quot;):
+    return {&quot;type&quot;: &quot;tool_result&quot;, &quot;tool_use_id&quot;: f&quot;t{i}&quot;, &quot;content&quot;: content}
+
+
+class Lab4(unittest.TestCase):
+    def test_truncate_short_untouched(self):
+        self.assertEqual(lab.truncate(&quot;abc&quot;, 10), &quot;abc&quot;)
+
+    def test_truncate_long(self):
+        s = &quot;A&quot; * 50 + &quot;B&quot; * 50
+        out = lab.truncate(s, 20)
+        self.assertTrue(out.startswith(&quot;A&quot; * 10))
+        self.assertTrue(out.endswith(&quot;B&quot; * 10))
+        self.assertIn(&quot;[80 chars truncated]&quot;, out)
+
+    def test_cache_breakpoint_on_last_block(self):
+        req = {&quot;system&quot;: &quot;s&quot;, &quot;messages&quot;: [
+            {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;첫 질문&quot;},
+            {&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: [{&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: &quot;답&quot;}]},
+            {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: [tr(1), tr(2)]}]}
+        before = copy.deepcopy(req)
+        out = lab.with_cache_breakpoint(req)
+        self.assertEqual(out[&quot;messages&quot;][-1][&quot;content&quot;][-1][&quot;cache_control&quot;], {&quot;type&quot;: &quot;ephemeral&quot;})
+        self.assertNotIn(&quot;cache_control&quot;, out[&quot;messages&quot;][-1][&quot;content&quot;][0])
+        self.assertEqual(req, before, &quot;원본 요청을 바꾸면 안 됩니다 (append-only!)&quot;)
+
+    def test_cache_breakpoint_string_content(self):
+        out = lab.with_cache_breakpoint({&quot;messages&quot;: [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;hi&quot;}]})
+        blk = out[&quot;messages&quot;][0][&quot;content&quot;][0]
+        self.assertEqual(blk[&quot;text&quot;], &quot;hi&quot;)
+        self.assertIn(&quot;cache_control&quot;, blk)
+
+    def test_elide_keeps_recent(self):
+        msgs = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;go&quot;},
+                {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: [tr(1, &quot;old1&quot;)]},
+                {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: [tr(2, &quot;old2&quot;), tr(3, &quot;new3&quot;)]},
+                {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: [tr(4, &quot;new4&quot;)]}]
+        before = copy.deepcopy(msgs)
+        out = lab.elide_old_tool_results(msgs, keep_last=2)
+        flat = [b[&quot;content&quot;] for m in out if isinstance(m[&quot;content&quot;], list) for b in m[&quot;content&quot;]]
+        self.assertEqual(flat, [lab.ELIDED, lab.ELIDED, &quot;new3&quot;, &quot;new4&quot;])
+        self.assertEqual(msgs, before, &quot;새 배열을 돌려줘야 합니다&quot;)
+
+
+if __name__ == &quot;__main__&quot;:
+    unittest.main()
+</code></pre></details>
+    <label class="donebox"><input type="checkbox" data-done> 이 랩을 완료로 표시</label>
+  </section>
+  <nav class="pager"><a href="03_agent_loop.html">← 03 에이전트 루프</a><a class="next" href="05_subagents.html">05 서브에이전트 →</a></nav>
+</main>
+<script type="application/json" id="lab-data">{"id": "04_context_budget", "exercise": "#!/usr/bin/env python3\n\"\"\"[연습] Lab 4 — 컨텍스트는 '예산'이다 + 캐싱은 '순서'에 달려 있다.\n\n배열을 매번 통째로 보내니 (1) 비용이 쌓이고 (2) 창(window)이 가득 찹니다.\n- 캐싱: 앞부분(prefix)이 이전 요청과 '바이트 단위로 같으면' 싸게 재사용됩니다.\n        그래서 배열은 append-only 로 다뤄야 하고, 캐시 표시는 맨 끝에 둡니다.\n- 예산: 큰 도구 결과는 '들어오는 시점에' 잘라야 합니다. 나중에 옛 결과를 지우면\n        공간은 생기지만 prefix 가 바뀌어 캐시가 깨집니다 (비용 ↔ 공간 트레이드오프).\n\"\"\"\nimport copy\nimport json\nimport os\nimport sys\n\nsys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), \"..\", \"..\")))\n\nMAX_RESULT_CHARS = 2_000\nELIDED = \"[이전 도구 결과 생략됨]\"\n\n\ndef truncate(text, limit=MAX_RESULT_CHARS):\n    \"\"\"limit 보다 길면 앞 절반 + 표시 + 뒤 절반만 남긴다.\n    표시 형식: \"\\\\n...[N chars truncated]...\\\\n\"  (N = 잘라낸 글자 수)\n    짧으면 그대로 반환.\"\"\"\n    # TODO(1): 앞/뒤를 limit//2 씩 남기고 가운데를 표시로 바꾸세요\n    raise NotImplementedError(\"04_context_budget TODO(1)\")\n\n\ndef estimate_tokens(obj):\n    \"\"\"아주 거친 추정: JSON 글자 수 / 4. (정확한 값은 API 응답의 usage 로 확인)\"\"\"\n    return len(json.dumps(obj, ensure_ascii=False)) // 4\n\n\ndef with_cache_breakpoint(request):\n    \"\"\"요청의 '사본'을 만들어 마지막 메시지의 마지막 블록에\n    \"cache_control\": {\"type\": \"ephemeral\"} 를 붙여 반환한다.\n    - 마지막 메시지 content 가 문자열이면 [{\"type\":\"text\",\"text\":...}] 로 바꿔서 붙인다.\n    - 원본 request/messages 는 절대 바꾸지 않는다 (append-only 배열 보호).\"\"\"\n    # TODO(2): deepcopy 후 마지막 블록에 cache_control 을 붙여 반환하세요\n    raise NotImplementedError(\"04_context_budget TODO(2)\")\n\n\ndef elide_old_tool_results(messages, keep_last=2):\n    \"\"\"마지막 keep_last 개를 제외한 옛 tool_result 의 content 를 ELIDED 로 바꾼 '새 배열'을 반환.\n    (원본은 그대로. 이 함수를 쓰면 공간은 생기지만 캐시 prefix 가 깨진다는 걸 Lab 8에서 확인합니다)\"\"\"\n    # TODO(3): 모든 tool_result 블록 위치를 모은 뒤, 뒤에서 keep_last 개를 빼고 내용을 바꾸세요\n    raise NotImplementedError(\"04_context_budget TODO(3)\")\n\n\ndef load_memory(path=\"AGENT.md\"):\n    \"\"\"프로젝트 메모리 파일이 있으면 시스템 프롬프트에 붙일 문자열로, 없으면 \"\".\"\"\"\n    if not os.path.exists(path):\n        return \"\"\n    with open(path, encoding=\"utf-8\") as f:\n        return f\"\\n\\n<project-memory path={path!r}>\\n{f.read()}\\n<\/project-memory>\"\n\n\nif __name__ == \"__main__\":\n    big = \"x\" * 10_000\n    print(\"원본\", len(big), \"→ 자른 뒤\", len(truncate(big)))\n    req = {\"system\": \"s\", \"messages\": [{\"role\": \"user\", \"content\": \"hi\"}]}\n    print(json.dumps(with_cache_breakpoint(req), ensure_ascii=False, indent=1))\n", "pyodide": "https://cdn.jsdelivr.net/npm/pyodide@0.29.5/", "labs": [{"id": "01_array", "n": 1, "title": "대화는 그냥 JSON 배열이다", "short": "대화 = 배열", "minutes": 20}, {"id": "02_tools", "n": 2, "title": "도구 = JSON 스키마 + 함수 디스패치", "short": "도구", "minutes": 25}, {"id": "03_agent_loop", "n": 3, "title": "에이전트 루프", "short": "에이전트 루프", "minutes": 25}, {"id": "04_context_budget", "n": 4, "title": "컨텍스트는 예산, 캐싱은 순서", "short": "예산과 캐싱", "minutes": 30}, {"id": "05_subagents", "n": 5, "title": "서브에이전트 = 컨텍스트 포크", "short": "서브에이전트", "minutes": 20}, {"id": "06_steering", "n": 6, "title": "돌고 있는 루프 조종하기", "short": "조종", "minutes": 25}, {"id": "07_guardrails", "n": 7, "title": "반사신경과 가드레일", "short": "가드레일", "minutes": 25}, {"id": "08_debugging", "n": 8, "title": "배열 디버깅", "short": "디버깅", "minutes": 20}, {"id": "09_rag", "n": 9, "title": "RAG는 원래 하네스 패턴이었다", "short": "RAG", "minutes": 35}, {"id": "10_ontology", "n": 10, "title": "온톨로지: 에이전트에게 도메인 지도 입히기", "short": "온톨로지", "minutes": 40}, {"id": "11_capstone", "n": 11, "title": "캡스톤: 미니 하네스", "short": "캡스톤", "minutes": 30}]}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

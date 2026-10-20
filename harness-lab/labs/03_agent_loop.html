@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lab 03 에이전트 루프 · 하네스 워크북</title>
+<meta name="description" content="stop_reason 이 tool_use 인 동안 [호출 → 실행 → 결과 덧붙이기]를 반복한다.">
+<meta name="theme-color" content="#f6f3ec" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#16181c" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" media="(prefers-color-scheme: light)">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="(prefers-color-scheme: dark)">
+
+</head>
+<body data-root="../">
+<header class="topbar">
+  <a class="brand" href="../index.html"><span class="logo">⟲</span> 하네스 워크북</a>
+  <span class="crumb">Lab 03</span>
+  <span class="progress-pill" data-progress-pill title="완료한 랩">0/11</span>
+</header>
+<main class="wrap" data-lab="03_agent_loop" data-has-exercise="true">
+  <section class="labhead">
+    <p class="eyebrow">Lab 03 · 약 25분</p>
+    <h1>에이전트 루프</h1>
+    <ul class="points"><li>stop_reason 이 tool_use 인 동안 [호출 → 실행 → 결과 덧붙이기]를 반복한다.</li><li>한 응답의 병렬 tool_use 결과는 하나의 user 메시지에 모은다.</li><li>MAX_ROUNDS 로 폭주를 막는다. 이게 &#x27;에이전트&#x27;의 전부다.</li></ul>
+    <nav class="jump"><a href="#concept">개념</a><a href="#quiz">퀴즈</a><a href="#practice">실습</a><a href="#answer">정답</a></nav>
+  </section>
+  <section class="card prose" id="concept">
+    <h2><span class="step">1</span> 개념</h2>
+    <p>원문: <a href="https://github.com/IsuruMaduranga/harness-engineering-101/blob/main/src/04-the-agent-loop.md" target="_blank" rel="noopener">04-the-agent-loop.md</a></p>
+<h3>무엇이 깨지나</h3>
+<p>실제 작업은 도구를 여러 번, 이전 결과를 보고 이어서 써야 한다.</p>
+<h3>패치</h3>
+<p><code>stop_reason == "tool_use"</code> 인 동안 [호출 → 실행 → 결과 덧붙이기]를 반복. 이게 '에이전트'의 전부다. 병렬 tool_use 결과는 하나의 user 메시지에 모은다. <code>MAX_ROUNDS</code> 로 폭주를 막는다.</p>
+<h3>비용</h3>
+<p>라운드마다 배열 전체를 다시 보낸다 → 비용이 라운드 수의 제곱처럼 커진다 (→ Lab 4).</p>
+<h3>할 일 (<code>exercise.py</code>)</h3>
+<ul><li><code>run_turn</code> 루프 하나</li></ul>
+<pre class="code"><code class="language-bash">python run_tests.py 3 -v</code></pre>
+<h3>생각해볼 것</h3>
+<ul><li>진짜 모델로 '이 폴더에 hello.py 를 만들고 실행해서 결과를 알려줘'를 시켜보세요.</li><li><code>MAX_ROUNDS=2</code> 로 바꾸면 어떻게 끝나나요? 모델에게 그 사실을 알려줘야 할까요?</li></ul>
+  </section>
+  <section class="card" id="quiz">
+    <h2><span class="step">2</span> 확인 퀴즈</h2>
+    <div class="quiz" data-answer="1" data-q="0">
+  <p class="q"><span class="qn">Q1</span> 루프를 멈추는 조건은?</p>
+  <div class="opts"><button class="opt" data-i="0">응답에 텍스트가 있을 때</button><button class="opt" data-i="1">stop_reason 이 tool_use 가 아닐 때</button><button class="opt" data-i="2">도구를 3번 썼을 때</button></div>
+  <p class="why" hidden>텍스트와 tool_use 가 함께 올 수도 있습니다. 기준은 stop_reason 입니다.</p>
+</div><div class="quiz" data-answer="1" data-q="1">
+  <p class="q"><span class="qn">Q2</span> 라운드가 늘수록 비용이 빠르게 커지는 이유는?</p>
+  <div class="opts"><button class="opt" data-i="0">모델이 느려져서</button><button class="opt" data-i="1">매 라운드 배열 전체를 다시 보내서</button><button class="opt" data-i="2">도구가 비싸서</button></div>
+  <p class="why" hidden>배열이 길어질수록 매 요청이 커집니다 → 캐싱(Lab 4)이 필요합니다.</p>
+</div>
+  </section>
+  <section class="card practice" id="practice">
+  <h2><span class="step">3</span> 실습: <code>exercise.py</code> 채우기</h2>
+  <p class="muted small">TODO 표시 부분을 채우고 채점하세요. 입력 내용은 이 기기에 자동 저장됩니다.</p>
+  <div class="toolbar">
+    <button class="btn small" data-act="todo">TODO 찾기</button>
+    <button class="btn small" data-act="indent" title="들여쓰기 4칸">⇥</button>
+    <button class="btn small" data-act="reset">초기화</button>
+    <span class="saved muted small" data-saved></span>
+  </div>
+  <textarea class="editor" data-editor spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off">#!/usr/bin/env python3
+&quot;&quot;&quot;[연습] Lab 3 — 에이전트 루프: 호출 → 실행 → 덧붙이기 → 반복.
+
+Lab 2는 도구를 한 번만 허용했습니다. 실제 작업은 &quot;파일 목록 보기 → 읽기 → 고치기 →
+테스트&quot; 처럼 여러 번 필요하죠. 해법은 while 루프 하나입니다.
+&quot;에이전트&quot;란 결국 stop_reason 이 tool_use 인 동안 도는 이 루프입니다.
+
+실행:  python labs/03_agent_loop/solution.py
+&quot;&quot;&quot;
+import os
+import sys
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), &quot;..&quot;, &quot;..&quot;)))
+from common.brain import get_brain  # noqa: E402
+from common.toolbox import BASE_TOOLS, execute_tool  # noqa: E402
+
+SYSTEM = (&quot;너는 로컬 머신에서 일하는 엔지니어링 에이전트다. &quot;
+          &quot;도구로 작업을 끝낸 뒤 한 일을 요약하라.&quot;)
+MAX_ROUNDS = 50
+
+
+def run_turn(brain, messages, tools=BASE_TOOLS, system=SYSTEM,
+             execute=execute_tool, max_rounds=MAX_ROUNDS, log=print):
+    &quot;&quot;&quot;사용자 한 턴 = 작업이 끝날 때까지 필요한 만큼의 모델/도구 왕복.
+
+    규칙
+    1. 매 라운드: 두뇌 호출 → 응답 content 전체를 assistant 메시지로 추가
+    2. stop_reason 이 &quot;tool_use&quot; 가 아니면 → 응답 텍스트를 반환하고 끝
+    3. 응답 속 &#x27;모든&#x27; tool_use 를 실행 → tool_result 들을 &#x27;하나의&#x27; user 메시지로 추가
+    4. max_rounds 를 넘으면 멈추고 &quot;[harness]&quot; 로 시작하는 문자열 반환 (폭주 방지)
+    &quot;&quot;&quot;
+    # TODO(1): 위 규칙대로 루프를 구현하세요 (log 로 도구 호출을 출력하면 보기 좋습니다)
+    raise NotImplementedError(&quot;03_agent_loop TODO(1)&quot;)
+
+
+def main():
+    brain, messages = get_brain(), []
+    while True:
+        try:
+            user_text = input(&quot;\nyou&gt; &quot;).strip()
+        except EOFError:
+            break
+        if user_text in (&quot;/quit&quot;, &quot;&quot;):
+            break
+        messages.append({&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: user_text})
+        print(f&quot;\nassistant&gt; {run_turn(brain, messages)}&quot;)
+
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</textarea>
+  <div class="runrow">
+    <button class="btn primary" data-act="run">▶ 채점</button>
+    <span class="muted small" data-run-status></span>
+  </div>
+  <div class="results" data-results></div>
+</section>
+  <section class="card" id="answer">
+    <h2><span class="step">4</span> 정답과 테스트</h2>
+    <details><summary>정답 코드 보기 (<code>solution.py</code>)</summary><pre class="code"><code class="language-python">#!/usr/bin/env python3
+&quot;&quot;&quot;Lab 3 — 에이전트 루프: 호출 → 실행 → 덧붙이기 → 반복.
+
+Lab 2는 도구를 한 번만 허용했습니다. 실제 작업은 &quot;파일 목록 보기 → 읽기 → 고치기 →
+테스트&quot; 처럼 여러 번 필요하죠. 해법은 while 루프 하나입니다.
+&quot;에이전트&quot;란 결국 stop_reason 이 tool_use 인 동안 도는 이 루프입니다.
+
+실행:  python labs/03_agent_loop/solution.py
+&quot;&quot;&quot;
+import os
+import sys
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), &quot;..&quot;, &quot;..&quot;)))
+from common.brain import get_brain  # noqa: E402
+from common.toolbox import BASE_TOOLS, execute_tool  # noqa: E402
+
+SYSTEM = (&quot;너는 로컬 머신에서 일하는 엔지니어링 에이전트다. &quot;
+          &quot;도구로 작업을 끝낸 뒤 한 일을 요약하라.&quot;)
+MAX_ROUNDS = 50
+
+
+def run_turn(brain, messages, tools=BASE_TOOLS, system=SYSTEM,
+             execute=execute_tool, max_rounds=MAX_ROUNDS, log=print):
+    &quot;&quot;&quot;사용자 한 턴 = 작업이 끝날 때까지 필요한 만큼의 모델/도구 왕복.
+
+    규칙
+    1. 매 라운드: 두뇌 호출 → 응답 content 전체를 assistant 메시지로 추가
+    2. stop_reason 이 &quot;tool_use&quot; 가 아니면 → 응답 텍스트를 반환하고 끝
+    3. 응답 속 &#x27;모든&#x27; tool_use 를 실행 → tool_result 들을 &#x27;하나의&#x27; user 메시지로 추가
+    4. max_rounds 를 넘으면 멈추고 &quot;[harness]&quot; 로 시작하는 문자열 반환 (폭주 방지)
+    &quot;&quot;&quot;
+    # &gt;&gt;&gt; TODO: 위 규칙대로 루프를 구현하세요 (log 로 도구 호출을 출력하면 보기 좋습니다)
+    for _ in range(max_rounds):
+        response = brain({&quot;system&quot;: system, &quot;messages&quot;: messages, &quot;tools&quot;: tools})
+        messages.append({&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: response[&quot;content&quot;]})
+        if response[&quot;stop_reason&quot;] != &quot;tool_use&quot;:
+            return &quot;&quot;.join(b[&quot;text&quot;] for b in response[&quot;content&quot;] if b[&quot;type&quot;] == &quot;text&quot;)
+        results = []
+        for b in response[&quot;content&quot;]:
+            if b[&quot;type&quot;] == &quot;tool_use&quot;:
+                log(f&quot;  [tool] {b[&#x27;name&#x27;]}({str(b[&#x27;input&#x27;])[:100]})&quot;)
+                results.append({&quot;type&quot;: &quot;tool_result&quot;, &quot;tool_use_id&quot;: b[&quot;id&quot;],
+                                &quot;content&quot;: execute(b[&quot;name&quot;], b[&quot;input&quot;])})
+        messages.append({&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: results})
+    return f&quot;[harness] MAX_ROUNDS({max_rounds}) 도달 — 이번 턴을 중단합니다.&quot;
+    # &lt;&lt;&lt; TODO
+
+
+def main():
+    brain, messages = get_brain(), []
+    while True:
+        try:
+            user_text = input(&quot;\nyou&gt; &quot;).strip()
+        except EOFError:
+            break
+        if user_text in (&quot;/quit&quot;, &quot;&quot;):
+            break
+        messages.append({&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: user_text})
+        print(f&quot;\nassistant&gt; {run_turn(brain, messages)}&quot;)
+
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</code></pre></details>
+    <details><summary>채점 테스트 보기 (<code>test_lab.py</code>)</summary><pre class="code"><code class="language-python">import os
+import sys
+import unittest
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), &quot;..&quot;, &quot;..&quot;)))
+from common.labkit import load_target  # noqa: E402
+from common.brain import ScriptedBrain, reply, text, tool_use  # noqa: E402
+
+lab = load_target(__file__)
+quiet = lambda *a, **k: None  # noqa: E731
+
+
+def fake_exec(name, args):
+    return f&quot;ran {name} {args.get(&#x27;command&#x27;, &#x27;&#x27;)}&quot;
+
+
+class Lab3(unittest.TestCase):
+    def run_script(self, script, **kw):
+        brain = ScriptedBrain(script)
+        msgs = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;작업해줘&quot;}]
+        out = lab.run_turn(brain, msgs, execute=fake_exec, log=quiet, **kw)
+        return brain, msgs, out
+
+    def test_plain_answer_one_call(self):
+        brain, msgs, out = self.run_script([reply(text(&quot;그냥 답&quot;))])
+        self.assertEqual(out, &quot;그냥 답&quot;)
+        self.assertEqual(len(brain.requests), 1)
+        self.assertEqual(len(msgs), 2)
+
+    def test_multi_round(self):
+        brain, msgs, out = self.run_script([
+            reply(tool_use(&quot;run_command&quot;, {&quot;command&quot;: &quot;ls&quot;}, id=&quot;t1&quot;)),
+            reply(text(&quot;생각 중&quot;), tool_use(&quot;run_command&quot;, {&quot;command&quot;: &quot;cat x&quot;}, id=&quot;t2&quot;)),
+            reply(text(&quot;끝!&quot;)),
+        ])
+        self.assertEqual(out, &quot;끝!&quot;)
+        self.assertEqual(len(brain.requests), 3)
+        self.assertEqual([m[&quot;role&quot;] for m in msgs],
+                         [&quot;user&quot;, &quot;assistant&quot;, &quot;user&quot;, &quot;assistant&quot;, &quot;user&quot;, &quot;assistant&quot;])
+        self.assertEqual(msgs[2][&quot;content&quot;][0][&quot;tool_use_id&quot;], &quot;t1&quot;)
+        self.assertEqual(msgs[4][&quot;content&quot;][0][&quot;content&quot;], &quot;ran run_command cat x&quot;)
+        # 세 번째 요청엔 앞의 모든 왕복이 담겨 있어야 한다
+        self.assertEqual(len(brain.requests[2][&quot;messages&quot;]), 5)
+        self.assertIn(&quot;tools&quot;, brain.requests[0])
+
+    def test_parallel_tools_one_user_message(self):
+        brain, msgs, out = self.run_script([
+            reply(tool_use(&quot;run_command&quot;, {&quot;command&quot;: &quot;a&quot;}, id=&quot;p1&quot;),
+                  tool_use(&quot;run_command&quot;, {&quot;command&quot;: &quot;b&quot;}, id=&quot;p2&quot;)),
+            reply(text(&quot;ok&quot;)),
+        ])
+        results = msgs[2][&quot;content&quot;]
+        self.assertEqual([r[&quot;tool_use_id&quot;] for r in results], [&quot;p1&quot;, &quot;p2&quot;],
+                         &quot;병렬 tool_use 결과는 &#x27;하나의&#x27; user 메시지에 모두 담아야 합니다&quot;)
+
+    def test_max_rounds(self):
+        forever = [reply(tool_use(&quot;run_command&quot;, {&quot;command&quot;: &quot;again&quot;})) for _ in range(5)]
+        brain, msgs, out = self.run_script(forever, max_rounds=3)
+        self.assertEqual(len(brain.requests), 3)
+        self.assertTrue(out.startswith(&quot;[harness]&quot;))
+
+
+if __name__ == &quot;__main__&quot;:
+    unittest.main()
+</code></pre></details>
+    <label class="donebox"><input type="checkbox" data-done> 이 랩을 완료로 표시</label>
+  </section>
+  <nav class="pager"><a href="02_tools.html">← 02 도구</a><a class="next" href="04_context_budget.html">04 예산과 캐싱 →</a></nav>
+</main>
+<script type="application/json" id="lab-data">{"id": "03_agent_loop", "exercise": "#!/usr/bin/env python3\n\"\"\"[연습] Lab 3 — 에이전트 루프: 호출 → 실행 → 덧붙이기 → 반복.\n\nLab 2는 도구를 한 번만 허용했습니다. 실제 작업은 \"파일 목록 보기 → 읽기 → 고치기 →\n테스트\" 처럼 여러 번 필요하죠. 해법은 while 루프 하나입니다.\n\"에이전트\"란 결국 stop_reason 이 tool_use 인 동안 도는 이 루프입니다.\n\n실행:  python labs/03_agent_loop/solution.py\n\"\"\"\nimport os\nimport sys\n\nsys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), \"..\", \"..\")))\nfrom common.brain import get_brain  # noqa: E402\nfrom common.toolbox import BASE_TOOLS, execute_tool  # noqa: E402\n\nSYSTEM = (\"너는 로컬 머신에서 일하는 엔지니어링 에이전트다. \"\n          \"도구로 작업을 끝낸 뒤 한 일을 요약하라.\")\nMAX_ROUNDS = 50\n\n\ndef run_turn(brain, messages, tools=BASE_TOOLS, system=SYSTEM,\n             execute=execute_tool, max_rounds=MAX_ROUNDS, log=print):\n    \"\"\"사용자 한 턴 = 작업이 끝날 때까지 필요한 만큼의 모델/도구 왕복.\n\n    규칙\n    1. 매 라운드: 두뇌 호출 → 응답 content 전체를 assistant 메시지로 추가\n    2. stop_reason 이 \"tool_use\" 가 아니면 → 응답 텍스트를 반환하고 끝\n    3. 응답 속 '모든' tool_use 를 실행 → tool_result 들을 '하나의' user 메시지로 추가\n    4. max_rounds 를 넘으면 멈추고 \"[harness]\" 로 시작하는 문자열 반환 (폭주 방지)\n    \"\"\"\n    # TODO(1): 위 규칙대로 루프를 구현하세요 (log 로 도구 호출을 출력하면 보기 좋습니다)\n    raise NotImplementedError(\"03_agent_loop TODO(1)\")\n\n\ndef main():\n    brain, messages = get_brain(), []\n    while True:\n        try:\n            user_text = input(\"\\nyou> \").strip()\n        except EOFError:\n            break\n        if user_text in (\"/quit\", \"\"):\n            break\n        messages.append({\"role\": \"user\", \"content\": user_text})\n        print(f\"\\nassistant> {run_turn(brain, messages)}\")\n\n\nif __name__ == \"__main__\":\n    main()\n", "pyodide": "https://cdn.jsdelivr.net/npm/pyodide@0.29.5/", "labs": [{"id": "01_array", "n": 1, "title": "대화는 그냥 JSON 배열이다", "short": "대화 = 배열", "minutes": 20}, {"id": "02_tools", "n": 2, "title": "도구 = JSON 스키마 + 함수 디스패치", "short": "도구", "minutes": 25}, {"id": "03_agent_loop", "n": 3, "title": "에이전트 루프", "short": "에이전트 루프", "minutes": 25}, {"id": "04_context_budget", "n": 4, "title": "컨텍스트는 예산, 캐싱은 순서", "short": "예산과 캐싱", "minutes": 30}, {"id": "05_subagents", "n": 5, "title": "서브에이전트 = 컨텍스트 포크", "short": "서브에이전트", "minutes": 20}, {"id": "06_steering", "n": 6, "title": "돌고 있는 루프 조종하기", "short": "조종", "minutes": 25}, {"id": "07_guardrails", "n": 7, "title": "반사신경과 가드레일", "short": "가드레일", "minutes": 25}, {"id": "08_debugging", "n": 8, "title": "배열 디버깅", "short": "디버깅", "minutes": 20}, {"id": "09_rag", "n": 9, "title": "RAG는 원래 하네스 패턴이었다", "short": "RAG", "minutes": 35}, {"id": "10_ontology", "n": 10, "title": "온톨로지: 에이전트에게 도메인 지도 입히기", "short": "온톨로지", "minutes": 40}, {"id": "11_capstone", "n": 11, "title": "캡스톤: 미니 하네스", "short": "캡스톤", "minutes": 30}]}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

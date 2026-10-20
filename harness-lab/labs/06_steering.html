@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lab 06 돌고 있는 루프 조종하기 · 하네스 워크북</title>
+<meta name="description" content="실행 중 리마인더는 다음 tool_result 메시지 끝에 &lt;system-reminder&gt; 로 붙인다.">
+<meta name="theme-color" content="#f6f3ec" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#16181c" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" media="(prefers-color-scheme: light)">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="(prefers-color-scheme: dark)">
+
+</head>
+<body data-root="../">
+<header class="topbar">
+  <a class="brand" href="../index.html"><span class="logo">⟲</span> 하네스 워크북</a>
+  <span class="crumb">Lab 06</span>
+  <span class="progress-pill" data-progress-pill title="완료한 랩">0/11</span>
+</header>
+<main class="wrap" data-lab="06_steering" data-has-exercise="true">
+  <section class="labhead">
+    <p class="eyebrow">Lab 06 · 약 25분</p>
+    <h1>돌고 있는 루프 조종하기</h1>
+    <ul class="points"><li>실행 중 리마인더는 다음 tool_result 메시지 끝에 &lt;system-reminder&gt; 로 붙인다.</li><li>todo 목록은 미완료가 있는 동안 매 라운드 다시 보여준다.</li><li>시스템 프롬프트를 고치지 않는 이유: 캐시.</li></ul>
+    <nav class="jump"><a href="#concept">개념</a><a href="#quiz">퀴즈</a><a href="#practice">실습</a><a href="#answer">정답</a></nav>
+  </section>
+  <section class="card prose" id="concept">
+    <h2><span class="step">1</span> 개념</h2>
+    <p>원문: <a href="https://github.com/IsuruMaduranga/harness-engineering-101/blob/main/src/08-steering.md" target="_blank" rel="noopener">08-steering.md</a></p>
+<h3>무엇이 깨지나</h3>
+<p>긴 작업 중 두뇌가 목표를 잊거나, 사용자가 도중에 방향을 바꾸고 싶다.</p>
+<h3>패치</h3>
+<p>리마인더를 큐에 쌓아 두었다가 다음 <code>tool_result</code> 메시지 <strong>끝에</strong> <code>&lt;system-reminder&gt;</code> 블록으로 붙인다. todo 목록은 미완료 항목이 있는 동안 매 라운드 다시 보여준다.</p>
+<h3>비용</h3>
+<p>리마인더도 토큰이다. 시스템 프롬프트가 아니라 배열 끝에 붙이는 이유는 캐시 때문.</p>
+<h3>할 일 (<code>exercise.py</code>)</h3>
+<ul><li><code>todo_write</code> 파싱</li><li><code>inject</code> — 큐 비우기 + todo 재표시</li></ul>
+<pre class="code"><code class="language-bash">python run_tests.py 6 -v</code></pre>
+<h3>생각해볼 것</h3>
+<ul><li>캡스톤에서 <code>/steer 테스트도 같이 돌려줘</code> 를 써 보세요.</li><li>백그라운드 작업 완료 알림(9장)도 같은 큐로 만들 수 있습니다.</li></ul>
+  </section>
+  <section class="card" id="quiz">
+    <h2><span class="step">2</span> 확인 퀴즈</h2>
+    <div class="quiz" data-answer="2" data-q="0">
+  <p class="q"><span class="qn">Q1</span> 사용자가 작업 도중 &#x27;테스트도 돌려줘&#x27;라고 말하면 하네스는?</p>
+  <div class="opts"><button class="opt" data-i="0">루프를 중단하고 새 턴을 시작</button><button class="opt" data-i="1">시스템 프롬프트를 수정</button><button class="opt" data-i="2">큐에 넣었다가 다음 tool_result 뒤에 리마인더로 붙임</button></div>
+  <p class="why" hidden>루프를 끊지 않고, 캐시도 깨지 않고 방향을 바꿉니다.</p>
+</div><div class="quiz" data-answer="0" data-q="1">
+  <p class="q"><span class="qn">Q2</span> 같은 리마인더를 두 번 보내지 않으려면?</p>
+  <div class="opts"><button class="opt" data-i="0">주입할 때 큐를 비운다</button><button class="opt" data-i="1">리마인더를 짧게 쓴다</button><button class="opt" data-i="2">모델에게 무시하라고 한다</button></div>
+  <p class="why" hidden>drain = 꺼내면서 비우기.</p>
+</div>
+  </section>
+  <section class="card practice" id="practice">
+  <h2><span class="step">3</span> 실습: <code>exercise.py</code> 채우기</h2>
+  <p class="muted small">TODO 표시 부분을 채우고 채점하세요. 입력 내용은 이 기기에 자동 저장됩니다.</p>
+  <div class="toolbar">
+    <button class="btn small" data-act="todo">TODO 찾기</button>
+    <button class="btn small" data-act="indent" title="들여쓰기 4칸">⇥</button>
+    <button class="btn small" data-act="reset">초기화</button>
+    <span class="saved muted small" data-saved></span>
+  </div>
+  <textarea class="editor" data-editor spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off">#!/usr/bin/env python3
+&quot;&quot;&quot;[연습] Lab 6 — 돌고 있는 루프 조종하기: 리마인더 큐 + 할 일 목록.
+
+긴 작업 중 두뇌는 목표를 잊고 표류합니다. 하네스는 다음 user 쪽 메시지(=tool_result
+메시지)에 &lt;system-reminder&gt; 블록을 슬쩍 끼워 넣어 방향을 잡아줍니다.
+- 사용자가 실행 중에 던진 말 (steer)
+- 하네스가 감지한 사실 (예: &quot;파일이 바깥에서 바뀌었음&quot;)
+- 매 라운드 다시 보여주는 할 일 목록 (todo)
+
+주의: 끼워 넣는 위치는 &#x27;배열 끝&#x27;입니다. 시스템 프롬프트를 고치면 캐시가 깨지니까요.
+&quot;&quot;&quot;
+import os
+import sys
+import threading
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), &quot;..&quot;, &quot;..&quot;)))
+
+TODO_TOOL = {
+    &quot;name&quot;: &quot;todo_write&quot;,
+    &quot;description&quot;: &quot;할 일 목록 전체를 교체한다. 한 줄에 하나, 끝난 항목은 &#x27;x &#x27; 로 시작.&quot;,
+    &quot;input_schema&quot;: {&quot;type&quot;: &quot;object&quot;,
+                     &quot;properties&quot;: {&quot;items&quot;: {&quot;type&quot;: &quot;string&quot;}},
+                     &quot;required&quot;: [&quot;items&quot;]},
+}
+
+
+def reminder_block(text):
+    return {&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: f&quot;&lt;system-reminder&gt;\n{text}\n&lt;/system-reminder&gt;&quot;}
+
+
+class Steering:
+    def __init__(self):
+        self._lock = threading.Lock()   # 다른 스레드(입력, 백그라운드 작업)도 remind 할 수 있음
+        self._queue = []
+        self.todos = []                 # [(done: bool, text: str)]
+
+    def remind(self, text):
+        with self._lock:
+            self._queue.append(text)
+
+    def steer(self, user_text):
+        &quot;&quot;&quot;사용자가 루프 실행 중에 끼어든 말.&quot;&quot;&quot;
+        self.remind(f&quot;사용자가 작업 도중 이렇게 말했습니다: {user_text}&quot;)
+
+    def todo_write(self, items):
+        &quot;&quot;&quot;&#x27;x 끝난일\\n할일&#x27; 형식 문자열을 파싱해 self.todos 를 교체하고 확인 메시지를 반환.&quot;&quot;&quot;
+        # TODO(1): 줄마다 &#x27;x &#x27; 접두사로 완료 여부를 판단해 (bool, text) 리스트로 만드세요 (빈 줄 무시)
+        raise NotImplementedError(&quot;06_steering TODO(1)&quot;)
+
+    def render_todos(self):
+        return &quot;\n&quot;.join(f&quot;[{&#x27;x&#x27; if d else &#x27; &#x27;}] {t}&quot; for d, t in self.todos)
+
+    def inject(self, blocks):
+        &quot;&quot;&quot;run_loop 의 inject 훅. tool_result 블록 리스트 &#x27;뒤에&#x27; 리마인더를 붙인다.
+        1) 큐에 쌓인 리마인더들을 한 블록으로 합쳐 붙이고 큐를 비운다
+        2) 할 일 목록이 있고 미완료 항목이 있으면 &quot;현재 할 일:\\n&lt;render_todos&gt;&quot; 블록도 붙인다
+        리마인더가 하나도 없으면 아무것도 붙이지 않는다.&quot;&quot;&quot;
+        # TODO(2): 잠금 안에서 큐를 비우고, 위 규칙대로 reminder_block 을 blocks 에 append 하세요
+        raise NotImplementedError(&quot;06_steering TODO(2)&quot;)
+
+    def executor(self, base_execute):
+        &quot;&quot;&quot;todo_write 는 여기서 처리하고 나머지는 base_execute 로.&quot;&quot;&quot;
+        def execute(name, args):
+            if name == &quot;todo_write&quot;:
+                return self.todo_write(args[&quot;items&quot;])
+            return base_execute(name, args)
+        return execute
+
+
+if __name__ == &quot;__main__&quot;:
+    s = Steering()
+    s.todo_write(&quot;x 저장소 둘러보기\n테스트 고치기&quot;)
+    s.steer(&quot;README도 같이 고쳐줘&quot;)
+    blocks = [{&quot;type&quot;: &quot;tool_result&quot;, &quot;tool_use_id&quot;: &quot;t1&quot;, &quot;content&quot;: &quot;ok&quot;}]
+    s.inject(blocks)
+    for b in blocks:
+        print(b.get(&quot;text&quot;) or b)
+</textarea>
+  <div class="runrow">
+    <button class="btn primary" data-act="run">▶ 채점</button>
+    <span class="muted small" data-run-status></span>
+  </div>
+  <div class="results" data-results></div>
+</section>
+  <section class="card" id="answer">
+    <h2><span class="step">4</span> 정답과 테스트</h2>
+    <details><summary>정답 코드 보기 (<code>solution.py</code>)</summary><pre class="code"><code class="language-python">#!/usr/bin/env python3
+&quot;&quot;&quot;Lab 6 — 돌고 있는 루프 조종하기: 리마인더 큐 + 할 일 목록.
+
+긴 작업 중 두뇌는 목표를 잊고 표류합니다. 하네스는 다음 user 쪽 메시지(=tool_result
+메시지)에 &lt;system-reminder&gt; 블록을 슬쩍 끼워 넣어 방향을 잡아줍니다.
+- 사용자가 실행 중에 던진 말 (steer)
+- 하네스가 감지한 사실 (예: &quot;파일이 바깥에서 바뀌었음&quot;)
+- 매 라운드 다시 보여주는 할 일 목록 (todo)
+
+주의: 끼워 넣는 위치는 &#x27;배열 끝&#x27;입니다. 시스템 프롬프트를 고치면 캐시가 깨지니까요.
+&quot;&quot;&quot;
+import os
+import sys
+import threading
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), &quot;..&quot;, &quot;..&quot;)))
+
+TODO_TOOL = {
+    &quot;name&quot;: &quot;todo_write&quot;,
+    &quot;description&quot;: &quot;할 일 목록 전체를 교체한다. 한 줄에 하나, 끝난 항목은 &#x27;x &#x27; 로 시작.&quot;,
+    &quot;input_schema&quot;: {&quot;type&quot;: &quot;object&quot;,
+                     &quot;properties&quot;: {&quot;items&quot;: {&quot;type&quot;: &quot;string&quot;}},
+                     &quot;required&quot;: [&quot;items&quot;]},
+}
+
+
+def reminder_block(text):
+    return {&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: f&quot;&lt;system-reminder&gt;\n{text}\n&lt;/system-reminder&gt;&quot;}
+
+
+class Steering:
+    def __init__(self):
+        self._lock = threading.Lock()   # 다른 스레드(입력, 백그라운드 작업)도 remind 할 수 있음
+        self._queue = []
+        self.todos = []                 # [(done: bool, text: str)]
+
+    def remind(self, text):
+        with self._lock:
+            self._queue.append(text)
+
+    def steer(self, user_text):
+        &quot;&quot;&quot;사용자가 루프 실행 중에 끼어든 말.&quot;&quot;&quot;
+        self.remind(f&quot;사용자가 작업 도중 이렇게 말했습니다: {user_text}&quot;)
+
+    def todo_write(self, items):
+        &quot;&quot;&quot;&#x27;x 끝난일\\n할일&#x27; 형식 문자열을 파싱해 self.todos 를 교체하고 확인 메시지를 반환.&quot;&quot;&quot;
+        # &gt;&gt;&gt; TODO: 줄마다 &#x27;x &#x27; 접두사로 완료 여부를 판단해 (bool, text) 리스트로 만드세요 (빈 줄 무시)
+        todos = []
+        for line in items.splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            done = line.startswith(&quot;x &quot;)
+            todos.append((done, line[2:].strip() if done else line))
+        self.todos = todos
+        return f&quot;todo 갱신: {sum(d for d, _ in todos)}/{len(todos)} 완료&quot;
+        # &lt;&lt;&lt; TODO
+
+    def render_todos(self):
+        return &quot;\n&quot;.join(f&quot;[{&#x27;x&#x27; if d else &#x27; &#x27;}] {t}&quot; for d, t in self.todos)
+
+    def inject(self, blocks):
+        &quot;&quot;&quot;run_loop 의 inject 훅. tool_result 블록 리스트 &#x27;뒤에&#x27; 리마인더를 붙인다.
+        1) 큐에 쌓인 리마인더들을 한 블록으로 합쳐 붙이고 큐를 비운다
+        2) 할 일 목록이 있고 미완료 항목이 있으면 &quot;현재 할 일:\\n&lt;render_todos&gt;&quot; 블록도 붙인다
+        리마인더가 하나도 없으면 아무것도 붙이지 않는다.&quot;&quot;&quot;
+        # &gt;&gt;&gt; TODO: 잠금 안에서 큐를 비우고, 위 규칙대로 reminder_block 을 blocks 에 append 하세요
+        with self._lock:
+            pending, self._queue = self._queue, []
+        if pending:
+            blocks.append(reminder_block(&quot;\n&quot;.join(pending)))
+        if any(not d for d, _ in self.todos):
+            blocks.append(reminder_block(&quot;현재 할 일:\n&quot; + self.render_todos()))
+        # &lt;&lt;&lt; TODO
+
+    def executor(self, base_execute):
+        &quot;&quot;&quot;todo_write 는 여기서 처리하고 나머지는 base_execute 로.&quot;&quot;&quot;
+        def execute(name, args):
+            if name == &quot;todo_write&quot;:
+                return self.todo_write(args[&quot;items&quot;])
+            return base_execute(name, args)
+        return execute
+
+
+if __name__ == &quot;__main__&quot;:
+    s = Steering()
+    s.todo_write(&quot;x 저장소 둘러보기\n테스트 고치기&quot;)
+    s.steer(&quot;README도 같이 고쳐줘&quot;)
+    blocks = [{&quot;type&quot;: &quot;tool_result&quot;, &quot;tool_use_id&quot;: &quot;t1&quot;, &quot;content&quot;: &quot;ok&quot;}]
+    s.inject(blocks)
+    for b in blocks:
+        print(b.get(&quot;text&quot;) or b)
+</code></pre></details>
+    <details><summary>채점 테스트 보기 (<code>test_lab.py</code>)</summary><pre class="code"><code class="language-python">import os
+import sys
+import unittest
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), &quot;..&quot;, &quot;..&quot;)))
+from common.labkit import load_target  # noqa: E402
+from common.brain import ScriptedBrain, reply, text, tool_use  # noqa: E402
+from common.loop import run_loop  # noqa: E402
+
+lab = load_target(__file__)
+
+
+class Lab6(unittest.TestCase):
+    def test_todo_parse(self):
+        s = lab.Steering()
+        msg = s.todo_write(&quot;x 첫째\n\n둘째\nx 셋째&quot;)
+        self.assertEqual(s.todos, [(True, &quot;첫째&quot;), (False, &quot;둘째&quot;), (True, &quot;셋째&quot;)])
+        self.assertIsInstance(msg, str)
+
+    def test_inject_drains_queue_once(self):
+        s = lab.Steering()
+        s.remind(&quot;A&quot;)
+        s.steer(&quot;B&quot;)
+        blocks = []
+        s.inject(blocks)
+        self.assertEqual(len(blocks), 1)
+        self.assertIn(&quot;&lt;system-reminder&gt;&quot;, blocks[0][&quot;text&quot;])
+        self.assertIn(&quot;A&quot;, blocks[0][&quot;text&quot;])
+        self.assertIn(&quot;B&quot;, blocks[0][&quot;text&quot;])
+        again = []
+        s.inject(again)
+        self.assertEqual(again, [], &quot;한 번 전달한 리마인더는 큐에서 사라져야 합니다&quot;)
+
+    def test_todos_reshown_until_done(self):
+        s = lab.Steering()
+        s.todo_write(&quot;일1&quot;)
+        b = []
+        s.inject(b)
+        self.assertEqual(len(b), 1)
+        self.assertIn(&quot;[ ] 일1&quot;, b[0][&quot;text&quot;])
+        s.todo_write(&quot;x 일1&quot;)
+        b = []
+        s.inject(b)
+        self.assertEqual(b, [], &quot;모두 끝나면 다시 보여줄 필요 없음&quot;)
+
+    def test_in_loop(self):
+        s = lab.Steering()
+        brain = ScriptedBrain([
+            reply(tool_use(&quot;todo_write&quot;, {&quot;items&quot;: &quot;조사\n수정&quot;}, id=&quot;T&quot;)),
+            reply(tool_use(&quot;run_command&quot;, {&quot;command&quot;: &quot;x&quot;}, id=&quot;R&quot;)),
+            reply(text(&quot;완료&quot;)),
+        ])
+        msgs = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;go&quot;}]
+
+        def base(name, args):
+            s.steer(&quot;천천히 해&quot;)      # 도구 실행 중 사용자가 끼어듦
+            return &quot;ok&quot;
+        run_loop(brain, msgs, [lab.TODO_TOOL], &quot;sys&quot;, execute=s.executor(base), inject=s.inject)
+        second_user = msgs[4][&quot;content&quot;]
+        self.assertEqual(second_user[0][&quot;type&quot;], &quot;tool_result&quot;,
+                         &quot;tool_result 가 먼저, 리마인더는 그 뒤에 와야 합니다&quot;)
+        joined = &quot;&quot;.join(b.get(&quot;text&quot;, &quot;&quot;) for b in second_user)
+        self.assertIn(&quot;천천히 해&quot;, joined)
+        self.assertIn(&quot;조사&quot;, joined)
+
+
+if __name__ == &quot;__main__&quot;:
+    unittest.main()
+</code></pre></details>
+    <label class="donebox"><input type="checkbox" data-done> 이 랩을 완료로 표시</label>
+  </section>
+  <nav class="pager"><a href="05_subagents.html">← 05 서브에이전트</a><a class="next" href="07_guardrails.html">07 가드레일 →</a></nav>
+</main>
+<script type="application/json" id="lab-data">{"id": "06_steering", "exercise": "#!/usr/bin/env python3\n\"\"\"[연습] Lab 6 — 돌고 있는 루프 조종하기: 리마인더 큐 + 할 일 목록.\n\n긴 작업 중 두뇌는 목표를 잊고 표류합니다. 하네스는 다음 user 쪽 메시지(=tool_result\n메시지)에 <system-reminder> 블록을 슬쩍 끼워 넣어 방향을 잡아줍니다.\n- 사용자가 실행 중에 던진 말 (steer)\n- 하네스가 감지한 사실 (예: \"파일이 바깥에서 바뀌었음\")\n- 매 라운드 다시 보여주는 할 일 목록 (todo)\n\n주의: 끼워 넣는 위치는 '배열 끝'입니다. 시스템 프롬프트를 고치면 캐시가 깨지니까요.\n\"\"\"\nimport os\nimport sys\nimport threading\n\nsys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), \"..\", \"..\")))\n\nTODO_TOOL = {\n    \"name\": \"todo_write\",\n    \"description\": \"할 일 목록 전체를 교체한다. 한 줄에 하나, 끝난 항목은 'x ' 로 시작.\",\n    \"input_schema\": {\"type\": \"object\",\n                     \"properties\": {\"items\": {\"type\": \"string\"}},\n                     \"required\": [\"items\"]},\n}\n\n\ndef reminder_block(text):\n    return {\"type\": \"text\", \"text\": f\"<system-reminder>\\n{text}\\n<\/system-reminder>\"}\n\n\nclass Steering:\n    def __init__(self):\n        self._lock = threading.Lock()   # 다른 스레드(입력, 백그라운드 작업)도 remind 할 수 있음\n        self._queue = []\n        self.todos = []                 # [(done: bool, text: str)]\n\n    def remind(self, text):\n        with self._lock:\n            self._queue.append(text)\n\n    def steer(self, user_text):\n        \"\"\"사용자가 루프 실행 중에 끼어든 말.\"\"\"\n        self.remind(f\"사용자가 작업 도중 이렇게 말했습니다: {user_text}\")\n\n    def todo_write(self, items):\n        \"\"\"'x 끝난일\\\\n할일' 형식 문자열을 파싱해 self.todos 를 교체하고 확인 메시지를 반환.\"\"\"\n        # TODO(1): 줄마다 'x ' 접두사로 완료 여부를 판단해 (bool, text) 리스트로 만드세요 (빈 줄 무시)\n        raise NotImplementedError(\"06_steering TODO(1)\")\n\n    def render_todos(self):\n        return \"\\n\".join(f\"[{'x' if d else ' '}] {t}\" for d, t in self.todos)\n\n    def inject(self, blocks):\n        \"\"\"run_loop 의 inject 훅. tool_result 블록 리스트 '뒤에' 리마인더를 붙인다.\n        1) 큐에 쌓인 리마인더들을 한 블록으로 합쳐 붙이고 큐를 비운다\n        2) 할 일 목록이 있고 미완료 항목이 있으면 \"현재 할 일:\\\\n<render_todos>\" 블록도 붙인다\n        리마인더가 하나도 없으면 아무것도 붙이지 않는다.\"\"\"\n        # TODO(2): 잠금 안에서 큐를 비우고, 위 규칙대로 reminder_block 을 blocks 에 append 하세요\n        raise NotImplementedError(\"06_steering TODO(2)\")\n\n    def executor(self, base_execute):\n        \"\"\"todo_write 는 여기서 처리하고 나머지는 base_execute 로.\"\"\"\n        def execute(name, args):\n            if name == \"todo_write\":\n                return self.todo_write(args[\"items\"])\n            return base_execute(name, args)\n        return execute\n\n\nif __name__ == \"__main__\":\n    s = Steering()\n    s.todo_write(\"x 저장소 둘러보기\\n테스트 고치기\")\n    s.steer(\"README도 같이 고쳐줘\")\n    blocks = [{\"type\": \"tool_result\", \"tool_use_id\": \"t1\", \"content\": \"ok\"}]\n    s.inject(blocks)\n    for b in blocks:\n        print(b.get(\"text\") or b)\n", "pyodide": "https://cdn.jsdelivr.net/npm/pyodide@0.29.5/", "labs": [{"id": "01_array", "n": 1, "title": "대화는 그냥 JSON 배열이다", "short": "대화 = 배열", "minutes": 20}, {"id": "02_tools", "n": 2, "title": "도구 = JSON 스키마 + 함수 디스패치", "short": "도구", "minutes": 25}, {"id": "03_agent_loop", "n": 3, "title": "에이전트 루프", "short": "에이전트 루프", "minutes": 25}, {"id": "04_context_budget", "n": 4, "title": "컨텍스트는 예산, 캐싱은 순서", "short": "예산과 캐싱", "minutes": 30}, {"id": "05_subagents", "n": 5, "title": "서브에이전트 = 컨텍스트 포크", "short": "서브에이전트", "minutes": 20}, {"id": "06_steering", "n": 6, "title": "돌고 있는 루프 조종하기", "short": "조종", "minutes": 25}, {"id": "07_guardrails", "n": 7, "title": "반사신경과 가드레일", "short": "가드레일", "minutes": 25}, {"id": "08_debugging", "n": 8, "title": "배열 디버깅", "short": "디버깅", "minutes": 20}, {"id": "09_rag", "n": 9, "title": "RAG는 원래 하네스 패턴이었다", "short": "RAG", "minutes": 35}, {"id": "10_ontology", "n": 10, "title": "온톨로지: 에이전트에게 도메인 지도 입히기", "short": "온톨로지", "minutes": 40}, {"id": "11_capstone", "n": 11, "title": "캡스톤: 미니 하네스", "short": "캡스톤", "minutes": 30}]}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lab 08 배열 디버깅 · 하네스 워크북</title>
+<meta name="description" content="에이전트 문제의 원인은 거의 항상 &#x27;실제로 보낸 배열&#x27; 안에 있다.">
+<meta name="theme-color" content="#f6f3ec" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#16181c" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" media="(prefers-color-scheme: light)">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="(prefers-color-scheme: dark)">
+
+</head>
+<body data-root="../">
+<header class="topbar">
+  <a class="brand" href="../index.html"><span class="logo">⟲</span> 하네스 워크북</a>
+  <span class="crumb">Lab 08</span>
+  <span class="progress-pill" data-progress-pill title="완료한 랩">0/11</span>
+</header>
+<main class="wrap" data-lab="08_debugging" data-has-exercise="true">
+  <section class="labhead">
+    <p class="eyebrow">Lab 08 · 약 20분</p>
+    <h1>배열 디버깅</h1>
+    <ul class="points"><li>에이전트 문제의 원인은 거의 항상 &#x27;실제로 보낸 배열&#x27; 안에 있다.</li><li>모든 요청·응답을 JSONL 로 캡처한다.</li><li>캐시 적중률이 갑자기 0 이 되면 prefix 가 깨진 것 — 어디서 갈라졌는지 비교한다.</li></ul>
+    <nav class="jump"><a href="#concept">개념</a><a href="#quiz">퀴즈</a><a href="#practice">실습</a><a href="#answer">정답</a></nav>
+  </section>
+  <section class="card prose" id="concept">
+    <h2><span class="step">1</span> 개념</h2>
+    <p>원문: <a href="https://github.com/IsuruMaduranga/harness-engineering-101/blob/main/src/12-debugging-the-array.md" target="_blank" rel="noopener">12-debugging-the-array.md</a></p>
+<h3>무엇이 깨지나</h3>
+<p>에이전트가 이상하게 굴 때 '모델이 실제로 본 것'을 모른다.</p>
+<h3>패치</h3>
+<p>모든 요청·응답을 JSONL 로 캡처, <code>usage</code> 로 캐시 적중률(활력징후) 계산, 이전/이번 요청의 prefix 가 어디서 갈라졌는지 비교.</p>
+<h3>비용</h3>
+<p>캡처 파일엔 비밀이 들어갈 수 있다. 커밋 금지.</p>
+<h3>할 일 (<code>exercise.py</code>)</h3>
+<ul><li><code>CapturingBrain</code></li><li><code>cache_hit_ratio</code></li><li><code>first_divergence</code></li></ul>
+<pre class="code"><code class="language-bash">python run_tests.py 8 -v</code></pre>
+<h3>생각해볼 것</h3>
+<ul><li><code>HARNESS_DEBUG=1</code> 로 캡스톤을 돌리고 <code>python labs/08_debugging/solution.py harness_debug.jsonl</code> 로 요약을 보세요.</li></ul>
+  </section>
+  <section class="card" id="quiz">
+    <h2><span class="step">2</span> 확인 퀴즈</h2>
+    <div class="quiz" data-answer="1" data-q="0">
+  <p class="q"><span class="qn">Q1</span> cache_read 80, input 10, cache_creation 10 일 때 캐시 적중률은?</p>
+  <div class="opts"><button class="opt" data-i="0">10%</button><button class="opt" data-i="1">80%</button><button class="opt" data-i="2">89%</button></div>
+  <p class="why" hidden>80 / (10 + 80 + 10) = 0.8</p>
+</div><div class="quiz" data-answer="1" data-q="1">
+  <p class="q"><span class="qn">Q2</span> prefix 비교 시 무시해야 하는 것은?</p>
+  <div class="opts"><button class="opt" data-i="0">tool_result 내용</button><button class="opt" data-i="1">cache_control 표시</button><button class="opt" data-i="2">role</button></div>
+  <p class="why" hidden>표시는 매번 위치가 옮겨지지만 내용 자체는 같기 때문입니다.</p>
+</div>
+  </section>
+  <section class="card practice" id="practice">
+  <h2><span class="step">3</span> 실습: <code>exercise.py</code> 채우기</h2>
+  <p class="muted small">TODO 표시 부분을 채우고 채점하세요. 입력 내용은 이 기기에 자동 저장됩니다.</p>
+  <div class="toolbar">
+    <button class="btn small" data-act="todo">TODO 찾기</button>
+    <button class="btn small" data-act="indent" title="들여쓰기 4칸">⇥</button>
+    <button class="btn small" data-act="reset">초기화</button>
+    <span class="saved muted small" data-saved></span>
+  </div>
+  <textarea class="editor" data-editor spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off">#!/usr/bin/env python3
+&quot;&quot;&quot;[연습] Lab 8 — 배열 디버깅: 보이지 않는 프롬프트는 고칠 수 없다.
+
+에이전트가 이상하게 굴면 원인은 거의 항상 &#x27;실제로 보낸 배열&#x27; 안에 있습니다.
+1. 캡처   : 매 요청/응답을 JSONL 로 그대로 기록 (HARNESS_DEBUG=1)
+2. 캐시 활력징후: usage 에서 캐시 적중률을 계산 → 갑자기 0 이 되면 prefix 가 깨진 것
+3. prefix 비교: 이전 요청과 이번 요청이 &#x27;어디서부터&#x27; 달라졌는지 찾기
+
+실행:  python labs/08_debugging/solution.py debug.jsonl   (캡처 파일 요약)
+&quot;&quot;&quot;
+import json
+import os
+import sys
+import time
+
+
+class CapturingBrain:
+    &quot;&quot;&quot;두뇌를 감싸서 모든 왕복을 path(JSONL)에 한 줄씩 기록한다.&quot;&quot;&quot;
+
+    def __init__(self, brain, path=&quot;harness_debug.jsonl&quot;):
+        self.brain, self.path, self.n = brain, path, 0
+
+    def __call__(self, request):
+        # TODO(1): 원래 두뇌를 호출하고, {&quot;n&quot;, &quot;t&quot;, &quot;request&quot;, &quot;response&quot;} 한 줄을 path 에 append 하세요
+        raise NotImplementedError(&quot;08_debugging TODO(1)&quot;)
+
+
+def cache_hit_ratio(usage):
+    &quot;&quot;&quot;캐시에서 읽은 입력 토큰 비율 = cache_read / (input + cache_read + cache_creation).
+    분모가 0 이면 0.0.&quot;&quot;&quot;
+    # TODO(2): usage dict 의 키가 없으면 0 으로 취급하세요
+    raise NotImplementedError(&quot;08_debugging TODO(2)&quot;)
+
+
+def first_divergence(prev_messages, curr_messages):
+    &quot;&quot;&quot;이전 요청의 배열이 이번 요청 배열의 &#x27;앞부분&#x27;으로 그대로 남아 있으면 None.
+    아니면 처음으로 달라진 메시지 인덱스를 반환한다. (None = 캐시 친화적)
+    주의: cache_control 표시는 비교에서 무시한다.&quot;&quot;&quot;
+    # TODO(3): cache_control 을 지운 사본끼리 앞에서부터 비교하세요
+    raise NotImplementedError(&quot;08_debugging TODO(3)&quot;)
+
+
+def summarize(path):
+    &quot;&quot;&quot;캡처 파일을 읽어 요청마다 메시지 수, 추정 크기, 캐시율, prefix 깨짐 여부를 출력.&quot;&quot;&quot;
+    prev = None
+    for line in open(path, encoding=&quot;utf-8&quot;):
+        rec = json.loads(line)
+        msgs = rec[&quot;request&quot;][&quot;messages&quot;]
+        div = first_divergence(prev, msgs) if prev is not None else None
+        ratio = cache_hit_ratio(rec[&quot;response&quot;].get(&quot;usage&quot;, {}))
+        flag = f&quot;  ⚠️ prefix 깨짐 @ {div}&quot; if div is not None else &quot;&quot;
+        print(f&quot;#{rec[&#x27;n&#x27;]:&gt;3}  msgs={len(msgs):&gt;3}  ~{len(json.dumps(msgs)) // 4:&gt;6} tok&quot;
+              f&quot;  cache={ratio:5.0%}{flag}&quot;)
+        prev = msgs
+
+
+if __name__ == &quot;__main__&quot;:
+    if len(sys.argv) &lt; 2 or not os.path.exists(sys.argv[1]):
+        print(&quot;사용법: python labs/08_debugging/solution.py &lt;capture.jsonl&gt;&quot;)
+    else:
+        summarize(sys.argv[1])
+</textarea>
+  <div class="runrow">
+    <button class="btn primary" data-act="run">▶ 채점</button>
+    <span class="muted small" data-run-status></span>
+  </div>
+  <div class="results" data-results></div>
+</section>
+  <section class="card" id="answer">
+    <h2><span class="step">4</span> 정답과 테스트</h2>
+    <details><summary>정답 코드 보기 (<code>solution.py</code>)</summary><pre class="code"><code class="language-python">#!/usr/bin/env python3
+&quot;&quot;&quot;Lab 8 — 배열 디버깅: 보이지 않는 프롬프트는 고칠 수 없다.
+
+에이전트가 이상하게 굴면 원인은 거의 항상 &#x27;실제로 보낸 배열&#x27; 안에 있습니다.
+1. 캡처   : 매 요청/응답을 JSONL 로 그대로 기록 (HARNESS_DEBUG=1)
+2. 캐시 활력징후: usage 에서 캐시 적중률을 계산 → 갑자기 0 이 되면 prefix 가 깨진 것
+3. prefix 비교: 이전 요청과 이번 요청이 &#x27;어디서부터&#x27; 달라졌는지 찾기
+
+실행:  python labs/08_debugging/solution.py debug.jsonl   (캡처 파일 요약)
+&quot;&quot;&quot;
+import json
+import os
+import sys
+import time
+
+
+class CapturingBrain:
+    &quot;&quot;&quot;두뇌를 감싸서 모든 왕복을 path(JSONL)에 한 줄씩 기록한다.&quot;&quot;&quot;
+
+    def __init__(self, brain, path=&quot;harness_debug.jsonl&quot;):
+        self.brain, self.path, self.n = brain, path, 0
+
+    def __call__(self, request):
+        # &gt;&gt;&gt; TODO: 원래 두뇌를 호출하고, {&quot;n&quot;, &quot;t&quot;, &quot;request&quot;, &quot;response&quot;} 한 줄을 path 에 append 하세요
+        response = self.brain(request)
+        self.n += 1
+        with open(self.path, &quot;a&quot;, encoding=&quot;utf-8&quot;) as f:
+            f.write(json.dumps({&quot;n&quot;: self.n, &quot;t&quot;: time.time(),
+                                &quot;request&quot;: request, &quot;response&quot;: response},
+                               ensure_ascii=False) + &quot;\n&quot;)
+        return response
+        # &lt;&lt;&lt; TODO
+
+
+def cache_hit_ratio(usage):
+    &quot;&quot;&quot;캐시에서 읽은 입력 토큰 비율 = cache_read / (input + cache_read + cache_creation).
+    분모가 0 이면 0.0.&quot;&quot;&quot;
+    # &gt;&gt;&gt; TODO: usage dict 의 키가 없으면 0 으로 취급하세요
+    read = usage.get(&quot;cache_read_input_tokens&quot;, 0) or 0
+    total = (usage.get(&quot;input_tokens&quot;, 0) or 0) + read + (usage.get(&quot;cache_creation_input_tokens&quot;, 0) or 0)
+    return read / total if total else 0.0
+    # &lt;&lt;&lt; TODO
+
+
+def first_divergence(prev_messages, curr_messages):
+    &quot;&quot;&quot;이전 요청의 배열이 이번 요청 배열의 &#x27;앞부분&#x27;으로 그대로 남아 있으면 None.
+    아니면 처음으로 달라진 메시지 인덱스를 반환한다. (None = 캐시 친화적)
+    주의: cache_control 표시는 비교에서 무시한다.&quot;&quot;&quot;
+    # &gt;&gt;&gt; TODO: cache_control 을 지운 사본끼리 앞에서부터 비교하세요
+    def clean(m):
+        m = json.loads(json.dumps(m))
+        if isinstance(m.get(&quot;content&quot;), list):
+            for b in m[&quot;content&quot;]:
+                b.pop(&quot;cache_control&quot;, None)
+        return m
+    for i, pm in enumerate(prev_messages):
+        if i &gt;= len(curr_messages) or clean(pm) != clean(curr_messages[i]):
+            return i
+    return None
+    # &lt;&lt;&lt; TODO
+
+
+def summarize(path):
+    &quot;&quot;&quot;캡처 파일을 읽어 요청마다 메시지 수, 추정 크기, 캐시율, prefix 깨짐 여부를 출력.&quot;&quot;&quot;
+    prev = None
+    for line in open(path, encoding=&quot;utf-8&quot;):
+        rec = json.loads(line)
+        msgs = rec[&quot;request&quot;][&quot;messages&quot;]
+        div = first_divergence(prev, msgs) if prev is not None else None
+        ratio = cache_hit_ratio(rec[&quot;response&quot;].get(&quot;usage&quot;, {}))
+        flag = f&quot;  ⚠️ prefix 깨짐 @ {div}&quot; if div is not None else &quot;&quot;
+        print(f&quot;#{rec[&#x27;n&#x27;]:&gt;3}  msgs={len(msgs):&gt;3}  ~{len(json.dumps(msgs)) // 4:&gt;6} tok&quot;
+              f&quot;  cache={ratio:5.0%}{flag}&quot;)
+        prev = msgs
+
+
+if __name__ == &quot;__main__&quot;:
+    if len(sys.argv) &lt; 2 or not os.path.exists(sys.argv[1]):
+        print(&quot;사용법: python labs/08_debugging/solution.py &lt;capture.jsonl&gt;&quot;)
+    else:
+        summarize(sys.argv[1])
+</code></pre></details>
+    <details><summary>채점 테스트 보기 (<code>test_lab.py</code>)</summary><pre class="code"><code class="language-python">import json
+import os
+import sys
+import tempfile
+import unittest
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), &quot;..&quot;, &quot;..&quot;)))
+from common.labkit import load_target  # noqa: E402
+from common.brain import ScriptedBrain, reply, text  # noqa: E402
+
+lab = load_target(__file__)
+ELIDED = &quot;[이전 도구 결과 생략됨]&quot;
+
+
+def tr(i, c):
+    return {&quot;type&quot;: &quot;tool_result&quot;, &quot;tool_use_id&quot;: f&quot;t{i}&quot;, &quot;content&quot;: c}
+
+
+class Lab8(unittest.TestCase):
+    def test_capture(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = os.path.join(d, &quot;cap.jsonl&quot;)
+            b = lab.CapturingBrain(ScriptedBrain([reply(text(&quot;a&quot;)), reply(text(&quot;b&quot;))]), p)
+            r1 = b({&quot;messages&quot;: [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;1&quot;}]})
+            b({&quot;messages&quot;: [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;2&quot;}]})
+            self.assertEqual(r1[&quot;content&quot;][0][&quot;text&quot;], &quot;a&quot;)
+            lines = [json.loads(x) for x in open(p, encoding=&quot;utf-8&quot;)]
+            self.assertEqual(len(lines), 2)
+            self.assertEqual(lines[1][&quot;request&quot;][&quot;messages&quot;][0][&quot;content&quot;], &quot;2&quot;)
+            self.assertEqual(lines[0][&quot;response&quot;][&quot;content&quot;][0][&quot;text&quot;], &quot;a&quot;)
+
+    def test_cache_ratio(self):
+        self.assertEqual(lab.cache_hit_ratio({}), 0.0)
+        self.assertAlmostEqual(lab.cache_hit_ratio(
+            {&quot;input_tokens&quot;: 10, &quot;cache_read_input_tokens&quot;: 80,
+             &quot;cache_creation_input_tokens&quot;: 10}), 0.8)
+
+    def test_append_only_is_cache_friendly(self):
+        prev = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;go&quot;},
+                {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: [tr(1, &quot;big&quot;)]}]
+        curr = prev + [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: [tr(2, &quot;more&quot;)]}]
+        self.assertIsNone(lab.first_divergence(prev, curr))
+
+    def test_cache_control_ignored(self):
+        prev = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: [{&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: &quot;hi&quot;,
+                                              &quot;cache_control&quot;: {&quot;type&quot;: &quot;ephemeral&quot;}}]}]
+        curr = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: [{&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: &quot;hi&quot;}]},
+                {&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;x&quot;}]
+        self.assertIsNone(lab.first_divergence(prev, curr))
+
+    def test_eliding_breaks_prefix(self):
+        &quot;&quot;&quot;Lab 4의 elide 를 쓰면 공간은 생기지만 캐시가 깨진다는 걸 눈으로 확인.&quot;&quot;&quot;
+        prev = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;go&quot;},
+                {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: [tr(1, &quot;big&quot;)]},
+                {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: [tr(2, &quot;big2&quot;)]}]
+        curr = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;go&quot;},
+                {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: [tr(1, ELIDED)]},
+                {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: [tr(2, &quot;big2&quot;)]},
+                {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: [tr(3, &quot;new&quot;)]}]
+        self.assertEqual(lab.first_divergence(prev, curr), 1)
+
+
+if __name__ == &quot;__main__&quot;:
+    unittest.main()
+</code></pre></details>
+    <label class="donebox"><input type="checkbox" data-done> 이 랩을 완료로 표시</label>
+  </section>
+  <nav class="pager"><a href="07_guardrails.html">← 07 가드레일</a><a class="next" href="09_rag.html">09 RAG →</a></nav>
+</main>
+<script type="application/json" id="lab-data">{"id": "08_debugging", "exercise": "#!/usr/bin/env python3\n\"\"\"[연습] Lab 8 — 배열 디버깅: 보이지 않는 프롬프트는 고칠 수 없다.\n\n에이전트가 이상하게 굴면 원인은 거의 항상 '실제로 보낸 배열' 안에 있습니다.\n1. 캡처   : 매 요청/응답을 JSONL 로 그대로 기록 (HARNESS_DEBUG=1)\n2. 캐시 활력징후: usage 에서 캐시 적중률을 계산 → 갑자기 0 이 되면 prefix 가 깨진 것\n3. prefix 비교: 이전 요청과 이번 요청이 '어디서부터' 달라졌는지 찾기\n\n실행:  python labs/08_debugging/solution.py debug.jsonl   (캡처 파일 요약)\n\"\"\"\nimport json\nimport os\nimport sys\nimport time\n\n\nclass CapturingBrain:\n    \"\"\"두뇌를 감싸서 모든 왕복을 path(JSONL)에 한 줄씩 기록한다.\"\"\"\n\n    def __init__(self, brain, path=\"harness_debug.jsonl\"):\n        self.brain, self.path, self.n = brain, path, 0\n\n    def __call__(self, request):\n        # TODO(1): 원래 두뇌를 호출하고, {\"n\", \"t\", \"request\", \"response\"} 한 줄을 path 에 append 하세요\n        raise NotImplementedError(\"08_debugging TODO(1)\")\n\n\ndef cache_hit_ratio(usage):\n    \"\"\"캐시에서 읽은 입력 토큰 비율 = cache_read / (input + cache_read + cache_creation).\n    분모가 0 이면 0.0.\"\"\"\n    # TODO(2): usage dict 의 키가 없으면 0 으로 취급하세요\n    raise NotImplementedError(\"08_debugging TODO(2)\")\n\n\ndef first_divergence(prev_messages, curr_messages):\n    \"\"\"이전 요청의 배열이 이번 요청 배열의 '앞부분'으로 그대로 남아 있으면 None.\n    아니면 처음으로 달라진 메시지 인덱스를 반환한다. (None = 캐시 친화적)\n    주의: cache_control 표시는 비교에서 무시한다.\"\"\"\n    # TODO(3): cache_control 을 지운 사본끼리 앞에서부터 비교하세요\n    raise NotImplementedError(\"08_debugging TODO(3)\")\n\n\ndef summarize(path):\n    \"\"\"캡처 파일을 읽어 요청마다 메시지 수, 추정 크기, 캐시율, prefix 깨짐 여부를 출력.\"\"\"\n    prev = None\n    for line in open(path, encoding=\"utf-8\"):\n        rec = json.loads(line)\n        msgs = rec[\"request\"][\"messages\"]\n        div = first_divergence(prev, msgs) if prev is not None else None\n        ratio = cache_hit_ratio(rec[\"response\"].get(\"usage\", {}))\n        flag = f\"  ⚠️ prefix 깨짐 @ {div}\" if div is not None else \"\"\n        print(f\"#{rec['n']:>3}  msgs={len(msgs):>3}  ~{len(json.dumps(msgs)) // 4:>6} tok\"\n              f\"  cache={ratio:5.0%}{flag}\")\n        prev = msgs\n\n\nif __name__ == \"__main__\":\n    if len(sys.argv) < 2 or not os.path.exists(sys.argv[1]):\n        print(\"사용법: python labs/08_debugging/solution.py <capture.jsonl>\")\n    else:\n        summarize(sys.argv[1])\n", "pyodide": "https://cdn.jsdelivr.net/npm/pyodide@0.29.5/", "labs": [{"id": "01_array", "n": 1, "title": "대화는 그냥 JSON 배열이다", "short": "대화 = 배열", "minutes": 20}, {"id": "02_tools", "n": 2, "title": "도구 = JSON 스키마 + 함수 디스패치", "short": "도구", "minutes": 25}, {"id": "03_agent_loop", "n": 3, "title": "에이전트 루프", "short": "에이전트 루프", "minutes": 25}, {"id": "04_context_budget", "n": 4, "title": "컨텍스트는 예산, 캐싱은 순서", "short": "예산과 캐싱", "minutes": 30}, {"id": "05_subagents", "n": 5, "title": "서브에이전트 = 컨텍스트 포크", "short": "서브에이전트", "minutes": 20}, {"id": "06_steering", "n": 6, "title": "돌고 있는 루프 조종하기", "short": "조종", "minutes": 25}, {"id": "07_guardrails", "n": 7, "title": "반사신경과 가드레일", "short": "가드레일", "minutes": 25}, {"id": "08_debugging", "n": 8, "title": "배열 디버깅", "short": "디버깅", "minutes": 20}, {"id": "09_rag", "n": 9, "title": "RAG는 원래 하네스 패턴이었다", "short": "RAG", "minutes": 35}, {"id": "10_ontology", "n": 10, "title": "온톨로지: 에이전트에게 도메인 지도 입히기", "short": "온톨로지", "minutes": 40}, {"id": "11_capstone", "n": 11, "title": "캡스톤: 미니 하네스", "short": "캡스톤", "minutes": 30}]}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

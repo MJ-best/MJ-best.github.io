@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lab 07 반사신경과 가드레일 · 하네스 워크북</title>
+<meta name="description" content="프롬프트의 &#x27;조심해&#x27;는 부탁, 하네스 코드는 규칙.">
+<meta name="theme-color" content="#f6f3ec" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#16181c" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" media="(prefers-color-scheme: light)">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="(prefers-color-scheme: dark)">
+
+</head>
+<body data-root="../">
+<header class="topbar">
+  <a class="brand" href="../index.html"><span class="logo">⟲</span> 하네스 워크북</a>
+  <span class="crumb">Lab 07</span>
+  <span class="progress-pill" data-progress-pill title="완료한 랩">0/11</span>
+</header>
+<main class="wrap" data-lab="07_guardrails" data-has-exercise="true">
+  <section class="labhead">
+    <p class="eyebrow">Lab 07 · 약 25분</p>
+    <h1>반사신경과 가드레일</h1>
+    <ul class="points"><li>프롬프트의 &#x27;조심해&#x27;는 부탁, 하네스 코드는 규칙.</li><li>보호 경로, 읽고 나서 쓰기, 위험 명령 승인 게이트.</li><li>거부는 BLOCKED: 이유 문자열로 돌려줘서 모델이 다른 길을 찾게 한다.</li></ul>
+    <nav class="jump"><a href="#concept">개념</a><a href="#quiz">퀴즈</a><a href="#practice">실습</a><a href="#answer">정답</a></nav>
+  </section>
+  <section class="card prose" id="concept">
+    <h2><span class="step">1</span> 개념</h2>
+    <p>원문: <a href="https://github.com/IsuruMaduranga/harness-engineering-101/blob/main/src/13-reflexes-and-guardrails.md" target="_blank" rel="noopener">13-reflexes-and-guardrails.md</a></p>
+<h3>무엇이 깨지나</h3>
+<p>모델은 확신에 차서 <code>.env</code> 를 덮어쓰거나 <code>rm -rf</code> 를 실행한다.</p>
+<h3>패치</h3>
+<p>하네스 코드에서 규칙으로 막는다: 보호 경로 쓰기 금지, 읽지 않은 기존 파일 덮어쓰기 금지, 위험 명령은 사람 승인. 거부는 예외가 아니라 <code>BLOCKED: 이유</code> 문자열로 돌려줘서 모델이 다른 길을 찾게 한다.</p>
+<h3>비용</h3>
+<p>정규식 기반 탐지는 우회될 수 있다. 진짜 격리(컨테이너, 권한)는 별도.</p>
+<h3>할 일 (<code>exercise.py</code>)</h3>
+<ul><li><code>Guard.check</code> 세 규칙</li></ul>
+<pre class="code"><code class="language-bash">python run_tests.py 7 -v</code></pre>
+<h3>생각해볼 것</h3>
+<ul><li><code>DANGEROUS</code> 패턴을 우회하는 명령을 떠올려 보세요. 무엇으로 보완할까요?</li><li>부록 C(플랜 모드)는 이 아이디어를 '상태'로 확장합니다.</li></ul>
+  </section>
+  <section class="card" id="quiz">
+    <h2><span class="step">2</span> 확인 퀴즈</h2>
+    <div class="quiz" data-answer="1" data-q="0">
+  <p class="q"><span class="qn">Q1</span> &#x27;읽지 않은 기존 파일 덮어쓰기 금지&#x27; 규칙이 막는 사고는?</p>
+  <div class="opts"><button class="opt" data-i="0">디스크 부족</button><button class="opt" data-i="1">모델이 내용을 모른 채 파일을 통째로 날리는 것</button><button class="opt" data-i="2">네트워크 오류</button></div>
+  <p class="why" hidden>모델은 파일 내용을 추측으로 &#x27;재작성&#x27;하는 경우가 많습니다.</p>
+</div><div class="quiz" data-answer="1" data-q="1">
+  <p class="q"><span class="qn">Q2</span> 정규식 기반 위험 명령 탐지의 한계는?</p>
+  <div class="opts"><button class="opt" data-i="0">너무 느리다</button><button class="opt" data-i="1">우회 표현을 다 막을 수 없다</button><button class="opt" data-i="2">안전한 명령도 다 막는다</button></div>
+  <p class="why" hidden>진짜 격리(컨테이너, 권한)와 함께 써야 합니다.</p>
+</div>
+  </section>
+  <section class="card practice" id="practice">
+  <h2><span class="step">3</span> 실습: <code>exercise.py</code> 채우기</h2>
+  <p class="muted small">TODO 표시 부분을 채우고 채점하세요. 입력 내용은 이 기기에 자동 저장됩니다.</p>
+  <div class="toolbar">
+    <button class="btn small" data-act="todo">TODO 찾기</button>
+    <button class="btn small" data-act="indent" title="들여쓰기 4칸">⇥</button>
+    <button class="btn small" data-act="reset">초기화</button>
+    <span class="saved muted small" data-saved></span>
+  </div>
+  <textarea class="editor" data-editor spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off">#!/usr/bin/env python3
+&quot;&quot;&quot;[연습] Lab 7 — 반사신경과 가드레일: 루프는 언젠가 멍청한 짓을 한다.
+
+프롬프트에 &quot;조심해&quot;라고 쓰는 건 부탁일 뿐입니다. 가드레일은 하네스 코드 안의 &#x27;규칙&#x27;이라
+모델이 아무리 확신해도 통과할 수 없습니다. 거부할 땐 예외 대신 이유를 문자열로 돌려줘서
+모델이 읽고 다른 길을 찾게 합니다.
+  1. 보호 경로   : .env, .git/, .ssh/ 등에는 쓰기 금지
+  2. 읽고 나서 쓰기: 이미 있는 파일을 이번 세션에 읽지 않고 덮어쓰기 금지
+  3. 승인 게이트 : 위험한 명령은 사람에게 물어보고 실행
+&quot;&quot;&quot;
+import os
+import re
+import sys
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), &quot;..&quot;, &quot;..&quot;)))
+from common.toolbox import execute_tool  # noqa: E402
+
+PROTECTED = (&quot;.env&quot;, &quot;.git/&quot;, &quot;.ssh/&quot;, &quot;id_rsa&quot;)
+DANGEROUS = [r&quot;\brm\s+-[a-zA-Z]*r[a-zA-Z]*f&quot;, r&quot;\brm\s+-[a-zA-Z]*f[a-zA-Z]*r&quot;,
+             r&quot;git\s+push\s+.*--force&quot;, r&quot;curl[^|]*\|\s*(ba)?sh&quot;, r&quot;\bmkfs\b&quot;,
+             r&quot;\bdd\s+if=&quot;]
+
+
+def is_protected(path):
+    p = path.replace(&quot;\\&quot;, &quot;/&quot;)
+    return any(mark in p for mark in PROTECTED)
+
+
+def is_dangerous(command):
+    return any(re.search(pat, command) for pat in DANGEROUS)
+
+
+class Guard:
+    def __init__(self, approve=None):
+        &quot;&quot;&quot;approve(command) -&gt; bool : 사람에게 묻는 함수. 기본은 터미널 입력.&quot;&quot;&quot;
+        self.approve = approve or (lambda cmd: input(f&quot;\n⚠️  실행할까요? {cmd} [y/N] &quot;).lower() == &quot;y&quot;)
+        self.read_paths = set()
+
+    def check(self, name, args):
+        &quot;&quot;&quot;허용이면 None, 거부면 &quot;BLOCKED: &lt;이유&gt;&quot; 문자열을 반환.&quot;&quot;&quot;
+        # TODO(1): 세 규칙을 구현하세요
+        raise NotImplementedError(&quot;07_guardrails TODO(1)&quot;)
+
+    def executor(self, base_execute=execute_tool):
+        def execute(name, args):
+            verdict = self.check(name, args)
+            if verdict:
+                return verdict
+            result = base_execute(name, args)
+            if name == &quot;read_file&quot; and not str(result).startswith(&quot;ERROR&quot;):
+                self.read_paths.add(os.path.abspath(args[&quot;path&quot;]))
+            return result
+        return execute
+
+
+if __name__ == &quot;__main__&quot;:
+    g = Guard(approve=lambda c: False)
+    ex = g.executor()
+    print(ex(&quot;write_file&quot;, {&quot;path&quot;: &quot;.env&quot;, &quot;content&quot;: &quot;KEY=1&quot;}))
+    print(ex(&quot;run_command&quot;, {&quot;command&quot;: &quot;rm -rf /tmp/whatever&quot;}))
+</textarea>
+  <div class="runrow">
+    <button class="btn primary" data-act="run">▶ 채점</button>
+    <span class="muted small" data-run-status></span>
+  </div>
+  <div class="results" data-results></div>
+</section>
+  <section class="card" id="answer">
+    <h2><span class="step">4</span> 정답과 테스트</h2>
+    <details><summary>정답 코드 보기 (<code>solution.py</code>)</summary><pre class="code"><code class="language-python">#!/usr/bin/env python3
+&quot;&quot;&quot;Lab 7 — 반사신경과 가드레일: 루프는 언젠가 멍청한 짓을 한다.
+
+프롬프트에 &quot;조심해&quot;라고 쓰는 건 부탁일 뿐입니다. 가드레일은 하네스 코드 안의 &#x27;규칙&#x27;이라
+모델이 아무리 확신해도 통과할 수 없습니다. 거부할 땐 예외 대신 이유를 문자열로 돌려줘서
+모델이 읽고 다른 길을 찾게 합니다.
+  1. 보호 경로   : .env, .git/, .ssh/ 등에는 쓰기 금지
+  2. 읽고 나서 쓰기: 이미 있는 파일을 이번 세션에 읽지 않고 덮어쓰기 금지
+  3. 승인 게이트 : 위험한 명령은 사람에게 물어보고 실행
+&quot;&quot;&quot;
+import os
+import re
+import sys
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), &quot;..&quot;, &quot;..&quot;)))
+from common.toolbox import execute_tool  # noqa: E402
+
+PROTECTED = (&quot;.env&quot;, &quot;.git/&quot;, &quot;.ssh/&quot;, &quot;id_rsa&quot;)
+DANGEROUS = [r&quot;\brm\s+-[a-zA-Z]*r[a-zA-Z]*f&quot;, r&quot;\brm\s+-[a-zA-Z]*f[a-zA-Z]*r&quot;,
+             r&quot;git\s+push\s+.*--force&quot;, r&quot;curl[^|]*\|\s*(ba)?sh&quot;, r&quot;\bmkfs\b&quot;,
+             r&quot;\bdd\s+if=&quot;]
+
+
+def is_protected(path):
+    p = path.replace(&quot;\\&quot;, &quot;/&quot;)
+    return any(mark in p for mark in PROTECTED)
+
+
+def is_dangerous(command):
+    return any(re.search(pat, command) for pat in DANGEROUS)
+
+
+class Guard:
+    def __init__(self, approve=None):
+        &quot;&quot;&quot;approve(command) -&gt; bool : 사람에게 묻는 함수. 기본은 터미널 입력.&quot;&quot;&quot;
+        self.approve = approve or (lambda cmd: input(f&quot;\n⚠️  실행할까요? {cmd} [y/N] &quot;).lower() == &quot;y&quot;)
+        self.read_paths = set()
+
+    def check(self, name, args):
+        &quot;&quot;&quot;허용이면 None, 거부면 &quot;BLOCKED: &lt;이유&gt;&quot; 문자열을 반환.&quot;&quot;&quot;
+        # &gt;&gt;&gt; TODO: 세 규칙을 구현하세요
+        #   - write_file: 보호 경로면 BLOCKED
+        #   - write_file: 파일이 이미 존재하는데 self.read_paths 에 없으면 BLOCKED (먼저 read_file 하라고 안내)
+        #   - run_command: 위험하면 self.approve(command) 가 False 일 때 BLOCKED
+        if name == &quot;write_file&quot;:
+            path = os.path.abspath(args.get(&quot;path&quot;, &quot;&quot;))
+            if is_protected(args.get(&quot;path&quot;, &quot;&quot;)) or is_protected(path):
+                return f&quot;BLOCKED: {args.get(&#x27;path&#x27;)} 는 보호된 경로입니다.&quot;
+            if os.path.exists(path) and path not in self.read_paths:
+                return (f&quot;BLOCKED: {args.get(&#x27;path&#x27;)} 는 이미 존재합니다. &quot;
+                        &quot;덮어쓰기 전에 read_file 로 먼저 읽으세요.&quot;)
+        if name == &quot;run_command&quot; and is_dangerous(args.get(&quot;command&quot;, &quot;&quot;)):
+            if not self.approve(args[&quot;command&quot;]):
+                return &quot;BLOCKED: 사용자가 위험한 명령 실행을 거부했습니다.&quot;
+        return None
+        # &lt;&lt;&lt; TODO
+
+    def executor(self, base_execute=execute_tool):
+        def execute(name, args):
+            verdict = self.check(name, args)
+            if verdict:
+                return verdict
+            result = base_execute(name, args)
+            if name == &quot;read_file&quot; and not str(result).startswith(&quot;ERROR&quot;):
+                self.read_paths.add(os.path.abspath(args[&quot;path&quot;]))
+            return result
+        return execute
+
+
+if __name__ == &quot;__main__&quot;:
+    g = Guard(approve=lambda c: False)
+    ex = g.executor()
+    print(ex(&quot;write_file&quot;, {&quot;path&quot;: &quot;.env&quot;, &quot;content&quot;: &quot;KEY=1&quot;}))
+    print(ex(&quot;run_command&quot;, {&quot;command&quot;: &quot;rm -rf /tmp/whatever&quot;}))
+</code></pre></details>
+    <details><summary>채점 테스트 보기 (<code>test_lab.py</code>)</summary><pre class="code"><code class="language-python">import os
+import sys
+import tempfile
+import unittest
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), &quot;..&quot;, &quot;..&quot;)))
+from common.labkit import load_target  # noqa: E402
+
+lab = load_target(__file__)
+
+
+class Lab7(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.d = self.tmp.name
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def test_protected_path(self):
+        g = lab.Guard(approve=lambda c: True)
+        out = g.executor()(&quot;write_file&quot;, {&quot;path&quot;: os.path.join(self.d, &quot;.env&quot;), &quot;content&quot;: &quot;x&quot;})
+        self.assertTrue(out.startswith(&quot;BLOCKED&quot;))
+        self.assertFalse(os.path.exists(os.path.join(self.d, &quot;.env&quot;)))
+
+    def test_new_file_ok(self):
+        g = lab.Guard(approve=lambda c: True)
+        p = os.path.join(self.d, &quot;new.txt&quot;)
+        self.assertIsNone(g.check(&quot;write_file&quot;, {&quot;path&quot;: p, &quot;content&quot;: &quot;x&quot;}))
+
+    def test_read_before_write(self):
+        p = os.path.join(self.d, &quot;exists.txt&quot;)
+        with open(p, &quot;w&quot;) as f:
+            f.write(&quot;old&quot;)
+        g = lab.Guard(approve=lambda c: True)
+        ex = g.executor()
+        self.assertTrue(ex(&quot;write_file&quot;, {&quot;path&quot;: p, &quot;content&quot;: &quot;new&quot;}).startswith(&quot;BLOCKED&quot;))
+        self.assertEqual(open(p).read(), &quot;old&quot;)
+        ex(&quot;read_file&quot;, {&quot;path&quot;: p})
+        self.assertFalse(ex(&quot;write_file&quot;, {&quot;path&quot;: p, &quot;content&quot;: &quot;new&quot;}).startswith(&quot;BLOCKED&quot;))
+        self.assertEqual(open(p).read(), &quot;new&quot;)
+
+    def test_dangerous_needs_approval(self):
+        asked = []
+        g = lab.Guard(approve=lambda c: asked.append(c) or False)
+        out = g.check(&quot;run_command&quot;, {&quot;command&quot;: &quot;rm -rf build&quot;})
+        self.assertTrue(out.startswith(&quot;BLOCKED&quot;))
+        self.assertEqual(asked, [&quot;rm -rf build&quot;])
+        g2 = lab.Guard(approve=lambda c: True)
+        self.assertIsNone(g2.check(&quot;run_command&quot;, {&quot;command&quot;: &quot;rm -rf build&quot;}))
+
+    def test_safe_command_not_asked(self):
+        g = lab.Guard(approve=lambda c: self.fail(&quot;안전한 명령엔 묻지 않아야 합니다&quot;))
+        self.assertIsNone(g.check(&quot;run_command&quot;, {&quot;command&quot;: &quot;ls -la&quot;}))
+
+
+if __name__ == &quot;__main__&quot;:
+    unittest.main()
+</code></pre></details>
+    <label class="donebox"><input type="checkbox" data-done> 이 랩을 완료로 표시</label>
+  </section>
+  <nav class="pager"><a href="06_steering.html">← 06 조종</a><a class="next" href="08_debugging.html">08 디버깅 →</a></nav>
+</main>
+<script type="application/json" id="lab-data">{"id": "07_guardrails", "exercise": "#!/usr/bin/env python3\n\"\"\"[연습] Lab 7 — 반사신경과 가드레일: 루프는 언젠가 멍청한 짓을 한다.\n\n프롬프트에 \"조심해\"라고 쓰는 건 부탁일 뿐입니다. 가드레일은 하네스 코드 안의 '규칙'이라\n모델이 아무리 확신해도 통과할 수 없습니다. 거부할 땐 예외 대신 이유를 문자열로 돌려줘서\n모델이 읽고 다른 길을 찾게 합니다.\n  1. 보호 경로   : .env, .git/, .ssh/ 등에는 쓰기 금지\n  2. 읽고 나서 쓰기: 이미 있는 파일을 이번 세션에 읽지 않고 덮어쓰기 금지\n  3. 승인 게이트 : 위험한 명령은 사람에게 물어보고 실행\n\"\"\"\nimport os\nimport re\nimport sys\n\nsys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), \"..\", \"..\")))\nfrom common.toolbox import execute_tool  # noqa: E402\n\nPROTECTED = (\".env\", \".git/\", \".ssh/\", \"id_rsa\")\nDANGEROUS = [r\"\\brm\\s+-[a-zA-Z]*r[a-zA-Z]*f\", r\"\\brm\\s+-[a-zA-Z]*f[a-zA-Z]*r\",\n             r\"git\\s+push\\s+.*--force\", r\"curl[^|]*\\|\\s*(ba)?sh\", r\"\\bmkfs\\b\",\n             r\"\\bdd\\s+if=\"]\n\n\ndef is_protected(path):\n    p = path.replace(\"\\\\\", \"/\")\n    return any(mark in p for mark in PROTECTED)\n\n\ndef is_dangerous(command):\n    return any(re.search(pat, command) for pat in DANGEROUS)\n\n\nclass Guard:\n    def __init__(self, approve=None):\n        \"\"\"approve(command) -> bool : 사람에게 묻는 함수. 기본은 터미널 입력.\"\"\"\n        self.approve = approve or (lambda cmd: input(f\"\\n⚠️  실행할까요? {cmd} [y/N] \").lower() == \"y\")\n        self.read_paths = set()\n\n    def check(self, name, args):\n        \"\"\"허용이면 None, 거부면 \"BLOCKED: <이유>\" 문자열을 반환.\"\"\"\n        # TODO(1): 세 규칙을 구현하세요\n        raise NotImplementedError(\"07_guardrails TODO(1)\")\n\n    def executor(self, base_execute=execute_tool):\n        def execute(name, args):\n            verdict = self.check(name, args)\n            if verdict:\n                return verdict\n            result = base_execute(name, args)\n            if name == \"read_file\" and not str(result).startswith(\"ERROR\"):\n                self.read_paths.add(os.path.abspath(args[\"path\"]))\n            return result\n        return execute\n\n\nif __name__ == \"__main__\":\n    g = Guard(approve=lambda c: False)\n    ex = g.executor()\n    print(ex(\"write_file\", {\"path\": \".env\", \"content\": \"KEY=1\"}))\n    print(ex(\"run_command\", {\"command\": \"rm -rf /tmp/whatever\"}))\n", "pyodide": "https://cdn.jsdelivr.net/npm/pyodide@0.29.5/", "labs": [{"id": "01_array", "n": 1, "title": "대화는 그냥 JSON 배열이다", "short": "대화 = 배열", "minutes": 20}, {"id": "02_tools", "n": 2, "title": "도구 = JSON 스키마 + 함수 디스패치", "short": "도구", "minutes": 25}, {"id": "03_agent_loop", "n": 3, "title": "에이전트 루프", "short": "에이전트 루프", "minutes": 25}, {"id": "04_context_budget", "n": 4, "title": "컨텍스트는 예산, 캐싱은 순서", "short": "예산과 캐싱", "minutes": 30}, {"id": "05_subagents", "n": 5, "title": "서브에이전트 = 컨텍스트 포크", "short": "서브에이전트", "minutes": 20}, {"id": "06_steering", "n": 6, "title": "돌고 있는 루프 조종하기", "short": "조종", "minutes": 25}, {"id": "07_guardrails", "n": 7, "title": "반사신경과 가드레일", "short": "가드레일", "minutes": 25}, {"id": "08_debugging", "n": 8, "title": "배열 디버깅", "short": "디버깅", "minutes": 20}, {"id": "09_rag", "n": 9, "title": "RAG는 원래 하네스 패턴이었다", "short": "RAG", "minutes": 35}, {"id": "10_ontology", "n": 10, "title": "온톨로지: 에이전트에게 도메인 지도 입히기", "short": "온톨로지", "minutes": 40}, {"id": "11_capstone", "n": 11, "title": "캡스톤: 미니 하네스", "short": "캡스톤", "minutes": 30}]}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

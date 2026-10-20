@@ -1,0 +1,205 @@
+{
+  "domain": "구매(Procurement)",
+  "version": 1,
+  "concepts": {
+    "purchase_order": {
+      "label": "발주",
+      "synonyms": [
+        "PO",
+        "구매오더",
+        "오더"
+      ],
+      "definition": "공급사에 품목·수량·단가·납기를 확정해 주문하는 문서.",
+      "attributes": [
+        "발주번호",
+        "공급사",
+        "품목",
+        "수량",
+        "단가",
+        "납기"
+      ],
+      "relations": [
+        {
+          "type": "issued_to",
+          "target": "supplier"
+        },
+        {
+          "type": "references",
+          "target": "price_contract"
+        }
+      ]
+    },
+    "goods_receipt": {
+      "label": "입고",
+      "synonyms": [
+        "GR",
+        "입고처리",
+        "입하"
+      ],
+      "definition": "발주된 물품이 창고에 도착해 수량이 확인되고 재고로 잡히는 처리.",
+      "attributes": [
+        "입고번호",
+        "발주번호",
+        "입고수량",
+        "입고일"
+      ],
+      "relations": [
+        {
+          "type": "fulfills",
+          "target": "purchase_order"
+        },
+        {
+          "type": "requires",
+          "target": "inspection"
+        }
+      ]
+    },
+    "inspection": {
+      "label": "검수",
+      "synonyms": [
+        "수입검사",
+        "QC검사",
+        "품질검사"
+      ],
+      "definition": "입고 물품이 규격·품질 기준을 만족하는지 판정하는 절차.",
+      "attributes": [
+        "검사번호",
+        "판정(합격/불합격)",
+        "검사자"
+      ],
+      "relations": [
+        {
+          "type": "performed_on",
+          "target": "goods_receipt"
+        }
+      ]
+    },
+    "invoice": {
+      "label": "송장",
+      "synonyms": [
+        "세금계산서",
+        "인보이스",
+        "청구서"
+      ],
+      "definition": "공급사가 대금을 청구하기 위해 발행하는 증빙.",
+      "attributes": [
+        "송장번호",
+        "공급가액",
+        "세액",
+        "발행일"
+      ],
+      "relations": [
+        {
+          "type": "issued_by",
+          "target": "supplier"
+        },
+        {
+          "type": "bills",
+          "target": "purchase_order"
+        }
+      ]
+    },
+    "three_way_match": {
+      "label": "3-Way Match",
+      "synonyms": [
+        "삼자대사",
+        "3자 대사",
+        "쓰리웨이매치"
+      ],
+      "definition": "발주·입고·송장의 수량과 금액이 허용오차 안에서 일치하는지 대조하는 통제.",
+      "attributes": [
+        "수량오차허용률",
+        "금액오차허용률",
+        "대사결과"
+      ],
+      "relations": [
+        {
+          "type": "compares",
+          "target": "purchase_order"
+        },
+        {
+          "type": "compares",
+          "target": "goods_receipt"
+        },
+        {
+          "type": "compares",
+          "target": "invoice"
+        }
+      ]
+    },
+    "payment": {
+      "label": "대금지급",
+      "synonyms": [
+        "지급",
+        "송금",
+        "결제"
+      ],
+      "definition": "대사가 끝난 송장에 대해 공급사에 대금을 송금하는 처리.",
+      "attributes": [
+        "지급번호",
+        "지급일",
+        "지급금액",
+        "지급방법"
+      ],
+      "relations": [
+        {
+          "type": "requires",
+          "target": "three_way_match"
+        },
+        {
+          "type": "pays",
+          "target": "supplier"
+        }
+      ]
+    },
+    "supplier": {
+      "label": "공급사",
+      "synonyms": [
+        "협력사",
+        "벤더",
+        "업체"
+      ],
+      "definition": "물품이나 서비스를 공급하는 외부 거래처.",
+      "attributes": [
+        "공급사코드",
+        "사업자번호",
+        "결제조건"
+      ],
+      "relations": []
+    },
+    "price_contract": {
+      "label": "단가계약",
+      "synonyms": [
+        "단가합의",
+        "연간단가",
+        "단가표"
+      ],
+      "definition": "일정 기간 품목 단가를 미리 합의해 둔 계약.",
+      "attributes": [
+        "계약번호",
+        "유효기간",
+        "품목별단가"
+      ],
+      "relations": [
+        {
+          "type": "agreed_with",
+          "target": "supplier"
+        }
+      ]
+    }
+  },
+  "rules": [
+    {
+      "id": "R1",
+      "text": "이 조직에서 '마감'은 매월 25일의 매입 마감을 뜻한다. 25일 이후 입고분은 다음 달로 넘어간다."
+    },
+    {
+      "id": "R2",
+      "text": "3-Way Match에서 수량 오차는 2%, 금액 오차는 1%까지 허용한다. 초과하면 구매 담당자 승인이 필요하다."
+    },
+    {
+      "id": "R3",
+      "text": "검수 불합격 입고분은 재고로 잡히지 않으며, 대사 대상 수량에서 제외된다."
+    }
+  ]
+}

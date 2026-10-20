@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lab 10 온톨로지: 에이전트에게 도메인 지도 입히기 · 하네스 워크북</title>
+<meta name="description" content="온톨로지 = 개념 · 관계 · 속성 · 해석 규칙을 명시한 도메인 지도.">
+<meta name="theme-color" content="#f6f3ec" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#16181c" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" media="(prefers-color-scheme: light)">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="(prefers-color-scheme: dark)">
+
+</head>
+<body data-root="../">
+<header class="topbar">
+  <a class="brand" href="../index.html"><span class="logo">⟲</span> 하네스 워크북</a>
+  <span class="crumb">Lab 10</span>
+  <span class="progress-pill" data-progress-pill title="완료한 랩">0/11</span>
+</header>
+<main class="wrap" data-lab="10_ontology" data-has-exercise="true">
+  <section class="labhead">
+    <p class="eyebrow">Lab 10 · 약 40분</p>
+    <h1>온톨로지: 에이전트에게 도메인 지도 입히기</h1>
+    <ul class="points"><li>온톨로지 = 개념 · 관계 · 속성 · 해석 규칙을 명시한 도메인 지도.</li><li>데이터가 작으면 YAML 을 시스템 프롬프트에 통째로 — 누락 없음, 디버깅 쉬움.</li><li>커지면 조회 도구 → 그래프(multi-hop) 순으로 확장. 저장소보다 설계가 먼저.</li></ul>
+    <nav class="jump"><a href="#concept">개념</a><a href="#quiz">퀴즈</a><a href="#practice">실습</a><a href="#answer">정답</a></nav>
+  </section>
+  <section class="card prose" id="concept">
+    <h2><span class="step">1</span> 개념</h2>
+    <p>참고: 장한별, <a href="https://bigstargithub.github.io/posts/AI-12/" target="_blank" rel="noopener">「그래서 Agent에 데이터를 어떻게 입히나요?」</a></p>
+<h3>무엇이 깨지나</h3>
+<p>LLM 은 일반 지식은 많지만 <strong>우리 조직에서 그 용어가 무엇을 뜻하는지</strong> 모른다. '마감'이 매월 25일 매입 마감이라는 것, 'PO'·'구매오더'·'오더'가 같은 것이라는 것, 대금지급이 삼자대사를 거쳐 검수에 걸려 있다는 것.</p>
+<h3>패치</h3>
+<p><strong>온톨로지</strong> = 개념 · 관계 · 속성 · 해석 규칙을 명시적으로 정의한 문서 (<code>data/procurement/ontology.yaml</code>). 데이터가 작을 때는 저장소를 고르기 전에 <strong>온톨로지 설계부터</strong>, 그리고 다음 순서로 확장한다.</p>
+<div class="table"><table><thead><tr><th>단계</th><th>하네스에서</th><th>언제</th><th>이 랩의 함수</th></tr></thead><tbody><tr><td>1. 전체 주입</td><td>시스템 프롬프트에 통째로</td><td>작을 때 (출발점)</td><td><code>render_for_prompt</code>, <code>build_system</code></td></tr><tr><td>2. 조회 도구</td><td><code>ontology_lookup</code> 으로 섹션만</td><td>컨텍스트 비중이 커지면</td><td><code>lookup</code> (들어오는 관계 포함)</td></tr><tr><td>3. 그래프</td><td>경로 탐색 결과를 도구로</td><td>인스턴스 증가, multi-hop</td><td><code>find_path</code> (BFS)</td></tr></tbody></table></div>
+<p>언제 넘어갈지는 <code>decide_strategy</code> 로 규칙화해 봅니다.</p>
+<h3>비용</h3>
+<ul><li>1단계: 컨텍스트를 상시 점유. 대신 시스템 프롬프트(고정 prefix)라 캐시가 잘 된다 (Lab 4).</li><li>2단계: 모델이 조회를 안 하거나, 개념이 아닌 '규칙'에 있는 용어('마감')는 못 찾는다 — 테스트 <code>test_lookup_tool_in_loop</code> 참고.</li><li>3단계: 운영·스키마 관리 비용. 쿼리를 잘못 만들면 <strong>확신을 갖고 틀린다.</strong></li></ul>
+<h3>할 일</h3>
+<ul><li><code>validate</code> — 깨진 관계, 용어 충돌, 누락 검사 (설계 품질!)</li><li><code>resolve</code> — 조직 용어 → 개념 id</li><li><code>render_for_prompt</code> — 1단계</li><li><code>lookup</code> — 2단계 (들어오는 관계·관련 규칙)</li><li><code>find_path</code> — 3단계 multi-hop</li></ul>
+<h3>확인</h3>
+<p><code>test_injection_beats_rag_on_multi_hop</code> 은 같은 질문에 대해 RAG top-3 은 고리를 놓치고, 전체 주입은 고리가 모두 프롬프트에 있음을 보여 줍니다.</p>
+<h3>생각해볼 것</h3>
+<ul><li><code>ontology.yaml</code> 에 개념을 하나 추가해 보세요 (예: 반품). <code>validate</code> 가 무엇을 잡아주나요? (YAML 수정 후 <code>python scripts/yaml_to_json.py</code>)</li><li>잘 만든 YAML 은 그래프 스키마로 옮기기 쉽습니다. <code>edges()</code> 출력을 Cypher <code>CREATE</code> 문으로 바꿔 보세요.</li><li>GraphRAG: <code>find_path</code> 결과의 각 노드에 Lab 9 검색 결과를 붙여 돌려주는 도구를 만들어 보세요.</li></ul>
+  </section>
+  <section class="card" id="quiz">
+    <h2><span class="step">2</span> 확인 퀴즈</h2>
+    <div class="quiz" data-answer="1" data-q="0">
+  <p class="q"><span class="qn">Q1</span> 온톨로지가 작을 때 &#x27;전체 주입&#x27;이 검색보다 나은 이유는?</p>
+  <div class="opts"><button class="opt" data-i="0">더 최신이라서</button><button class="opt" data-i="1">검색 누락이라는 실패 지점 자체가 없어서</button><button class="opt" data-i="2">토큰이 더 적어서</button></div>
+  <p class="why" hidden>작은 데이터에서 검색 단계는 오히려 새 실패 지점을 만듭니다.</p>
+</div><div class="quiz" data-answer="1" data-q="1">
+  <p class="q"><span class="qn">Q2</span> ontology_lookup(&#x27;마감&#x27;)이 UNKNOWN 을 돌려준 이유는?</p>
+  <div class="opts"><button class="opt" data-i="0">버그</button><button class="opt" data-i="1">&#x27;마감&#x27;은 개념이 아니라 해석 규칙(R1)에 있어서</button><button class="opt" data-i="2">동의어가 대문자라서</button></div>
+  <p class="why" hidden>조회 도구 방식은 &#x27;어디에 있을지&#x27; 맞혀야 합니다. 전체 주입은 이 문제가 없습니다.</p>
+</div><div class="quiz" data-answer="1" data-q="2">
+  <p class="q"><span class="qn">Q3</span> 다음 중 &#x27;그래프&#x27; 단계로 넘어갈 신호는?</p>
+  <div class="opts"><button class="opt" data-i="0">개념 10개</button><button class="opt" data-i="1">인스턴스가 수만 개이고 multi-hop 질문이 잦음</button><button class="opt" data-i="2">규칙이 3개</button></div>
+  <p class="why" hidden>규모와 관계 탐색 빈도가 기준입니다.</p>
+</div>
+  </section>
+  <section class="card practice" id="practice">
+  <h2><span class="step">3</span> 실습: <code>exercise.py</code> 채우기</h2>
+  <p class="muted small">TODO 표시 부분을 채우고 채점하세요. 입력 내용은 이 기기에 자동 저장됩니다.</p>
+  <div class="toolbar">
+    <button class="btn small" data-act="todo">TODO 찾기</button>
+    <button class="btn small" data-act="indent" title="들여쓰기 4칸">⇥</button>
+    <button class="btn small" data-act="reset">초기화</button>
+    <span class="saved muted small" data-saved></span>
+  </div>
+  <textarea class="editor" data-editor spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off">#!/usr/bin/env python3
+&quot;&quot;&quot;[연습] Lab 10 — 온톨로지: 에이전트에게 &#x27;도메인 지도&#x27; 입히기.
+
+LLM 은 일반 지식은 많지만 &quot;우리 조직에서 &#x27;마감&#x27;이 뭘 뜻하는지&quot;는 모릅니다.
+온톨로지 = 개념 · 관계 · 속성 · 해석 규칙을 명시적으로 적은 문서.
+
+데이터가 작을 때의 출발점과 확장 순서:
+  1단계 전체 주입 : YAML 을 렌더링해 시스템 프롬프트에 &#x27;통째로&#x27;. 검색 누락이 원천적으로 없음.
+  2단계 조회 도구 : 커지면 ontology_lookup 도구로 필요한 섹션만 꺼내 보게 한다.
+  3단계 그래프   : 인스턴스가 많고 multi-hop 탐색이 잦으면 그래프 탐색(GraphDB/GraphRAG).
+저장소보다 먼저 &#x27;온톨로지 설계&#x27;가 중요합니다. 잘 만든 YAML 은 그래프 스키마로 옮기기 쉽습니다.
+
+실행:  python labs/10_ontology/solution.py            (렌더링 결과와 경로 탐색 예시 출력)
+&quot;&quot;&quot;
+import json
+import os
+import sys
+from collections import deque
+
+ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), &quot;..&quot;, &quot;..&quot;))
+sys.path.insert(0, ROOT)
+DATA = os.path.join(ROOT, &quot;data&quot;, &quot;procurement&quot;)
+
+
+def load_ontology(path=os.path.join(DATA, &quot;ontology.yaml&quot;)):
+    &quot;&quot;&quot;PyYAML 이 있으면 YAML, 없으면 같은 이름의 .json 을 읽는다.&quot;&quot;&quot;
+    try:
+        import yaml
+        with open(path, encoding=&quot;utf-8&quot;) as f:
+            return yaml.safe_load(f)
+    except ImportError:
+        with open(os.path.splitext(path)[0] + &quot;.json&quot;, encoding=&quot;utf-8&quot;) as f:
+            return json.load(f)
+
+
+def _norm(term):
+    return term.lower().replace(&quot; &quot;, &quot;&quot;).replace(&quot;-&quot;, &quot;&quot;)
+
+
+# ------------------------------------------------------------------ 설계 검증
+def validate(onto):
+    &quot;&quot;&quot;온톨로지의 설계 오류를 문자열 리스트로 반환 (없으면 []).
+    - 개념에 label 또는 definition 이 없음      → &quot;&lt;id&gt;: label/definition 누락&quot;
+    - 관계의 target 이 정의되지 않은 개념        → &quot;&lt;id&gt;: 알 수 없는 target &lt;target&gt;&quot;
+    - 같은 용어(label·synonym, _norm 기준)가 두 개념에 쓰임 → &quot;용어 충돌: &lt;term&gt;&quot;
+    &quot;&quot;&quot;
+    # TODO(1): 세 가지 검사를 구현하세요
+    raise NotImplementedError(&quot;10_ontology TODO(1)&quot;)
+
+
+def resolve(onto, term):
+    &quot;&quot;&quot;조직 용어(id·label·동의어, 대소문자/공백/하이픈 무시)를 개념 id 로. 없으면 None.&quot;&quot;&quot;
+    # TODO(2): _norm 으로 비교해 일치하는 개념 id 를 반환하세요
+    raise NotImplementedError(&quot;10_ontology TODO(2)&quot;)
+
+
+# ----------------------------------------------------------- 1단계: 전체 주입
+def render_concept(onto, cid):
+    c = onto[&quot;concepts&quot;][cid]
+    syn = f&quot; (= {&#x27;, &#x27;.join(c[&#x27;synonyms&#x27;])})&quot; if c.get(&quot;synonyms&quot;) else &quot;&quot;
+    lines = [f&quot;[{cid}] {c[&#x27;label&#x27;]}{syn}&quot;, f&quot;  정의: {c[&#x27;definition&#x27;]}&quot;]
+    if c.get(&quot;attributes&quot;):
+        lines.append(f&quot;  속성: {&#x27;, &#x27;.join(c[&#x27;attributes&#x27;])}&quot;)
+    rels = [f&quot;{r[&#x27;type&#x27;]} → {r[&#x27;target&#x27;]}({onto[&#x27;concepts&#x27;][r[&#x27;target&#x27;]][&#x27;label&#x27;]})&quot;
+            for r in c.get(&quot;relations&quot;) or []]
+    if rels:
+        lines.append(f&quot;  관계: {&#x27;; &#x27;.join(rels)}&quot;)
+    return &quot;\n&quot;.join(lines)
+
+
+def render_for_prompt(onto):
+    &quot;&quot;&quot;온톨로지 전체를 시스템 프롬프트용 텍스트로.
+    형식:
+        &lt;ontology domain=&quot;...&quot; version=&quot;...&quot;&gt;
+        (개념마다 render_concept, 빈 줄로 구분)
+
+        해석 규칙:
+        - R1: ...
+        &lt;/ontology&gt;
+    &quot;&quot;&quot;
+    # TODO(3): 위 형식대로 렌더링하세요
+    raise NotImplementedError(&quot;10_ontology TODO(3)&quot;)
+
+
+def build_system(base, onto):
+    return (f&quot;{base}\n\n아래 온톨로지는 이 조직의 용어 정의다. 일반 상식보다 이 정의를 우선하라.&quot;
+            f&quot;\n\n{render_for_prompt(onto)}&quot;)
+
+
+# ----------------------------------------------------------- 2단계: 조회 도구
+ONTOLOGY_TOOL = {
+    &quot;name&quot;: &quot;ontology_lookup&quot;,
+    &quot;description&quot;: &quot;도메인 용어(동의어 가능)의 정의·속성·관계(들어오는 관계 포함)와 관련 규칙을 조회한다.&quot;,
+    &quot;input_schema&quot;: {&quot;type&quot;: &quot;object&quot;,
+                     &quot;properties&quot;: {&quot;term&quot;: {&quot;type&quot;: &quot;string&quot;}},
+                     &quot;required&quot;: [&quot;term&quot;]},
+}
+
+
+def lookup(onto, term):
+    &quot;&quot;&quot;도구 결과 문자열. 모르는 용어면 &quot;UNKNOWN: &lt;term&gt; (알려진 개념: ...)&quot;.
+    아는 용어면 render_concept + &#x27;들어오는 관계&#x27; 줄 + 개념 label 이 언급된 규칙들.&quot;&quot;&quot;
+    cid = resolve(onto, term)
+    if cid is None:
+        known = &quot;, &quot;.join(c[&quot;label&quot;] for c in onto[&quot;concepts&quot;].values())
+        return f&quot;UNKNOWN: {term} (알려진 개념: {known})&quot;
+    out = [render_concept(onto, cid)]
+    # TODO(4): 다른 개념에서 cid 로 향하는 관계를 &quot;  들어오는 관계: &lt;src&gt;(&lt;label&gt;) -&lt;type&gt;→&quot; 형식으로 모아 추가하고,
+    raise NotImplementedError(&quot;10_ontology TODO(4)&quot;)
+
+
+# --------------------------------------------------------- 3단계: 그래프 탐색
+def edges(onto):
+    &quot;&quot;&quot;[(src, type, dst), ...] 모든 관계.&quot;&quot;&quot;
+    return [(src, r[&quot;type&quot;], r[&quot;target&quot;])
+            for src, c in onto[&quot;concepts&quot;].items() for r in c.get(&quot;relations&quot;) or []]
+
+
+def find_path(onto, start, goal, max_depth=4):
+    &quot;&quot;&quot;관계를 &#x27;방향 무시&#x27;하고 BFS 로 start→goal 최단 경로를 찾는다.
+    반환: 원래 방향을 유지한 간선 리스트 [(src, type, dst), ...]. 없으면 None. start==goal 이면 [].
+    예) payment→inspection:
+        [(&quot;payment&quot;,&quot;requires&quot;,&quot;three_way_match&quot;),
+         (&quot;three_way_match&quot;,&quot;compares&quot;,&quot;goods_receipt&quot;),
+         (&quot;goods_receipt&quot;,&quot;requires&quot;,&quot;inspection&quot;)]&quot;&quot;&quot;
+    # TODO(5): 인접 리스트(양방향)를 만들고 BFS 하세요. 경로 길이가 max_depth 를 넘으면 탐색하지 마세요
+    raise NotImplementedError(&quot;10_ontology TODO(5)&quot;)
+
+
+def explain_path(onto, path):
+    lab = lambda cid: onto[&quot;concepts&quot;][cid][&quot;label&quot;]  # noqa: E731
+    return &quot; → &quot;.join(f&quot;{lab(s)} -{t}→ {lab(d)}&quot; for s, t, d in path)
+
+
+# --------------------------------------------------------------- 어떤 단계?
+def decide_strategy(prompt_tokens, context_budget, n_instances=0, multi_hop_heavy=False):
+    &quot;&quot;&quot;확장 판단 (글의 순서를 단순화한 규칙):
+    - 인스턴스가 1만 개 이상이거나 multi-hop 탐색이 핵심이면  → &quot;graph&quot;
+    - 온톨로지 프롬프트가 컨텍스트 예산의 10% 를 넘으면      → &quot;lookup_tool&quot;
+    - 그 밖에는                                               → &quot;inject&quot;
+    &quot;&quot;&quot;
+    if n_instances &gt;= 10_000 or multi_hop_heavy:
+        return &quot;graph&quot;
+    if prompt_tokens &gt; context_budget * 0.10:
+        return &quot;lookup_tool&quot;
+    return &quot;inject&quot;
+
+
+def make_ontology_executor(onto, base_execute):
+    def execute(name, args):
+        if name == &quot;ontology_lookup&quot;:
+            return lookup(onto, args[&quot;term&quot;])
+        return base_execute(name, args)
+    return execute
+
+
+if __name__ == &quot;__main__&quot;:
+    onto = load_ontology()
+    print(&quot;검증:&quot;, validate(onto) or &quot;문제 없음&quot;)
+    text = render_for_prompt(onto)
+    print(text)
+    toks = len(text) // 2  # 한글은 대략 글자 2개 ≈ 1토큰 (거친 추정)
+    print(f&quot;\n~{toks} 토큰 → 전략: {decide_strategy(toks, 200_000)}&quot;)
+    p = find_path(onto, resolve(onto, &quot;대금지급&quot;), resolve(onto, &quot;검수&quot;))
+    print(&quot;대금지급 ↔ 검수 경로:&quot;, explain_path(onto, p))
+</textarea>
+  <div class="runrow">
+    <button class="btn primary" data-act="run">▶ 채점</button>
+    <span class="muted small" data-run-status></span>
+  </div>
+  <div class="results" data-results></div>
+</section>
+  <section class="card" id="answer">
+    <h2><span class="step">4</span> 정답과 테스트</h2>
+    <details><summary>정답 코드 보기 (<code>solution.py</code>)</summary><pre class="code"><code class="language-python">#!/usr/bin/env python3
+&quot;&quot;&quot;Lab 10 — 온톨로지: 에이전트에게 &#x27;도메인 지도&#x27; 입히기.
+
+LLM 은 일반 지식은 많지만 &quot;우리 조직에서 &#x27;마감&#x27;이 뭘 뜻하는지&quot;는 모릅니다.
+온톨로지 = 개념 · 관계 · 속성 · 해석 규칙을 명시적으로 적은 문서.
+
+데이터가 작을 때의 출발점과 확장 순서:
+  1단계 전체 주입 : YAML 을 렌더링해 시스템 프롬프트에 &#x27;통째로&#x27;. 검색 누락이 원천적으로 없음.
+  2단계 조회 도구 : 커지면 ontology_lookup 도구로 필요한 섹션만 꺼내 보게 한다.
+  3단계 그래프   : 인스턴스가 많고 multi-hop 탐색이 잦으면 그래프 탐색(GraphDB/GraphRAG).
+저장소보다 먼저 &#x27;온톨로지 설계&#x27;가 중요합니다. 잘 만든 YAML 은 그래프 스키마로 옮기기 쉽습니다.
+
+실행:  python labs/10_ontology/solution.py            (렌더링 결과와 경로 탐색 예시 출력)
+&quot;&quot;&quot;
+import json
+import os
+import sys
+from collections import deque
+
+ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), &quot;..&quot;, &quot;..&quot;))
+sys.path.insert(0, ROOT)
+DATA = os.path.join(ROOT, &quot;data&quot;, &quot;procurement&quot;)
+
+
+def load_ontology(path=os.path.join(DATA, &quot;ontology.yaml&quot;)):
+    &quot;&quot;&quot;PyYAML 이 있으면 YAML, 없으면 같은 이름의 .json 을 읽는다.&quot;&quot;&quot;
+    try:
+        import yaml
+        with open(path, encoding=&quot;utf-8&quot;) as f:
+            return yaml.safe_load(f)
+    except ImportError:
+        with open(os.path.splitext(path)[0] + &quot;.json&quot;, encoding=&quot;utf-8&quot;) as f:
+            return json.load(f)
+
+
+def _norm(term):
+    return term.lower().replace(&quot; &quot;, &quot;&quot;).replace(&quot;-&quot;, &quot;&quot;)
+
+
+# ------------------------------------------------------------------ 설계 검증
+def validate(onto):
+    &quot;&quot;&quot;온톨로지의 설계 오류를 문자열 리스트로 반환 (없으면 []).
+    - 개념에 label 또는 definition 이 없음      → &quot;&lt;id&gt;: label/definition 누락&quot;
+    - 관계의 target 이 정의되지 않은 개념        → &quot;&lt;id&gt;: 알 수 없는 target &lt;target&gt;&quot;
+    - 같은 용어(label·synonym, _norm 기준)가 두 개념에 쓰임 → &quot;용어 충돌: &lt;term&gt;&quot;
+    &quot;&quot;&quot;
+    # &gt;&gt;&gt; TODO: 세 가지 검사를 구현하세요
+    errors, seen = [], {}
+    concepts = onto.get(&quot;concepts&quot;, {})
+    for cid, c in concepts.items():
+        if not c.get(&quot;label&quot;) or not c.get(&quot;definition&quot;):
+            errors.append(f&quot;{cid}: label/definition 누락&quot;)
+        for r in c.get(&quot;relations&quot;) or []:
+            if r[&quot;target&quot;] not in concepts:
+                errors.append(f&quot;{cid}: 알 수 없는 target {r[&#x27;target&#x27;]}&quot;)
+        for term in [c.get(&quot;label&quot;, &quot;&quot;)] + list(c.get(&quot;synonyms&quot;) or []):
+            key = _norm(term)
+            if key and seen.setdefault(key, cid) != cid:
+                errors.append(f&quot;용어 충돌: {term}&quot;)
+    return errors
+    # &lt;&lt;&lt; TODO
+
+
+def resolve(onto, term):
+    &quot;&quot;&quot;조직 용어(id·label·동의어, 대소문자/공백/하이픈 무시)를 개념 id 로. 없으면 None.&quot;&quot;&quot;
+    # &gt;&gt;&gt; TODO: _norm 으로 비교해 일치하는 개념 id 를 반환하세요
+    key = _norm(term)
+    for cid, c in onto[&quot;concepts&quot;].items():
+        if key in {_norm(cid), _norm(c[&quot;label&quot;])} | {_norm(s) for s in c.get(&quot;synonyms&quot;) or []}:
+            return cid
+    return None
+    # &lt;&lt;&lt; TODO
+
+
+# ----------------------------------------------------------- 1단계: 전체 주입
+def render_concept(onto, cid):
+    c = onto[&quot;concepts&quot;][cid]
+    syn = f&quot; (= {&#x27;, &#x27;.join(c[&#x27;synonyms&#x27;])})&quot; if c.get(&quot;synonyms&quot;) else &quot;&quot;
+    lines = [f&quot;[{cid}] {c[&#x27;label&#x27;]}{syn}&quot;, f&quot;  정의: {c[&#x27;definition&#x27;]}&quot;]
+    if c.get(&quot;attributes&quot;):
+        lines.append(f&quot;  속성: {&#x27;, &#x27;.join(c[&#x27;attributes&#x27;])}&quot;)
+    rels = [f&quot;{r[&#x27;type&#x27;]} → {r[&#x27;target&#x27;]}({onto[&#x27;concepts&#x27;][r[&#x27;target&#x27;]][&#x27;label&#x27;]})&quot;
+            for r in c.get(&quot;relations&quot;) or []]
+    if rels:
+        lines.append(f&quot;  관계: {&#x27;; &#x27;.join(rels)}&quot;)
+    return &quot;\n&quot;.join(lines)
+
+
+def render_for_prompt(onto):
+    &quot;&quot;&quot;온톨로지 전체를 시스템 프롬프트용 텍스트로.
+    형식:
+        &lt;ontology domain=&quot;...&quot; version=&quot;...&quot;&gt;
+        (개념마다 render_concept, 빈 줄로 구분)
+
+        해석 규칙:
+        - R1: ...
+        &lt;/ontology&gt;
+    &quot;&quot;&quot;
+    # &gt;&gt;&gt; TODO: 위 형식대로 렌더링하세요
+    parts = [f&#x27;&lt;ontology domain=&quot;{onto[&quot;domain&quot;]}&quot; version=&quot;{onto.get(&quot;version&quot;, 1)}&quot;&gt;&#x27;]
+    parts.append(&quot;\n\n&quot;.join(render_concept(onto, cid) for cid in onto[&quot;concepts&quot;]))
+    if onto.get(&quot;rules&quot;):
+        parts.append(&quot;\n해석 규칙:\n&quot; + &quot;\n&quot;.join(f&quot;- {r[&#x27;id&#x27;]}: {r[&#x27;text&#x27;]}&quot; for r in onto[&quot;rules&quot;]))
+    parts.append(&quot;&lt;/ontology&gt;&quot;)
+    return &quot;\n&quot;.join(parts)
+    # &lt;&lt;&lt; TODO
+
+
+def build_system(base, onto):
+    return (f&quot;{base}\n\n아래 온톨로지는 이 조직의 용어 정의다. 일반 상식보다 이 정의를 우선하라.&quot;
+            f&quot;\n\n{render_for_prompt(onto)}&quot;)
+
+
+# ----------------------------------------------------------- 2단계: 조회 도구
+ONTOLOGY_TOOL = {
+    &quot;name&quot;: &quot;ontology_lookup&quot;,
+    &quot;description&quot;: &quot;도메인 용어(동의어 가능)의 정의·속성·관계(들어오는 관계 포함)와 관련 규칙을 조회한다.&quot;,
+    &quot;input_schema&quot;: {&quot;type&quot;: &quot;object&quot;,
+                     &quot;properties&quot;: {&quot;term&quot;: {&quot;type&quot;: &quot;string&quot;}},
+                     &quot;required&quot;: [&quot;term&quot;]},
+}
+
+
+def lookup(onto, term):
+    &quot;&quot;&quot;도구 결과 문자열. 모르는 용어면 &quot;UNKNOWN: &lt;term&gt; (알려진 개념: ...)&quot;.
+    아는 용어면 render_concept + &#x27;들어오는 관계&#x27; 줄 + 개념 label 이 언급된 규칙들.&quot;&quot;&quot;
+    cid = resolve(onto, term)
+    if cid is None:
+        known = &quot;, &quot;.join(c[&quot;label&quot;] for c in onto[&quot;concepts&quot;].values())
+        return f&quot;UNKNOWN: {term} (알려진 개념: {known})&quot;
+    out = [render_concept(onto, cid)]
+    # &gt;&gt;&gt; TODO: 다른 개념에서 cid 로 향하는 관계를 &quot;  들어오는 관계: &lt;src&gt;(&lt;label&gt;) -&lt;type&gt;→&quot; 형식으로 모아 추가하고,
+    #           text 에 이 개념의 label 이 들어간 규칙을 &quot;  규칙 R?: ...&quot; 로 추가하세요
+    incoming = [f&quot;{src}({c[&#x27;label&#x27;]}) -{r[&#x27;type&#x27;]}→&quot;
+                for src, c in onto[&quot;concepts&quot;].items()
+                for r in c.get(&quot;relations&quot;) or [] if r[&quot;target&quot;] == cid]
+    if incoming:
+        out.append(f&quot;  들어오는 관계: {&#x27;; &#x27;.join(incoming)}&quot;)
+    label = onto[&quot;concepts&quot;][cid][&quot;label&quot;]
+    out += [f&quot;  규칙 {r[&#x27;id&#x27;]}: {r[&#x27;text&#x27;]}&quot; for r in onto.get(&quot;rules&quot;) or [] if label in r[&quot;text&quot;]]
+    return &quot;\n&quot;.join(out)
+    # &lt;&lt;&lt; TODO
+
+
+# --------------------------------------------------------- 3단계: 그래프 탐색
+def edges(onto):
+    &quot;&quot;&quot;[(src, type, dst), ...] 모든 관계.&quot;&quot;&quot;
+    return [(src, r[&quot;type&quot;], r[&quot;target&quot;])
+            for src, c in onto[&quot;concepts&quot;].items() for r in c.get(&quot;relations&quot;) or []]
+
+
+def find_path(onto, start, goal, max_depth=4):
+    &quot;&quot;&quot;관계를 &#x27;방향 무시&#x27;하고 BFS 로 start→goal 최단 경로를 찾는다.
+    반환: 원래 방향을 유지한 간선 리스트 [(src, type, dst), ...]. 없으면 None. start==goal 이면 [].
+    예) payment→inspection:
+        [(&quot;payment&quot;,&quot;requires&quot;,&quot;three_way_match&quot;),
+         (&quot;three_way_match&quot;,&quot;compares&quot;,&quot;goods_receipt&quot;),
+         (&quot;goods_receipt&quot;,&quot;requires&quot;,&quot;inspection&quot;)]&quot;&quot;&quot;
+    # &gt;&gt;&gt; TODO: 인접 리스트(양방향)를 만들고 BFS 하세요. 경로 길이가 max_depth 를 넘으면 탐색하지 마세요
+    adj = {}
+    for e in edges(onto):
+        src, _, dst = e
+        adj.setdefault(src, []).append((dst, e))
+        adj.setdefault(dst, []).append((src, e))
+    queue, seen = deque([(start, [])]), {start}
+    while queue:
+        node, path = queue.popleft()
+        if node == goal:
+            return path
+        if len(path) &gt;= max_depth:
+            continue
+        for nxt, e in adj.get(node, []):
+            if nxt not in seen:
+                seen.add(nxt)
+                queue.append((nxt, path + [e]))
+    return None
+    # &lt;&lt;&lt; TODO
+
+
+def explain_path(onto, path):
+    lab = lambda cid: onto[&quot;concepts&quot;][cid][&quot;label&quot;]  # noqa: E731
+    return &quot; → &quot;.join(f&quot;{lab(s)} -{t}→ {lab(d)}&quot; for s, t, d in path)
+
+
+# --------------------------------------------------------------- 어떤 단계?
+def decide_strategy(prompt_tokens, context_budget, n_instances=0, multi_hop_heavy=False):
+    &quot;&quot;&quot;확장 판단 (글의 순서를 단순화한 규칙):
+    - 인스턴스가 1만 개 이상이거나 multi-hop 탐색이 핵심이면  → &quot;graph&quot;
+    - 온톨로지 프롬프트가 컨텍스트 예산의 10% 를 넘으면      → &quot;lookup_tool&quot;
+    - 그 밖에는                                               → &quot;inject&quot;
+    &quot;&quot;&quot;
+    if n_instances &gt;= 10_000 or multi_hop_heavy:
+        return &quot;graph&quot;
+    if prompt_tokens &gt; context_budget * 0.10:
+        return &quot;lookup_tool&quot;
+    return &quot;inject&quot;
+
+
+def make_ontology_executor(onto, base_execute):
+    def execute(name, args):
+        if name == &quot;ontology_lookup&quot;:
+            return lookup(onto, args[&quot;term&quot;])
+        return base_execute(name, args)
+    return execute
+
+
+if __name__ == &quot;__main__&quot;:
+    onto = load_ontology()
+    print(&quot;검증:&quot;, validate(onto) or &quot;문제 없음&quot;)
+    text = render_for_prompt(onto)
+    print(text)
+    toks = len(text) // 2  # 한글은 대략 글자 2개 ≈ 1토큰 (거친 추정)
+    print(f&quot;\n~{toks} 토큰 → 전략: {decide_strategy(toks, 200_000)}&quot;)
+    p = find_path(onto, resolve(onto, &quot;대금지급&quot;), resolve(onto, &quot;검수&quot;))
+    print(&quot;대금지급 ↔ 검수 경로:&quot;, explain_path(onto, p))
+</code></pre></details>
+    <details><summary>채점 테스트 보기 (<code>test_lab.py</code>)</summary><pre class="code"><code class="language-python">import builtins
+import copy
+import os
+import sys
+import unittest
+from unittest import mock
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), &quot;..&quot;, &quot;..&quot;)))
+from common.labkit import load_target, ROOT  # noqa: E402
+from common.brain import ScriptedBrain, reply, text, tool_use  # noqa: E402
+from common.loop import run_loop  # noqa: E402
+
+lab = load_target(__file__)
+
+
+class Lab10(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.onto = lab.load_ontology()
+
+    def test_json_fallback_matches_yaml(self):
+        real_import = builtins.__import__
+
+        def no_yaml(name, *a, **k):
+            if name == &quot;yaml&quot;:
+                raise ImportError
+            return real_import(name, *a, **k)
+        with mock.patch.object(builtins, &quot;__import__&quot;, no_yaml):
+            from_json = lab.load_ontology()
+        self.assertEqual(from_json, self.onto, &quot;ontology.json 이 YAML 과 다릅니다 → scripts/yaml_to_json.py&quot;)
+
+    def test_validate_clean(self):
+        self.assertEqual(lab.validate(self.onto), [])
+
+    def test_validate_catches_errors(self):
+        bad = copy.deepcopy(self.onto)
+        bad[&quot;concepts&quot;][&quot;payment&quot;][&quot;relations&quot;].append({&quot;type&quot;: &quot;x&quot;, &quot;target&quot;: &quot;ghost&quot;})
+        bad[&quot;concepts&quot;][&quot;supplier&quot;][&quot;synonyms&quot;].append(&quot;PO&quot;)        # 발주의 동의어와 충돌
+        del bad[&quot;concepts&quot;][&quot;invoice&quot;][&quot;definition&quot;]
+        errs = lab.validate(bad)
+        self.assertTrue(any(&quot;ghost&quot; in e for e in errs))
+        self.assertTrue(any(&quot;충돌&quot; in e for e in errs))
+        self.assertTrue(any(e.startswith(&quot;invoice&quot;) for e in errs))
+
+    def test_resolve_org_terms(self):
+        self.assertEqual(lab.resolve(self.onto, &quot;삼자대사&quot;), &quot;three_way_match&quot;)
+        self.assertEqual(lab.resolve(self.onto, &quot;3자 대사&quot;), &quot;three_way_match&quot;)
+        self.assertEqual(lab.resolve(self.onto, &quot;3-way match&quot;), &quot;three_way_match&quot;)
+        self.assertEqual(lab.resolve(self.onto, &quot;po&quot;), &quot;purchase_order&quot;)
+        self.assertEqual(lab.resolve(self.onto, &quot;협력사&quot;), &quot;supplier&quot;)
+        self.assertIsNone(lab.resolve(self.onto, &quot;점심메뉴&quot;))
+
+    def test_render_has_everything(self):
+        t = lab.render_for_prompt(self.onto)
+        self.assertTrue(t.startswith(&quot;&lt;ontology&quot;))
+        self.assertTrue(t.rstrip().endswith(&quot;&lt;/ontology&gt;&quot;))
+        for c in self.onto[&quot;concepts&quot;].values():
+            self.assertIn(c[&quot;label&quot;], t)
+        self.assertIn(&quot;R1:&quot;, t)
+        self.assertIn(&quot;requires → three_way_match(3-Way Match)&quot;, t)
+
+    def test_lookup_incoming_and_rules(self):
+        out = lab.lookup(self.onto, &quot;QC검사&quot;)
+        self.assertIn(&quot;[inspection] 검수&quot;, out)
+        self.assertIn(&quot;goods_receipt(입고) -requires→&quot;, out, &quot;들어오는 관계가 있어야 경로를 거슬러 갈 수 있습니다&quot;)
+        self.assertIn(&quot;R3&quot;, lab.lookup(self.onto, &quot;검수&quot;))
+        self.assertTrue(lab.lookup(self.onto, &quot;점심&quot;).startswith(&quot;UNKNOWN&quot;))
+
+    def test_find_path_multi_hop(self):
+        p = lab.find_path(self.onto, &quot;payment&quot;, &quot;inspection&quot;)
+        self.assertEqual(p, [(&quot;payment&quot;, &quot;requires&quot;, &quot;three_way_match&quot;),
+                             (&quot;three_way_match&quot;, &quot;compares&quot;, &quot;goods_receipt&quot;),
+                             (&quot;goods_receipt&quot;, &quot;requires&quot;, &quot;inspection&quot;)])
+        self.assertEqual(lab.find_path(self.onto, &quot;payment&quot;, &quot;payment&quot;), [])
+        self.assertIsNone(lab.find_path(self.onto, &quot;payment&quot;, &quot;inspection&quot;, max_depth=2))
+
+    def test_strategy(self):
+        self.assertEqual(lab.decide_strategy(2_000, 200_000), &quot;inject&quot;)
+        self.assertEqual(lab.decide_strategy(30_000, 200_000), &quot;lookup_tool&quot;)
+        self.assertEqual(lab.decide_strategy(2_000, 200_000, multi_hop_heavy=True), &quot;graph&quot;)
+
+    def test_injection_beats_rag_on_multi_hop(self):
+        &quot;&quot;&quot;같은 질문에 대해: RAG top-3 는 고리를 놓치지만, 전체 주입은 고리가 모두 프롬프트에 있다.&quot;&quot;&quot;
+        sys.path.insert(0, os.path.join(ROOT, &quot;labs&quot;, &quot;09_rag&quot;))
+        import solution as rag  # 정답 구현으로 비교
+        idx = rag.Index(rag.load_docs())
+        hits = &quot; &quot;.join(c[&quot;text&quot;] for _, c in idx.search(&quot;대금지급 전에 검수가 끝나야 하나요?&quot;, 3))
+        system = lab.build_system(&quot;너는 구매 도우미다.&quot;, self.onto)
+        for link in (&quot;3-Way Match&quot;, &quot;입고&quot;, &quot;검수&quot;, &quot;대금지급&quot;):
+            self.assertIn(link, system)
+        self.assertNotIn(&quot;입고(GR)를 등록&quot;, hits)
+
+    def test_lookup_tool_in_loop(self):
+        brain = ScriptedBrain([reply(tool_use(&quot;ontology_lookup&quot;, {&quot;term&quot;: &quot;마감&quot;}, id=&quot;L&quot;)),
+                               reply(text(&quot;모르는 용어라 규칙을 찾아볼게요&quot;))])
+        msgs = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;마감이 뭐야?&quot;}]
+        ex = lab.make_ontology_executor(self.onto, lambda n, a: &quot;base&quot;)
+        run_loop(brain, msgs, [lab.ONTOLOGY_TOOL], &quot;sys&quot;, execute=ex)
+        self.assertTrue(msgs[2][&quot;content&quot;][0][&quot;content&quot;].startswith(&quot;UNKNOWN&quot;),
+                        &quot;&#x27;마감&#x27;은 개념이 아니라 &#x27;규칙&#x27;에 있다 → 1단계 전체 주입이 더 나은 사례&quot;)
+
+
+if __name__ == &quot;__main__&quot;:
+    unittest.main()
+</code></pre></details>
+    <label class="donebox"><input type="checkbox" data-done> 이 랩을 완료로 표시</label>
+  </section>
+  <nav class="pager"><a href="09_rag.html">← 09 RAG</a><a class="next" href="11_capstone.html">11 캡스톤 →</a></nav>
+</main>
+<script type="application/json" id="lab-data">{"id": "10_ontology", "exercise": "#!/usr/bin/env python3\n\"\"\"[연습] Lab 10 — 온톨로지: 에이전트에게 '도메인 지도' 입히기.\n\nLLM 은 일반 지식은 많지만 \"우리 조직에서 '마감'이 뭘 뜻하는지\"는 모릅니다.\n온톨로지 = 개념 · 관계 · 속성 · 해석 규칙을 명시적으로 적은 문서.\n\n데이터가 작을 때의 출발점과 확장 순서:\n  1단계 전체 주입 : YAML 을 렌더링해 시스템 프롬프트에 '통째로'. 검색 누락이 원천적으로 없음.\n  2단계 조회 도구 : 커지면 ontology_lookup 도구로 필요한 섹션만 꺼내 보게 한다.\n  3단계 그래프   : 인스턴스가 많고 multi-hop 탐색이 잦으면 그래프 탐색(GraphDB/GraphRAG).\n저장소보다 먼저 '온톨로지 설계'가 중요합니다. 잘 만든 YAML 은 그래프 스키마로 옮기기 쉽습니다.\n\n실행:  python labs/10_ontology/solution.py            (렌더링 결과와 경로 탐색 예시 출력)\n\"\"\"\nimport json\nimport os\nimport sys\nfrom collections import deque\n\nROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), \"..\", \"..\"))\nsys.path.insert(0, ROOT)\nDATA = os.path.join(ROOT, \"data\", \"procurement\")\n\n\ndef load_ontology(path=os.path.join(DATA, \"ontology.yaml\")):\n    \"\"\"PyYAML 이 있으면 YAML, 없으면 같은 이름의 .json 을 읽는다.\"\"\"\n    try:\n        import yaml\n        with open(path, encoding=\"utf-8\") as f:\n            return yaml.safe_load(f)\n    except ImportError:\n        with open(os.path.splitext(path)[0] + \".json\", encoding=\"utf-8\") as f:\n            return json.load(f)\n\n\ndef _norm(term):\n    return term.lower().replace(\" \", \"\").replace(\"-\", \"\")\n\n\n# ------------------------------------------------------------------ 설계 검증\ndef validate(onto):\n    \"\"\"온톨로지의 설계 오류를 문자열 리스트로 반환 (없으면 []).\n    - 개념에 label 또는 definition 이 없음      → \"<id>: label/definition 누락\"\n    - 관계의 target 이 정의되지 않은 개념        → \"<id>: 알 수 없는 target <target>\"\n    - 같은 용어(label·synonym, _norm 기준)가 두 개념에 쓰임 → \"용어 충돌: <term>\"\n    \"\"\"\n    # TODO(1): 세 가지 검사를 구현하세요\n    raise NotImplementedError(\"10_ontology TODO(1)\")\n\n\ndef resolve(onto, term):\n    \"\"\"조직 용어(id·label·동의어, 대소문자/공백/하이픈 무시)를 개념 id 로. 없으면 None.\"\"\"\n    # TODO(2): _norm 으로 비교해 일치하는 개념 id 를 반환하세요\n    raise NotImplementedError(\"10_ontology TODO(2)\")\n\n\n# ----------------------------------------------------------- 1단계: 전체 주입\ndef render_concept(onto, cid):\n    c = onto[\"concepts\"][cid]\n    syn = f\" (= {', '.join(c['synonyms'])})\" if c.get(\"synonyms\") else \"\"\n    lines = [f\"[{cid}] {c['label']}{syn}\", f\"  정의: {c['definition']}\"]\n    if c.get(\"attributes\"):\n        lines.append(f\"  속성: {', '.join(c['attributes'])}\")\n    rels = [f\"{r['type']} → {r['target']}({onto['concepts'][r['target']]['label']})\"\n            for r in c.get(\"relations\") or []]\n    if rels:\n        lines.append(f\"  관계: {'; '.join(rels)}\")\n    return \"\\n\".join(lines)\n\n\ndef render_for_prompt(onto):\n    \"\"\"온톨로지 전체를 시스템 프롬프트용 텍스트로.\n    형식:\n        <ontology domain=\"...\" version=\"...\">\n        (개념마다 render_concept, 빈 줄로 구분)\n\n        해석 규칙:\n        - R1: ...\n        <\/ontology>\n    \"\"\"\n    # TODO(3): 위 형식대로 렌더링하세요\n    raise NotImplementedError(\"10_ontology TODO(3)\")\n\n\ndef build_system(base, onto):\n    return (f\"{base}\\n\\n아래 온톨로지는 이 조직의 용어 정의다. 일반 상식보다 이 정의를 우선하라.\"\n            f\"\\n\\n{render_for_prompt(onto)}\")\n\n\n# ----------------------------------------------------------- 2단계: 조회 도구\nONTOLOGY_TOOL = {\n    \"name\": \"ontology_lookup\",\n    \"description\": \"도메인 용어(동의어 가능)의 정의·속성·관계(들어오는 관계 포함)와 관련 규칙을 조회한다.\",\n    \"input_schema\": {\"type\": \"object\",\n                     \"properties\": {\"term\": {\"type\": \"string\"}},\n                     \"required\": [\"term\"]},\n}\n\n\ndef lookup(onto, term):\n    \"\"\"도구 결과 문자열. 모르는 용어면 \"UNKNOWN: <term> (알려진 개념: ...)\".\n    아는 용어면 render_concept + '들어오는 관계' 줄 + 개념 label 이 언급된 규칙들.\"\"\"\n    cid = resolve(onto, term)\n    if cid is None:\n        known = \", \".join(c[\"label\"] for c in onto[\"concepts\"].values())\n        return f\"UNKNOWN: {term} (알려진 개념: {known})\"\n    out = [render_concept(onto, cid)]\n    # TODO(4): 다른 개념에서 cid 로 향하는 관계를 \"  들어오는 관계: <src>(<label>) -<type>→\" 형식으로 모아 추가하고,\n    raise NotImplementedError(\"10_ontology TODO(4)\")\n\n\n# --------------------------------------------------------- 3단계: 그래프 탐색\ndef edges(onto):\n    \"\"\"[(src, type, dst), ...] 모든 관계.\"\"\"\n    return [(src, r[\"type\"], r[\"target\"])\n            for src, c in onto[\"concepts\"].items() for r in c.get(\"relations\") or []]\n\n\ndef find_path(onto, start, goal, max_depth=4):\n    \"\"\"관계를 '방향 무시'하고 BFS 로 start→goal 최단 경로를 찾는다.\n    반환: 원래 방향을 유지한 간선 리스트 [(src, type, dst), ...]. 없으면 None. start==goal 이면 [].\n    예) payment→inspection:\n        [(\"payment\",\"requires\",\"three_way_match\"),\n         (\"three_way_match\",\"compares\",\"goods_receipt\"),\n         (\"goods_receipt\",\"requires\",\"inspection\")]\"\"\"\n    # TODO(5): 인접 리스트(양방향)를 만들고 BFS 하세요. 경로 길이가 max_depth 를 넘으면 탐색하지 마세요\n    raise NotImplementedError(\"10_ontology TODO(5)\")\n\n\ndef explain_path(onto, path):\n    lab = lambda cid: onto[\"concepts\"][cid][\"label\"]  # noqa: E731\n    return \" → \".join(f\"{lab(s)} -{t}→ {lab(d)}\" for s, t, d in path)\n\n\n# --------------------------------------------------------------- 어떤 단계?\ndef decide_strategy(prompt_tokens, context_budget, n_instances=0, multi_hop_heavy=False):\n    \"\"\"확장 판단 (글의 순서를 단순화한 규칙):\n    - 인스턴스가 1만 개 이상이거나 multi-hop 탐색이 핵심이면  → \"graph\"\n    - 온톨로지 프롬프트가 컨텍스트 예산의 10% 를 넘으면      → \"lookup_tool\"\n    - 그 밖에는                                               → \"inject\"\n    \"\"\"\n    if n_instances >= 10_000 or multi_hop_heavy:\n        return \"graph\"\n    if prompt_tokens > context_budget * 0.10:\n        return \"lookup_tool\"\n    return \"inject\"\n\n\ndef make_ontology_executor(onto, base_execute):\n    def execute(name, args):\n        if name == \"ontology_lookup\":\n            return lookup(onto, args[\"term\"])\n        return base_execute(name, args)\n    return execute\n\n\nif __name__ == \"__main__\":\n    onto = load_ontology()\n    print(\"검증:\", validate(onto) or \"문제 없음\")\n    text = render_for_prompt(onto)\n    print(text)\n    toks = len(text) // 2  # 한글은 대략 글자 2개 ≈ 1토큰 (거친 추정)\n    print(f\"\\n~{toks} 토큰 → 전략: {decide_strategy(toks, 200_000)}\")\n    p = find_path(onto, resolve(onto, \"대금지급\"), resolve(onto, \"검수\"))\n    print(\"대금지급 ↔ 검수 경로:\", explain_path(onto, p))\n", "pyodide": "https://cdn.jsdelivr.net/npm/pyodide@0.29.5/", "labs": [{"id": "01_array", "n": 1, "title": "대화는 그냥 JSON 배열이다", "short": "대화 = 배열", "minutes": 20}, {"id": "02_tools", "n": 2, "title": "도구 = JSON 스키마 + 함수 디스패치", "short": "도구", "minutes": 25}, {"id": "03_agent_loop", "n": 3, "title": "에이전트 루프", "short": "에이전트 루프", "minutes": 25}, {"id": "04_context_budget", "n": 4, "title": "컨텍스트는 예산, 캐싱은 순서", "short": "예산과 캐싱", "minutes": 30}, {"id": "05_subagents", "n": 5, "title": "서브에이전트 = 컨텍스트 포크", "short": "서브에이전트", "minutes": 20}, {"id": "06_steering", "n": 6, "title": "돌고 있는 루프 조종하기", "short": "조종", "minutes": 25}, {"id": "07_guardrails", "n": 7, "title": "반사신경과 가드레일", "short": "가드레일", "minutes": 25}, {"id": "08_debugging", "n": 8, "title": "배열 디버깅", "short": "디버깅", "minutes": 20}, {"id": "09_rag", "n": 9, "title": "RAG는 원래 하네스 패턴이었다", "short": "RAG", "minutes": 35}, {"id": "10_ontology", "n": 10, "title": "온톨로지: 에이전트에게 도메인 지도 입히기", "short": "온톨로지", "minutes": 40}, {"id": "11_capstone", "n": 11, "title": "캡스톤: 미니 하네스", "short": "캡스톤", "minutes": 30}]}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

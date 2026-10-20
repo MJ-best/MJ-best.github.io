@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lab 05 서브에이전트 = 컨텍스트 포크 · 하네스 워크북</title>
+<meta name="description" content="서브에이전트 = 새 배열로 같은 루프를 한 번 더 돌리는 것.">
+<meta name="theme-color" content="#f6f3ec" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#16181c" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" media="(prefers-color-scheme: light)">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="(prefers-color-scheme: dark)">
+
+</head>
+<body data-root="../">
+<header class="topbar">
+  <a class="brand" href="../index.html"><span class="logo">⟲</span> 하네스 워크북</a>
+  <span class="crumb">Lab 05</span>
+  <span class="progress-pill" data-progress-pill title="완료한 랩">0/11</span>
+</header>
+<main class="wrap" data-lab="05_subagents" data-has-exercise="true">
+  <section class="labhead">
+    <p class="eyebrow">Lab 05 · 약 20분</p>
+    <h1>서브에이전트 = 컨텍스트 포크</h1>
+    <ul class="points"><li>서브에이전트 = 새 배열로 같은 루프를 한 번 더 돌리는 것.</li><li>부모는 최종 보고서만 받고 중간 과정은 보지 않는다 (컨텍스트 포크).</li><li>서브에이전트에게 agent 도구를 주지 않아 무한 위임을 막는다.</li></ul>
+    <nav class="jump"><a href="#concept">개념</a><a href="#quiz">퀴즈</a><a href="#practice">실습</a><a href="#answer">정답</a></nav>
+  </section>
+  <section class="card prose" id="concept">
+    <h2><span class="step">1</span> 개념</h2>
+    <p>원문: <a href="https://github.com/IsuruMaduranga/harness-engineering-101/blob/main/src/07-subagents.md" target="_blank" rel="noopener">07-subagents.md</a></p>
+<h3>무엇이 깨지나</h3>
+<p>조사 과정(파일 수십 개 읽기)이 부모 배열을 다 채워버린다.</p>
+<h3>패치</h3>
+<p><code>agent</code> 도구가 호출되면 <strong>새 배열</strong>로 같은 루프를 돌리고, 부모에게는 최종 보고서 텍스트만 돌려준다. 서브에이전트에게는 <code>agent</code> 도구를 주지 않는다.</p>
+<h3>비용</h3>
+<p>서브에이전트는 부모의 맥락을 모른다 → 위임 메시지(task)를 자기완결적으로 써야 한다. 호출 비용도 따로 든다.</p>
+<h3>할 일 (<code>exercise.py</code>)</h3>
+<ul><li><code>run_subagent</code></li><li><code>make_executor</code></li></ul>
+<pre class="code"><code class="language-bash">python run_tests.py 5 -v</code></pre>
+<h3>생각해볼 것</h3>
+<ul><li>FakeBrain 에서 <code>ask read README.md</code> 를 입력하고 <code>/dump</code> 로 부모 배열에 무엇이 남는지 보세요.</li><li>부록 B(worktree)는 서브에이전트에게 '세상의 사본'까지 따로 주는 이야기입니다.</li></ul>
+  </section>
+  <section class="card" id="quiz">
+    <h2><span class="step">2</span> 확인 퀴즈</h2>
+    <div class="quiz" data-answer="1" data-q="0">
+  <p class="q"><span class="qn">Q1</span> 서브에이전트의 첫 요청 messages 는?</p>
+  <div class="opts"><button class="opt" data-i="0">부모 배열 전체</button><button class="opt" data-i="1">[user: 위임받은 task] 하나</button><button class="opt" data-i="2">비어 있음</button></div>
+  <p class="why" hidden>그래서 task 문장은 맥락 없이도 이해되게 써야 합니다.</p>
+</div><div class="quiz" data-answer="1" data-q="1">
+  <p class="q"><span class="qn">Q2</span> 서브에이전트를 쓰는 가장 큰 이유는?</p>
+  <div class="opts"><button class="opt" data-i="0">더 똑똑해서</button><button class="opt" data-i="1">부모 컨텍스트를 탐색 과정으로 채우지 않으려고</button><button class="opt" data-i="2">도구가 더 많아서</button></div>
+  <p class="why" hidden>파일 수십 개 읽은 흔적 대신 한 단락 보고서만 남습니다.</p>
+</div>
+  </section>
+  <section class="card practice" id="practice">
+  <h2><span class="step">3</span> 실습: <code>exercise.py</code> 채우기</h2>
+  <p class="muted small">TODO 표시 부분을 채우고 채점하세요. 입력 내용은 이 기기에 자동 저장됩니다.</p>
+  <div class="toolbar">
+    <button class="btn small" data-act="todo">TODO 찾기</button>
+    <button class="btn small" data-act="indent" title="들여쓰기 4칸">⇥</button>
+    <button class="btn small" data-act="reset">초기화</button>
+    <span class="saved muted small" data-saved></span>
+  </div>
+  <textarea class="editor" data-editor spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off">#!/usr/bin/env python3
+&quot;&quot;&quot;[연습] Lab 5 — 서브에이전트 = &#x27;새 배열&#x27;로 같은 루프를 한 번 더 돌리는 것.
+
+한 배열에 모든 탐색 과정을 쌓으면 금방 찹니다. 서브에이전트는
+빈 배열에서 시작해 일하고, 부모에게는 &#x27;최종 보고서 한 줄&#x27;만 돌려줍니다.
+부모의 배열에는 중간 과정이 전혀 남지 않습니다 (컨텍스트 포크).
+
+실행:  python labs/05_subagents/solution.py   (FakeBrain: &#x27;ask read README.md&#x27;)
+&quot;&quot;&quot;
+import os
+import sys
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), &quot;..&quot;, &quot;..&quot;)))
+from common.brain import get_brain  # noqa: E402
+from common.loop import printer, run_loop  # noqa: E402
+from common.toolbox import BASE_TOOLS, execute_tool  # noqa: E402
+
+SYSTEM = &quot;너는 엔지니어링 에이전트다. 독립적인 조사는 agent 도구로 위임하라.&quot;
+SUB_SYSTEM = &quot;너는 집중형 서브에이전트다. 도구로 작업을 끝내고, 파일 경로를 인용한 독립적인 보고서로 마무리하라.&quot;
+
+AGENT_TOOL = {
+    &quot;name&quot;: &quot;agent&quot;,
+    &quot;description&quot;: &quot;독립적인 하위 작업을 새 컨텍스트의 서브에이전트에게 맡기고 보고서를 받는다.&quot;,
+    &quot;input_schema&quot;: {&quot;type&quot;: &quot;object&quot;,
+                     &quot;properties&quot;: {&quot;task&quot;: {&quot;type&quot;: &quot;string&quot;}},
+                     &quot;required&quot;: [&quot;task&quot;]},
+}
+PARENT_TOOLS = BASE_TOOLS + [AGENT_TOOL]
+
+
+def run_subagent(brain, task, tools=BASE_TOOLS, execute=execute_tool):
+    &quot;&quot;&quot;새 배열 [user: task] 로 SUB_SYSTEM 루프를 돌리고 최종 텍스트만 반환.
+    서브에이전트의 도구 목록에는 agent 가 없어야 한다 (무한 위임 방지).&quot;&quot;&quot;
+    # TODO(1): 새 messages 를 만들고 run_loop(brain, messages, tools, SUB_SYSTEM, execute) 를 호출하세요
+    raise NotImplementedError(&quot;05_subagents TODO(1)&quot;)
+
+
+def make_executor(brain):
+    &quot;&quot;&quot;부모용 실행기: agent 는 서브에이전트로, 나머지는 기본 도구로 보낸다.&quot;&quot;&quot;
+    # TODO(2): execute(name, args) 함수를 만들어 반환하세요
+    raise NotImplementedError(&quot;05_subagents TODO(2)&quot;)
+
+
+def run_turn(brain, messages, on_event=None):
+    return run_loop(brain, messages, PARENT_TOOLS, SYSTEM,
+                    execute=make_executor(brain), on_event=on_event)
+
+
+def main():
+    brain, messages = get_brain(), []
+    while True:
+        try:
+            user_text = input(&quot;\nyou&gt; &quot;).strip()
+        except EOFError:
+            break
+        if user_text in (&quot;/quit&quot;, &quot;&quot;):
+            break
+        messages.append({&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: user_text})
+        run_turn(brain, messages, on_event=printer)
+
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</textarea>
+  <div class="runrow">
+    <button class="btn primary" data-act="run">▶ 채점</button>
+    <span class="muted small" data-run-status></span>
+  </div>
+  <div class="results" data-results></div>
+</section>
+  <section class="card" id="answer">
+    <h2><span class="step">4</span> 정답과 테스트</h2>
+    <details><summary>정답 코드 보기 (<code>solution.py</code>)</summary><pre class="code"><code class="language-python">#!/usr/bin/env python3
+&quot;&quot;&quot;Lab 5 — 서브에이전트 = &#x27;새 배열&#x27;로 같은 루프를 한 번 더 돌리는 것.
+
+한 배열에 모든 탐색 과정을 쌓으면 금방 찹니다. 서브에이전트는
+빈 배열에서 시작해 일하고, 부모에게는 &#x27;최종 보고서 한 줄&#x27;만 돌려줍니다.
+부모의 배열에는 중간 과정이 전혀 남지 않습니다 (컨텍스트 포크).
+
+실행:  python labs/05_subagents/solution.py   (FakeBrain: &#x27;ask read README.md&#x27;)
+&quot;&quot;&quot;
+import os
+import sys
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), &quot;..&quot;, &quot;..&quot;)))
+from common.brain import get_brain  # noqa: E402
+from common.loop import printer, run_loop  # noqa: E402
+from common.toolbox import BASE_TOOLS, execute_tool  # noqa: E402
+
+SYSTEM = &quot;너는 엔지니어링 에이전트다. 독립적인 조사는 agent 도구로 위임하라.&quot;
+SUB_SYSTEM = &quot;너는 집중형 서브에이전트다. 도구로 작업을 끝내고, 파일 경로를 인용한 독립적인 보고서로 마무리하라.&quot;
+
+AGENT_TOOL = {
+    &quot;name&quot;: &quot;agent&quot;,
+    &quot;description&quot;: &quot;독립적인 하위 작업을 새 컨텍스트의 서브에이전트에게 맡기고 보고서를 받는다.&quot;,
+    &quot;input_schema&quot;: {&quot;type&quot;: &quot;object&quot;,
+                     &quot;properties&quot;: {&quot;task&quot;: {&quot;type&quot;: &quot;string&quot;}},
+                     &quot;required&quot;: [&quot;task&quot;]},
+}
+PARENT_TOOLS = BASE_TOOLS + [AGENT_TOOL]
+
+
+def run_subagent(brain, task, tools=BASE_TOOLS, execute=execute_tool):
+    &quot;&quot;&quot;새 배열 [user: task] 로 SUB_SYSTEM 루프를 돌리고 최종 텍스트만 반환.
+    서브에이전트의 도구 목록에는 agent 가 없어야 한다 (무한 위임 방지).&quot;&quot;&quot;
+    # &gt;&gt;&gt; TODO: 새 messages 를 만들고 run_loop(brain, messages, tools, SUB_SYSTEM, execute) 를 호출하세요
+    sub_tools = [t for t in tools if t[&quot;name&quot;] != &quot;agent&quot;]
+    messages = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: task}]
+    return run_loop(brain, messages, sub_tools, SUB_SYSTEM, execute=execute)
+    # &lt;&lt;&lt; TODO
+
+
+def make_executor(brain):
+    &quot;&quot;&quot;부모용 실행기: agent 는 서브에이전트로, 나머지는 기본 도구로 보낸다.&quot;&quot;&quot;
+    # &gt;&gt;&gt; TODO: execute(name, args) 함수를 만들어 반환하세요
+    def execute(name, args):
+        if name == &quot;agent&quot;:
+            return run_subagent(brain, args[&quot;task&quot;])
+        return execute_tool(name, args)
+    return execute
+    # &lt;&lt;&lt; TODO
+
+
+def run_turn(brain, messages, on_event=None):
+    return run_loop(brain, messages, PARENT_TOOLS, SYSTEM,
+                    execute=make_executor(brain), on_event=on_event)
+
+
+def main():
+    brain, messages = get_brain(), []
+    while True:
+        try:
+            user_text = input(&quot;\nyou&gt; &quot;).strip()
+        except EOFError:
+            break
+        if user_text in (&quot;/quit&quot;, &quot;&quot;):
+            break
+        messages.append({&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: user_text})
+        run_turn(brain, messages, on_event=printer)
+
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</code></pre></details>
+    <details><summary>채점 테스트 보기 (<code>test_lab.py</code>)</summary><pre class="code"><code class="language-python">import json
+import os
+import sys
+import unittest
+from unittest import mock
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), &quot;..&quot;, &quot;..&quot;)))
+from common.labkit import load_target  # noqa: E402
+from common.brain import ScriptedBrain, reply, text, tool_use  # noqa: E402
+
+lab = load_target(__file__)
+
+
+class Lab5(unittest.TestCase):
+    def test_fork_context(self):
+        brain = ScriptedBrain([
+            # 부모: 위임
+            reply(tool_use(&quot;agent&quot;, {&quot;task&quot;: &quot;설정 파일 찾아줘&quot;}, id=&quot;P1&quot;)),
+            # 서브: 도구 하나 쓰고 보고
+            reply(tool_use(&quot;run_command&quot;, {&quot;command&quot;: &quot;echo SECRET_DETAIL&quot;}, id=&quot;S1&quot;)),
+            reply(text(&quot;보고서: config.yaml 에 있음&quot;)),
+            # 부모: 마무리
+            reply(text(&quot;config.yaml 이네요&quot;)),
+        ])
+        msgs = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;설정 어딨어?&quot;}]
+        out = lab.run_turn(brain, msgs)
+        self.assertEqual(out, &quot;config.yaml 이네요&quot;)
+
+        sub_first = brain.requests[1]
+        self.assertEqual(sub_first[&quot;system&quot;], lab.SUB_SYSTEM)
+        self.assertEqual(sub_first[&quot;messages&quot;], [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;설정 파일 찾아줘&quot;}],
+                         &quot;서브에이전트는 &#x27;새 배열&#x27;에서 시작해야 합니다&quot;)
+        self.assertNotIn(&quot;agent&quot;, [t[&quot;name&quot;] for t in sub_first[&quot;tools&quot;]],
+                         &quot;서브에이전트에게 agent 도구를 주면 무한 위임이 가능해집니다&quot;)
+
+        parent_result = msgs[2][&quot;content&quot;][0]
+        self.assertEqual(parent_result[&quot;tool_use_id&quot;], &quot;P1&quot;)
+        self.assertEqual(parent_result[&quot;content&quot;], &quot;보고서: config.yaml 에 있음&quot;)
+        self.assertNotIn(&quot;SECRET_DETAIL&quot;, json.dumps(msgs, ensure_ascii=False),
+                         &quot;서브에이전트의 중간 과정이 부모 배열에 새면 안 됩니다&quot;)
+
+    def test_executor_routes_other_tools(self):
+        with mock.patch.object(lab, &quot;execute_tool&quot;, return_value=&quot;BASE&quot;) as m:
+            ex = lab.make_executor(ScriptedBrain([]))
+            self.assertEqual(ex(&quot;read_file&quot;, {&quot;path&quot;: &quot;x&quot;}), &quot;BASE&quot;)
+            m.assert_called_once()
+
+
+if __name__ == &quot;__main__&quot;:
+    unittest.main()
+</code></pre></details>
+    <label class="donebox"><input type="checkbox" data-done> 이 랩을 완료로 표시</label>
+  </section>
+  <nav class="pager"><a href="04_context_budget.html">← 04 예산과 캐싱</a><a class="next" href="06_steering.html">06 조종 →</a></nav>
+</main>
+<script type="application/json" id="lab-data">{"id": "05_subagents", "exercise": "#!/usr/bin/env python3\n\"\"\"[연습] Lab 5 — 서브에이전트 = '새 배열'로 같은 루프를 한 번 더 돌리는 것.\n\n한 배열에 모든 탐색 과정을 쌓으면 금방 찹니다. 서브에이전트는\n빈 배열에서 시작해 일하고, 부모에게는 '최종 보고서 한 줄'만 돌려줍니다.\n부모의 배열에는 중간 과정이 전혀 남지 않습니다 (컨텍스트 포크).\n\n실행:  python labs/05_subagents/solution.py   (FakeBrain: 'ask read README.md')\n\"\"\"\nimport os\nimport sys\n\nsys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), \"..\", \"..\")))\nfrom common.brain import get_brain  # noqa: E402\nfrom common.loop import printer, run_loop  # noqa: E402\nfrom common.toolbox import BASE_TOOLS, execute_tool  # noqa: E402\n\nSYSTEM = \"너는 엔지니어링 에이전트다. 독립적인 조사는 agent 도구로 위임하라.\"\nSUB_SYSTEM = \"너는 집중형 서브에이전트다. 도구로 작업을 끝내고, 파일 경로를 인용한 독립적인 보고서로 마무리하라.\"\n\nAGENT_TOOL = {\n    \"name\": \"agent\",\n    \"description\": \"독립적인 하위 작업을 새 컨텍스트의 서브에이전트에게 맡기고 보고서를 받는다.\",\n    \"input_schema\": {\"type\": \"object\",\n                     \"properties\": {\"task\": {\"type\": \"string\"}},\n                     \"required\": [\"task\"]},\n}\nPARENT_TOOLS = BASE_TOOLS + [AGENT_TOOL]\n\n\ndef run_subagent(brain, task, tools=BASE_TOOLS, execute=execute_tool):\n    \"\"\"새 배열 [user: task] 로 SUB_SYSTEM 루프를 돌리고 최종 텍스트만 반환.\n    서브에이전트의 도구 목록에는 agent 가 없어야 한다 (무한 위임 방지).\"\"\"\n    # TODO(1): 새 messages 를 만들고 run_loop(brain, messages, tools, SUB_SYSTEM, execute) 를 호출하세요\n    raise NotImplementedError(\"05_subagents TODO(1)\")\n\n\ndef make_executor(brain):\n    \"\"\"부모용 실행기: agent 는 서브에이전트로, 나머지는 기본 도구로 보낸다.\"\"\"\n    # TODO(2): execute(name, args) 함수를 만들어 반환하세요\n    raise NotImplementedError(\"05_subagents TODO(2)\")\n\n\ndef run_turn(brain, messages, on_event=None):\n    return run_loop(brain, messages, PARENT_TOOLS, SYSTEM,\n                    execute=make_executor(brain), on_event=on_event)\n\n\ndef main():\n    brain, messages = get_brain(), []\n    while True:\n        try:\n            user_text = input(\"\\nyou> \").strip()\n        except EOFError:\n            break\n        if user_text in (\"/quit\", \"\"):\n            break\n        messages.append({\"role\": \"user\", \"content\": user_text})\n        run_turn(brain, messages, on_event=printer)\n\n\nif __name__ == \"__main__\":\n    main()\n", "pyodide": "https://cdn.jsdelivr.net/npm/pyodide@0.29.5/", "labs": [{"id": "01_array", "n": 1, "title": "대화는 그냥 JSON 배열이다", "short": "대화 = 배열", "minutes": 20}, {"id": "02_tools", "n": 2, "title": "도구 = JSON 스키마 + 함수 디스패치", "short": "도구", "minutes": 25}, {"id": "03_agent_loop", "n": 3, "title": "에이전트 루프", "short": "에이전트 루프", "minutes": 25}, {"id": "04_context_budget", "n": 4, "title": "컨텍스트는 예산, 캐싱은 순서", "short": "예산과 캐싱", "minutes": 30}, {"id": "05_subagents", "n": 5, "title": "서브에이전트 = 컨텍스트 포크", "short": "서브에이전트", "minutes": 20}, {"id": "06_steering", "n": 6, "title": "돌고 있는 루프 조종하기", "short": "조종", "minutes": 25}, {"id": "07_guardrails", "n": 7, "title": "반사신경과 가드레일", "short": "가드레일", "minutes": 25}, {"id": "08_debugging", "n": 8, "title": "배열 디버깅", "short": "디버깅", "minutes": 20}, {"id": "09_rag", "n": 9, "title": "RAG는 원래 하네스 패턴이었다", "short": "RAG", "minutes": 35}, {"id": "10_ontology", "n": 10, "title": "온톨로지: 에이전트에게 도메인 지도 입히기", "short": "온톨로지", "minutes": 40}, {"id": "11_capstone", "n": 11, "title": "캡스톤: 미니 하네스", "short": "캡스톤", "minutes": 30}]}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

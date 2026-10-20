@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+harness_debug.jsonl
+session*.json
+.env
+site/

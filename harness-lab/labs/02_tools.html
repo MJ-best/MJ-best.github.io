@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lab 02 도구 = JSON 스키마 + 함수 디스패치 · 하네스 워크북</title>
+<meta name="description" content="도구 = 모델에게 보여줄 JSON 스키마 + 하네스가 실행할 함수.">
+<meta name="theme-color" content="#f6f3ec" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#16181c" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" media="(prefers-color-scheme: light)">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="(prefers-color-scheme: dark)">
+
+</head>
+<body data-root="../">
+<header class="topbar">
+  <a class="brand" href="../index.html"><span class="logo">⟲</span> 하네스 워크북</a>
+  <span class="crumb">Lab 02</span>
+  <span class="progress-pill" data-progress-pill title="완료한 랩">0/11</span>
+</header>
+<main class="wrap" data-lab="02_tools" data-has-exercise="true">
+  <section class="labhead">
+    <p class="eyebrow">Lab 02 · 약 25분</p>
+    <h1>도구 = JSON 스키마 + 함수 디스패치</h1>
+    <ul class="points"><li>도구 = 모델에게 보여줄 JSON 스키마 + 하네스가 실행할 함수.</li><li>모델은 tool_use 블록을 &#x27;쓰기&#x27;만 하고, 실행과 결과 전달은 하네스 몫이다.</li><li>실패도 &#x27;ERROR: ...&#x27; 문자열로 돌려줘야 모델이 읽고 대처한다.</li></ul>
+    <nav class="jump"><a href="#concept">개념</a><a href="#quiz">퀴즈</a><a href="#practice">실습</a><a href="#answer">정답</a></nav>
+  </section>
+  <section class="card prose" id="concept">
+    <h2><span class="step">1</span> 개념</h2>
+    <p>원문: <a href="https://github.com/IsuruMaduranga/harness-engineering-101/blob/main/src/03-tools.md" target="_blank" rel="noopener">03-tools.md</a></p>
+<h3>무엇이 깨지나</h3>
+<p>두뇌는 텍스트만 쓸 수 있다. 파일을 읽거나 명령을 실행할 손이 없다.</p>
+<h3>패치</h3>
+<p>모델에게 도구 스키마(이름·설명·입력 형식)를 보여주면, 모델은 <code>tool_use</code> 블록을 '쓴다'. 실행은 하네스가 하고 결과를 <code>tool_result</code> 블록(같은 id)으로 돌려준다. 에러도 문자열로 돌려줘야 모델이 읽고 대처한다.</p>
+<h3>비용</h3>
+<p>도구 스키마도 매 요청마다 토큰을 먹는다. 설명이 곧 프롬프트다.</p>
+<h3>할 일 (<code>exercise.py</code>)</h3>
+<ul><li><code>write_file</code> 스키마 추가</li><li><code>execute_tool</code> — 디스패치 + 에러를 문자열로</li><li><code>tool_results_for</code> — 모든 tool_use 에 id 맞춰 결과</li></ul>
+<pre class="code"><code class="language-bash">python run_tests.py 2 -v</code></pre>
+<h3>생각해볼 것</h3>
+<ul><li><code>ask_with_tools</code> 는 도구를 딱 한 번만 허용합니다. '파일 목록을 보고 가장 큰 파일을 읽어줘' 같은 작업은 왜 실패할까요? → Lab 3</li><li>도구 description 을 일부러 모호하게 바꾸고 진짜 모델로 실행해 보세요.</li></ul>
+  </section>
+  <section class="card" id="quiz">
+    <h2><span class="step">2</span> 확인 퀴즈</h2>
+    <div class="quiz" data-answer="1" data-q="0">
+  <p class="q"><span class="qn">Q1</span> tool_result 블록이 반드시 가져야 하는 것은?</p>
+  <div class="opts"><button class="opt" data-i="0">도구 이름</button><button class="opt" data-i="1">대응하는 tool_use 블록의 id</button><button class="opt" data-i="2">실행 시간</button><button class="opt" data-i="3">모델 이름</button></div>
+  <p class="why" hidden>tool_use_id 로 어떤 호출의 결과인지 짝을 맞춥니다.</p>
+</div><div class="quiz" data-answer="2" data-q="1">
+  <p class="q"><span class="qn">Q2</span> 도구 실행 중 예외가 났을 때 가장 좋은 처리는?</p>
+  <div class="opts"><button class="opt" data-i="0">하네스를 종료한다</button><button class="opt" data-i="1">예외를 그대로 던진다</button><button class="opt" data-i="2">에러 내용을 문자열 결과로 모델에게 돌려준다</button></div>
+  <p class="why" hidden>에러도 관찰입니다. 모델이 경로를 고치거나 다른 방법을 시도할 수 있습니다.</p>
+</div>
+  </section>
+  <section class="card practice" id="practice">
+  <h2><span class="step">3</span> 실습: <code>exercise.py</code> 채우기</h2>
+  <p class="muted small">TODO 표시 부분을 채우고 채점하세요. 입력 내용은 이 기기에 자동 저장됩니다.</p>
+  <div class="toolbar">
+    <button class="btn small" data-act="todo">TODO 찾기</button>
+    <button class="btn small" data-act="indent" title="들여쓰기 4칸">⇥</button>
+    <button class="btn small" data-act="reset">초기화</button>
+    <span class="saved muted small" data-saved></span>
+  </div>
+  <textarea class="editor" data-editor spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off">#!/usr/bin/env python3
+&quot;&quot;&quot;[연습] Lab 2 — 도구 = JSON 스키마 + 함수 디스패치.
+
+두뇌는 세상을 만질 수 없습니다. 할 수 있는 건 &quot;이 도구를 이 인자로 불러줘&quot;라는
+tool_use 블록을 &#x27;쓰는&#x27; 것뿐. 실제 실행은 하네스(몸)가 합니다.
+
+실행:  python labs/02_tools/solution.py      (FakeBrain에서 &#x27;read README.md&#x27; 입력해보기)
+&quot;&quot;&quot;
+import os
+import subprocess
+import sys
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), &quot;..&quot;, &quot;..&quot;)))
+from common.brain import get_brain  # noqa: E402
+
+SYSTEM = &quot;너는 도구를 쓸 수 있는 조수다. 필요하면 도구를 호출하라.&quot;
+
+TOOLS = [
+    {&quot;name&quot;: &quot;read_file&quot;,
+     &quot;description&quot;: &quot;텍스트 파일을 읽어 내용을 반환한다.&quot;,
+     &quot;input_schema&quot;: {&quot;type&quot;: &quot;object&quot;,
+                      &quot;properties&quot;: {&quot;path&quot;: {&quot;type&quot;: &quot;string&quot;}},
+                      &quot;required&quot;: [&quot;path&quot;]}},
+    {&quot;name&quot;: &quot;run_command&quot;,
+     &quot;description&quot;: &quot;셸 명령을 실행하고 stdout+stderr를 반환한다.&quot;,
+     &quot;input_schema&quot;: {&quot;type&quot;: &quot;object&quot;,
+                      &quot;properties&quot;: {&quot;command&quot;: {&quot;type&quot;: &quot;string&quot;}},
+                      &quot;required&quot;: [&quot;command&quot;]}},
+]
+
+# TODO(1): write_file 도구 스키마를 TOOLS 에 추가하세요 (path, content 둘 다 필수 문자열)
+
+
+def _read_file(path):
+    with open(path, encoding=&quot;utf-8&quot;) as f:
+        return f.read()
+
+
+def _write_file(path, content):
+    with open(path, &quot;w&quot;, encoding=&quot;utf-8&quot;) as f:
+        f.write(content)
+    return f&quot;wrote {len(content)} chars to {path}&quot;
+
+
+def _run_command(command):
+    out = subprocess.run(command, shell=True, capture_output=True, text=True, timeout=120)
+    return (out.stdout + out.stderr) or &quot;(no output)&quot;
+
+
+HANDLERS = {&quot;read_file&quot;: _read_file, &quot;write_file&quot;: _write_file,
+            &quot;run_command&quot;: _run_command}
+
+
+def execute_tool(name, args):
+    &quot;&quot;&quot;디스패치. 규칙:
+    - 모르는 도구  → &quot;ERROR: unknown tool &lt;name&gt;&quot;
+    - 실행 중 예외 → 예외를 던지지 말고 &quot;ERROR: ...&quot; 로 시작하는 문자열 반환
+    &quot;&quot;&quot;
+    # TODO(2): HANDLERS 로 디스패치하고, 위 규칙대로 에러를 문자열로 바꾸세요
+    raise NotImplementedError(&quot;02_tools TODO(2)&quot;)
+
+
+def tool_results_for(response):
+    &quot;&quot;&quot;응답 속 &#x27;모든&#x27; tool_use 블록을 실행해서 tool_result 블록 리스트를 만든다.
+    각 결과의 tool_use_id 는 해당 tool_use 블록의 id 와 같아야 한다.&quot;&quot;&quot;
+    # TODO(3): {&quot;type&quot;: &quot;tool_result&quot;, &quot;tool_use_id&quot;: ..., &quot;content&quot;: ...} 리스트를 반환하세요
+    raise NotImplementedError(&quot;02_tools TODO(3)&quot;)
+
+
+def ask_with_tools(brain, messages, user_text):
+    &quot;&quot;&quot;도구를 &#x27;딱 한 번만&#x27; 허용하는 버전. 첫 응답이 도구를 원하면 실행하고
+    결과를 user 메시지로 붙여 한 번 더 호출한다. → 왜 이걸로 부족한지가 Lab 3의 출발점.&quot;&quot;&quot;
+    messages.append({&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: user_text})
+    request = {&quot;system&quot;: SYSTEM, &quot;messages&quot;: messages, &quot;tools&quot;: TOOLS}
+    response = brain(request)
+    messages.append({&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: response[&quot;content&quot;]})
+    if response[&quot;stop_reason&quot;] == &quot;tool_use&quot;:
+        messages.append({&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: tool_results_for(response)})
+        response = brain(request)
+        messages.append({&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: response[&quot;content&quot;]})
+    return &quot;&quot;.join(b[&quot;text&quot;] for b in response[&quot;content&quot;] if b[&quot;type&quot;] == &quot;text&quot;)
+
+
+def main():
+    brain, messages = get_brain(), []
+    while True:
+        try:
+            user_text = input(&quot;\nyou&gt; &quot;).strip()
+        except EOFError:
+            break
+        if user_text in (&quot;/quit&quot;, &quot;&quot;):
+            break
+        print(f&quot;\nassistant&gt; {ask_with_tools(brain, messages, user_text)}&quot;)
+
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</textarea>
+  <div class="runrow">
+    <button class="btn primary" data-act="run">▶ 채점</button>
+    <span class="muted small" data-run-status></span>
+  </div>
+  <div class="results" data-results></div>
+</section>
+  <section class="card" id="answer">
+    <h2><span class="step">4</span> 정답과 테스트</h2>
+    <details><summary>정답 코드 보기 (<code>solution.py</code>)</summary><pre class="code"><code class="language-python">#!/usr/bin/env python3
+&quot;&quot;&quot;Lab 2 — 도구 = JSON 스키마 + 함수 디스패치.
+
+두뇌는 세상을 만질 수 없습니다. 할 수 있는 건 &quot;이 도구를 이 인자로 불러줘&quot;라는
+tool_use 블록을 &#x27;쓰는&#x27; 것뿐. 실제 실행은 하네스(몸)가 합니다.
+
+실행:  python labs/02_tools/solution.py      (FakeBrain에서 &#x27;read README.md&#x27; 입력해보기)
+&quot;&quot;&quot;
+import os
+import subprocess
+import sys
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), &quot;..&quot;, &quot;..&quot;)))
+from common.brain import get_brain  # noqa: E402
+
+SYSTEM = &quot;너는 도구를 쓸 수 있는 조수다. 필요하면 도구를 호출하라.&quot;
+
+TOOLS = [
+    {&quot;name&quot;: &quot;read_file&quot;,
+     &quot;description&quot;: &quot;텍스트 파일을 읽어 내용을 반환한다.&quot;,
+     &quot;input_schema&quot;: {&quot;type&quot;: &quot;object&quot;,
+                      &quot;properties&quot;: {&quot;path&quot;: {&quot;type&quot;: &quot;string&quot;}},
+                      &quot;required&quot;: [&quot;path&quot;]}},
+    {&quot;name&quot;: &quot;run_command&quot;,
+     &quot;description&quot;: &quot;셸 명령을 실행하고 stdout+stderr를 반환한다.&quot;,
+     &quot;input_schema&quot;: {&quot;type&quot;: &quot;object&quot;,
+                      &quot;properties&quot;: {&quot;command&quot;: {&quot;type&quot;: &quot;string&quot;}},
+                      &quot;required&quot;: [&quot;command&quot;]}},
+]
+
+# &gt;&gt;&gt; TODO: write_file 도구 스키마를 TOOLS 에 추가하세요 (path, content 둘 다 필수 문자열)
+TOOLS.append(
+    {&quot;name&quot;: &quot;write_file&quot;,
+     &quot;description&quot;: &quot;파일을 만들거나 덮어쓴다.&quot;,
+     &quot;input_schema&quot;: {&quot;type&quot;: &quot;object&quot;,
+                      &quot;properties&quot;: {&quot;path&quot;: {&quot;type&quot;: &quot;string&quot;},
+                                     &quot;content&quot;: {&quot;type&quot;: &quot;string&quot;}},
+                      &quot;required&quot;: [&quot;path&quot;, &quot;content&quot;]}})
+# &lt;&lt;&lt; TODO
+
+
+def _read_file(path):
+    with open(path, encoding=&quot;utf-8&quot;) as f:
+        return f.read()
+
+
+def _write_file(path, content):
+    with open(path, &quot;w&quot;, encoding=&quot;utf-8&quot;) as f:
+        f.write(content)
+    return f&quot;wrote {len(content)} chars to {path}&quot;
+
+
+def _run_command(command):
+    out = subprocess.run(command, shell=True, capture_output=True, text=True, timeout=120)
+    return (out.stdout + out.stderr) or &quot;(no output)&quot;
+
+
+HANDLERS = {&quot;read_file&quot;: _read_file, &quot;write_file&quot;: _write_file,
+            &quot;run_command&quot;: _run_command}
+
+
+def execute_tool(name, args):
+    &quot;&quot;&quot;디스패치. 규칙:
+    - 모르는 도구  → &quot;ERROR: unknown tool &lt;name&gt;&quot;
+    - 실행 중 예외 → 예외를 던지지 말고 &quot;ERROR: ...&quot; 로 시작하는 문자열 반환
+    &quot;&quot;&quot;
+    # &gt;&gt;&gt; TODO: HANDLERS 로 디스패치하고, 위 규칙대로 에러를 문자열로 바꾸세요
+    fn = HANDLERS.get(name)
+    if fn is None:
+        return f&quot;ERROR: unknown tool {name}&quot;
+    try:
+        return fn(**args)
+    except Exception as e:
+        return f&quot;ERROR: {type(e).__name__}: {e}&quot;
+    # &lt;&lt;&lt; TODO
+
+
+def tool_results_for(response):
+    &quot;&quot;&quot;응답 속 &#x27;모든&#x27; tool_use 블록을 실행해서 tool_result 블록 리스트를 만든다.
+    각 결과의 tool_use_id 는 해당 tool_use 블록의 id 와 같아야 한다.&quot;&quot;&quot;
+    # &gt;&gt;&gt; TODO: {&quot;type&quot;: &quot;tool_result&quot;, &quot;tool_use_id&quot;: ..., &quot;content&quot;: ...} 리스트를 반환하세요
+    return [{&quot;type&quot;: &quot;tool_result&quot;, &quot;tool_use_id&quot;: b[&quot;id&quot;],
+             &quot;content&quot;: execute_tool(b[&quot;name&quot;], b[&quot;input&quot;])}
+            for b in response[&quot;content&quot;] if b[&quot;type&quot;] == &quot;tool_use&quot;]
+    # &lt;&lt;&lt; TODO
+
+
+def ask_with_tools(brain, messages, user_text):
+    &quot;&quot;&quot;도구를 &#x27;딱 한 번만&#x27; 허용하는 버전. 첫 응답이 도구를 원하면 실행하고
+    결과를 user 메시지로 붙여 한 번 더 호출한다. → 왜 이걸로 부족한지가 Lab 3의 출발점.&quot;&quot;&quot;
+    messages.append({&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: user_text})
+    request = {&quot;system&quot;: SYSTEM, &quot;messages&quot;: messages, &quot;tools&quot;: TOOLS}
+    response = brain(request)
+    messages.append({&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: response[&quot;content&quot;]})
+    if response[&quot;stop_reason&quot;] == &quot;tool_use&quot;:
+        messages.append({&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: tool_results_for(response)})
+        response = brain(request)
+        messages.append({&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: response[&quot;content&quot;]})
+    return &quot;&quot;.join(b[&quot;text&quot;] for b in response[&quot;content&quot;] if b[&quot;type&quot;] == &quot;text&quot;)
+
+
+def main():
+    brain, messages = get_brain(), []
+    while True:
+        try:
+            user_text = input(&quot;\nyou&gt; &quot;).strip()
+        except EOFError:
+            break
+        if user_text in (&quot;/quit&quot;, &quot;&quot;):
+            break
+        print(f&quot;\nassistant&gt; {ask_with_tools(brain, messages, user_text)}&quot;)
+
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</code></pre></details>
+    <details><summary>채점 테스트 보기 (<code>test_lab.py</code>)</summary><pre class="code"><code class="language-python">import os
+import sys
+import tempfile
+import unittest
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), &quot;..&quot;, &quot;..&quot;)))
+from common.labkit import load_target  # noqa: E402
+from common.brain import ScriptedBrain, reply, text, tool_use  # noqa: E402
+
+lab = load_target(__file__)
+
+
+class Lab2(unittest.TestCase):
+    def test_write_file_schema(self):
+        tools = {t[&quot;name&quot;]: t for t in lab.TOOLS}
+        self.assertIn(&quot;write_file&quot;, tools)
+        s = tools[&quot;write_file&quot;][&quot;input_schema&quot;]
+        self.assertEqual(s[&quot;type&quot;], &quot;object&quot;)
+        self.assertEqual(set(s[&quot;required&quot;]), {&quot;path&quot;, &quot;content&quot;})
+        self.assertTrue(tools[&quot;write_file&quot;][&quot;description&quot;])
+
+    def test_dispatch_read_write(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = os.path.join(d, &quot;a.txt&quot;)
+            out = lab.execute_tool(&quot;write_file&quot;, {&quot;path&quot;: p, &quot;content&quot;: &quot;hi&quot;})
+            self.assertIsInstance(out, str)
+            self.assertEqual(lab.execute_tool(&quot;read_file&quot;, {&quot;path&quot;: p}), &quot;hi&quot;)
+
+    def test_unknown_tool_is_string(self):
+        self.assertEqual(lab.execute_tool(&quot;fly&quot;, {}), &quot;ERROR: unknown tool fly&quot;)
+
+    def test_exceptions_become_strings(self):
+        out = lab.execute_tool(&quot;read_file&quot;, {&quot;path&quot;: &quot;/no/such/file&quot;})
+        self.assertTrue(out.startswith(&quot;ERROR&quot;), &quot;예외를 던지지 말고 문자열로 돌려줘야 합니다&quot;)
+        out = lab.execute_tool(&quot;read_file&quot;, {&quot;wrong_arg&quot;: 1})
+        self.assertTrue(out.startswith(&quot;ERROR&quot;))
+
+    def test_results_match_ids(self):
+        r = reply(tool_use(&quot;run_command&quot;, {&quot;command&quot;: &quot;echo 1&quot;}, id=&quot;A&quot;),
+                  tool_use(&quot;run_command&quot;, {&quot;command&quot;: &quot;echo 2&quot;}, id=&quot;B&quot;))
+        res = lab.tool_results_for(r)
+        self.assertEqual([x[&quot;tool_use_id&quot;] for x in res], [&quot;A&quot;, &quot;B&quot;])
+        self.assertEqual([x[&quot;type&quot;] for x in res], [&quot;tool_result&quot;] * 2)
+        self.assertEqual(res[1][&quot;content&quot;].strip(), &quot;2&quot;)
+
+    def test_one_tool_round(self):
+        brain = ScriptedBrain([reply(tool_use(&quot;run_command&quot;, {&quot;command&quot;: &quot;echo hi&quot;}, id=&quot;X&quot;)),
+                               reply(text(&quot;결과는 hi&quot;))])
+        msgs = []
+        self.assertEqual(lab.ask_with_tools(brain, msgs, &quot;hi 출력해&quot;), &quot;결과는 hi&quot;)
+        self.assertEqual([m[&quot;role&quot;] for m in msgs], [&quot;user&quot;, &quot;assistant&quot;, &quot;user&quot;, &quot;assistant&quot;])
+        self.assertEqual(msgs[2][&quot;content&quot;][0][&quot;tool_use_id&quot;], &quot;X&quot;)
+
+
+if __name__ == &quot;__main__&quot;:
+    unittest.main()
+</code></pre></details>
+    <label class="donebox"><input type="checkbox" data-done> 이 랩을 완료로 표시</label>
+  </section>
+  <nav class="pager"><a href="01_array.html">← 01 대화 = 배열</a><a class="next" href="03_agent_loop.html">03 에이전트 루프 →</a></nav>
+</main>
+<script type="application/json" id="lab-data">{"id": "02_tools", "exercise": "#!/usr/bin/env python3\n\"\"\"[연습] Lab 2 — 도구 = JSON 스키마 + 함수 디스패치.\n\n두뇌는 세상을 만질 수 없습니다. 할 수 있는 건 \"이 도구를 이 인자로 불러줘\"라는\ntool_use 블록을 '쓰는' 것뿐. 실제 실행은 하네스(몸)가 합니다.\n\n실행:  python labs/02_tools/solution.py      (FakeBrain에서 'read README.md' 입력해보기)\n\"\"\"\nimport os\nimport subprocess\nimport sys\n\nsys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), \"..\", \"..\")))\nfrom common.brain import get_brain  # noqa: E402\n\nSYSTEM = \"너는 도구를 쓸 수 있는 조수다. 필요하면 도구를 호출하라.\"\n\nTOOLS = [\n    {\"name\": \"read_file\",\n     \"description\": \"텍스트 파일을 읽어 내용을 반환한다.\",\n     \"input_schema\": {\"type\": \"object\",\n                      \"properties\": {\"path\": {\"type\": \"string\"}},\n                      \"required\": [\"path\"]}},\n    {\"name\": \"run_command\",\n     \"description\": \"셸 명령을 실행하고 stdout+stderr를 반환한다.\",\n     \"input_schema\": {\"type\": \"object\",\n                      \"properties\": {\"command\": {\"type\": \"string\"}},\n                      \"required\": [\"command\"]}},\n]\n\n# TODO(1): write_file 도구 스키마를 TOOLS 에 추가하세요 (path, content 둘 다 필수 문자열)\n\n\ndef _read_file(path):\n    with open(path, encoding=\"utf-8\") as f:\n        return f.read()\n\n\ndef _write_file(path, content):\n    with open(path, \"w\", encoding=\"utf-8\") as f:\n        f.write(content)\n    return f\"wrote {len(content)} chars to {path}\"\n\n\ndef _run_command(command):\n    out = subprocess.run(command, shell=True, capture_output=True, text=True, timeout=120)\n    return (out.stdout + out.stderr) or \"(no output)\"\n\n\nHANDLERS = {\"read_file\": _read_file, \"write_file\": _write_file,\n            \"run_command\": _run_command}\n\n\ndef execute_tool(name, args):\n    \"\"\"디스패치. 규칙:\n    - 모르는 도구  → \"ERROR: unknown tool <name>\"\n    - 실행 중 예외 → 예외를 던지지 말고 \"ERROR: ...\" 로 시작하는 문자열 반환\n    \"\"\"\n    # TODO(2): HANDLERS 로 디스패치하고, 위 규칙대로 에러를 문자열로 바꾸세요\n    raise NotImplementedError(\"02_tools TODO(2)\")\n\n\ndef tool_results_for(response):\n    \"\"\"응답 속 '모든' tool_use 블록을 실행해서 tool_result 블록 리스트를 만든다.\n    각 결과의 tool_use_id 는 해당 tool_use 블록의 id 와 같아야 한다.\"\"\"\n    # TODO(3): {\"type\": \"tool_result\", \"tool_use_id\": ..., \"content\": ...} 리스트를 반환하세요\n    raise NotImplementedError(\"02_tools TODO(3)\")\n\n\ndef ask_with_tools(brain, messages, user_text):\n    \"\"\"도구를 '딱 한 번만' 허용하는 버전. 첫 응답이 도구를 원하면 실행하고\n    결과를 user 메시지로 붙여 한 번 더 호출한다. → 왜 이걸로 부족한지가 Lab 3의 출발점.\"\"\"\n    messages.append({\"role\": \"user\", \"content\": user_text})\n    request = {\"system\": SYSTEM, \"messages\": messages, \"tools\": TOOLS}\n    response = brain(request)\n    messages.append({\"role\": \"assistant\", \"content\": response[\"content\"]})\n    if response[\"stop_reason\"] == \"tool_use\":\n        messages.append({\"role\": \"user\", \"content\": tool_results_for(response)})\n        response = brain(request)\n        messages.append({\"role\": \"assistant\", \"content\": response[\"content\"]})\n    return \"\".join(b[\"text\"] for b in response[\"content\"] if b[\"type\"] == \"text\")\n\n\ndef main():\n    brain, messages = get_brain(), []\n    while True:\n        try:\n            user_text = input(\"\\nyou> \").strip()\n        except EOFError:\n            break\n        if user_text in (\"/quit\", \"\"):\n            break\n        print(f\"\\nassistant> {ask_with_tools(brain, messages, user_text)}\")\n\n\nif __name__ == \"__main__\":\n    main()\n", "pyodide": "https://cdn.jsdelivr.net/npm/pyodide@0.29.5/", "labs": [{"id": "01_array", "n": 1, "title": "대화는 그냥 JSON 배열이다", "short": "대화 = 배열", "minutes": 20}, {"id": "02_tools", "n": 2, "title": "도구 = JSON 스키마 + 함수 디스패치", "short": "도구", "minutes": 25}, {"id": "03_agent_loop", "n": 3, "title": "에이전트 루프", "short": "에이전트 루프", "minutes": 25}, {"id": "04_context_budget", "n": 4, "title": "컨텍스트는 예산, 캐싱은 순서", "short": "예산과 캐싱", "minutes": 30}, {"id": "05_subagents", "n": 5, "title": "서브에이전트 = 컨텍스트 포크", "short": "서브에이전트", "minutes": 20}, {"id": "06_steering", "n": 6, "title": "돌고 있는 루프 조종하기", "short": "조종", "minutes": 25}, {"id": "07_guardrails", "n": 7, "title": "반사신경과 가드레일", "short": "가드레일", "minutes": 25}, {"id": "08_debugging", "n": 8, "title": "배열 디버깅", "short": "디버깅", "minutes": 20}, {"id": "09_rag", "n": 9, "title": "RAG는 원래 하네스 패턴이었다", "short": "RAG", "minutes": 35}, {"id": "10_ontology", "n": 10, "title": "온톨로지: 에이전트에게 도메인 지도 입히기", "short": "온톨로지", "minutes": 40}, {"id": "11_capstone", "n": 11, "title": "캡스톤: 미니 하네스", "short": "캡스톤", "minutes": 30}]}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

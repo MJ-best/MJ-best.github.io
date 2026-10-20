@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>하네스 엔지니어링 워크북</title>
+<meta name="description" content="LLM은 두뇌, 하네스는 몸. 파이썬으로 에이전트를 처음부터 만들어 보는 11개의 랩.">
+<meta name="theme-color" content="#f6f3ec" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#16181c" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" media="(prefers-color-scheme: light)">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="(prefers-color-scheme: dark)">
+
+</head>
+<body data-root="">
+<header class="topbar">
+  <a class="brand" href="index.html"><span class="logo">⟲</span> 하네스 워크북</a>
+  <span class="crumb"></span>
+  <span class="progress-pill" data-progress-pill title="완료한 랩">0/11</span>
+</header>
+<main class="wrap">
+  <section class="hero">
+    <p class="eyebrow">Harness Engineering · 실습 워크북</p>
+    <h1>LLM은 두뇌,<br>하네스는 몸.</h1>
+    <p class="lede">LLM은 두뇌, 하네스는 몸. 파이썬으로 에이전트를 처음부터 만들어 보는 11개의 랩. 각 랩은 <b>개념 → 확인 퀴즈 → 브라우저에서 코드 채우기 → 자동 채점</b> 순서로 진행됩니다. 휴대폰에서도 됩니다.</p>
+    <div class="cta">
+      <a class="btn primary" data-continue href="labs/01_array.html">시작하기</a>
+      <a class="btn" href="harness-lab.zip" download>전체 코드 내려받기</a>
+    </div>
+    <div class="bar"><span data-progress-bar></span></div>
+    <p class="muted small" data-progress-text>진행 상황은 이 기기 브라우저에 저장됩니다.</p>
+  </section>
+  <h2 class="part">Part I · 몸의 기본</h2><ol class="labs"><li><a class="labcard" href="labs/01_array.html" data-lab="01_array">
+  <span class="num">01</span>
+  <span class="body"><strong>대화는 그냥 JSON 배열이다</strong>
+  <small>LLM API는 상태가 없다. 매 요청에 대화 전체를 배열로 보낸다.</small></span>
+  <span class="meta"><span class="mins">20분</span><span class="state" data-state></span></span>
+</a></li><li><a class="labcard" href="labs/02_tools.html" data-lab="02_tools">
+  <span class="num">02</span>
+  <span class="body"><strong>도구 = JSON 스키마 + 함수 디스패치</strong>
+  <small>도구 = 모델에게 보여줄 JSON 스키마 + 하네스가 실행할 함수.</small></span>
+  <span class="meta"><span class="mins">25분</span><span class="state" data-state></span></span>
+</a></li><li><a class="labcard" href="labs/03_agent_loop.html" data-lab="03_agent_loop">
+  <span class="num">03</span>
+  <span class="body"><strong>에이전트 루프</strong>
+  <small>stop_reason 이 tool_use 인 동안 [호출 → 실행 → 결과 덧붙이기]를 반복한다.</small></span>
+  <span class="meta"><span class="mins">25분</span><span class="state" data-state></span></span>
+</a></li></ol><h2 class="part">Part II · 오래 달리기</h2><ol class="labs"><li><a class="labcard" href="labs/04_context_budget.html" data-lab="04_context_budget">
+  <span class="num">04</span>
+  <span class="body"><strong>컨텍스트는 예산, 캐싱은 순서</strong>
+  <small>큰 도구 결과는 들어오는 순간 잘라야 한다.</small></span>
+  <span class="meta"><span class="mins">30분</span><span class="state" data-state></span></span>
+</a></li><li><a class="labcard" href="labs/05_subagents.html" data-lab="05_subagents">
+  <span class="num">05</span>
+  <span class="body"><strong>서브에이전트 = 컨텍스트 포크</strong>
+  <small>서브에이전트 = 새 배열로 같은 루프를 한 번 더 돌리는 것.</small></span>
+  <span class="meta"><span class="mins">20분</span><span class="state" data-state></span></span>
+</a></li><li><a class="labcard" href="labs/06_steering.html" data-lab="06_steering">
+  <span class="num">06</span>
+  <span class="body"><strong>돌고 있는 루프 조종하기</strong>
+  <small>실행 중 리마인더는 다음 tool_result 메시지 끝에 &lt;system-reminder&gt; 로 붙인다.</small></span>
+  <span class="meta"><span class="mins">25분</span><span class="state" data-state></span></span>
+</a></li></ol><h2 class="part">Part III · 믿을 수 있는 몸</h2><ol class="labs"><li><a class="labcard" href="labs/07_guardrails.html" data-lab="07_guardrails">
+  <span class="num">07</span>
+  <span class="body"><strong>반사신경과 가드레일</strong>
+  <small>프롬프트의 &#x27;조심해&#x27;는 부탁, 하네스 코드는 규칙.</small></span>
+  <span class="meta"><span class="mins">25분</span><span class="state" data-state></span></span>
+</a></li><li><a class="labcard" href="labs/08_debugging.html" data-lab="08_debugging">
+  <span class="num">08</span>
+  <span class="body"><strong>배열 디버깅</strong>
+  <small>에이전트 문제의 원인은 거의 항상 &#x27;실제로 보낸 배열&#x27; 안에 있다.</small></span>
+  <span class="meta"><span class="mins">20분</span><span class="state" data-state></span></span>
+</a></li></ol><h2 class="part">Part IV · 데이터 입히기</h2><ol class="labs"><li><a class="labcard" href="labs/09_rag.html" data-lab="09_rag">
+  <span class="num">09</span>
+  <span class="body"><strong>RAG는 원래 하네스 패턴이었다</strong>
+  <small>RAG도 &#x27;배열에 무엇을 넣을지&#x27; 고르는 하네스 코드다.</small></span>
+  <span class="meta"><span class="mins">35분</span><span class="state" data-state></span></span>
+</a></li><li><a class="labcard" href="labs/10_ontology.html" data-lab="10_ontology">
+  <span class="num">10</span>
+  <span class="body"><strong>온톨로지: 에이전트에게 도메인 지도 입히기</strong>
+  <small>온톨로지 = 개념 · 관계 · 속성 · 해석 규칙을 명시한 도메인 지도.</small></span>
+  <span class="meta"><span class="mins">40분</span><span class="state" data-state></span></span>
+</a></li></ol><h2 class="part">마무리</h2><ol class="labs"><li><a class="labcard" href="labs/11_capstone.html" data-lab="11_capstone">
+  <span class="num">11</span>
+  <span class="body"><strong>캡스톤: 미니 하네스</strong>
+  <small>지금까지의 패치를 하나의 몸으로 조립한다.</small></span>
+  <span class="meta"><span class="mins">30분</span><span class="state" data-state></span></span>
+</a></li></ol>
+  <section class="card">
+    <h2>큰 그림</h2>
+    <pre class="code"><code class="language-plaintext">            ┌──────────────────────── 하네스 (몸) ────────────────────────┐
+ 사용자 ──▶ │  배열 = [system(+온톨로지), user, assistant, tool_result…]     │
+            │     │                                       ▲               │
+            │     ▼  요청(배열 전체 + 도구 스키마)          │ 결과 덧붙이기  │
+            │  ┌────────┐   tool_use    ┌──────────────────┴────────────┐  │
+            │  │  두뇌  │ ────────────▶ │ 가드레일 → 도구 실행 → 자르기     │  │
+            │  │ (LLM)  │ ◀──────────── │ (파일·셸·검색·온톨로지·서브에이전트)│  │
+            │  └────────┘  end_turn     └───────────────────────────────┘  │
+            │        리마인더/todo 는 다음 user 메시지 끝에 주입               │
+            └─────────────────────────────────────────────────────────────┘</code></pre>
+<h4>RAG와 온톨로지는 어디에 끼나?</h4>
+<p>둘 다 결국 <strong>"배열에 무엇을, 언제, 어디에 넣을지"</strong> 의 문제입니다.</p>
+<div class="table"><table><thead><tr><th>방식</th><th>배열의 어디에</th><th>강점</th><th>실패 지점</th></tr></thead><tbody><tr><td>온톨로지 전체 주입</td><td>시스템 프롬프트 (고정 prefix → 캐시됨)</td><td>누락 없음, 고치기·디버깅 쉬움</td><td>커지면 컨텍스트를 잡아먹음</td></tr><tr><td>온톨로지 조회 도구</td><td>필요할 때 tool_result 로</td><td>컨텍스트 절약</td><td>모델이 조회를 안 하거나 잘못된 용어로 조회</td></tr><tr><td>RAG 사전 주입</td><td>사용자 메시지 앞</td><td>모델이 검색을 몰라도 됨</td><td>top-k 가 연결 고리를 놓침</td></tr><tr><td>RAG 검색 도구</td><td>tool_result 로</td><td>여러 번 다시 검색 가능</td><td>검색어 선택을 모델에 의존</td></tr><tr><td>그래프 탐색</td><td>도구 결과로 경로를</td><td>multi-hop 관계에 강함</td><td>운영 비용, 쿼리가 틀리면 확신 있게 틀림</td></tr></tbody></table></div>
+<p>Lab 9·10은 같은 질문 <em>"대금지급 전에 검수가 끝나야 하나요?"</em> 으로 이 차이를 직접 확인합니다. RAG top-3 은 <code>대금지급</code>·<code>검수</code> 문서는 찾지만 둘을 잇는 <code>삼자대사</code>·<code>입고</code> 문서를 놓치고, 온톨로지는 <code>대금지급 -requires→ 3-Way Match -compares→ 입고 -requires→ 검수</code> 경로를 그대로 보여 줍니다.</p>
+  </section>
+  <section class="card">
+    <h2>공부하는 법</h2>
+    <ol>
+      <li><b>개념</b>을 읽고 <b>확인 퀴즈</b>를 풉니다.</li>
+      <li><b>실습</b> 편집기에서 <code>TODO</code> 를 채웁니다. <kbd>TODO 찾기</kbd> 버튼이 다음 빈칸으로 데려갑니다.</li>
+      <li><b>▶ 채점</b>을 누르면 브라우저 안의 파이썬(Pyodide)이 테스트를 돌립니다. 처음 한 번은 10MB 정도를 내려받습니다.</li>
+      <li>막히면 <b>정답 보기</b>로 비교하세요. 작성한 코드는 자동 저장됩니다.</li>
+      <li>PC에서는 <a href="harness-lab.zip">zip</a>을 받아 <code>python run_tests.py</code> 로 같은 테스트를 돌리고, <code>ANTHROPIC_API_KEY</code> 를 넣으면 진짜 Claude와 대화합니다.</li>
+    </ol>
+  </section>
+  <section class="card small">
+    <h2>출처</h2>
+    <p>개념과 흐름: <a href="https://github.com/IsuruMaduranga/harness-engineering-101" target="_blank" rel="noopener">Harness Engineering 101</a> © Isuru Wijesiri (본문 CC BY-NC-ND 4.0, 코드 MIT). 이 워크북은 원문을 옮기지 않고 한국어로 새로 쓴 학습 자료입니다.<br>
+    온톨로지 확장 순서: 장한별, <a href="https://bigstargithub.github.io/posts/AI-12/" target="_blank" rel="noopener">「그래서 Agent에 데이터를 어떻게 입히나요?」</a></p>
+    <p><a href="https://github.com/MJ-best/MJ-best.github.io/tree/main/harness-lab/project" target="_blank" rel="noopener">GitHub에서 코드 보기</a></p>
+  </section>
+</main>
+<script type="application/json" id="labs-meta">[{"id": "01_array", "n": 1, "title": "대화는 그냥 JSON 배열이다", "short": "대화 = 배열", "minutes": 20}, {"id": "02_tools", "n": 2, "title": "도구 = JSON 스키마 + 함수 디스패치", "short": "도구", "minutes": 25}, {"id": "03_agent_loop", "n": 3, "title": "에이전트 루프", "short": "에이전트 루프", "minutes": 25}, {"id": "04_context_budget", "n": 4, "title": "컨텍스트는 예산, 캐싱은 순서", "short": "예산과 캐싱", "minutes": 30}, {"id": "05_subagents", "n": 5, "title": "서브에이전트 = 컨텍스트 포크", "short": "서브에이전트", "minutes": 20}, {"id": "06_steering", "n": 6, "title": "돌고 있는 루프 조종하기", "short": "조종", "minutes": 25}, {"id": "07_guardrails", "n": 7, "title": "반사신경과 가드레일", "short": "가드레일", "minutes": 25}, {"id": "08_debugging", "n": 8, "title": "배열 디버깅", "short": "디버깅", "minutes": 20}, {"id": "09_rag", "n": 9, "title": "RAG는 원래 하네스 패턴이었다", "short": "RAG", "minutes": 35}, {"id": "10_ontology", "n": 10, "title": "온톨로지: 에이전트에게 도메인 지도 입히기", "short": "온톨로지", "minutes": 40}, {"id": "11_capstone", "n": 11, "title": "캡스톤: 미니 하네스", "short": "캡스톤", "minutes": 30}]</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>
