@@ -1,0 +1,1284 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="CCNP ENCOR 350-401 v1.2 이론 요약, 브라우저 IOS CLI 랩 8개, 계산 도구, 45문항 퀴즈, 공개 자료·GitHub 모음">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>ENCOR 랩북</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: patch-panel header with port-style tabs; content in a single 1080px column; terminal as an inset console surface */
+:root{
+  --bg:#edf1f4; --surface:#ffffff; --surface-2:#f5f8fa; --ink:#15212b; --muted:#5b6976; --line:#d2dae1;
+  --accent:#0a6a8a; --accent-ink:#ffffff; --accent-soft:#dcecf2;
+  --led:#c97c00; --ok:#2c8547; --ok-soft:#e0f0e5; --bad:#bf3f2b; --bad-soft:#f8e3df;
+  --term-bg:#0f1a22; --term-fg:#cfe0e8; --term-dim:#7f97a5; --term-hi:#7fd3f0; --term-warn:#f2b45a; --term-err:#ff8c78;
+  --f-display:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --f-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --f-mono:"IBM Plex Mono","D2Coding",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --r:6px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0d151b; --surface:#141f28; --surface-2:#192631; --ink:#e2eaf0; --muted:#93a3b0; --line:#273641;
+  --accent:#4cb2d3; --accent-ink:#06202b; --accent-soft:#16323f;
+  --led:#f0aa3a; --ok:#5cc07a; --ok-soft:#143322; --bad:#ff8a73; --bad-soft:#3a1d18;
+  --term-bg:#070e13; --term-fg:#cfe0e8; --term-dim:#7890a0; --term-hi:#7fd3f0; --term-warn:#f2b45a; --term-err:#ff8c78;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0d151b; --surface:#141f28; --surface-2:#192631; --ink:#e2eaf0; --muted:#93a3b0; --line:#273641;
+  --accent:#4cb2d3; --accent-ink:#06202b; --accent-soft:#16323f;
+  --led:#f0aa3a; --ok:#5cc07a; --ok-soft:#143322; --bad:#ff8a73; --bad-soft:#3a1d18;
+  --term-bg:#070e13; --term-fg:#cfe0e8; --term-dim:#7890a0; --term-hi:#7fd3f0; --term-warn:#f2b45a; --term-err:#ff8c78;
+  color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.65;word-break:keep-all;overflow-wrap:anywhere}
+a{color:var(--accent)}
+code,kbd,.mono{font-family:var(--f-mono);font-size:.92em}
+code{background:var(--surface-2);border:1px solid var(--line);border-radius:4px;padding:0 .3em}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;line-height:1.3;margin:0}
+h2{font-size:1.45rem;font-weight:700;letter-spacing:-.01em}
+h3{font-size:1.05rem;font-weight:600}
+p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* header = patch panel */
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:12px 6px;flex-wrap:wrap}
+.brand h1{font-size:1.25rem;font-weight:700;display:flex;align-items:center;gap:10px}
+.brand .code{font-family:var(--f-mono);font-size:.78rem;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.leds{display:flex;gap:5px;align-items:center}
+.leds i{width:8px;height:8px;border-radius:50%;background:var(--line);display:block}
+.leds i.on{background:var(--led);box-shadow:0 0 6px var(--led)}
+nav.ports{display:flex;gap:6px;overflow-x:auto;padding-block:6px 10px;scrollbar-width:none}
+nav.ports::-webkit-scrollbar{display:none}
+nav.ports button{flex:0 0 auto;border:1px solid var(--line);background:var(--surface-2);border-radius:4px;padding:6px 12px 6px 10px;font-size:.88rem;display:flex;align-items:center;gap:8px;white-space:nowrap}
+nav.ports button .p{font-family:var(--f-mono);font-size:.7rem;color:var(--muted)}
+nav.ports button .dot{width:7px;height:7px;border-radius:50%;background:var(--line)}
+nav.ports button[aria-selected="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+nav.ports button[aria-selected="true"] .p{color:var(--accent-ink);opacity:.8}
+nav.ports button[aria-selected="true"] .dot{background:var(--led);box-shadow:0 0 5px var(--led)}
+
+main{padding-block:24px 64px}
+section.view{display:grid;gap:22px}
+.lede{color:var(--muted);max-width:68ch}
+.eyebrow{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:16px}
+.grid2>*{min-width:0}
+.note{border-left:3px solid var(--led);background:var(--surface-2);padding:10px 14px;border-radius:0 var(--r) var(--r) 0;font-size:.92rem}
+
+/* overview */
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.facts div{background:var(--surface);padding:12px 14px}
+.facts b{display:block;font-family:var(--f-mono);font-size:1.15rem;font-variant-numeric:tabular-nums}
+.facts span{font-size:.8rem;color:var(--muted)}
+.bars{display:grid;gap:10px}
+.bar{display:grid;grid-template-columns:minmax(0,11rem) 1fr 3rem;align-items:center;gap:10px;background:none;border:0;padding:0;text-align:left}
+.bar .n{font-size:.9rem}
+.bar .n small{font-family:var(--f-mono);color:var(--muted);margin-right:6px}
+.bar .t{height:14px;background:var(--surface-2);border:1px solid var(--line);border-radius:3px;overflow:hidden}
+.bar .t i{display:block;height:100%;background:var(--accent)}
+.bar .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;text-align:right}
+.bar:hover .n{color:var(--accent)}
+.prog{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:12px}
+.prog .m{display:flex;flex-direction:column;gap:4px}
+.prog .m b{font-family:var(--f-mono);font-size:1.3rem;font-variant-numeric:tabular-nums}
+.meter{height:6px;background:var(--surface-2);border-radius:3px;overflow:hidden;border:1px solid var(--line)}
+.meter i{display:block;height:100%;background:var(--ok)}
+table.plain{width:100%;border-collapse:collapse;font-size:.9rem}
+table.plain th,table.plain td{border-bottom:1px solid var(--line);padding:7px 8px;text-align:left;vertical-align:top}
+table.plain th{font-size:.78rem;color:var(--muted);font-weight:500;letter-spacing:.04em}
+table.plain td.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.scroll{overflow-x:auto}
+
+/* theory */
+.domtabs{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 12px;font-size:.85rem}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.topic{border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+.topic>summary{list-style:none;cursor:pointer;padding:12px 16px;display:flex;gap:12px;align-items:baseline}
+.topic>summary::-webkit-details-marker{display:none}
+.topic>summary .id{font-family:var(--f-mono);font-size:.8rem;color:var(--muted);flex:0 0 auto}
+.topic>summary .tt{font-weight:600;flex:1}
+.topic>summary .st{font-size:.75rem;color:var(--muted);flex:0 0 auto}
+.topic.done>summary .st{color:var(--ok)}
+.topic .body{padding:0 16px 16px 16px;display:grid;gap:10px}
+.topic .body ul{margin:0;padding-left:1.2em;display:grid;gap:4px}
+.topic .body pre{margin:0}
+.topic label{display:flex;gap:8px;align-items:center;font-size:.88rem;color:var(--muted)}
+pre.cfg{background:var(--term-bg);color:var(--term-fg);font-family:var(--f-mono);font-size:.82rem;padding:10px 12px;border-radius:var(--r);overflow-x:auto;line-height:1.5}
+.trap{font-size:.88rem;background:var(--bad-soft);border-radius:var(--r);padding:8px 12px}
+.trap b{color:var(--bad)}
+
+/* lab */
+.labwrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,340px);gap:16px;align-items:start}
+@media (max-width:860px){.labwrap{grid-template-columns:1fr}}
+.lablist{display:flex;gap:6px;flex-wrap:wrap}
+.lablist button{border:1px solid var(--line);background:var(--surface);border-radius:4px;padding:6px 10px;font-size:.85rem;display:flex;gap:6px;align-items:center}
+.lablist button .d{font-family:var(--f-mono);font-size:.7rem;color:var(--muted)}
+.lablist button.done::after{content:"✓";color:var(--ok);font-weight:700}
+.lablist button[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.term{background:var(--term-bg);color:var(--term-fg);border-radius:var(--r);font-family:var(--f-mono);font-size:.84rem;display:flex;flex-direction:column;min-height:420px;max-height:70vh;border:1px solid var(--line)}
+.term .bar2{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;border-bottom:1px solid #ffffff14;color:var(--term-dim);font-size:.75rem;gap:8px;flex-wrap:wrap}
+.term .bar2 button{background:none;border:1px solid #ffffff26;color:var(--term-fg);border-radius:4px;padding:2px 8px;font-size:.75rem}
+.term .out{flex:1;overflow:auto;padding:10px 12px;white-space:pre-wrap;word-break:break-word;line-height:1.5}
+.term .out .c{color:var(--term-hi)}
+.term .out .w{color:var(--term-warn)}
+.term .out .e{color:var(--term-err)}
+.term .out .d{color:var(--term-dim)}
+.term .in{display:flex;align-items:center;gap:6px;padding:8px 12px;border-top:1px solid #ffffff14}
+.term .in span{color:var(--term-hi);white-space:nowrap}
+.term .in input{flex:1;min-width:0;background:transparent;border:0;color:var(--term-fg);font:inherit;outline:none;caret-color:var(--term-warn)}
+.tasks{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+.tasks li{display:grid;grid-template-columns:20px 1fr;gap:8px;font-size:.9rem;align-items:start}
+.tasks li .box{width:18px;height:18px;border:1.5px solid var(--line);border-radius:4px;margin-top:3px;display:grid;place-items:center;font-size:.75rem}
+.tasks li.ok .box{background:var(--ok);border-color:var(--ok);color:#fff}
+.tasks li.ok .tx{color:var(--muted)}
+.tasks li details{grid-column:2;font-size:.82rem;color:var(--muted)}
+.tasks li details summary{cursor:pointer}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:4px;padding:6px 12px;font-size:.86rem}
+.btn.pri{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.topo{width:100%;height:auto;display:block}
+.topo text{font-family:var(--f-mono);font-size:11px;fill:var(--ink)}
+.topo .lbl{fill:var(--muted);font-size:10px}
+.topo .dev{fill:var(--surface-2);stroke:var(--ink);stroke-width:1.2}
+.topo .peer{fill:var(--surface-2);stroke:var(--muted);stroke-width:1.2;stroke-dasharray:3 3}
+.topo .lnk{stroke:var(--accent);stroke-width:2;fill:none}
+.badge{display:inline-block;font-family:var(--f-mono);font-size:.7rem;padding:1px 7px;border-radius:999px;background:var(--accent-soft);color:var(--accent);letter-spacing:.03em}
+.success{background:var(--ok-soft);color:var(--ok);border-radius:var(--r);padding:8px 12px;font-size:.9rem;font-weight:600}
+
+/* tools */
+.field{display:grid;gap:4px}
+.field label{font-size:.8rem;color:var(--muted)}
+input[type=text],input[type=number],select,textarea{font:inherit;color:var(--ink);background:var(--surface-2);border:1px solid var(--line);border-radius:4px;padding:7px 9px;width:100%;min-width:0}
+textarea{font-family:var(--f-mono);font-size:.82rem;min-height:170px;resize:vertical}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:.9rem}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:end}
+.row>*{flex:1 1 140px;min-width:0}
+.order{display:flex;flex-wrap:wrap;gap:6px}
+.order button{border:1px solid var(--line);background:var(--surface-2);border-radius:4px;padding:5px 10px;font-size:.85rem}
+.order button:disabled{opacity:.35;cursor:default}
+ol.picked{margin:0;padding-left:1.6em;display:grid;gap:3px;font-size:.9rem}
+ol.picked li.good{color:var(--ok)}
+ol.picked li.badx{color:var(--bad)}
+.out-box{background:var(--term-bg);color:var(--term-fg);font-family:var(--f-mono);font-size:.8rem;border-radius:var(--r);padding:10px 12px;white-space:pre-wrap;word-break:break-all}
+
+/* quiz */
+.qcard{display:grid;gap:14px}
+.qmeta{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:.82rem;color:var(--muted)}
+.qtext{font-size:1.05rem;font-weight:600}
+.opts{display:grid;gap:8px}
+.opts button{text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:10px 12px;display:flex;gap:10px}
+.opts button .k{font-family:var(--f-mono);color:var(--muted)}
+.opts button.right{border-color:var(--ok);background:var(--ok-soft)}
+.opts button.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.opts button:disabled{cursor:default}
+.expl{font-size:.9rem;background:var(--surface-2);border-radius:var(--r);padding:10px 12px}
+.dstat{display:grid;gap:6px;font-size:.85rem}
+.dstat div{display:grid;grid-template-columns:8rem 1fr 4rem;gap:8px;align-items:center}
+.dstat span:last-child{font-family:var(--f-mono);text-align:right;font-variant-numeric:tabular-nums}
+
+/* links */
+.res{display:grid;gap:10px}
+.res a.item{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;text-decoration:none;color:var(--ink);border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:12px 14px}
+.res a.item:hover{border-color:var(--accent)}
+.res a.item .tag{grid-row:span 2;font-family:var(--f-mono);font-size:.7rem;color:var(--muted);padding-top:3px;min-width:3.5rem}
+.res a.item b{font-weight:600}
+.res a.item span{font-size:.86rem;color:var(--muted)}
+footer{font-size:.8rem;color:var(--muted);padding-block:20px 0;border-top:1px solid var(--line);margin-top:20px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <h1>ENCOR 랩북 <span class="code">350-401 v1.2</span></h1>
+      <div class="leds" aria-hidden="true" id="leds"></div>
+    </div>
+    <nav class="ports" role="tablist" id="tabs"></nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- OVERVIEW -->
+<section class="view" id="v-overview" role="tabpanel">
+  <div style="display:grid;gap:8px">
+    <span class="eyebrow">CCNP Enterprise 코어 시험</span>
+    <h2>이론 읽고, CLI로 쳐보고, 문제로 확인하기</h2>
+    <p class="lede">ENCOR 350-401 v1.2 범위를 6개 도메인으로 나눠 정리했습니다. 브라우저 안에서 IOS 명령을 직접 입력하는 랩 8개, 서브넷·OSPF 비용·RESTCONF 도구, 45문항 퀴즈가 있습니다. 진도는 이 브라우저에만 저장됩니다.</p>
+  </div>
+  <div class="facts">
+    <div><b>120분</b><span>시험 시간</span></div>
+    <div><b>US$400</b><span>응시료 (Pearson VUE·OnVUE)</span></div>
+    <div><b>v1.2</b><span>2026-03-19부터 적용</span></div>
+    <div><b>랩 먼저</b><span>실기형 문항이 첫 1시간에 배치</span></div>
+    <div><b>뒤로 가기 없음</b><span>지나간 문항으로 못 돌아감</span></div>
+  </div>
+  <div class="grid2">
+    <div class="panel" style="display:grid;gap:14px">
+      <h3>도메인 비중</h3>
+      <div class="bars" id="bars"></div>
+      <p style="font-size:.82rem;color:var(--muted)">막대를 누르면 해당 도메인 이론으로 이동합니다.</p>
+    </div>
+    <div class="panel" style="display:grid;gap:14px">
+      <h3>내 진도</h3>
+      <div class="prog" id="progress"></div>
+      <div class="note"><b>v1.1 → v1.2 변경점</b><br>무선(RF, AP 모드, WLAN 보안)은 새 CCNP Wireless 트랙으로 빠졌고, 6번 도메인 이름이 '자동화와 AI'로 바뀌었습니다. 멀티캐스트에 SSM·bidir PIM·MSDP가 추가됐고 제품명은 Catalyst Center, SD-WAN Manager로 표기됩니다. 무선 내용이 들어 있는 옛 교재는 그 부분을 건너뛰세요.</div>
+    </div>
+  </div>
+  <div class="panel" style="display:grid;gap:12px">
+    <h3>10주 학습 계획 (주 8~10시간 기준)</h3>
+    <div class="scroll"><table class="plain">
+      <thead><tr><th>주차</th><th>도메인</th><th>이론</th><th>실습</th></tr></thead>
+      <tbody id="plan"></tbody>
+    </table></div>
+  </div>
+</section>
+
+<!-- THEORY -->
+<section class="view" id="v-theory" role="tabpanel" hidden>
+  <div style="display:grid;gap:8px">
+    <span class="eyebrow">Exam Topics 기반 요약</span>
+    <h2>이론</h2>
+    <p class="lede">Cisco 공식 시험 주제 순서를 따릅니다. 각 항목을 읽고 '학습 완료'에 체크하면 진도에 반영됩니다. 설정 예시는 랩 탭에서 그대로 쳐볼 수 있습니다.</p>
+  </div>
+  <div class="domtabs" id="domtabs"></div>
+  <div id="topics" style="display:grid;gap:10px"></div>
+</section>
+
+<!-- LAB -->
+<section class="view" id="v-lab" role="tabpanel" hidden>
+  <div style="display:grid;gap:8px">
+    <span class="eyebrow">브라우저 IOS 시뮬레이터</span>
+    <h2>CLI 랩</h2>
+    <p class="lede">실제 시험의 랩 문항처럼 과제를 받고 명령어로 해결합니다. 약어(<code>conf t</code>, <code>int g0/0</code>, <code>sh ip int br</code>), <code>?</code> 도움말, Tab 자동완성, ↑↓ 기록, <code>do</code>, <code>| include</code>를 지원합니다. 상대 장비는 미리 설정된 것으로 가정하고 결과를 흉내 냅니다.</p>
+  </div>
+  <div class="lablist" id="lablist"></div>
+  <div class="labwrap">
+    <div style="display:grid;gap:12px;min-width:0">
+      <div class="term" id="term">
+        <div class="bar2"><span id="termtitle">console</span><span class="btnrow"><button id="btnClear">화면 지우기</button><button id="btnReset">랩 초기화</button></span></div>
+        <div class="out" id="out" aria-live="polite"></div>
+        <div class="in"><span id="prompt">R1&gt;</span><input id="cmd" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="명령 입력"></div>
+      </div>
+    </div>
+    <div style="display:grid;gap:12px;min-width:0">
+      <div class="panel" style="display:grid;gap:10px">
+        <div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><h3 id="labtitle"></h3><span class="badge" id="labdom"></span></div>
+        <svg class="topo" id="topo" viewBox="0 0 320 120" role="img" aria-label="토폴로지"></svg>
+        <p id="labdesc" style="font-size:.9rem"></p>
+      </div>
+      <div class="panel" style="display:grid;gap:10px">
+        <h3>과제</h3>
+        <ul class="tasks" id="tasks"></ul>
+        <div id="labdone"></div>
+        <div class="btnrow"><button class="btn" id="btnVerify">검증 명령 보기</button><button class="btn" id="btnSol">정답 설정 보기</button></div>
+        <pre class="cfg" id="sol" hidden></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TOOLS -->
+<section class="view" id="v-tools" role="tabpanel" hidden>
+  <div style="display:grid;gap:8px">
+    <span class="eyebrow">계산·암기 도구</span>
+    <h2>도구</h2>
+  </div>
+  <div class="grid2">
+    <div class="panel" style="display:grid;gap:12px">
+      <h3>서브넷 · 와일드카드 계산기</h3>
+      <div class="field"><label for="cidr">IP/프리픽스 (예: 10.0.12.1/30)</label><input id="cidr" type="text" value="10.0.12.1/30"></div>
+      <dl class="kv" id="cidrOut"></dl>
+    </div>
+    <div class="panel" style="display:grid;gap:12px">
+      <h3>OSPF 인터페이스 비용</h3>
+      <div class="field"><label for="refbw">auto-cost reference-bandwidth (Mbps)</label><input id="refbw" type="number" value="100" min="1"></div>
+      <div class="scroll"><table class="plain"><thead><tr><th>인터페이스</th><th>대역폭</th><th>비용</th></tr></thead><tbody id="costOut"></tbody></table></div>
+      <p style="font-size:.82rem;color:var(--muted)">비용 = 기준 대역폭 ÷ 인터페이스 대역폭 (소수점 버림, 최솟값 1). 기본 100Mbps에서는 1G 이상이 모두 1이 되므로 모든 라우터에 같은 기준값을 넣어야 합니다.</p>
+    </div>
+  </div>
+  <div class="grid2">
+    <div class="panel" style="display:grid;gap:12px">
+      <h3>BGP 최적 경로 선택 순서 맞추기</h3>
+      <p style="font-size:.88rem;color:var(--muted)">먼저 비교하는 항목부터 차례로 누르세요.</p>
+      <div class="order" id="bgpPool"></div>
+      <ol class="picked" id="bgpPicked"></ol>
+      <div class="btnrow"><button class="btn" id="bgpReset">다시 섞기</button></div>
+      <div id="bgpResult"></div>
+    </div>
+    <div class="panel" style="display:grid;gap:12px">
+      <h3>관리 거리(AD)</h3>
+      <div class="scroll"><table class="plain"><thead><tr><th>출처</th><th>AD</th></tr></thead><tbody id="adOut"></tbody></table></div>
+    </div>
+  </div>
+  <div class="grid2">
+    <div class="panel" style="display:grid;gap:12px">
+      <h3>RESTCONF 요청 만들기</h3>
+      <div class="row">
+        <div class="field"><label for="rcHost">장비 주소</label><input id="rcHost" type="text" value="10.10.20.48"></div>
+        <div class="field"><label for="rcMethod">메서드</label><select id="rcMethod"><option>GET</option><option>PATCH</option><option>PUT</option><option>POST</option><option>DELETE</option></select></div>
+      </div>
+      <div class="row">
+        <div class="field"><label for="rcRes">리소스</label><select id="rcRes">
+          <option value="if">인터페이스 1개 (ietf-interfaces)</option>
+          <option value="ifs">인터페이스 전체 (ietf-interfaces)</option>
+          <option value="host">호스트네임 (Cisco-IOS-XE-native)</option>
+          <option value="caps">지원 모델 목록 (ietf-yang-library)</option>
+        </select></div>
+        <div class="field"><label for="rcIf">인터페이스 이름</label><input id="rcIf" type="text" value="GigabitEthernet1"></div>
+      </div>
+      <div class="out-box" id="rcOut"></div>
+    </div>
+    <div class="panel" style="display:grid;gap:12px">
+      <h3>JSON 검사 · 경로 추출</h3>
+      <textarea id="jsonIn" spellcheck="false" aria-label="JSON 입력"></textarea>
+      <div class="row">
+        <div class="field" style="flex:3 1 200px"><label for="jsonPath">경로 (예: ietf-interfaces:interface.enabled)</label><input id="jsonPath" type="text" value="ietf-interfaces:interface.ietf-ip:ipv4.address[0].ip"></div>
+        <button class="btn pri" id="jsonGo" style="flex:0 0 auto">검사</button>
+      </div>
+      <div class="out-box" id="jsonOut"></div>
+    </div>
+  </div>
+</section>
+
+<!-- QUIZ -->
+<section class="view" id="v-quiz" role="tabpanel" hidden>
+  <div style="display:grid;gap:8px">
+    <span class="eyebrow">자체 제작 문항</span>
+    <h2>퀴즈</h2>
+    <p class="lede">실제 시험 문제가 아니라 시험 주제를 확인하기 위해 직접 만든 문항입니다. 답을 고르면 바로 해설이 나옵니다.</p>
+  </div>
+  <div class="domtabs" id="quizdom"></div>
+  <div class="labwrap">
+    <div class="panel qcard" id="qcard"></div>
+    <div class="panel" style="display:grid;gap:10px">
+      <h3>도메인별 정답률</h3>
+      <div class="dstat" id="qstat"></div>
+      <button class="btn" id="qClear">기록 지우기</button>
+    </div>
+  </div>
+</section>
+
+<!-- LINKS -->
+<section class="view" id="v-links" role="tabpanel" hidden>
+  <div style="display:grid;gap:8px">
+    <span class="eyebrow">공개 자료 · GitHub</span>
+    <h2>자료와 실습 환경</h2>
+    <p class="lede">이 페이지의 시뮬레이터는 개념 연습용입니다. 실제 장비 동작은 아래 무료 환경에서 확인하세요. Cisco 이미지는 CML 참조 플랫폼처럼 정식 경로로 받은 것만 쓰세요.</p>
+  </div>
+  <div class="grid2">
+    <div style="display:grid;gap:10px;min-width:0"><h3>공식 · 시험 정보</h3><div class="res" id="resOfficial"></div></div>
+    <div style="display:grid;gap:10px;min-width:0"><h3>웹·무료 실습 환경</h3><div class="res" id="resLab"></div></div>
+  </div>
+  <div class="grid2">
+    <div style="display:grid;gap:10px;min-width:0"><h3>GitHub 학습 저장소</h3><div class="res" id="resGit"></div></div>
+    <div style="display:grid;gap:10px;min-width:0"><h3>자동화 · 프로그래머빌리티</h3><div class="res" id="resAuto"></div></div>
+  </div>
+  <footer>시험 정보는 2026년 10월 기준 공개 자료를 바탕으로 정리했습니다. 응시 전 Cisco 공식 시험 페이지에서 최신 정보를 확인하세요. Cisco, CCNP, Catalyst는 Cisco Systems의 상표이며 이 페이지는 Cisco와 관계없는 개인 학습 자료입니다.</footer>
+</section>
+
+</main>
+
+<script>
+/* ---------- storage ---------- */
+const store={get(k,d){try{const v=localStorage.getItem('encor:'+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem('encor:'+k,JSON.stringify(v))}catch(e){}}};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---------- domains ---------- */
+const DOMAINS=[
+ {id:1,name:'아키텍처',en:'Architecture',w:15},
+ {id:2,name:'가상화',en:'Virtualization',w:10},
+ {id:3,name:'인프라',en:'Infrastructure',w:30},
+ {id:4,name:'네트워크 보증',en:'Network Assurance',w:10},
+ {id:5,name:'보안',en:'Security',w:20},
+ {id:6,name:'자동화와 AI',en:'Automation & AI',w:15},
+];
+
+/* ---------- theory ---------- */
+const TOPICS=[
+ {d:1,id:'1.1',t:'엔터프라이즈 설계: 2계층·3계층·패브릭·클라우드',p:[
+  '3계층은 액세스–디스트리뷰션–코어로 나눠 규모가 큰 캠퍼스에 쓰고, 2계층(collapsed core)은 디스트리뷰션과 코어를 합쳐 중소 규모에서 비용을 줄입니다.',
+  '패브릭은 스파인–리프 같은 균일한 구조 위에 오버레이를 얹는 방식입니다. SD-Access가 캠퍼스용 패브릭입니다.',
+  '온프레미스는 통제권과 예측 가능한 비용, 클라우드는 탄력성과 빠른 구축이 장점입니다. 하이브리드는 둘을 연결하며 지연과 데이터 주권이 고려 요소입니다.'],
+  trap:'2계층 구조에서도 디스트리뷰션 스위치 이중화와 FHRP는 그대로 필요합니다.'},
+ {d:1,id:'1.2',t:'고가용성: 이중화, FHRP, SSO',p:[
+  '장비·링크·전원 이중화로 단일 장애점을 없앱니다.',
+  'SSO(Stateful Switchover)는 이중 수퍼바이저 사이에 설정과 상태를 동기화해 전환 시간을 줄입니다.',
+  'NSF(Non-Stop Forwarding)는 SSO와 함께 쓰여 전환 중에도 포워딩을 유지하고, 이웃 라우터가 경로를 다시 계산하지 않도록 돕습니다.'],
+  cfg:'redundancy\n mode sso\nrouter ospf 1\n nsf'},
+ {d:1,id:'1.3',t:'Catalyst SD-WAN 동작 원리',p:[
+  '관리 플레인: SD-WAN Manager(구 vManage) — GUI, 템플릿, 모니터링.',
+  '오케스트레이션: SD-WAN Validator(구 vBond) — 최초 인증과 NAT 통과를 도와 장비를 컨트롤러에 연결.',
+  '컨트롤 플레인: SD-WAN Controller(구 vSmart) — OMP로 경로·정책·키를 WAN Edge에 배포.',
+  '데이터 플레인: WAN Edge 라우터 사이의 IPsec 터널. TLOC(사이트 ID·시스템 IP·색상·캡슐화)가 터널 끝점을 나타냅니다.'],
+  trap:'Validator와 Controller의 역할을 자주 혼동합니다. "인증·NAT 통과·최초 연결"이면 Validator, "OMP·정책"이면 Controller입니다.'},
+ {d:1,id:'1.4',t:'SD-Access 동작 원리',p:[
+  '언더레이: IS-IS 기반 라우티드 액세스(LAN Automation으로 자동 구성 가능).',
+  '오버레이: 컨트롤 플레인은 LISP, 데이터 플레인은 VXLAN, 정책 플레인은 TrustSec(SGT).',
+  '노드 역할: Fabric Edge(단말 연결), Control Plane 노드(LISP Map-Server/Resolver), Border(외부 연결).',
+  'Catalyst Center가 설계·정책·프로비저닝·보증을 담당하고 ISE가 인증과 SGT를 제공합니다.']},
+ {d:1,id:'1.5',t:'QoS 설정 해석',p:[
+  '분류와 마킹: class-map으로 트래픽을 고르고 DSCP를 붙입니다. 음성 EF(46), 화상 AF41(34), 시그널링 CS3(24).',
+  '폴리싱은 초과 트래픽을 버리거나 다시 마킹하고, 셰이핑은 버퍼에 담아 늦게 보냅니다(지연 증가, 손실 감소).',
+  '큐잉: CBWFQ는 클래스별 대역폭 보장, LLQ는 priority 클래스에 엄격한 우선순위를 줍니다.'],
+  cfg:'class-map match-any VOICE\n match dscp ef\npolicy-map WAN-OUT\n class VOICE\n  priority percent 20\n class class-default\n  fair-queue\ninterface GigabitEthernet0/0\n service-policy output WAN-OUT'},
+ {d:2,id:'2.1',t:'하이퍼바이저와 가상 스위칭',p:[
+  'Type 1(베어메탈): 하드웨어 위에서 바로 동작 — ESXi, KVM, Hyper-V.',
+  'Type 2(호스티드): 일반 OS 위 애플리케이션 — VirtualBox, VMware Workstation.',
+  '가상 스위치는 VM의 vNIC를 물리 NIC와 연결하고 VLAN 태깅을 처리합니다.']},
+ {d:2,id:'2.2',t:'VRF 설정과 검증',p:[
+  'VRF-Lite는 MPLS 없이 한 라우터 안에 독립된 라우팅 테이블을 만듭니다.',
+  '인터페이스에 vrf forwarding을 적용하면 기존 IP 주소가 지워지므로 IP를 다시 넣어야 합니다.',
+  '검증: show vrf, show ip route vrf 이름, ping vrf 이름 주소.'],
+  cfg:'vrf definition CUST-A\n rd 65000:1\n address-family ipv4\n exit-address-family\ninterface GigabitEthernet0/1\n vrf forwarding CUST-A\n ip address 172.16.1.1 255.255.255.0',
+  trap:'IP를 먼저 넣고 vrf forwarding을 나중에 넣으면 IP가 사라집니다. 랩 4에서 직접 확인해 보세요.',lab:'vrf'},
+ {d:2,id:'2.3',t:'GRE와 IPsec 터널',p:[
+  'GRE는 IP 프로토콜 47, 기본 헤더 24바이트 오버헤드. 멀티캐스트와 라우팅 프로토콜을 실어 나를 수 있지만 암호화는 없습니다.',
+  '터널 목적지로 가는 경로를 터널 자체로 배우면 재귀 라우팅으로 터널이 내려갑니다.',
+  'IPsec: IKE(v1/v2)로 SA를 맺고 ESP(50) 또는 AH(51)로 보호합니다. 사이트 간 VPN은 보통 터널 모드.',
+  '구성 방식: crypto map(정책 기반) 또는 VTI(tunnel mode ipsec ipv4, 경로 기반). GRE over IPsec은 tunnel protection으로 묶습니다.'],
+  cfg:'interface Tunnel0\n ip address 172.31.0.1 255.255.255.252\n ip mtu 1400\n ip tcp adjust-mss 1360\n tunnel source GigabitEthernet0/0\n tunnel destination 203.0.113.10',lab:'gre'},
+ {d:2,id:'2.4',t:'LISP와 VXLAN',p:[
+  'LISP는 위치(RLOC)와 식별자(EID)를 분리합니다. ETR이 Map-Server에 EID를 등록하고, ITR이 Map-Resolver에 물어 RLOC를 찾습니다. xTR은 둘을 겸합니다.',
+  'VXLAN은 L2 프레임을 UDP 4789로 감쌉니다. VNI는 24비트(약 1,600만 개), 오버헤드는 약 50바이트, 끝점은 VTEP입니다.',
+  'VXLAN의 MAC 학습은 flood-and-learn 또는 BGP EVPN 컨트롤 플레인으로 합니다.']},
+ {d:3,id:'3.1a',t:'트렁크와 EtherChannel',p:[
+  '802.1Q 트렁크는 native VLAN 프레임만 태그 없이 보냅니다. 양쪽 native VLAN이 다르면 CDP가 불일치를 알립니다.',
+  'DTP: dynamic desirable은 적극 협상, dynamic auto는 수동 대기. auto–auto는 트렁크가 안 됩니다. 운영 환경에서는 switchport nonegotiate 권장.',
+  'LACP(active/passive), PAgP(desirable/auto), static(on). passive–passive나 auto–auto는 번들이 안 되고, on은 상대도 on이어야 합니다.',
+  '번들 조건: 속도·듀플렉스·스위치포트 모드·허용 VLAN·native VLAN이 같아야 합니다.'],
+  cfg:'interface range GigabitEthernet1/0/1 - 2\n channel-group 1 mode active\ninterface Port-channel1\n switchport mode trunk\n switchport trunk native vlan 99',lab:'ec'},
+ {d:3,id:'3.1b',t:'RSTP, MST, STP 보호 기능',p:[
+  'RSTP 포트 역할: Root, Designated, Alternate, Backup. 상태: Discarding, Learning, Forwarding.',
+  'MST는 VLAN 여러 개를 인스턴스로 묶습니다. 같은 리전이 되려면 리전 이름·리비전 번호·VLAN–인스턴스 매핑이 모두 같아야 합니다.',
+  'BPDU Guard: PortFast 포트에서 BPDU를 받으면 err-disabled. Root Guard: 더 좋은 BPDU를 받으면 root-inconsistent로 차단. Loop Guard: BPDU가 끊긴 비지정 포트를 loop-inconsistent로 막음. BPDU Filter: BPDU 송수신 차단.'],
+  cfg:'spanning-tree mode mst\nspanning-tree mst configuration\n name CAMPUS\n revision 1\n instance 1 vlan 10,20\ninterface GigabitEthernet1/0/10\n spanning-tree portfast\n spanning-tree bpduguard enable'},
+ {d:3,id:'3.2',t:'EIGRP와 OSPF 비교',p:[
+  'EIGRP: 고급 거리 벡터, DUAL, 복합 메트릭(대역폭·지연 기본), 내부 AD 90/외부 170, variance로 비동등 부하분산.',
+  'OSPF: 링크 상태, SPF, 비용 메트릭, AD 110, 영역 구조로 확장. 동등 비용 부하분산만 지원.',
+  'EIGRP는 Feasible Successor로 즉시 대체 경로를 쓰고, OSPF는 LSA 플러딩 후 SPF를 다시 계산합니다.']},
+ {d:3,id:'3.2b',t:'OSPFv2 / OSPFv3',p:[
+  '이웃 상태: Down → Init → 2-Way → ExStart → Exchange → Loading → Full. 브로드캐스트에서 DROther끼리는 2-Way에 머무는 것이 정상입니다.',
+  '인접 조건: 영역 ID, 서브넷, Hello/Dead, 인증, stub 플래그, MTU(ExStart에서 멈춤)가 맞아야 하고 라우터 ID는 서로 달라야 합니다. 프로세스 ID는 달라도 됩니다.',
+  'LSA: 1(라우터), 2(네트워크, DR), 3(요약, ABR), 4(ASBR 요약), 5(외부), 7(NSSA 외부).',
+  '영역: stub(5 차단), totally stubby(3·5 차단, 기본 경로만), NSSA(7로 외부 경로 허용).',
+  '경로 선호: 영역 내부 > 영역 간 > E1 > E2. OSPFv3는 링크 로컬 주소로 이웃을 맺고 인터페이스에서 직접 활성화합니다.'],
+  cfg:'router ospf 1\n router-id 1.1.1.1\n network 10.0.12.0 0.0.0.3 area 0\n passive-interface GigabitEthernet0/1\ninterface GigabitEthernet0/0\n ip ospf network point-to-point',
+  trap:'network 명령의 와일드카드는 서브넷 마스크를 뒤집은 값입니다. /30이면 0.0.0.3입니다.',lab:'ospf'},
+ {d:3,id:'3.2c',t:'eBGP 이웃과 경로 선택',p:[
+  'TCP 179, eBGP는 기본 TTL 1(직접 연결이 아니면 ebgp-multihop 또는 루프백+update-source).',
+  'AS_PATH에 자기 AS가 있으면 경로를 버려 루프를 막습니다.',
+  'network 명령은 라우팅 테이블에 정확히 같은 프리픽스가 있어야 광고됩니다(mask 일치 필수).',
+  '최적 경로: Weight↑ → Local Pref↑ → 로컬 생성 → AS_PATH 짧음 → Origin(IGP<EGP<?) → MED↓ → eBGP>iBGP → 넥스트홉 IGP 메트릭↓ → 오래된 eBGP → Router-ID↓.'],
+  cfg:'router bgp 65001\n bgp router-id 1.1.1.1\n neighbor 203.0.113.2 remote-as 65002\n network 192.168.1.0 mask 255.255.255.0',lab:'bgp'},
+ {d:3,id:'3.2d',t:'정책 기반 라우팅(PBR)',p:[
+  'route-map에서 match ip address로 트래픽을 고르고 set ip next-hop으로 다음 홉을 지정합니다.',
+  '수신 인터페이스에 ip policy route-map으로 적용합니다. 라우터 자신이 만든 트래픽은 ip local policy route-map.'],
+  cfg:'access-list 101 permit ip 10.1.1.0 0.0.0.255 any\nroute-map PBR-GUEST permit 10\n match ip address 101\n set ip next-hop 192.0.2.1\ninterface GigabitEthernet0/1\n ip policy route-map PBR-GUEST'},
+ {d:3,id:'3.3',t:'NTP/PTP, NAT/PAT, FHRP',p:[
+  'NTP stratum이 낮을수록 기준 시계에 가깝습니다. PTP(IEEE 1588)는 하드웨어 타임스탬프로 마이크로초 이하 정밀도, Grandmaster·Boundary·Transparent Clock.',
+  'NAT 용어: inside local(내부 실제 주소), inside global(외부에서 보이는 내부 주소), outside global, outside local. PAT는 ip nat inside source list … overload.',
+  'HSRP: 기본 우선순위 100, preempt 기본 꺼짐, v1 224.0.0.2·v2 224.0.0.102, UDP 1985, 가상 MAC 0000.0c07.acXX(v1)/0000.0c9f.fXXX(v2).',
+  'VRRP: 표준, IP 프로토콜 112, 224.0.0.18, 가상 MAC 0000.5e00.01XX, preempt 기본 켜짐, 실제 인터페이스 IP를 가상 IP로 쓸 수 있음.'],
+  cfg:'interface Vlan10\n ip address 10.10.10.2 255.255.255.0\n standby version 2\n standby 10 ip 10.10.10.1\n standby 10 priority 110\n standby 10 preempt',lab:'hsrp'},
+ {d:3,id:'3.3d',t:'멀티캐스트: RPF, PIM, IGMP, SSM, bidir, MSDP',p:[
+  'RPF 검사: 멀티캐스트를 받은 인터페이스가 유니캐스트 라우팅상 소스로 가는 인터페이스와 같아야 포워딩합니다.',
+  'PIM-SM: RP를 중심으로 공유 트리(*,G)를 만들고, 트래픽이 흐르면 소스 트리(S,G)로 전환합니다.',
+  'IGMPv2는 그룹 단위 가입·Leave 메시지, IGMPv3는 소스 지정 가입(INCLUDE/EXCLUDE)을 지원합니다.',
+  'SSM: 232.0.0.0/8, RP 없이 (S,G)만 사용, 수신자는 IGMPv3 필요.',
+  'Bidir PIM: 공유 트리만 쓰고 양방향으로 흘러 다대다 애플리케이션에 적합.',
+  'MSDP: 서로 다른 PIM-SM 도메인의 RP끼리 TCP 639로 활성 소스 정보를 주고받습니다(Anycast RP에도 사용).']},
+ {d:4,id:'4.1',t:'진단: debug, 조건부 debug, ping, traceroute, SNMP, syslog',p:[
+  '조건부 debug는 debug condition interface/ip로 출력 범위를 좁혀 CPU 부담을 줄입니다.',
+  'SNMPv3 보안 수준: noAuthNoPriv, authNoPriv, authPriv(인증+암호화). Trap은 확인 응답이 없고 Inform은 있습니다.',
+  'Syslog 레벨 0~7: Emergency, Alert, Critical, Error, Warning, Notification, Informational, Debugging. logging trap 4는 0~4를 보냅니다.']},
+ {d:4,id:'4.2',t:'Flexible NetFlow',p:[
+  'flow record에서 match는 흐름을 구분하는 키 필드, collect는 수집만 하는 비키 필드입니다.',
+  'flow exporter로 수집기 주소를 정하고 flow monitor로 record와 exporter를 묶어 인터페이스에 적용합니다.'],
+  cfg:'flow record REC1\n match ipv4 source address\n match ipv4 destination address\n collect counter bytes\nflow exporter EXP1\n destination 192.0.2.50\n transport udp 2055\nflow monitor MON1\n record REC1\n exporter EXP1\ninterface GigabitEthernet0/0\n ip flow monitor MON1 input'},
+ {d:4,id:'4.3',t:'SPAN, RSPAN, ERSPAN',p:[
+  'SPAN: 같은 스위치 안에서 미러링.',
+  'RSPAN: remote-span VLAN을 통해 L2로 다른 스위치에 전달.',
+  'ERSPAN: GRE로 감싸 L3 네트워크를 넘어 전달.']},
+ {d:4,id:'4.4',t:'IP SLA',p:[
+  'icmp-echo, udp-jitter 등으로 경로 품질을 측정합니다.',
+  'track 객체와 연결해 정적 경로나 FHRP 우선순위를 측정 결과에 따라 바꿉니다.'],
+  cfg:'ip sla 1\n icmp-echo 8.8.8.8 source-interface GigabitEthernet0/0\n frequency 10\nip sla schedule 1 life forever start-time now\ntrack 1 ip sla 1 reachability\nip route 0.0.0.0 0.0.0.0 203.0.113.2 track 1'},
+ {d:4,id:'4.5',t:'Catalyst Center 워크플로 (기존·AI 기반)',p:[
+  '기존 워크플로: Design(사이트·IP 풀) → Policy → Provision(템플릿·SWIM) → Assurance(건강도 점수, 이슈).',
+  'AI 기반 워크플로: 머신러닝 기반 기준선과 이상 탐지, 원인 분석과 조치 제안, 자연어 지원 등을 이용해 설정·모니터링·관리를 돕습니다. 시험에서는 기존 방식과의 차이(수동 임계값 vs 학습된 기준선)를 묻습니다.']},
+ {d:4,id:'4.6',t:'NETCONF와 RESTCONF',p:[
+  'NETCONF: SSH(TCP 830), XML, RPC(get, get-config, edit-config, lock/commit). running/candidate/startup 데이터스토어.',
+  'RESTCONF: HTTPS, JSON 또는 XML, HTTP 메서드(GET/POST/PUT/PATCH/DELETE). URL은 /restconf/data/모듈:컨테이너 형식.',
+  'IOS XE 활성화: netconf-yang, restconf + ip http secure-server.']},
+ {d:5,id:'5.1',t:'장비 접근 제어: line, 로컬 사용자, AAA',p:[
+  'enable secret과 username … secret을 쓰고 password는 피합니다. type 9는 scrypt, type 8은 PBKDF2.',
+  'VTY: login local, transport input ssh, exec-timeout. SSH는 hostname, ip domain-name, RSA 키가 필요합니다.',
+  'RADIUS: UDP 1812/1813, 비밀번호만 암호화, 인증·인가 결합. TACACS+: TCP 49, 전체 페이로드 암호화, AAA 분리, 명령 단위 인가.'],
+  cfg:'aaa new-model\naaa authentication login default group tacacs+ local\nline vty 0 4\n login authentication default\n transport input ssh',lab:'ssh'},
+ {d:5,id:'5.2',t:'ACL과 CoPP',p:[
+  '표준 ACL(1–99, 1300–1999)은 출발지만 보므로 목적지 가까이, 확장 ACL(100–199, 2000–2699)은 출발지 가까이 둡니다. 마지막엔 묵시적 deny any.',
+  'CoPP는 라우터 CPU로 가는 트래픽을 class-map으로 나누고 police로 제한해 control-plane에 service-policy input으로 적용합니다.'],
+  cfg:'ip access-list extended MGMT\n permit tcp 10.0.0.0 0.0.0.255 any eq 22\nclass-map COPP-SSH\n match access-group name MGMT\npolicy-map COPP\n class COPP-SSH\n  police 64000 conform-action transmit exceed-action drop\ncontrol-plane\n service-policy input COPP'},
+ {d:5,id:'5.3',t:'REST API 보안',p:[
+  'HTTPS로 전송 구간을 암호화하고, 토큰(Bearer, X-Auth-Token)이나 OAuth로 인증합니다.',
+  '최소 권한 역할, 토큰 만료, 요청 속도 제한, 입력 검증, 감사 로그가 기본 대책입니다.']},
+ {d:5,id:'5.4',t:'위협 방어, 엔드포인트 보안, NGFW, TrustSec, MACsec',p:[
+  '엔드포인트 보안: 악성코드 차단과 행위 분석(EDR). NGFW: 애플리케이션 식별, IPS, URL 필터링, 사용자 기반 정책.',
+  '802.1X: 단말(supplicant) – 스위치(authenticator) – RADIUS 서버(authentication server). 802.1X를 못 하는 단말은 MAB.',
+  'TrustSec: 분류(SGT 부여) → 전파(인라인 태깅 또는 SXP) → 적용(SGACL).',
+  'MACsec(802.1AE): 홉 단위 L2 암호화, 키 교환은 MKA.']},
+ {d:6,id:'6.1',t:'Python, JSON, YANG 해석',p:[
+  'JSON: 객체 {}, 배열 [], 키는 반드시 큰따옴표 문자열. 작은따옴표나 끝의 쉼표는 오류입니다.',
+  'Python에서 requests 응답의 .json()은 dict(또는 list)를 돌려줍니다.',
+  'YANG: module > container > list(key로 항목 구분) > leaf(값 하나), leaf-list(값 여러 개). IETF 표준 모델과 벤더 native 모델이 있습니다.'],
+  cfg:'import requests\nurl = "https://10.10.20.48/restconf/data/ietf-interfaces:interfaces"\nh = {"Accept": "application/yang-data+json"}\nr = requests.get(url, headers=h, auth=("user","pass"), verify=False)\nfor i in r.json()["ietf-interfaces:interfaces"]["interface"]:\n    print(i["name"], i["enabled"])'},
+ {d:6,id:'6.2',t:'Catalyst Center·SD-WAN Manager API와 HTTP 응답 코드',p:[
+  'Catalyst Center: POST /dna/system/api/v1/auth/token(Basic 인증) → 응답 토큰을 X-Auth-Token 헤더에 넣어 호출.',
+  'SD-WAN Manager: /j_security_check로 세션 쿠키를 받고, 쓰기 요청에는 X-XSRF-TOKEN을 붙입니다.',
+  '200 OK, 201 Created, 204 No Content, 400 Bad Request, 401 Unauthorized(인증 없음·실패), 403 Forbidden(권한 없음), 404 Not Found, 409 Conflict, 500 서버 오류.']},
+ {d:6,id:'6.3',t:'EEM 애플릿',p:[
+  '이벤트(syslog 패턴, CLI 패턴, 타이머, 인터페이스 카운터, track)가 발생하면 순서대로 action을 실행합니다.',
+  'action 라벨은 문자열 순서로 정렬되므로 1.0, 2.0처럼 자릿수를 맞추세요.'],
+  cfg:'event manager applet SAVE-CONFIG\n event syslog pattern "%SYS-5-CONFIG_I"\n action 1.0 cli command "enable"\n action 2.0 cli command "write memory"\n action 3.0 syslog msg "config saved"',lab:'eem'},
+ {d:6,id:'6.4',t:'에이전트 vs 에이전트리스 오케스트레이션',p:[
+  'Puppet, Chef: 관리 대상에 에이전트를 설치하고 주로 pull 방식.',
+  'Ansible: 에이전트리스, SSH/NETCONF로 push, YAML 플레이북.',
+  'SaltStack: 기본은 에이전트(minion), salt-ssh로 에이전트리스도 가능.']},
+];
+
+/* ---------- labs ---------- */
+const ip2n=s=>{const p=String(s).split('.').map(Number);if(p.length!==4||p.some(x=>isNaN(x)||x<0||x>255))return null;return((p[0]<<24)>>>0)+(p[1]<<16)+(p[2]<<8)+p[3]};
+const n2ip=n=>[n>>>24,(n>>>16)&255,(n>>>8)&255,n&255].join('.');
+const pfx2m=p=>p===0?0:(0xFFFFFFFF<<(32-p))>>>0;
+const m2pfx=m=>{let c=0;for(let i=31;i>=0;i--){if((m>>>i)&1)c++;else break}return c};
+
+function findBlock(st,re){return st.cfg.find(n=>n.kids&&(typeof re==='string'?n.text===re:re.test(n.text)))}
+function findAll(st,re){return st.cfg.filter(n=>n.kids&&re.test(n.text))}
+function hasKid(node,re){if(!node)return false;return node.kids.some(k=>typeof re==='string'?k.text===re:re.test(k.text))}
+function kidVal(node,re){if(!node)return null;for(const k of node.kids){const m=k.text.match(re);if(m)return m}return null}
+function ifIp(st,name){const n=findBlock(st,'interface '+name);const m=kidVal(n,/^ip address (\S+) (\S+)$/);return m?{ip:m[1],mask:m[2]}:null}
+function ifUp(st,name){const n=findBlock(st,'interface '+name);return n&&!hasKid(n,'shutdown')}
+function ospfCovers(st,ip,area){
+  const a=area===undefined?null:String(area);
+  const ipn=ip2n(ip);
+  for(const r of findAll(st,/^router ospf \d+$/)){
+    for(const k of r.kids){const m=k.text.match(/^network (\S+) (\S+) area (\S+)$/);if(!m)continue;
+      const net=ip2n(m[1]),wc=ip2n(m[2]);if(net===null||wc===null)continue;
+      const ar=m[3]==='0.0.0.0'?'0':m[3];
+      if(((ipn&~wc)>>>0)===((net&~wc)>>>0)&&(a===null||ar===a))return true}}
+  for(const n of findAll(st,/^interface /)){const m=kidVal(n,/^ip address (\S+) /);const o=kidVal(n,/^ip ospf \d+ area (\S+)$/);
+    if(m&&m[1]===ip&&o&&(a===null||(o[1]==='0.0.0.0'?'0':o[1])===a))return true}
+  return false}
+
+const LABS=[
+{id:'ospf',d:3,title:'OSPFv2 포인트투포인트',host:'R1',kind:'router',
+ desc:'R1과 R2가 /30 링크로 연결돼 있습니다. R2는 area 0, 네트워크 타입 point-to-point로 이미 설정돼 있습니다. R1을 설정해 R2의 루프백(2.2.2.2)과 LAN(192.168.20.0/24)을 OSPF로 배우세요.',
+ topo:{a:'R1',b:'R2',l:'Gi0/0  10.0.12.0/30  Gi0/0',x:['Lo0 1.1.1.1/32','Gi0/1 192.168.10.1/24'],y:['Lo0 2.2.2.2/32','LAN 192.168.20.0/24']},
+ init:[['interface GigabitEthernet0/0',['ip address 10.0.12.1 255.255.255.252']],['interface GigabitEthernet0/1',['ip address 192.168.10.1 255.255.255.0']],['interface Loopback0',['ip address 1.1.1.1 255.255.255.255']]],
+ tasks:[
+  {t:'OSPF 프로세스 1을 만든다',c:st=>!!findBlock(st,/^router ospf \d+$/),h:'router ospf 1'},
+  {t:'라우터 ID를 1.1.1.1로 고정한다',c:st=>hasKid(findBlock(st,/^router ospf \d+$/),'router-id 1.1.1.1'),h:'router-id 1.1.1.1'},
+  {t:'Gi0/0을 area 0에 넣는다',c:st=>ospfCovers(st,'10.0.12.1','0'),h:'network 10.0.12.0 0.0.0.3 area 0 (또는 인터페이스에서 ip ospf 1 area 0)'},
+  {t:'Lo0과 Gi0/1도 area 0으로 광고한다',c:st=>ospfCovers(st,'1.1.1.1','0')&&ospfCovers(st,'192.168.10.1','0'),h:'network 1.1.1.1 0.0.0.0 area 0 / network 192.168.10.0 0.0.0.255 area 0'},
+  {t:'Gi0/1은 Hello를 보내지 않게 한다',c:st=>hasKid(findBlock(st,/^router ospf \d+$/),'passive-interface GigabitEthernet0/1'),h:'passive-interface g0/1'},
+  {t:'Gi0/0 네트워크 타입을 R2와 맞춘다',c:st=>hasKid(findBlock(st,'interface GigabitEthernet0/0'),'ip ospf network point-to-point'),h:'interface g0/0 → ip ospf network point-to-point'},
+ ],
+ verify:['show ip ospf neighbor','show ip route ospf','show ip ospf interface brief','show run | section ospf'],
+ sol:'router ospf 1\n router-id 1.1.1.1\n network 10.0.12.0 0.0.0.3 area 0\n network 1.1.1.1 0.0.0.0 area 0\n network 192.168.10.0 0.0.0.255 area 0\n passive-interface GigabitEthernet0/1\ninterface GigabitEthernet0/0\n ip ospf network point-to-point',
+ sim:{
+  ospfNbr(st){if(!ospfCovers(st,'10.0.12.1','0')||!ifUp(st,'GigabitEthernet0/0'))return '';
+    const p2p=hasKid(findBlock(st,'interface GigabitEthernet0/0'),'ip ospf network point-to-point');
+    return `\nNeighbor ID     Pri   State           Dead Time   Address         Interface\n2.2.2.2           ${p2p?'0   FULL/  -       ':'1   FULL/BDR       '} 00:00:3${Math.floor(Math.random()*9)}    10.0.12.2       GigabitEthernet0/0`},
+  routes(st){if(!ospfCovers(st,'10.0.12.1','0'))return [];
+    const p2p=hasKid(findBlock(st,'interface GigabitEthernet0/0'),'ip ospf network point-to-point');
+    if(!p2p)return ['! 네트워크 타입 불일치(broadcast ↔ point-to-point): 인접은 FULL이지만 SPF 계산에서 R2 경로가 빠졌습니다.'];
+    return ['O        2.2.2.2 [110/2] via 10.0.12.2, 00:01:12, GigabitEthernet0/0','O     192.168.20.0/24 [110/2] via 10.0.12.2, 00:01:12, GigabitEthernet0/0']},
+ }},
+{id:'hsrp',d:3,title:'HSRPv2 게이트웨이 이중화',host:'DSW1',kind:'switch',
+ desc:'VLAN 10의 기본 게이트웨이 10.10.10.1을 DSW1과 DSW2(10.10.10.3, 우선순위 100, preempt)가 나눠 맡습니다. DSW1이 평소에 Active가 되고, 장애 후 복구되면 다시 Active를 가져오도록 설정하세요.',
+ topo:{a:'DSW1',b:'DSW2',l:'VLAN 10  10.10.10.0/24',x:['SVI 10.10.10.2'],y:['SVI 10.10.10.3','priority 100']},
+ init:[['interface Vlan10',['ip address 10.10.10.2 255.255.255.0']]],
+ tasks:[
+  {t:'Vlan10에서 HSRP 버전 2를 쓴다',c:st=>hasKid(findBlock(st,'interface Vlan10'),'standby version 2'),h:'interface vlan 10 → standby version 2'},
+  {t:'그룹 10 가상 IP를 10.10.10.1로 정한다',c:st=>hasKid(findBlock(st,'interface Vlan10'),'standby 10 ip 10.10.10.1'),h:'standby 10 ip 10.10.10.1'},
+  {t:'DSW1 우선순위를 DSW2보다 높게 한다',c:st=>{const m=kidVal(findBlock(st,'interface Vlan10'),/^standby 10 priority (\d+)$/);return m&&+m[1]>100},h:'standby 10 priority 110'},
+  {t:'복구 시 Active를 되찾도록 한다',c:st=>hasKid(findBlock(st,'interface Vlan10'),'standby 10 preempt'),h:'standby 10 preempt'},
+ ],
+ verify:['show standby brief','show run interface Vlan10'],
+ sol:'interface Vlan10\n standby version 2\n standby 10 ip 10.10.10.1\n standby 10 priority 110\n standby 10 preempt',
+ sim:{}},
+{id:'ec',d:3,title:'LACP EtherChannel 트렁크',host:'SW1',kind:'switch',
+ desc:'SW1의 Gi1/0/1–2가 SW2로 연결됩니다. SW2는 channel-group 1 mode passive, 트렁크, native VLAN 99로 설정돼 있습니다. 두 포트를 LACP 번들 Po1로 묶고 트렁크를 맞추세요.',
+ topo:{a:'SW1',b:'SW2',l:'Gi1/0/1–2  ⇄  Po1 (LACP)',x:['VLAN 10, 20, 99'],y:['mode passive','native 99']},
+ init:[['interface GigabitEthernet1/0/1',[]],['interface GigabitEthernet1/0/2',[]]],
+ tasks:[
+  {t:'Gi1/0/1과 Gi1/0/2를 LACP로 채널 1에 넣는다',c:st=>['1','2'].every(i=>hasKid(findBlock(st,'interface GigabitEthernet1/0/'+i),'channel-group 1 mode active')),h:'interface range g1/0/1 - 2 → channel-group 1 mode active (상대가 passive이므로 active 필요)'},
+  {t:'Port-channel1을 트렁크로 만든다',c:st=>hasKid(findBlock(st,'interface Port-channel1'),'switchport mode trunk'),h:'interface po1 → switchport mode trunk'},
+  {t:'native VLAN을 99로 맞춘다',c:st=>hasKid(findBlock(st,'interface Port-channel1'),'switchport trunk native vlan 99'),h:'switchport trunk native vlan 99'},
+  {t:'허용 VLAN을 10,20,99로 제한한다',c:st=>hasKid(findBlock(st,'interface Port-channel1'),/^switchport trunk allowed vlan 10,20,99$/),h:'switchport trunk allowed vlan 10,20,99'},
+ ],
+ verify:['show etherchannel summary','show interfaces trunk'],
+ sol:'interface range GigabitEthernet1/0/1 - 2\n channel-group 1 mode active\ninterface Port-channel1\n switchport mode trunk\n switchport trunk native vlan 99\n switchport trunk allowed vlan 10,20,99',
+ sim:{}},
+{id:'vrf',d:2,title:'VRF-Lite 고객 분리',host:'PE1',kind:'router',
+ desc:'Gi0/1(172.16.1.1/24)은 고객 A 전용 링크입니다. 이 인터페이스를 VRF CUST-A로 옮겨 전역 라우팅 테이블과 분리하세요. 적용 후 IP 주소가 어떻게 되는지 확인하세요.',
+ topo:{a:'PE1',b:'CE-A',l:'Gi0/1  172.16.1.0/24',x:['Gi0/0 전역 10.0.0.1/24'],y:['고객 A']},
+ init:[['interface GigabitEthernet0/0',['ip address 10.0.0.1 255.255.255.0']],['interface GigabitEthernet0/1',['ip address 172.16.1.1 255.255.255.0']]],
+ tasks:[
+  {t:'VRF CUST-A를 만든다',c:st=>!!findBlock(st,'vrf definition CUST-A'),h:'vrf definition CUST-A'},
+  {t:'RD를 65000:1로 지정한다',c:st=>hasKid(findBlock(st,'vrf definition CUST-A'),'rd 65000:1'),h:'rd 65000:1'},
+  {t:'IPv4 주소 패밀리를 활성화한다',c:st=>hasKid(findBlock(st,'vrf definition CUST-A'),/^address-family ipv4/),h:'address-family ipv4 → exit-address-family'},
+  {t:'Gi0/1을 CUST-A에 넣는다',c:st=>hasKid(findBlock(st,'interface GigabitEthernet0/1'),'vrf forwarding CUST-A'),h:'interface g0/1 → vrf forwarding CUST-A'},
+  {t:'지워진 IP 주소를 다시 넣는다',c:st=>hasKid(findBlock(st,'interface GigabitEthernet0/1'),'vrf forwarding CUST-A')&&hasKid(findBlock(st,'interface GigabitEthernet0/1'),'ip address 172.16.1.1 255.255.255.0'),h:'ip address 172.16.1.1 255.255.255.0'},
+ ],
+ verify:['show vrf','show ip route vrf CUST-A','show ip route'],
+ sol:'vrf definition CUST-A\n rd 65000:1\n address-family ipv4\n exit-address-family\ninterface GigabitEthernet0/1\n vrf forwarding CUST-A\n ip address 172.16.1.1 255.255.255.0',
+ sim:{}},
+{id:'bgp',d:3,title:'eBGP 인터넷 연결',host:'R1',kind:'router',
+ desc:'R1(AS 65001)이 ISP(AS 65002, 203.0.113.2)와 연결됩니다. ISP는 기본 경로와 8.8.8.0/24를 보냅니다. eBGP 이웃을 맺고 사내 대역 192.168.1.0/24를 광고하세요.',
+ topo:{a:'R1',b:'ISP',l:'Gi0/0  203.0.113.0/30',x:['AS 65001','Lo1 192.168.1.1/24'],y:['AS 65002','0.0.0.0/0, 8.8.8.0/24']},
+ init:[['interface GigabitEthernet0/0',['ip address 203.0.113.1 255.255.255.252']],['interface Loopback1',['ip address 192.168.1.1 255.255.255.0']]],
+ tasks:[
+  {t:'BGP AS 65001 프로세스를 만든다',c:st=>!!findBlock(st,'router bgp 65001'),h:'router bgp 65001'},
+  {t:'BGP 라우터 ID를 1.1.1.1로 지정한다',c:st=>hasKid(findBlock(st,'router bgp 65001'),'bgp router-id 1.1.1.1'),h:'bgp router-id 1.1.1.1'},
+  {t:'ISP와 eBGP 이웃을 맺는다',c:st=>hasKid(findBlock(st,'router bgp 65001'),'neighbor 203.0.113.2 remote-as 65002'),h:'neighbor 203.0.113.2 remote-as 65002'},
+  {t:'192.168.1.0/24를 광고한다',c:st=>hasKid(findBlock(st,'router bgp 65001'),'network 192.168.1.0 mask 255.255.255.0'),h:'network 192.168.1.0 mask 255.255.255.0 (mask가 RIB와 정확히 같아야 함)'},
+ ],
+ verify:['show ip bgp summary','show ip bgp','show ip route bgp'],
+ sol:'router bgp 65001\n bgp router-id 1.1.1.1\n neighbor 203.0.113.2 remote-as 65002\n network 192.168.1.0 mask 255.255.255.0',
+ sim:{
+  bgpState(st){const b=findBlock(st,'router bgp 65001');if(!b)return null;const m=kidVal(b,/^neighbor 203\.0\.113\.2 remote-as (\d+)$/);if(!m)return null;return m[1]==='65002'?'up':'badas'},
+  routes(st){return this.bgpState(st)==='up'?['B*    0.0.0.0/0 [20/0] via 203.0.113.2, 00:00:41','B        8.8.8.0/24 [20/0] via 203.0.113.2, 00:00:41']:[]},
+ }},
+{id:'gre',d:2,title:'GRE 터널',host:'BR1',kind:'router',
+ desc:'지사 BR1(Gi0/0 198.51.100.1)과 본사 HQ(203.0.113.10)를 GRE로 연결합니다. HQ 쪽은 Tunnel0 172.31.0.2/30으로 이미 설정돼 있습니다. 단편화를 줄이도록 MTU와 MSS도 조정하세요.',
+ topo:{a:'BR1',b:'HQ',l:'Tunnel0  172.31.0.0/30',x:['Gi0/0 198.51.100.1'],y:['203.0.113.10']},
+ init:[['interface GigabitEthernet0/0',['ip address 198.51.100.1 255.255.255.252']]],
+ tasks:[
+  {t:'Tunnel0에 172.31.0.1/30을 넣는다',c:st=>hasKid(findBlock(st,'interface Tunnel0'),'ip address 172.31.0.1 255.255.255.252'),h:'interface tunnel 0 → ip address 172.31.0.1 255.255.255.252'},
+  {t:'터널 출발지를 Gi0/0으로 지정한다',c:st=>hasKid(findBlock(st,'interface Tunnel0'),/^tunnel source (GigabitEthernet0\/0|198\.51\.100\.1)$/),h:'tunnel source g0/0'},
+  {t:'터널 목적지를 HQ로 지정한다',c:st=>hasKid(findBlock(st,'interface Tunnel0'),'tunnel destination 203.0.113.10'),h:'tunnel destination 203.0.113.10'},
+  {t:'IP MTU 1400, TCP MSS 1360으로 조정한다',c:st=>{const n=findBlock(st,'interface Tunnel0');return hasKid(n,'ip mtu 1400')&&hasKid(n,'ip tcp adjust-mss 1360')},h:'ip mtu 1400 / ip tcp adjust-mss 1360'},
+ ],
+ verify:['show ip interface brief','show interfaces Tunnel0','ping 172.31.0.2'],
+ sol:'interface Tunnel0\n ip address 172.31.0.1 255.255.255.252\n ip mtu 1400\n ip tcp adjust-mss 1360\n tunnel source GigabitEthernet0/0\n tunnel destination 203.0.113.10',
+ sim:{}},
+{id:'ssh',d:5,title:'SSH 전용 관리 접속',host:'R1',kind:'router',
+ desc:'원격 관리를 SSH만 허용하고 로컬 계정으로 인증하도록 R1을 설정하세요. 10분 동안 입력이 없으면 세션을 끊습니다. 텔넷은 막습니다.',
+ topo:{a:'관리 PC',b:'R1',l:'SSH (TCP 22)',x:['10.0.0.100'],y:['VTY 0–4']},
+ init:[['interface GigabitEthernet0/0',['ip address 10.0.0.1 255.255.255.0']]],
+ tasks:[
+  {t:'도메인 이름을 lab.local로 정한다',c:st=>st.cfg.some(n=>n.text==='ip domain-name lab.local'||n.text==='ip domain name lab.local'),h:'ip domain-name lab.local'},
+  {t:'2048비트 RSA 키를 만든다',c:st=>st.flags.rsa>=2048,h:'crypto key generate rsa modulus 2048'},
+  {t:'권한 15 사용자 admin을 secret으로 만든다',c:st=>st.cfg.some(n=>/^username admin privilege 15 secret \S+/.test(n.text)),h:'username admin privilege 15 secret Str0ng!Pass'},
+  {t:'VTY 0–4에서 로컬 인증을 쓴다',c:st=>hasKid(findBlock(st,'line vty 0 4'),'login local'),h:'line vty 0 4 → login local'},
+  {t:'VTY에서 SSH만 허용한다',c:st=>hasKid(findBlock(st,'line vty 0 4'),'transport input ssh'),h:'transport input ssh'},
+  {t:'유휴 시간을 10분으로 정한다',c:st=>hasKid(findBlock(st,'line vty 0 4'),/^exec-timeout 10( 0)?$/),h:'exec-timeout 10 0'},
+ ],
+ verify:['show ip ssh','show run | section line vty','show run | include username'],
+ sol:'ip domain-name lab.local\ncrypto key generate rsa modulus 2048\nusername admin privilege 15 secret Str0ng!Pass\nline vty 0 4\n login local\n transport input ssh\n exec-timeout 10 0',
+ sim:{}},
+{id:'eem',d:6,title:'EEM으로 설정 자동 저장',host:'R1',kind:'router',
+ desc:'누군가 설정 모드를 빠져나와 %SYS-5-CONFIG_I 로그가 찍힐 때마다 running-config를 저장하고 syslog를 남기는 EEM 애플릿 SAVE-CONFIG를 만드세요.',
+ topo:{a:'R1',b:'Syslog',l:'%SYS-5-CONFIG_I',x:['EEM'],y:['이벤트 트리거']},
+ init:[['interface GigabitEthernet0/0',['ip address 10.0.0.1 255.255.255.0']]],
+ tasks:[
+  {t:'애플릿 SAVE-CONFIG를 만든다',c:st=>!!findBlock(st,'event manager applet SAVE-CONFIG'),h:'event manager applet SAVE-CONFIG'},
+  {t:'CONFIG_I syslog를 이벤트로 지정한다',c:st=>hasKid(findBlock(st,'event manager applet SAVE-CONFIG'),/^event syslog pattern "?[^"]*CONFIG_I"?/),h:'event syslog pattern "%SYS-5-CONFIG_I"'},
+  {t:'enable 후 write memory를 실행한다',c:st=>{const n=findBlock(st,'event manager applet SAVE-CONFIG');return hasKid(n,/^action \S+ cli command "enable"$/)&&hasKid(n,/^action \S+ cli command "(write memory|wr mem|write|copy running-config startup-config)"$/)},h:'action 1.0 cli command "enable" / action 2.0 cli command "write memory"'},
+  {t:'syslog 메시지를 남긴다',c:st=>hasKid(findBlock(st,'event manager applet SAVE-CONFIG'),/^action \S+ syslog msg ".+"$/),h:'action 3.0 syslog msg "config saved"'},
+ ],
+ verify:['show run | section event manager','show event manager policy registered'],
+ sol:'event manager applet SAVE-CONFIG\n event syslog pattern "%SYS-5-CONFIG_I"\n action 1.0 cli command "enable"\n action 2.0 cli command "write memory"\n action 3.0 syslog msg "config saved"',
+ sim:{}},
+];
+
+/* ---------- CLI engine ---------- */
+const KW=['address','address-family','area','active','allowed','auto-cost','bgp','brief','channel-group','configure','copy','crypto','definition','description','destination','disable','domain-name','enable','encapsulation','end','etherchannel','event','exec-timeout','exit','exit-address-family','forwarding','generate','hostname','input','interface','interfaces','ip','ipv4','key','line','local','login','manager','mask','memory','mode','modulus','native','neighbor','network','ospf','passive-interface','point-to-point','preempt','priority','protocols','range','remote-as','router','router-id','route','rsa','running-config','secret','show','shutdown','source','ssh','standby','startup-config','summary','switchport','terminal','transport','trunk','tunnel','unicast','username','version','vlan','vrf','write','applet','action','syslog','pattern','command','privilege','ping','traceroute','mtu','adjust-mss','tcp','rd','route-target','policy','registered','section','include','begin','history','clear','logout','reload','timeout','do','no','passive','on','desirable','auto','name','vlan','dhcp','secondary','enabled'];
+const ALIAS={sh:'show',conf:'configure',t:'terminal',int:'interface',run:'running-config',br:'brief',wr:'write',mem:'memory',nei:'neighbor',add:'address',shut:'shutdown',sw:'switchport',en:'enable',ex:'exit',inc:'include',sec:'section',ver:'version',st:'startup-config',ru:'running-config',int2:'interface'};
+const STOPW=new Set(['description','hostname','secret','password','definition','applet','forwarding','msg','pattern','domain-name','command','name']);
+function ifName(t){
+  const m=t.match(/^(gigabitethernet|gigabit|gig|gi|g|loopback|loop|lo|tunnel|tun|tu|port-channel|port|po|vlan|vl|fastethernet|fa|f)([\d][\d\/.]*)$/i);if(!m)return null;
+  const k=m[1].toLowerCase();const map=k.startsWith('g')?'GigabitEthernet':k.startsWith('lo')?'Loopback':k.startsWith('tu')?'Tunnel':k.startsWith('po')?'Port-channel':k.startsWith('v')?'Vlan':'FastEthernet';
+  return map+m[2]}
+function tokenize(s){const out=[];const re=/"[^"]*"|\S+/g;let m;while((m=re.exec(s)))out.push(m[0]);return out}
+function expandTok(tok,first,mode){
+  if(tok.startsWith('"'))return tok;
+  const lo=tok.toLowerCase();
+  if(first&&(lo==='sh')&&mode!=='exec')return 'shutdown';
+  if(ALIAS[lo])return ALIAS[lo];
+  if(KW.includes(lo))return lo;
+  if(lo.length>=2&&/^[a-z-]+$/.test(lo)){const c=KW.filter(k=>k.startsWith(lo));if(c.length===1)return c[0]}
+  return tok}
+function normalize(line,mode){
+  let toks=tokenize(line.trim());if(!toks.length)return '';
+  const out=[];let stop=false;let ifctx=false;
+  for(let i=0;i<toks.length;i++){
+    let t=toks[i];
+    if(t==='|'){out.push('|');out.push(...toks.slice(i+1).map((x,j)=>j===0?expandTok(x,false,'exec'):x));break}
+    if(stop){out.push(t);continue}
+    const first=out.length===0||(out.length===1&&(out[0]==='no'||out[0]==='do'));
+    const ex=expandTok(t,first,(out[0]==='do')?'exec':mode);
+    if(ifctx){
+      // join "gi 0/0"
+      const typ=t.match(/^(gigabitethernet|gi|g|loopback|lo|tunnel|tu|port-channel|po|vlan|vl|fastethernet|fa)$/i);
+      if(typ&&toks[i+1]&&/^\d/.test(toks[i+1])){const nm=ifName(t+toks[i+1]);if(nm){out.push(nm);i++;continue}}
+      const nm=ifName(t);if(nm){out.push(nm);continue}
+    }
+    out.push(ex);
+    if(STOPW.has(ex))stop=true;
+    ifctx=['interface','interfaces','passive-interface','source','range','-'].includes(ex)||(ex==='brief'&&false);
+  }
+  // range "g1/0/1-2"
+  return out.join(' ').replace(/(\d)-(\d)/g,(m,a,b)=>a+' - '+b).replace(/ - (?=\d+\.\d+\.)/,'-')}
+
+const PAT={
+ config:[/^hostname \S+$/,/^interface .+$/,/^router (ospf|bgp|eigrp) \S+$/,/^vrf definition \S+$/,/^ip route .+$/,/^ip routing$/,/^ip domain[- ]name \S+$/,/^ip domain-lookup$/,/^ipv6 unicast-routing$/,/^spanning-tree .+$/,/^vlan [\d,-]+$/,/^line (vty|con|console|aux) .+$/,/^username \S+ (privilege \d+ )?(secret|password) .+$/,/^enable secret .+$/,/^ntp .+$/,/^banner .+$/,/^crypto key generate rsa( .+)?$/,/^ip ssh .+$/,/^event manager applet \S+$/,/^service .+$/,/^logging .+$/,/^snmp-server .+$/,/^aaa .+$/,/^access-list .+$/,/^cdp run$/,/^lldp run$/,/^redundancy$/],
+ if:[/^ip address \S+ \S+( secondary)?$/,/^ip address dhcp$/,/^shutdown$/,/^description .+$/,/^switchport( .+)?$/,/^channel-group \d+ mode (active|passive|on|desirable|auto)$/,/^standby .+$/,/^vrrp .+$/,/^vrf forwarding \S+$/,/^ip ospf .+$/,/^ospfv3 .+$/,/^ipv6 (address|ospf|enable).*$/,/^spanning-tree .+$/,/^tunnel (source|destination|mode|key|protection) .+$/,/^ip nat (inside|outside)$/,/^bandwidth \d+$/,/^mtu \d+$/,/^ip mtu \d+$/,/^ip tcp adjust-mss \d+$/,/^duplex .+$/,/^speed .+$/,/^encapsulation .+$/,/^ip policy route-map \S+$/,/^ip helper-address \S+$/,/^cdp .+$/,/^ip access-group .+$/,/^ip flow monitor .+$/,/^service-policy .+$/,/^negotiation auto$/],
+ router:[/^router-id \S+$/,/^network \S+ \S+ area \S+$/,/^passive-interface .+$/,/^auto-cost reference-bandwidth \d+$/,/^default-information originate.*$/,/^area .+$/,/^redistribute .+$/,/^log-adjacency-changes.*$/,/^maximum-paths \d+$/,/^distance .+$/,/^nsf.*$/,/^bgp .+$/,/^neighbor .+$/,/^network \S+( mask \S+)?$/,/^timers .+$/,/^address-family .+$/,/^eigrp .+$/,/^variance \d+$/],
+ vrf:[/^rd \S+$/,/^route-target .+$/,/^address-family (ipv4|ipv6)( unicast)?$/,/^description .+$/],
+ af:[/^route-target .+$/,/^neighbor .+$/,/^network .+$/,/^redistribute .+$/,/^exit-address-family$/,/^maximum-paths .+$/],
+ line:[/^login( local| authentication \S+)?$/,/^password .+$/,/^transport input .+$/,/^transport output .+$/,/^exec-timeout \d+( \d+)?$/,/^logging synchronous$/,/^access-class .+$/,/^privilege level \d+$/],
+ vlan:[/^name .+$/],
+ applet:[/^event .+$/,/^action \S+ .+$/,/^description .+$/],
+ redundancy:[/^mode (sso|rpr)$/],
+};
+const KEYED=[/^ip address (?!.*secondary)/,/^description /,/^router-id /,/^bgp router-id /,/^rd /,/^switchport mode /,/^switchport trunk native vlan /,/^switchport trunk allowed vlan /,/^switchport access vlan /,/^channel-group /,/^vrf forwarding /,/^ip ospf network /,/^ip ospf cost /,/^ip ospf priority /,/^bandwidth /,/^standby \d+ priority /,/^standby \d+ ip /,/^standby version /,/^tunnel source /,/^tunnel destination /,/^tunnel mode /,/^ip mtu /,/^ip tcp adjust-mss /,/^exec-timeout /,/^transport input /,/^name /,/^event /,/^neighbor \S+ remote-as /,/^hostname /,/^ip domain[- ]name /,/^enable secret /,/^username \S+ /,/^spanning-tree mode /,/^auto-cost /,/^mode /,/^action \S+ /];
+const keyOf=l=>{for(const r of KEYED){const m=l.match(r);if(m)return m[0]}return null};
+
+function newState(lab){
+  const st={lab,host:lab.host,mode:'user',stack:[],cfg:[],flags:{rsa:0},hist:[],hi:0,saved:false};
+  st.cfg.push({text:'hostname '+lab.host,kids:null});
+  for(const [h,kids] of lab.init)st.cfg.push({text:h,kids:kids.map(k=>({text:k,kids:null}))});
+  return st}
+function ctxType(text){
+  if(/^interface range /.test(text))return 'if-range';
+  if(/^interface /.test(text))return 'if';
+  if(/^router /.test(text))return 'router';
+  if(/^vrf definition /.test(text))return 'vrf';
+  if(/^address-family /.test(text))return 'af';
+  if(/^line /.test(text))return 'line';
+  if(/^vlan /.test(text))return 'vlan';
+  if(/^event manager applet /.test(text))return 'applet';
+  if(/^redundancy$/.test(text))return 'redundancy';
+  return null}
+const PROMPT={config:'(config)#',if:'(config-if)#','if-range':'(config-if-range)#',router:'(config-router)#',vrf:'(config-vrf)#',af:'(config-router-af)#',line:'(config-line)#',vlan:'(config-vlan)#',applet:'(config-applet)#',redundancy:'(config-red)#'};
+function promptOf(st){
+  if(st.mode==='user')return st.host+'>';if(st.mode==='priv')return st.host+'#';
+  const top=st.stack[st.stack.length-1];if(!top)return st.host+PROMPT.config;
+  let p=PROMPT[top.type];if(top.type==='af'&&st.stack[st.stack.length-2]&&st.stack[st.stack.length-2].type==='vrf')p='(config-vrf-af)#';
+  return st.host+p}
+
+function getOrMake(list,text){let n=list.find(x=>x.text===text);if(!n){n={text,kids:[]};list.push(n)}else if(!n.kids)n.kids=[];return n}
+function addKid(node,line){
+  const k=keyOf(line);
+  if(k){const i=node.kids.findIndex(c=>keyOf(c.text)===k);if(i>=0){node.kids[i]={text:line,kids:null};return}}
+  if(!node.kids.some(c=>c.text===line))node.kids.push({text:line,kids:null})}
+function removeKid(list,line){
+  let removed=false;
+  for(let i=list.length-1;i>=0;i--){const c=list[i].text;if(c===line||c.startsWith(line+' ')||(keyOf(line)&&keyOf(c)===keyOf(line)&&line.split(' ').length<=keyOf(line).trim().split(' ').length)){list.splice(i,1);removed=true}}
+  return removed}
+
+function expandRange(spec){
+  // "GigabitEthernet1/0/1 - 2" or "GigabitEthernet1/0/1 - 2 , GigabitEthernet1/0/5"
+  const out=[];
+  for(const part of spec.split(',')){const m=part.trim().match(/^(\S+?)(\d+)\s*(?:-\s*(\d+))?$/);if(!m)return null;
+    const a=+m[2],b=m[3]?+m[3]:a;if(b<a||b-a>48)return null;for(let i=a;i<=b;i++)out.push(m[1]+i)}
+  return out}
+
+const INV="% Invalid input detected at '^' marker.";
+
+function exec(st,raw){
+  const mode=st.mode==='config'?'config':'exec';
+  let line=normalize(raw,st.mode==='user'||st.mode==='priv'?'exec':'config');
+  if(!line)return '';
+  let pipe=null;const pi=line.indexOf(' | ');if(pi>=0){pipe=line.slice(pi+3);line=line.slice(0,pi)}
+  let out=run(st,line);
+  if(pipe&&typeof out==='string')out=applyPipe(out,pipe);
+  return out}
+function applyPipe(text,p){
+  const m=p.match(/^(include|section|begin|exclude|i|s|b|e)\s+(.+)$/i);if(!m)return text;
+  const op=m[1][0].toLowerCase(),pat=m[2].replace(/^"|"$/g,'');let re;try{re=new RegExp(pat,'i')}catch(e){re=new RegExp(pat.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'i')}
+  const lines=text.split('\n');
+  if(op==='i')return lines.filter(l=>re.test(l)).join('\n');
+  if(op==='e')return lines.filter(l=>!re.test(l)).join('\n');
+  if(op==='b'){const i=lines.findIndex(l=>re.test(l));return i<0?'':lines.slice(i).join('\n')}
+  const o=[];let inS=false;for(const l of lines){if(!/^ /.test(l)){inS=re.test(l)}else if(!inS&&re.test(l)){}if(inS)o.push(l)}return o.join('\n')}
+
+function run(st,line){
+  if(line==='?')return help(st);
+  const inCfg=!(st.mode==='user'||st.mode==='priv');
+  if(inCfg&&/^do /.test(line))return execCmd(st,line.slice(3),true);
+  if(!inCfg)return execCmd(st,line,false);
+  return cfgCmd(st,line)}
+
+function execCmd(st,line,fromDo){
+  if(line==='enable'){if(st.mode==='user')st.mode='priv';return ''}
+  if(line==='disable'){st.mode='user';return ''}
+  if(/^(exit|logout|end)$/.test(line)&&!fromDo){if(line==='end')return '';st.mode='user';return '\n'+st.host+' con0 is now available\n\nPress RETURN to get started.'}
+  if(/^configure( terminal)?$/.test(line)){if(st.mode==='user')return INV;st.mode='config';st.stack=[];return 'Enter configuration commands, one per line.  End with CNTL/Z.'}
+  if(/^(write( memory)?|copy running-config startup-config)$/.test(line)){if(st.mode==='user'&&!fromDo)return INV;st.saved=true;return 'Building configuration...\n[OK]'}
+  if(/^show /.test(line))return show(st,line.slice(5));
+  if(/^ping /.test(line))return ping(st,line.slice(5));
+  if(/^traceroute /.test(line))return 'Type escape sequence to abort.\nTracing the route to '+line.split(' ').pop()+'\n  1 * * *\n(시뮬레이터: traceroute는 생략합니다. ping과 show 명령으로 확인하세요.)';
+  if(line==='clear'||/^clear /.test(line))return '';
+  return INV}
+
+function cfgCmd(st,line){
+  const top=st.stack[st.stack.length-1];
+  if(line==='end'){st.mode='priv';st.stack=[];return '\n%SYS-5-CONFIG_I: Configured from console by console'}
+  if(line==='exit'){if(st.stack.length)st.stack.pop();else{st.mode='priv';return '\n%SYS-5-CONFIG_I: Configured from console by console'}return ''}
+  if(line==='exit-address-family'&&top&&top.type==='af'){st.stack.pop();return ''}
+  let neg=false;let body=line;if(/^no /.test(line)){neg=true;body=line.slice(3)}
+  // global commands are accepted from any sub-mode (IOS falls back to parent)
+  const isGlobal=PAT.config.some(r=>r.test(body));
+  const curType=top?top.type:'config';
+  const subOK=top&&(PAT[curType==='if-range'?'if':curType]||[]).some(r=>r.test(body));
+  if(top&&!subOK&&!isGlobal){
+    if(neg&&top.nodes.some(n=>n.kids.some(k=>k.text===body||k.text.startsWith(body+' '))))return applySub(st,top,body,true);
+    return INV}
+  if(top&&subOK)return applySub(st,top,body,neg);
+  if(!isGlobal)return INV;
+  st.stack=[];
+  return applyGlobal(st,body,neg)}
+
+function applyGlobal(st,body,neg){
+  // mode-entering
+  const t=ctxType(body);
+  if(neg){
+    if(t){const i=st.cfg.findIndex(n=>n.text===body);if(i>=0){if(/^interface (GigabitEthernet|FastEthernet)/.test(body)){st.cfg[i].kids=[];return ''}st.cfg.splice(i,1)}return ''}
+    removeKid(st.cfg,body);if(/^hostname/.test(body)){st.host='Router';st.cfg.unshift({text:'hostname Router',kids:null})}return ''}
+  if(t==='if-range'){
+    const names=expandRange(body.replace(/^interface range /,''));if(!names)return INV;
+    const nodes=names.map(n=>getOrMake(st.cfg,'interface '+n));st.stack=[{type:'if-range',nodes}];return ''}
+  if(t==='if'){
+    const nm=body.slice(10);
+    if(!/^(GigabitEthernet|FastEthernet|Loopback|Tunnel|Port-channel|Vlan)\d/.test(nm))return INV;
+    if(/^(GigabitEthernet|FastEthernet)/.test(nm)&&!st.cfg.some(n=>n.text===body))return '% Invalid interface: 이 랩 장비에는 '+nm+'가 없습니다. show ip interface brief로 확인하세요.';
+    const n=getOrMake(st.cfg,body);st.stack=[{type:'if',nodes:[n]}];return ''}
+  if(t){
+    if(t==='router'&&/^router bgp/.test(body)){const other=st.cfg.find(n=>/^router bgp /.test(n.text)&&n.text!==body);if(other)return '% BGP is already running; AS is '+other.text.split(' ')[2]}
+    const n=getOrMake(st.cfg,body);st.stack=[{type:t,nodes:[n]}];return ''}
+  if(/^hostname /.test(body)){st.host=body.slice(9);addKidRoot(st,body);return ''}
+  if(/^crypto key generate rsa/.test(body)){
+    if(st.host==='Router')return '% Please define a hostname other than Router.';
+    if(!st.cfg.some(n=>/^ip domain[- ]name /.test(n.text)))return '% Please define a domain-name first.';
+    const m=body.match(/modulus (\d+)/);const bits=m?+m[1]:512;
+    if(![512,768,1024,2048,3072,4096].includes(bits))return '% Invalid modulus. Choose 1024, 2048, 3072 or 4096.';
+    st.flags.rsa=bits;const dn=st.cfg.find(n=>/^ip domain[- ]name /.test(n.text)).text.split(' ').pop();
+    return `The name for the keys will be: ${st.host}.${dn}\n\n% The key modulus size is ${bits} bits\n% Generating ${bits} bit RSA keys, keys will be non-exportable...\n[OK] (elapsed time was 1 seconds)\n\n%SSH-5-ENABLED: SSH 2.0 has been enabled`}
+  addKidRoot(st,body);return ''}
+function addKidRoot(st,line){const k=keyOf(line);if(k){const i=st.cfg.findIndex(c=>!c.kids&&keyOf(c.text)===k);if(i>=0){st.cfg[i]={text:line,kids:null};return}}if(!st.cfg.some(c=>c.text===line))st.cfg.push({text:line,kids:null})}
+
+function applySub(st,top,body,neg){
+  const msgs=[];
+  // nested address-family
+  if(/^address-family /.test(body)&&!neg&&(top.type==='vrf'||top.type==='router')){
+    const n=getOrMake(top.nodes[0].kids,body.replace(/ unicast$/,''));st.stack.push({type:'af',nodes:[n]});return ''}
+  for(const node of top.nodes){
+    const ifname=node.text.replace(/^interface /,'');
+    if(neg){removeKid(node.kids,body);continue}
+    if(/^vrf forwarding /.test(body)){
+      const v=body.split(' ')[2];
+      if(!st.cfg.some(n=>n.text==='vrf definition '+v))return '% VRF '+v+' not configured.';
+      const ipk=node.kids.find(k=>/^ip address /.test(k.text));
+      if(ipk&&!node.kids.some(k=>k.text===body)){msgs.push(`% Interface ${ifname} IP address ${ipk.text.split(' ')[2]} removed due to enabling VRF ${v}`);node.kids=node.kids.filter(k=>!/^ip address /.test(k.text))}}
+    if(/^channel-group (\d+)/.test(body)){const g=body.match(/^channel-group (\d+)/)[1];if(!st.cfg.some(n=>n.text==='interface Port-channel'+g)){st.cfg.push({text:'interface Port-channel'+g,kids:[]});msgs.push('Creating a port-channel interface Port-channel '+g)}}
+    if(/^standby \d+ ip /.test(body)&&!node.kids.some(k=>/^ip address /.test(k.text)))return '% Address cannot be configured: 인터페이스에 IP 주소가 없습니다.';
+    addKid(node,body);
+  }
+  if(/^shutdown$/.test(body)&&!neg)msgs.push(...top.nodes.map(n=>`%LINK-5-CHANGED: Interface ${n.text.slice(10)}, changed state to administratively down`));
+  if(/^shutdown$/.test(body)&&neg)msgs.push(...top.nodes.map(n=>`%LINK-3-UPDOWN: Interface ${n.text.slice(10)}, changed state to up`));
+  // dynamic events
+  const ev=events(st);if(ev)msgs.push(ev);
+  return msgs.join('\n')}
+
+function events(st){
+  const L=st.lab;const out=[];st._ev=st._ev||{};
+  if(L.id==='ospf'){const up=!!L.sim.ospfNbr(st);if(up&&!st._ev.ospf){out.push('%OSPF-5-ADJCHG: Process 1, Nbr 2.2.2.2 on GigabitEthernet0/0 from LOADING to FULL, Loading Done')}st._ev.ospf=up}
+  if(L.id==='bgp'){const s=L.sim.bgpState(st);if(s==='up'&&st._ev.bgp!=='up')out.push('%BGP-5-ADJCHANGE: neighbor 203.0.113.2 Up');if(s==='badas'&&st._ev.bgp!=='badas')out.push('%BGP-3-NOTIFICATION: sent to neighbor 203.0.113.2 active 2/2 (peer in wrong AS) 2 bytes FDE9');st._ev.bgp=s}
+  if(L.id==='hsrp'){const s=hsrpState(st);if(s&&s.state!==st._ev.hsrp){out.push(`%HSRP-5-STATECHANGE: Vlan10 Grp 10 state ${st._ev.hsrp||'Speak'} -> ${s.state}`);st._ev.hsrp=s.state}}
+  if(L.id==='gre'){const up=tunUp(st);if(up&&!st._ev.gre)out.push('%LINEPROTO-5-UPDOWN: Line protocol on Interface Tunnel0, changed state to up');st._ev.gre=up}
+  if(L.id==='ec'){const s=ecState(st);if(s.bundled&&!st._ev.ec)out.push('%EC-5-BUNDLE: Interface Gi1/0/1 joined port-channel Po1\n%EC-5-BUNDLE: Interface Gi1/0/2 joined port-channel Po1\n%LINEPROTO-5-UPDOWN: Line protocol on Interface Port-channel1, changed state to up');st._ev.ec=s.bundled}
+  return out.join('\n')}
+function hsrpState(st){const n=findBlock(st,'interface Vlan10');if(!n||!hasKid(n,'standby 10 ip 10.10.10.1'))return null;
+  const pm=kidVal(n,/^standby 10 priority (\d+)$/);const pr=pm?+pm[1]:100;const v2=hasKid(n,'standby version 2');
+  // DSW2: priority 100, preempt, was Active first. DSW1 becomes Active only if higher priority AND preempt.
+  const active=pr>100&&hasKid(n,'standby 10 preempt');return {state:active?'Active':'Standby',pr,v2,pre:hasKid(n,'standby 10 preempt')}}
+function tunUp(st){const n=findBlock(st,'interface Tunnel0');return !!(n&&!hasKid(n,'shutdown')&&hasKid(n,/^tunnel source /)&&hasKid(n,'tunnel destination 203.0.113.10')&&hasKid(n,/^ip address /))}
+function ecState(st){const m=['1','2'].map(i=>{const n=findBlock(st,'interface GigabitEthernet1/0/'+i);const g=kidVal(n,/^channel-group 1 mode (\S+)$/);return g?g[1]:null});
+  const po=findBlock(st,'interface Port-channel1');const trunk=hasKid(po,'switchport mode trunk');const nat=hasKid(po,'switchport trunk native vlan 99');
+  const flags=m.map(x=>x==='active'?(trunk?'P':'I'):x==='passive'?'I':x==='on'?'D':null);
+  return {modes:m,flags,bundled:m.every(x=>x==='active')&&trunk,trunk,nat}}
+
+/* show commands */
+function show(st,a){
+  a=a.trim();const L=st.lab;
+  if(/^(running-config|run)$/.test(a))return showRun(st);
+  if(/^running-config interface (\S+)$/.test(a)){const n=findBlock(st,'interface '+a.split(' ')[2]);return n?renderNodes([n]):'% Invalid interface'}
+  if(/^ip interface brief$/.test(a))return showIpIntBr(st);
+  if(/^ip route( ospf| bgp| connected)?$/.test(a))return showIpRoute(st,null,a.split(' ')[2]);
+  if(/^ip route vrf \S+$/.test(a))return showIpRoute(st,a.split(' ')[3]);
+  if(/^vrf( brief)?$/.test(a)){const v=findAll(st,/^vrf definition /);if(!v.length)return '';
+    return '  Name                             Default RD            Protocols   Interfaces\n'+v.map(n=>{const name=n.text.split(' ')[2];const rd=(kidVal(n,/^rd (\S+)$/)||[,'<not set>'])[1];const pr=hasKid(n,/^address-family ipv4/)?'ipv4':'';const ifs=findAll(st,/^interface /).filter(i=>hasKid(i,'vrf forwarding '+name)).map(i=>shortIf(i.text.slice(10))).join(',');return '  '+name.padEnd(33)+rd.padEnd(22)+pr.padEnd(12)+ifs}).join('\n')}
+  if(/^ip ospf neighbor$/.test(a))return L.sim.ospfNbr?L.sim.ospfNbr(st):'';
+  if(/^ip ospf interface brief$/.test(a)){if(!findBlock(st,/^router ospf/))return '';const rows=[];for(const n of findAll(st,/^interface /)){const ip=kidVal(n,/^ip address (\S+) (\S+)$/);if(!ip||!ospfCovers(st,ip[1]))continue;const nm=n.text.slice(10);const p2p=hasKid(n,'ip ospf network point-to-point');const lo=/^Loopback/.test(nm);rows.push(shortIf(nm).padEnd(10)+'1     0               '+(ip[1]+'/'+m2pfx(ip2n(ip[2]))).padEnd(19)+(lo?'1':'1').padEnd(6)+(lo?'LOOP':p2p?'P2P':'DR').padEnd(6)+(nm==='GigabitEthernet0/0'&&L.sim.ospfNbr(st)?'1/1':'0/0'))}
+    return 'Interface    PID   Area            IP Address/Mask    Cost  State Nbrs F/C\n'+rows.join('\n')}
+  if(/^ip protocols$/.test(a)){const r=st.cfg.filter(n=>n.kids&&/^router /.test(n.text));return r.map(n=>`Routing Protocol is "${n.text.replace('router ','')}"`).join('\n')||''}
+  if(/^standby( brief)?$/.test(a)){const s=hsrpState(st);if(!s)return '';const actv=s.state==='Active'?'local':'10.10.10.3';const stby=s.state==='Active'?'10.10.10.3':'local';
+    return '                     P indicates configured to preempt.\n                     |\nInterface   Grp  Pri P State   Active          Standby         Virtual IP\nVl10        10   '+String(s.pr).padEnd(4)+(s.pre?'P':' ')+' '+s.state.padEnd(8)+actv.padEnd(16)+stby.padEnd(16)+'10.10.10.1'+(s.pr>100&&!s.pre?'\n\n! 우선순위는 더 높지만 preempt가 없어 먼저 Active가 된 DSW2가 계속 Active입니다.':'')}
+  if(/^etherchannel summary$/.test(a)){const s=ecState(st);if(!s.modes.some(Boolean))return '';
+    const proto=s.modes.includes('on')?'-':'LACP';const poFlag=s.bundled?'SU':'SD';
+    return 'Flags:  D - down        P - bundled in port-channel\n        I - stand-alone s - suspended\n        S - Layer2      U - in use\n\nNumber of channel-groups in use: 1\nGroup  Port-channel  Protocol    Ports\n------+-------------+-----------+-----------------------------------------------\n1      Po1('+poFlag+')       '+proto.padEnd(12)+['1','2'].map((i,k)=>s.modes[k]?'Gi1/0/'+i+'('+s.flags[k]+')':'').filter(Boolean).join(' ')+
+      (s.modes.includes('passive')?'\n\n! 상대가 passive이므로 양쪽 모두 passive이면 LACP PDU를 아무도 먼저 보내지 않습니다.':'')+(s.modes.includes('on')?'\n\n! mode on은 협상하지 않습니다. 상대가 LACP이므로 번들이 안 됩니다.':'')+(s.modes.every(x=>x==='active')&&!s.trunk?'\n\n! 상대는 트렁크인데 Po1이 액세스 모드라 포트가 stand-alone입니다.':'')}
+  if(/^interfaces trunk$/.test(a)){const s=ecState(st);if(!s.trunk)return '';return 'Port        Mode             Encapsulation  Status        Native vlan\nPo1         on               802.1q         trunking      '+(s.nat?'99':'1')+'\n\nPort        Vlans allowed on trunk\nPo1         '+((kidVal(findBlock(st,'interface Port-channel1'),/^switchport trunk allowed vlan (.+)$/)||[,'1-4094'])[1])+(s.nat?'':'\n\n%CDP-4-NATIVE_VLAN_MISMATCH: Native VLAN mismatch discovered on Port-channel1 (1), with SW2 Port-channel1 (99).')}
+  if(/^ip bgp summary$/.test(a)){const s=L.sim.bgpState?L.sim.bgpState(st):null;if(!findBlock(st,/^router bgp/))return '% BGP not active';
+    const rid=(kidVal(findBlock(st,/^router bgp/),/^bgp router-id (\S+)$/)||[,'203.0.113.1'])[1];
+    let o=`BGP router identifier ${rid}, local AS number 65001\n\nNeighbor        V           AS MsgRcvd MsgSent   TblVer  InQ OutQ Up/Down  State/PfxRcd`;
+    const nb=kidVal(findBlock(st,/^router bgp/),/^neighbor (\S+) remote-as (\d+)$/);if(nb)o+='\n'+nb[1].padEnd(16)+'4'+nb[2].padStart(13)+(s==='up'?'      12      10        4    0    0 00:00:41        2':'       0       0        1    0    0 never    Idle');
+    if(s==='badas')o+='\n\n! remote-as가 ISP의 실제 AS(65002)와 달라 OPEN 메시지에서 거부됐습니다.';return o}
+  if(/^ip bgp$/.test(a)){const s=L.sim.bgpState?L.sim.bgpState(st):null;const b=findBlock(st,/^router bgp/);if(!b)return '% BGP not active';
+    let rows=[];if(s==='up'){rows.push(' *>   0.0.0.0          203.0.113.2              0             0 65002 i',' *>   8.8.8.0/24       203.0.113.2              0             0 65002 15169 i')}
+    const nw=kidVal(b,/^network (\S+) mask (\S+)$/);if(nw){const ok=nw[1]==='192.168.1.0'&&nw[2]==='255.255.255.0';if(ok)rows.push(' *>   192.168.1.0      0.0.0.0                  0         32768 i');}
+    return 'BGP table version is 4, local router ID is 1.1.1.1\nStatus codes: * valid, > best\nOrigin codes: i - IGP, e - EGP, ? - incomplete\n\n     Network          Next Hop            Metric LocPrf Weight Path\n'+rows.join('\n')+(nw&&!(nw[1]==='192.168.1.0'&&nw[2]==='255.255.255.0')?'\n\n! network '+nw[1]+' mask '+nw[2]+'는 라우팅 테이블에 같은 프리픽스가 없어 광고되지 않습니다.':'')}
+  if(/^interfaces Tunnel0$/.test(a)){const n=findBlock(st,'interface Tunnel0');if(!n)return '% Invalid interface';const up=tunUp(st);const mtu=(kidVal(n,/^ip mtu (\d+)$/)||[,'1476'])[1];
+    return `Tunnel0 is up, line protocol is ${up?'up':'down'}\n  Hardware is Tunnel\n  Internet address is ${(kidVal(n,/^ip address (\S+) (\S+)$/)||[,'unassigned'])[1]}\n  MTU 17916 bytes, BW 100 Kbit/sec, DLY 50000 usec\n  Encapsulation TUNNEL, loopback not set\n  Tunnel source ${(kidVal(n,/^tunnel source (\S+)$/)||[,'unset'])[1]}, destination ${(kidVal(n,/^tunnel destination (\S+)$/)||[,'unset'])[1]}\n  Tunnel protocol/transport GRE/IP\n  Tunnel transport MTU 1476 bytes\n  IP MTU ${mtu} bytes`}
+  if(/^ip ssh$/.test(a))return st.flags.rsa?`SSH Enabled - version 2.0\nAuthentication methods:publickey,keyboard-interactive,password\nAuthentication timeout: 120 secs; Authentication retries: 3\nMinimum expected Diffie Hellman key size : 2048 bits\nIOS Keys in SECSH format(ssh-rsa, base64 encoded): ${st.host}.lab.local\nModulus Size : ${st.flags.rsa} bits`:'SSH Disabled - version 1.99\n%Please create RSA keys to enable SSH (and of atleast 768 bits for SSH v2).';
+  if(/^event manager policy registered$/.test(a)){const ap=findAll(st,/^event manager applet /);return ap.length?'No.  Class     Type    Event Type          Trap  Time Registered           Name\n'+ap.map((n,i)=>`${i+1}    applet    user    ${hasKid(n,/^event syslog/)?'syslog':'none'}              Off   Tue Oct 20 22:30:00 2026  ${n.text.split(' ')[3]}\n ${(kidVal(n,/^(event .+)$/)||[,''])[1]}\n maxrun 20.000\n action ...`).join('\n'):''}
+  if(/^version$/.test(a))return `Cisco IOS XE Software, Version 17.12.4 (ENCOR 랩북 시뮬레이터)\n${st.host} uptime is 1 hour, 4 minutes\ncisco ${st.lab.kind==='switch'?'C9300-24T':'C8000V'} processor`;
+  if(/^history$/.test(a))return st.hist.slice(-15).map(h=>'  '+h).join('\n');
+  return INV}
+function shortIf(n){return n.replace('GigabitEthernet','Gi').replace('Loopback','Lo').replace('Port-channel','Po').replace('Tunnel','Tu').replace('Vlan','Vl')}
+function ifSort(a,b){return a.localeCompare(b,undefined,{numeric:true})}
+function rank(t){if(/^hostname/.test(t))return 0;if(/^(ip domain|enable|username|crypto)/.test(t))return 1;if(/^vrf definition/.test(t))return 2;if(/^redundancy/.test(t))return 3;if(/^interface/.test(t))return 4;if(/^router/.test(t))return 5;if(/^ip route/.test(t))return 6;if(/^line/.test(t))return 8;if(/^event manager/.test(t))return 9;return 1.5}
+function renderNodes(nodes,ind=''){
+  const o=[];for(const n of nodes){let tx=n.text;tx=tx.replace(/^(username \S+(?: privilege \d+)? secret) (?!\d )(\S+)$/,(m,a)=>a+' 9 $9$nP2kUe.Wx7SRwk$dF7sLQjz0b3HhYc5vQ1A');tx=tx.replace(/^enable secret (?!\d )(\S+)$/,'enable secret 9 $9$hZr0f1x7AqV4Hk$8hJm2p0YcQ');
+    o.push(ind+tx);if(n.kids){if(/^address-family/.test(n.text)){o.push(...n.kids.map(k=>ind+' '+k.text));o.push(ind+'exit-address-family')}else{for(const k of n.kids){if(k.kids)o.push(renderNodes([k],ind+' '));else o.push(ind+' '+k.text)}}
+      if(/^interface (GigabitEthernet|FastEthernet)/.test(n.text)&&!n.kids.some(k=>k.text==='shutdown'))o.push(ind+' negotiation auto');
+      if(/^interface/.test(n.text)&&!n.kids.some(k=>/^ip address|^switchport|^channel-group|^vrf/.test(k.text))&&!/Port-channel|range/.test(n.text)&&st0().lab.kind==='router')o.push(ind+' no ip address');
+      if(!ind)o.push('!')}}
+  return o.join('\n')}
+let CUR=null;const st0=()=>CUR;
+function showRun(st){
+  const nodes=[...st.cfg].sort((a,b)=>rank(a.text)-rank(b.text)||(/^interface/.test(a.text)&&/^interface/.test(b.text)?ifSort(a.text,b.text):0));
+  const body=renderNodes(nodes.filter(n=>n.kids)).split('\n');
+  const glob=nodes.filter(n=>!n.kids).map(n=>renderNodes([n]));
+  const lines=['Building configuration...','','Current configuration : '+(1800+JSON.stringify(st.cfg).length)+' bytes','!','version 17.12','service timestamps log datetime msec','!',...glob.filter(g=>/^hostname/.test(g)),'!',...glob.filter(g=>!/^hostname/.test(g)),'!',...body,'end'];
+  return lines.join('\n').replace(/\n!\n!/g,'\n!')}
+function showIpIntBr(st){
+  const rows=findAll(st,/^interface (?!range)/).sort((a,b)=>ifSort(a.text,b.text)).map(n=>{
+    const nm=n.text.slice(10);const ip=kidVal(n,/^ip address (\S+) /);const sh=hasKid(n,'shutdown');
+    let proto='up';if(/^Tunnel/.test(nm))proto=tunUp(st)?'up':'down';if(/^Port-channel/.test(nm))proto=ecState(st).bundled?'up':'down';
+    if(st.lab.kind==='switch'&&/^GigabitEthernet/.test(nm))return null;
+    return nm.padEnd(23)+(ip?ip[1]:'unassigned').padEnd(16)+'YES '+(ip?'manual':'unset ').padEnd(7)+(sh?'administratively down':'up').padEnd(22)+(sh?'down':proto)}).filter(Boolean);
+  return 'Interface              IP-Address      OK? Method Status                Protocol\n'+rows.join('\n')}
+function showIpRoute(st,vrf,filt){
+  const C=[];
+  for(const n of findAll(st,/^interface (?!range)/)){const nm=n.text.slice(10);const ip=kidVal(n,/^ip address (\S+) (\S+)$/);if(!ip||hasKid(n,'shutdown'))continue;
+    const v=kidVal(n,/^vrf forwarding (\S+)$/);if((v?v[1]:null)!==(vrf||null))continue;
+    if(/^Tunnel/.test(nm)&&!tunUp(st))continue;
+    const p=m2pfx(ip2n(ip[2]));const net=n2ip((ip2n(ip[1])&pfx2m(p))>>>0);
+    if(p<32)C.push('C        '+net+'/'+p+' is directly connected, '+nm);C.push('L        '+ip[1]+'/32 is directly connected, '+nm)}
+  let extra=(!vrf&&st.lab.sim.routes)?st.lab.sim.routes.call(st.lab.sim,st):[];
+  let rows=[...C,...extra];
+  if(filt==='ospf')rows=extra.filter(r=>/^O|^!/.test(r));if(filt==='bgp')rows=extra.filter(r=>/^B/.test(r));if(filt==='connected')rows=C;
+  const gw=rows.some(r=>/0\.0\.0\.0\/0/.test(r))?'Gateway of last resort is 203.0.113.2 to network 0.0.0.0':'Gateway of last resort is not set';
+  return (vrf?'\nRouting Table: '+vrf+'\n':'')+'Codes: L - local, C - connected, S - static, O - OSPF, B - BGP\n       * - candidate default\n\n'+gw+'\n\n'+rows.join('\n')}
+function ping(st,a){
+  const m=a.match(/^(?:vrf (\S+) )?(\S+)/);if(!m)return INV;const vrf=m[1],dst=m[2];
+  const reach=routeTo(st,dst,vrf);
+  const hdr=`Type escape sequence to abort.\nSending 5, 100-byte ICMP Echos to ${dst}, timeout is 2 seconds:\n`;
+  return hdr+(reach?'!!!!!\nSuccess rate is 100 percent (5/5), round-trip min/avg/max = 1/2/4 ms':'.....\nSuccess rate is 0 percent (0/5)')}
+function routeTo(st,dst,vrf){
+  const d=ip2n(dst);if(d===null)return false;
+  const L=st.lab;
+  const peers={ospf:['10.0.12.2','2.2.2.2','192.168.20.1'],gre:['172.31.0.2','203.0.113.10'],bgp:['203.0.113.2','8.8.8.8'],hsrp:['10.10.10.3','10.10.10.1'],vrf:['172.16.1.2'],ssh:['10.0.0.100'],eem:['10.0.0.100']}[L.id]||[];
+  // own interfaces
+  for(const n of findAll(st,/^interface /)){const ip=kidVal(n,/^ip address (\S+) (\S+)$/);if(ip&&ip[1]===dst&&!hasKid(n,'shutdown'))return true}
+  if(L.id==='ospf'&&(dst==='2.2.2.2'||dst==='192.168.20.1'))return !!L.sim.ospfNbr(st)&&hasKid(findBlock(st,'interface GigabitEthernet0/0'),'ip ospf network point-to-point');
+  if(L.id==='gre'&&dst==='172.31.0.2')return tunUp(st);
+  if(L.id==='bgp'&&dst==='8.8.8.8')return L.sim.bgpState(st)==='up';
+  if(L.id==='vrf'&&dst==='172.16.1.2')return vrf==='CUST-A'&&hasKid(findBlock(st,'interface GigabitEthernet0/1'),'ip address 172.16.1.1 255.255.255.0')&&hasKid(findBlock(st,'interface GigabitEthernet0/1'),'vrf forwarding CUST-A')||(!vrf&&!hasKid(findBlock(st,'interface GigabitEthernet0/1'),'vrf forwarding CUST-A'));
+  if(L.id==='hsrp'&&dst==='10.10.10.1')return !!hsrpState(st);
+  if(!peers.includes(dst))return false;
+  // directly connected?
+  for(const n of findAll(st,/^interface /)){const ip=kidVal(n,/^ip address (\S+) (\S+)$/);if(!ip||hasKid(n,'shutdown'))continue;const v=kidVal(n,/^vrf forwarding (\S+)$/);if((v?v[1]:undefined)!==vrf)continue;const mk=ip2n(ip[2]);if(((ip2n(ip[1])&mk)>>>0)===((d&mk)>>>0))return true}
+  return false}
+function help(st){
+  if(st.mode==='user')return 'Exec commands:\n  enable       Turn on privileged commands\n  ping         Send echo messages\n  show         Show running system information\n  exit         Exit from the EXEC';
+  if(st.mode==='priv')return 'Exec commands:\n  configure    Enter configuration mode\n  copy         Copy from one file to another\n  disable      Turn off privileged commands\n  ping         Send echo messages\n  show         Show running system information\n  traceroute   Trace route to destination\n  write        Write running configuration to memory\n\n자주 쓰는 show: running-config, ip interface brief, ip route, '+(st.lab.verify||[]).map(v=>v.replace('show ','')).join(', ');
+  const top=st.stack[st.stack.length-1];const t=top?top.type:'config';
+  const H={config:'hostname, interface, interface range, router ospf|bgp, vrf definition, line vty, username, ip domain-name, crypto key, event manager applet, ip route, spanning-tree',
+   if:'ip address, shutdown / no shutdown, description, switchport, channel-group, standby, vrf forwarding, ip ospf, tunnel source|destination, ip mtu, ip tcp adjust-mss','if-range':'channel-group, switchport, shutdown, description',
+   router:'router-id, network, passive-interface, auto-cost, area, bgp router-id, neighbor, address-family, redistribute',vrf:'rd, route-target, address-family ipv4',af:'route-target, neighbor, network, exit-address-family',
+   line:'login local, transport input, exec-timeout, logging synchronous, access-class',vlan:'name',applet:'event syslog pattern "...", action <label> cli command "...", action <label> syslog msg "..."',redundancy:'mode sso'};
+  return '이 모드에서 쓸 수 있는 명령: \n  '+H[t]+'\n  exit, end, do <exec 명령>, no <명령>'}
+
+/* ---------- lab UI ---------- */
+let LAB=null;
+const out=$('#out'),inp=$('#cmd');
+function print(txt,cls){if(!txt)return;const d=document.createElement('div');if(cls)d.className=cls;
+  d.innerHTML=esc(txt).replace(/^(%\S+:.*)$/gm,'<span class="w">$1</span>').replace(/^(% (?!\S+:).*)$/gm,'<span class="e">$1</span>').replace(/^(! .*)$/gm,'<span class="d">$1</span>');
+  out.appendChild(d);out.scrollTop=out.scrollHeight}
+function loadLab(id,fresh){
+  LAB=LABS.find(l=>l.id===id)||LABS[0];
+  const saved=fresh?null:store.get('lab:'+LAB.id,null);
+  CUR=newState(LAB);
+  out.innerHTML='';
+  print(`${LAB.host} 콘솔에 연결했습니다. ${LAB.title}\n'?'로 도움말, Tab으로 자동완성, ↑↓로 이전 명령을 불러옵니다.\n`,'d');
+  if(saved&&saved.length){for(const c of saved){exec(CUR,c);CUR.hist.push(c)}print('(이전에 입력한 명령 '+saved.length+'개를 다시 적용했습니다. 처음부터 하려면 "랩 초기화")','d')}
+  CUR.hi=CUR.hist.length;
+  $('#prompt').textContent=promptOf(CUR);$('#termtitle').textContent=LAB.host+' — console';
+  $('#labtitle').textContent=LAB.title;$('#labdom').textContent=DOMAINS[LAB.d-1].name;$('#labdesc').textContent=LAB.desc;
+  $('#sol').textContent=LAB.sol;$('#sol').hidden=true;$('#btnSol').textContent='정답 설정 보기';
+  drawTopo(LAB);renderLabList();renderTasks();
+  store.set('lastLab',LAB.id)}
+function renderLabList(){
+  const done=store.get('labsDone',{});
+  $('#lablist').innerHTML=LABS.map((l,i)=>`<button aria-pressed="${LAB&&LAB.id===l.id}" class="${done[l.id]?'done':''}" data-lab="${l.id}"><span class="d">${String(i+1).padStart(2,'0')}</span>${esc(l.title)}</button>`).join('')}
+function renderTasks(){
+  const res=LAB.tasks.map(t=>{try{return !!t.c(CUR)}catch(e){return false}});
+  $('#tasks').innerHTML=LAB.tasks.map((t,i)=>`<li class="${res[i]?'ok':''}"><span class="box">${res[i]?'✓':''}</span><span class="tx">${esc(t.t)}</span><details><summary>힌트</summary><code>${esc(t.h)}</code></details></li>`).join('');
+  const all=res.every(Boolean);
+  const done=store.get('labsDone',{});
+  if(all){$('#labdone').innerHTML='<div class="success">모든 과제를 마쳤습니다. 검증 명령으로 결과를 확인해 보세요.</div>';if(!done[LAB.id]){done[LAB.id]=1;store.set('labsDone',done);renderLabList();renderProgress()}}
+  else $('#labdone').innerHTML=''}
+function drawTopo(L){
+  const T=L.topo;const s=$('#topo');
+  s.innerHTML=`<rect class="dev" x="10" y="38" width="80" height="40" rx="5"/><text x="50" y="62" text-anchor="middle">${esc(T.a)}</text>
+  <rect class="peer" x="230" y="38" width="80" height="40" rx="5"/><text x="270" y="62" text-anchor="middle">${esc(T.b)}</text>
+  <line class="lnk" x1="90" y1="58" x2="230" y2="58"/><text class="lbl" x="160" y="50" text-anchor="middle">${esc(T.l)}</text>
+  ${T.x.map((t,i)=>`<text class="lbl" x="10" y="${94+i*13}">${esc(t)}</text>`).join('')}
+  ${T.y.map((t,i)=>`<text class="lbl" x="310" y="${94+i*13}" text-anchor="end">${esc(t)}</text>`).join('')}
+  <text class="lbl" x="10" y="24">이 장비를 설정</text><text class="lbl" x="310" y="24" text-anchor="end">미리 설정됨</text>`}
+function submit(cmd){
+  print(promptOf(CUR)+cmd,'c');
+  if(cmd.trim()){CUR.hist.push(cmd);const log=store.get('lab:'+LAB.id,[]);log.push(cmd);store.set('lab:'+LAB.id,log.slice(-300))}
+  CUR.hi=CUR.hist.length;
+  let r='';try{r=exec(CUR,cmd)}catch(e){r='% 시뮬레이터 오류: '+e.message}
+  print(r);
+  $('#prompt').textContent=promptOf(CUR);renderTasks()}
+inp.addEventListener('keydown',e=>{
+  if(e.key==='Enter'){const v=inp.value;inp.value='';submit(v)}
+  else if(e.key==='ArrowUp'){if(CUR.hi>0){CUR.hi--;inp.value=CUR.hist[CUR.hi]||''}e.preventDefault()}
+  else if(e.key==='ArrowDown'){if(CUR.hi<CUR.hist.length){CUR.hi++;inp.value=CUR.hist[CUR.hi]||''}e.preventDefault()}
+  else if(e.key==='Tab'){e.preventDefault();const parts=inp.value.split(' ');const last=parts.pop();if(!last)return;const lo=last.toLowerCase();const c=KW.filter(k=>k.startsWith(lo));if(c.length===1)parts.push(c[0]+' ');else{parts.push(last);if(c.length>1)print(c.join('  '),'d')}inp.value=parts.join(' ')}
+  else if(e.key==='?'&&inp.value.trim()===''){e.preventDefault();submit('?')}});
+$('#term').addEventListener('click',e=>{if(e.target.tagName!=='BUTTON'&&!window.getSelection().toString())inp.focus()});
+$('#lablist').addEventListener('click',e=>{const b=e.target.closest('button[data-lab]');if(b)loadLab(b.dataset.lab)});
+$('#btnClear').onclick=()=>{out.innerHTML=''};
+$('#btnReset').onclick=()=>{store.set('lab:'+LAB.id,[]);loadLab(LAB.id,true)};
+$('#btnSol').onclick=()=>{const s=$('#sol');s.hidden=!s.hidden;$('#btnSol').textContent=s.hidden?'정답 설정 보기':'정답 숨기기'};
+$('#btnVerify').onclick=()=>{print('검증 명령 (특권 모드에서 입력, 설정 모드에서는 앞에 do):\n  '+LAB.verify.join('\n  '),'d')};
+
+/* ---------- tabs ---------- */
+const TABS=[['overview','개요','00'],['theory','이론','01'],['lab','CLI 랩','02'],['tools','도구','03'],['quiz','퀴즈','04'],['links','자료','05']];
+$('#tabs').innerHTML=TABS.map(([id,n,p])=>`<button role="tab" data-tab="${id}" aria-selected="false" aria-controls="v-${id}"><span class="dot"></span>${n}<span class="p">Gi0/${p.slice(1)}</span></button>`).join('');
+function openTab(id){if(!TABS.some(t=>t[0]===id))id='overview';
+  document.querySelectorAll('section.view').forEach(s=>s.hidden=s.id!=='v-'+id);
+  document.querySelectorAll('#tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===id));
+  try{history.replaceState(null,'','#'+id)}catch(e){}
+  if(id==='lab')setTimeout(()=>inp.focus({preventScroll:true}),0);
+  window.scrollTo(0,0)}
+$('#tabs').addEventListener('click',e=>{const b=e.target.closest('button');if(b)openTab(b.dataset.tab)});
+
+/* ---------- overview ---------- */
+$('#bars').innerHTML=DOMAINS.map(d=>`<button class="bar" data-dom="${d.id}"><span class="n"><small>${d.id}.0</small>${d.name}</span><span class="t"><i style="width:${d.w/30*100}%"></i></span><span class="v">${d.w}%</span></button>`).join('');
+$('#bars').addEventListener('click',e=>{const b=e.target.closest('[data-dom]');if(b){theoryDom=+b.dataset.dom;renderTheory();openTab('theory')}});
+const PLAN=[['1','3.0 인프라','트렁크·EtherChannel·STP','랩 3 EtherChannel'],['2','3.0 인프라','OSPFv2/v3, EIGRP 비교','랩 1 OSPF'],['3','3.0 인프라','eBGP, PBR','랩 5 eBGP'],['4','3.0 인프라','FHRP, NAT, NTP/PTP, 멀티캐스트','랩 2 HSRP'],['5','2.0 가상화','VRF, GRE/IPsec, LISP/VXLAN','랩 4 VRF, 랩 6 GRE'],['6','1.0 아키텍처','설계, 고가용성, SD-WAN, SD-Access, QoS','퀴즈 1.0'],['7','5.0 보안','AAA, ACL, CoPP, TrustSec, MACsec','랩 7 SSH'],['8','4.0 보증','SNMP, syslog, NetFlow, SPAN, IP SLA, NETCONF','도구: RESTCONF'],['9','6.0 자동화·AI','Python, JSON, YANG, API, EEM','랩 8 EEM, JSON 검사'],['10','전체 복습','약한 도메인 재학습','퀴즈 전체 + 실장비 랩']];
+$('#plan').innerHTML=PLAN.map(r=>`<tr><td class="num">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`).join('');
+function renderProgress(){
+  const labs=Object.keys(store.get('labsDone',{})).length;const th=store.get('theory',{});const thn=TOPICS.filter(t=>th[t.id]).length;
+  const q=store.get('quiz',{});let a=0,c=0;Object.values(q).forEach(v=>{a+=v.a;c+=v.c});
+  const items=[['CLI 랩',labs,LABS.length],['이론 항목',thn,TOPICS.length],['퀴즈 정답률',a?Math.round(c/a*100):0,100,a?`${c}/${a}문항`:'아직 풀지 않음']];
+  $('#progress').innerHTML=items.map(([n,v,m,s])=>`<div class="m"><span class="eyebrow">${n}</span><b>${m===100?v+'%':v+' / '+m}</b><div class="meter"><i style="width:${v/m*100}%"></i></div>${s?`<span style="font-size:.78rem;color:var(--muted)">${s}</span>`:''}</div>`).join('');
+  const pct=(labs/LABS.length+thn/TOPICS.length)/2;$('#leds').innerHTML=Array.from({length:6},(_,i)=>`<i class="${pct>i/6?'on':''}"></i>`).join('')}
+
+/* ---------- theory ---------- */
+let theoryDom=1;
+function renderTheory(){
+  $('#domtabs').innerHTML=DOMAINS.map(d=>`<button class="chip" aria-pressed="${d.id===theoryDom}" data-d="${d.id}">${d.id}.0 ${d.name} · ${d.w}%</button>`).join('');
+  const th=store.get('theory',{});
+  $('#topics').innerHTML=TOPICS.filter(t=>t.d===theoryDom).map(t=>`<details class="topic ${th[t.id]?'done':''}" ${th[t.id]?'':'open'}><summary><span class="id">${t.id}</span><span class="tt">${esc(t.t)}</span><span class="st">${th[t.id]?'완료':''}</span></summary><div class="body"><ul>${t.p.map(p=>`<li>${esc(p)}</li>`).join('')}</ul>${t.cfg?`<pre class="cfg">${esc(t.cfg)}</pre>`:''}${t.trap?`<div class="trap"><b>헷갈리는 점</b> ${esc(t.trap)}</div>`:''}<div class="btnrow" style="align-items:center"><label><input type="checkbox" id="th-${t.id}" data-t="${t.id}" ${th[t.id]?'checked':''}> 학습 완료</label>${t.lab?`<button class="btn" data-golab="${t.lab}">관련 랩 열기</button>`:''}</div></div></details>`).join('')}
+$('#domtabs').addEventListener('click',e=>{const b=e.target.closest('[data-d]');if(b){theoryDom=+b.dataset.d;renderTheory()}});
+$('#topics').addEventListener('change',e=>{const c=e.target.closest('[data-t]');if(!c)return;const th=store.get('theory',{});if(c.checked)th[c.dataset.t]=1;else delete th[c.dataset.t];store.set('theory',th);const d=c.closest('details');d.classList.toggle('done',c.checked);d.querySelector('.st').textContent=c.checked?'완료':'';renderProgress()});
+$('#topics').addEventListener('click',e=>{const b=e.target.closest('[data-golab]');if(b){loadLab(b.dataset.golab);openTab('lab')}});
+
+/* ---------- tools ---------- */
+function calcCidr(){
+  const v=$('#cidr').value.trim();const m=v.match(/^(\d+\.\d+\.\d+\.\d+)\s*\/\s*(\d{1,2})$/)||v.match(/^(\d+\.\d+\.\d+\.\d+)\s+(\d+\.\d+\.\d+\.\d+)$/);
+  const o=$('#cidrOut');if(!m){o.innerHTML='<dt>오류</dt><dd>10.0.12.1/30 또는 10.0.12.1 255.255.255.252 형식으로 입력하세요.</dd>';return}
+  const ip=ip2n(m[1]);let p=m[2].includes('.')?m2pfx(ip2n(m[2])):+m[2];if(ip===null||p>32){o.innerHTML='<dt>오류</dt><dd>IP 주소나 프리픽스 길이가 범위를 벗어났습니다.</dd>';return}
+  const mk=pfx2m(p),wc=(~mk)>>>0,net=(ip&mk)>>>0,bc=(net|wc)>>>0;const hosts=p>=31?(p===31?2:1):Math.pow(2,32-p)-2;
+  const first=p>=31?net:net+1,last=p>=31?bc:bc-1;
+  const rows=[['네트워크',n2ip(net)+'/'+p],['서브넷 마스크',n2ip(mk)],['와일드카드',n2ip(wc)],['브로드캐스트',p>=31?'없음':n2ip(bc)],['사용 가능 범위',n2ip(first)+' – '+n2ip(last)],['호스트 수',hosts.toLocaleString()],['OSPF network 문',`network ${n2ip(net)} ${n2ip(wc)} area 0`],['이 주소만 매칭',`network ${n2ip(ip)} 0.0.0.0 area 0`],['BGP network 문',`network ${n2ip(net)} mask ${n2ip(mk)}`]];
+  o.innerHTML=rows.map(r=>`<dt>${r[0]}</dt><dd>${r[1]}</dd>`).join('')}
+$('#cidr').addEventListener('input',calcCidr);
+function calcCost(){const ref=Math.max(1,+$('#refbw').value||100);const IF=[['Ethernet',10],['FastEthernet',100],['GigabitEthernet',1000],['TenGigabitEthernet',10000],['FortyGigabitEthernet',40000],['HundredGigE',100000]];
+  $('#costOut').innerHTML=IF.map(([n,b])=>`<tr><td>${n}</td><td class="num">${b>=1000?b/1000+' Gbps':b+' Mbps'}</td><td class="num">${Math.max(1,Math.floor(ref/b))}</td></tr>`).join('')}
+$('#refbw').addEventListener('input',calcCost);
+const BGP=['Weight (높을수록)','Local Preference (높을수록)','로컬에서 생성한 경로','AS_PATH 길이 (짧을수록)','Origin (IGP < EGP < ?)','MED (낮을수록)','eBGP 경로 > iBGP 경로','넥스트홉까지 IGP 메트릭 (낮을수록)','가장 오래된 eBGP 경로','BGP Router ID (낮을수록)'];
+let bgpPick=[];
+function bgpRender(){
+  const order=store.get('bgpShuffle',null)||shuffleIdx();
+  $('#bgpPool').innerHTML=order.map(i=>`<button data-i="${i}" ${bgpPick.includes(i)?'disabled':''}>${BGP[i]}</button>`).join('');
+  $('#bgpPicked').innerHTML=bgpPick.map((i,k)=>`<li class="${i===k?'good':'badx'}">${BGP[i]}${i===k?'':' ← '+(k+1)+'번째는 '+BGP[k]}</li>`).join('');
+  if(bgpPick.length===BGP.length){const ok=bgpPick.every((i,k)=>i===k);$('#bgpResult').innerHTML=ok?'<div class="success">순서를 모두 맞혔습니다.</div>':'<div class="trap"><b>다시 확인</b> 빨간 항목의 위치를 외워 두세요. 앞 글자로 "W-L-L-A-O-M-E-I-O-R"로 외우기도 합니다.</div>'}else $('#bgpResult').innerHTML=''}
+function shuffleIdx(){const a=BGP.map((_,i)=>i);for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}store.set('bgpShuffle',a);return a}
+$('#bgpPool').addEventListener('click',e=>{const b=e.target.closest('[data-i]');if(b&&!b.disabled){bgpPick.push(+b.dataset.i);bgpRender()}});
+$('#bgpReset').onclick=()=>{bgpPick=[];shuffleIdx();bgpRender()};
+const AD=[['직접 연결(Connected)',0],['정적 경로(Static)',1],['EIGRP 요약 경로',5],['외부 BGP(eBGP)',20],['EIGRP 내부',90],['OSPF',110],['IS-IS',115],['RIP',120],['EIGRP 외부',170],['내부 BGP(iBGP)',200],['알 수 없음(사용 안 함)',255]];
+$('#adOut').innerHTML=AD.map(r=>`<tr><td>${r[0]}</td><td class="num">${r[1]}</td></tr>`).join('');
+function rcBuild(){
+  const h=$('#rcHost').value.trim()||'device',me=$('#rcMethod').value,r=$('#rcRes').value,ifn=$('#rcIf').value.trim()||'GigabitEthernet1';
+  $('#rcIf').disabled=r!=='if';
+  const enc=encodeURIComponent(ifn);
+  const path={if:'data/ietf-interfaces:interfaces/interface='+enc,ifs:'data/ietf-interfaces:interfaces',host:'data/Cisco-IOS-XE-native:native/hostname',caps:'data/ietf-yang-library:modules-state'}[r];
+  const url=`https://${h}/restconf/${path}`;
+  const body={if:{"ietf-interfaces:interface":{"name":ifn,"description":"WAN uplink","enabled":true}},ifs:null,host:{"Cisco-IOS-XE-native:hostname":"R1"},caps:null}[r];
+  const code={GET:'200 OK',PATCH:'204 No Content',PUT:'201 Created (새로 생성) / 204 No Content (교체)',POST:'201 Created (이미 있으면 409 Conflict)',DELETE:'204 No Content'}[me];
+  const needBody=['PATCH','PUT','POST'].includes(me);
+  let s=`${me} ${url}\nAccept: application/yang-data+json\n${needBody?'Content-Type: application/yang-data+json\n':''}Authorization: Basic <base64(user:pass)>\n`;
+  if(needBody)s+='\n'+(body?JSON.stringify(body,null,2):'(이 리소스는 읽기 전용으로 쓰는 것이 일반적입니다)')+'\n';
+  s+=`\n예상 성공 응답: ${code}\n실패 예: 401 인증 실패, 404 경로 오류, 400 본문 형식 오류`;
+  s+=`\n\ncurl -k -u USER:PASS -X ${me} "${url}" \\\n  -H "Accept: application/yang-data+json"${needBody?` \\\n  -H "Content-Type: application/yang-data+json" \\\n  -d '${body?JSON.stringify(body):'{}'}'`:''}`;
+  if(r==='if')s+=`\n\n참고: 인터페이스 이름의 "/"는 URL에서 %2F로 인코딩합니다.`;
+  $('#rcOut').textContent=s}
+['#rcHost','#rcMethod','#rcRes','#rcIf'].forEach(id=>$(id).addEventListener('input',rcBuild));
+$('#jsonIn').value=JSON.stringify({"ietf-interfaces:interface":{"name":"GigabitEthernet1","description":"WAN uplink","type":"iana-if-type:ethernetCsmacd","enabled":true,"ietf-ip:ipv4":{"address":[{"ip":"10.10.20.48","netmask":"255.255.255.0"}]}}},null,2);
+function jsonCheck(){
+  const o=$('#jsonOut');let data;
+  try{data=JSON.parse($('#jsonIn').value)}catch(e){o.textContent='✗ JSON 형식 오류\n'+e.message+'\n\n자주 하는 실수: 작은따옴표, 마지막 항목 뒤 쉼표, 따옴표 없는 키, True/None(파이썬 표기)';return}
+  const path=$('#jsonPath').value.trim();let cur=data,trail='data';
+  if(path){
+    const parts=[];path.replace(/([^.[\]]+)|\[(\d+)\]/g,(m,k,i)=>{parts.push(i!==undefined?+i:k)});
+    for(const p of parts){if(cur==null||!(p in Object(cur))){o.textContent=`✓ 올바른 JSON입니다.\n✗ 경로를 찾지 못했습니다: ${trail} 다음의 ${JSON.stringify(p)}\n\n현재 위치에 있는 키: ${cur&&typeof cur==='object'?Object.keys(cur).join(', '):'(값)'}`;return}
+      cur=cur[p];trail+=typeof p==='number'?`[${p}]`:`["${p}"]`}}
+  o.textContent=`✓ 올바른 JSON입니다.\n\nPython 표기: ${trail}\n값 (${Array.isArray(cur)?'list':cur===null?'None':typeof cur==='object'?'dict':typeof cur==='number'?'int/float':typeof cur==='boolean'?'bool':'str'}):\n${JSON.stringify(cur,null,2)}`}
+$('#jsonGo').onclick=jsonCheck;
+
+/* ---------- quiz ---------- */
+const Q=[
+ [1,'Catalyst SD-WAN에서 OMP로 WAN Edge에 경로와 정책을 배포하는 구성요소는?',['SD-WAN Manager','SD-WAN Validator','SD-WAN Controller','WAN Edge'],2,'SD-WAN Controller(구 vSmart)가 컨트롤 플레인으로 OMP 경로·정책·키를 배포합니다. Manager는 관리, Validator는 최초 인증과 NAT 통과를 담당합니다.'],
+ [1,'새 WAN Edge가 처음 연결될 때 인증하고 NAT 뒤에서도 컨트롤러를 찾도록 돕는 구성요소는?',['SD-WAN Validator','SD-WAN Controller','SD-WAN Manager','Catalyst Center'],0,'SD-WAN Validator(구 vBond)가 오케스트레이션을 맡아 최초 연결을 조율합니다.'],
+ [1,'SD-Access 오버레이의 컨트롤 플레인과 데이터 플레인 조합으로 옳은 것은?',['OSPF / GRE','LISP / VXLAN','BGP EVPN / MPLS','IS-IS / IPsec'],1,'SD-Access는 LISP로 단말 위치를 관리하고 VXLAN으로 트래픽을 감쌉니다. IS-IS는 언더레이에 씁니다.'],
+ [1,'음성 RTP 트래픽에 일반적으로 붙이는 DSCP 값은?',['AF41 (34)','CS3 (24)','EF (46)','AF11 (10)'],2,'음성 미디어는 EF(46), 화상은 AF41, 시그널링은 CS3을 흔히 씁니다.'],
+ [1,'셰이핑(shaping)이 폴리싱(policing)과 다른 점은?',['초과 트래픽을 즉시 버린다','초과 트래픽을 버퍼에 담아 늦게 보낸다','수신 방향에만 적용된다','DSCP를 항상 0으로 바꾼다'],1,'셰이핑은 버퍼링으로 속도를 맞춰 지연이 늘고, 폴리싱은 초과분을 버리거나 다시 마킹합니다.'],
+ [1,'SSO와 함께 써서 수퍼바이저 전환 중에도 포워딩을 유지하고 이웃의 재수렴을 막는 기능은?',['NSF','HSRP','BFD','UDLD'],0,'NSF(Non-Stop Forwarding)는 SSO 전환 동안 기존 FIB로 계속 포워딩하고 Graceful Restart로 이웃 관계를 유지합니다.'],
+ [2,'Type 1 하이퍼바이저에 해당하는 것은?',['VirtualBox','VMware Workstation','VMware ESXi','Parallels Desktop'],2,'ESXi는 하드웨어 위에서 직접 동작하는 베어메탈 하이퍼바이저입니다.'],
+ [2,'VXLAN의 기본 UDP 목적지 포트와 VNI 크기는?',['4789 / 24비트','4789 / 12비트','8472 / 16비트','179 / 24비트'],0,'IANA 지정 포트는 4789, VNI는 24비트로 약 1,600만 개 세그먼트를 만들 수 있습니다.'],
+ [2,'LISP에서 ETR이 EID-to-RLOC 매핑을 등록하는 대상은?',['Map-Resolver','Map-Server','PITR','RLOC'],1,'ETR은 Map-Server에 등록하고, ITR은 Map-Resolver에 질의합니다.'],
+ [2,'IP 주소가 있는 인터페이스에 vrf forwarding을 적용하면?',['IP 주소가 VRF로 함께 옮겨진다','명령이 거부된다','기존 IP 주소가 삭제된다','인터페이스가 shutdown 된다'],2,'IOS는 VRF를 바꿀 때 IP 주소를 지우므로 다시 설정해야 합니다. 랩 4에서 직접 볼 수 있습니다.'],
+ [2,'GRE와 ESP의 IP 프로토콜 번호로 옳은 것은?',['47 / 50','50 / 51','47 / 51','17 / 50'],0,'GRE 47, ESP 50, AH 51입니다.'],
+ [3,'OSPF 인접 관계에서 양쪽이 같지 않아도 되는 것은?',['Area ID','Hello/Dead 타이머','OSPF 프로세스 ID','인증 설정'],2,'프로세스 ID는 라우터 내부에서만 의미가 있습니다. 라우터 ID는 오히려 서로 달라야 합니다.'],
+ [3,'ABR이 다른 영역의 네트워크를 알리기 위해 만드는 LSA는?',['Type 1','Type 2','Type 3','Type 5'],2,'Type 3 Summary LSA입니다. Type 4는 ASBR 위치, Type 5는 외부 경로입니다.'],
+ [3,'NSSA 안에서 ASBR이 외부 경로를 알릴 때 쓰는 LSA는?',['Type 4','Type 5','Type 7','Type 3'],2,'NSSA에서는 Type 7을 쓰고 ABR이 Type 5로 변환해 백본에 전달합니다.'],
+ [3,'OSPF 이웃이 ExStart에서 멈춰 있다. 가장 가능성 높은 원인은?',['Area 불일치','MTU 불일치','Hello 타이머 불일치','라우터 ID 중복이 아님'],1,'DBD 교환 단계에서 MTU가 다르면 ExStart/Exchange에서 멈춥니다. Area나 타이머가 다르면 아예 이웃이 안 생깁니다.'],
+ [3,'Cisco BGP 최적 경로 선택에서 가장 먼저 비교하는 속성은?',['Local Preference','AS_PATH 길이','Weight','MED'],2,'Cisco 전용 속성인 Weight가 첫 번째이며 라우터 로컬에만 적용됩니다.'],
+ [3,'eBGP 세션의 기본 TTL 값은?',['1','2','64','255'],0,'eBGP는 직접 연결을 가정해 TTL 1로 보냅니다. 루프백끼리 맺으려면 ebgp-multihop이 필요합니다.'],
+ [3,'BGP network 192.168.1.0 mask 255.255.255.0이 광고되려면?',['라우팅 테이블에 192.168.1.0/24가 정확히 있어야 한다','192.168.0.0/16만 있어도 된다','이웃이 Established면 항상 광고된다','auto-summary가 켜져 있어야 한다'],0,'network 명령은 RIB에 같은 프리픽스·마스크가 있을 때만 BGP 테이블에 올립니다.'],
+ [3,'HSRP와 비교한 VRRP의 기본 동작으로 옳은 것은?',['preempt가 기본으로 켜져 있다','멀티캐스트 224.0.0.2를 쓴다','Cisco 전용이다','UDP 1985를 쓴다'],0,'VRRP는 preempt 기본 활성, 224.0.0.18, IP 프로토콜 112를 씁니다. HSRP는 preempt 기본 비활성입니다.'],
+ [3,'HSRP 버전 2가 사용하는 멀티캐스트 주소는?',['224.0.0.2','224.0.0.18','224.0.0.102','224.0.0.10'],2,'v1은 224.0.0.2, v2는 224.0.0.102입니다.'],
+ [3,'LACP로 설정한 두 스위치 포트가 모두 passive일 때 결과는?',['번들이 형성된다','번들이 형성되지 않는다','PAgP로 자동 전환된다','한쪽만 err-disabled 된다'],1,'passive는 상대가 보내는 LACPDU에만 응답하므로 최소 한쪽은 active여야 합니다.'],
+ [3,'두 MST 스위치가 같은 리전으로 동작하려면 일치해야 하는 것은?',['리전 이름, 리비전 번호, VLAN–인스턴스 매핑','브리지 우선순위와 리전 이름','루트 포트와 리비전 번호','native VLAN과 인스턴스 수'],0,'세 가지가 모두 같아야 같은 MST 리전이 됩니다.'],
+ [3,'PortFast 포트에서 BPDU를 받으면 포트를 err-disabled로 만드는 기능은?',['Root Guard','Loop Guard','BPDU Guard','BPDU Filter'],2,'Root Guard는 root-inconsistent, Loop Guard는 loop-inconsistent 상태로 차단합니다.'],
+ [3,'멀티캐스트 RPF 검사에서 기준이 되는 것은?',['그룹 주소로 가는 유니캐스트 경로','소스 주소로 가는 유니캐스트 경로','RP의 IGMP 테이블','수신자의 MAC 주소'],1,'패킷이 들어온 인터페이스가 소스로 향하는 유니캐스트 출구와 같아야 통과합니다.'],
+ [3,'SSM에 대한 설명으로 옳은 것은?',['RP가 반드시 필요하다','232.0.0.0/8 범위를 쓰고 수신자는 IGMPv3가 필요하다','공유 트리만 사용한다','IGMPv1으로도 동작한다'],1,'SSM은 (S,G) 소스 트리만 쓰고 RP가 필요 없습니다. 공유 트리만 쓰는 것은 bidir PIM입니다.'],
+ [3,'MSDP의 용도는?',['RP 사이에서 활성 소스 정보를 교환','IGMP 스누핑 테이블 동기화','PIM-DM 프루닝 가속','멀티캐스트 MAC 주소 변환'],0,'MSDP는 TCP 639로 서로 다른 PIM-SM 도메인의 RP(또는 Anycast RP)가 소스 정보를 공유하게 합니다.'],
+ [3,'NAT에서 외부 네트워크가 보는 내부 호스트의 주소를 부르는 용어는?',['Inside local','Inside global','Outside local','Outside global'],1,'inside global은 변환된 공인 주소입니다. inside local은 내부의 실제 사설 주소입니다.'],
+ [3,'EIGRP 외부 경로의 기본 관리 거리는?',['90','110','170','200'],2,'EIGRP 내부 90, 외부 170, iBGP 200입니다.'],
+ [3,'PTP가 정의된 표준은?',['IEEE 802.1AE','IEEE 1588','RFC 5905','IEEE 802.3ad'],1,'PTP는 IEEE 1588입니다. RFC 5905는 NTPv4, 802.1AE는 MACsec입니다.'],
+ [4,'Syslog 심각도 4에 해당하는 것은?',['Error','Warning','Notification','Critical'],1,'0 Emergency, 1 Alert, 2 Critical, 3 Error, 4 Warning, 5 Notification, 6 Informational, 7 Debugging.'],
+ [4,'SNMPv3에서 인증과 암호화를 모두 쓰는 보안 수준은?',['noAuthNoPriv','authNoPriv','authPriv','privAuth'],2,'authPriv가 인증과 암호화를 모두 적용합니다.'],
+ [4,'Flexible NetFlow record에서 흐름을 구분하는 키 필드를 지정하는 명령은?',['collect','match','exporter','sampler'],1,'match는 키 필드, collect는 수집만 하는 비키 필드입니다.'],
+ [4,'L3 네트워크를 넘어 원격 분석기로 미러링 트래픽을 보내는 방식은?',['SPAN','RSPAN','ERSPAN','VSPAN'],2,'ERSPAN은 GRE로 감싸 라우팅되는 경로로 보냅니다. RSPAN은 전용 VLAN을 통한 L2 방식입니다.'],
+ [4,'NETCONF over SSH의 기본 포트는?',['TCP 22','TCP 443','TCP 830','UDP 161'],2,'NETCONF는 TCP 830을 씁니다. RESTCONF는 HTTPS(443)입니다.'],
+ [4,'IP SLA 측정 결과에 따라 정적 경로를 넣고 빼려면 무엇을 함께 쓰는가?',['track 객체','EEM 타이머','NetFlow 모니터','SPAN 세션'],0,'ip sla → track → ip route … track 순서로 연결합니다.'],
+ [5,'TACACS+의 특징으로 옳은 것은?',['UDP 1812를 쓴다','비밀번호만 암호화한다','인증·인가·과금을 분리하고 전체 페이로드를 암호화한다','표준 개방형 프로토콜로 802.1X에 주로 쓴다'],2,'TACACS+는 TCP 49, 전체 암호화, 명령 단위 인가가 강점입니다. 나머지는 RADIUS 설명입니다.'],
+ [5,'표준 ACL을 배치하는 권장 위치는?',['출발지 가까이','목적지 가까이','코어 스위치','관리 VLAN'],1,'표준 ACL은 출발지만 보므로 출발지 근처에 두면 다른 목적지 트래픽까지 막을 수 있습니다.'],
+ [5,'CoPP 정책을 적용하는 위치는?',['모든 물리 인터페이스 inbound','control-plane에 service-policy input','VTY 라인의 access-class','Loopback0 outbound'],1,'control-plane 설정 모드에서 service-policy input으로 CPU 방향 트래픽에 적용합니다.'],
+ [5,'MACsec에서 키 교환에 쓰는 프로토콜은?',['IKEv2','MKA','EAPOL-Key','TLS'],1,'MKA(MACsec Key Agreement)가 802.1X 결과를 바탕으로 키를 관리합니다.'],
+ [5,'TrustSec에서 정책 적용 기준이 되는 것은?',['VLAN ID','SGT와 SGACL','MAC 주소 테이블','DSCP 값'],1,'단말에 SGT를 붙이고 SGACL로 그룹 간 통신을 제어합니다.'],
+ [5,'802.1X에서 스위치의 역할은?',['Supplicant','Authenticator','Authentication server','Proxy'],1,'단말이 supplicant, 스위치가 authenticator, RADIUS 서버가 authentication server입니다.'],
+ [5,'enable secret 9에 쓰이는 해시 알고리즘은?',['MD5','PBKDF2-SHA256','scrypt','Vigenère'],2,'type 9는 scrypt, type 8은 PBKDF2, type 5는 MD5, type 7은 가역 암호입니다.'],
+ [6,'RESTCONF에서 JSON을 요청할 때 Accept 헤더 값은?',['application/json','application/yang-data+json','text/yang','application/xml+yang'],1,'RFC 8040은 application/yang-data+json과 application/yang-data+xml을 정의합니다.'],
+ [6,'POST로 새 리소스를 만들었을 때 일반적인 성공 코드는?',['200','201','204','202'],1,'201 Created입니다. PATCH나 DELETE 성공은 보통 204 No Content입니다.'],
+ [6,'토큰 없이 API를 호출했을 때 받는 코드는?',['401 Unauthorized','403 Forbidden','404 Not Found','409 Conflict'],0,'401은 인증이 없거나 실패한 경우, 403은 인증됐지만 권한이 없는 경우입니다.'],
+ [6,'Catalyst Center API에서 토큰을 담는 헤더는?',['Authorization: Bearer','X-Auth-Token','X-XSRF-TOKEN','Cookie: JSESSIONID'],1,'POST /dna/system/api/v1/auth/token으로 받은 토큰을 X-Auth-Token에 넣습니다. X-XSRF-TOKEN은 SD-WAN Manager 쪽입니다.'],
+ [6,'YANG에서 키로 구분되는 여러 항목을 담는 노드는?',['leaf','container','list','leaf-list'],2,'list는 key로 각 항목을 구분합니다. leaf-list는 값만 여러 개인 목록입니다.'],
+ [6,'에이전트리스 방식으로 SSH를 통해 장비를 구성하는 도구는?',['Puppet','Chef','Ansible','Puppet Bolt 에이전트'],2,'Ansible은 관리 대상에 에이전트를 설치하지 않습니다.'],
+ [6,'다음 중 올바르지 않은 JSON은?',['{"a": 1}','{"a": [1, 2]}',"{'a': 1}",'{"a": {"b": null}}'],2,'JSON 키와 문자열은 큰따옴표만 허용합니다.'],
+ [6,'EEM 애플릿에서 특정 로그 메시지가 찍히면 실행하도록 하는 이벤트 명령은?',['event cli pattern','event syslog pattern','event timer watchdog','event track'],1,'event syslog pattern "정규식"을 씁니다. 랩 8에서 직접 만들어 볼 수 있습니다.'],
+];
+let quizDom=0,qOrder=[],qPos=0;
+function qPool(){return Q.map((q,i)=>i).filter(i=>!quizDom||Q[i][0]===quizDom)}
+function qStart(){const p=qPool();for(let i=p.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[p[i],p[j]]=[p[j],p[i]]}qOrder=p;qPos=0;qRender()}
+function qRender(){
+  $('#quizdom').innerHTML=[[0,'전체']].concat(DOMAINS.map(d=>[d.id,d.id+'.0 '+d.name])).map(([id,n])=>`<button class="chip" aria-pressed="${id===quizDom}" data-q="${id}">${n} · ${id?Q.filter(q=>q[0]===id).length:Q.length}</button>`).join('');
+  const c=$('#qcard');
+  if(qPos>=qOrder.length){c.innerHTML=`<div class="qtext">이 묶음의 문항을 모두 풀었습니다.</div><p style="color:var(--muted)">오른쪽 정답률에서 약한 도메인을 확인하고 이론 탭으로 돌아가 보세요.</p><div class="btnrow"><button class="btn pri" id="qAgain">다시 섞어서 풀기</button></div>`;$('#qAgain').onclick=qStart;return}
+  const idx=qOrder[qPos],q=Q[idx];
+  c.innerHTML=`<div class="qmeta"><span>${q[0]}.0 ${DOMAINS[q[0]-1].name}</span><span class="mono">${qPos+1} / ${qOrder.length}</span></div><div class="qtext">${esc(q[1])}</div><div class="opts">${q[2].map((o,i)=>`<button data-o="${i}"><span class="k">${'ABCD'[i]}</span><span>${esc(o)}</span></button>`).join('')}</div><div id="qexp"></div>`}
+function qStats(){const s=store.get('quiz',{});$('#qstat').innerHTML=DOMAINS.map(d=>{const v=s[d.id]||{a:0,c:0};const p=v.a?Math.round(v.c/v.a*100):0;return `<div><span>${d.id}.0 ${d.name}</span><span class="meter"><i style="width:${p}%;background:${p>=80?'var(--ok)':p>=60?'var(--led)':'var(--bad)'}"></i></span><span>${v.a?p+'%':'–'}</span></div>`}).join('')}
+$('#qcard').addEventListener('click',e=>{
+  const b=e.target.closest('[data-o]');if(!b||b.disabled)return;
+  const q=Q[qOrder[qPos]];const pick=+b.dataset.o;const ok=pick===q[3];
+  document.querySelectorAll('#qcard [data-o]').forEach(x=>{x.disabled=true;const i=+x.dataset.o;if(i===q[3])x.classList.add('right');else if(i===pick)x.classList.add('wrong')});
+  const s=store.get('quiz',{});s[q[0]]=s[q[0]]||{a:0,c:0};s[q[0]].a++;if(ok)s[q[0]].c++;store.set('quiz',s);
+  $('#qexp').innerHTML=`<div class="expl"><b style="color:${ok?'var(--ok)':'var(--bad)'}">${ok?'정답':'오답'}</b> ${esc(q[4])}</div><div class="btnrow" style="margin-top:10px"><button class="btn pri" id="qNext">다음 문제</button></div>`;
+  $('#qNext').onclick=()=>{qPos++;qRender()};$('#qNext').focus();
+  qStats();renderProgress()});
+$('#quizdom').addEventListener('click',e=>{const b=e.target.closest('[data-q]');if(b){quizDom=+b.dataset.q;qStart()}});
+$('#qClear').onclick=()=>{store.set('quiz',{});qStats();renderProgress()};
+
+/* ---------- resources ---------- */
+const RES={
+ resOfficial:[
+  ['Cisco','ENCOR 350-401 시험 페이지','https://www.cisco.com/site/us/en/learn/training-certifications/exams/encor.html','공식 Exam Topics(v1.2) PDF와 응시 정보'],
+  ['무료','OpenExamPrep ENCOR 학습 가이드','https://open-exam-prep.com/study-guides/cisco-350-401','v1.2 도메인별 무료 해설과 연습 문제'],
+  ['Cisco','Cisco Learning Network','https://learningnetwork.cisco.com/','시험 공지, 커뮤니티 Q&A, 학습 그룹'],
+ ],
+ resLab:[
+  ['브라우저','Cisco DevNet Sandbox','https://devnetsandbox.cisco.com/','IOS XE Always-On, CML 예약형 샌드박스를 무료로 사용. RESTCONF·NETCONF 실습에 바로 쓸 수 있음'],
+  ['무료','Cisco Modeling Labs Free','https://developer.cisco.com/modeling-labs/','공식 이미지로 노드 5개까지 무료. ENCOR 라우팅·스위칭 랩에 가장 안전한 선택'],
+  ['GitHub','srl-labs/containerlab','https://github.com/srl-labs/containerlab','YAML로 토폴로지를 정의하는 컨테이너 기반 랩. GitHub Codespaces에서도 실행 가능'],
+  ['GitHub','hellt/vrnetlab','https://github.com/hellt/vrnetlab','CML에서 받은 IOL·IOSv 이미지를 containerlab용 컨테이너로 변환'],
+  ['GitHub','ipspace/netlab','https://github.com/ipspace/netlab','OSPF·BGP·VRF 랩 구성을 자동 생성하는 도구, 문서는 netlab.tools'],
+ ],
+ resGit:[
+  ['GitHub','mrbiggbrain/CCNP_Study_Resources','https://github.com/mrbiggbrain/CCNP_Study_Resources','ENCOR·ENARSI 합격자가 실제로 쓴 책·영상·랩 목록'],
+  ['GitHub','DangSys/CCNP-ENCOR','https://github.com/DangSys/CCNP-ENCOR','ENCOR 준비 과정의 랩·강의·모의고사 기록'],
+  ['GitHub','network-dluong/CCNP-ENCOR','https://github.com/network-dluong/CCNP-ENCOR','ENCOR 요약 노트'],
+  ['GitHub','topic: ccnp','https://github.com/topics/ccnp','CCNP 관련 공개 저장소 모음 (EVE-NG 랩, Ansible 랩 등)'],
+ ],
+ resAuto:[
+  ['GitHub','hpreston/python_networking','https://github.com/hpreston/python_networking','DevNet NetDevOps Live 예제: netmiko, ncclient, requests, pyATS. Always-On 샌드박스로 실행'],
+  ['GitHub','YangModels/yang','https://github.com/YangModels/yang','IETF·Cisco IOS XE YANG 모델 원본. RESTCONF 경로를 찾을 때 참고'],
+  ['GitHub','CiscoDevNet','https://github.com/CiscoDevNet','Catalyst Center, SD-WAN Manager API 예제 코드'],
+  ['문서','Containerlab 문서','https://containerlab.dev/','설치, Codespaces 실행, Cisco IOL 노드 사용법'],
+ ]};
+for(const k in RES)$('#'+k).innerHTML=RES[k].map(([tag,t,u,d])=>`<a class="item" href="${u}" target="_blank" rel="noopener"><span class="tag">${tag}</span><b>${esc(t)}</b><span>${esc(d)}</span></a>`).join('');
+
+/* ---------- init ---------- */
+renderTheory();calcCidr();calcCost();bgpRender();rcBuild();jsonCheck();qStart();qStats();
+loadLab(store.get('lastLab','ospf'));
+renderProgress();
+openTab((location.hash||'').slice(1)||'overview');
+</script>
+
+</body>
+</html>
