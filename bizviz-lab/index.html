@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>경영정보시각화 실기 랩</title>
+<meta name="description" content="경영정보시각화능력 실기(Power BI) 대비: 브라우저에서 DAX 식을 입력하면 바로 계산되는 DAX 시뮬레이터, 자동 채점 연습문제 32개, 문제1~3 작업 체크리스트, 퀴즈.">
+<meta property="og:title" content="경영정보시각화 실기 랩 — DAX 시뮬레이터">
+<meta property="og:description" content="Power BI 없이도 DAX 측정값·계산 열·계산 테이블을 연습하고 결과를 바로 확인하세요.">
+<meta name="theme-color" content="#12665a">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2312665a'/%3E%3Crect x='7' y='17' width='5' height='9' fill='%23fff'/%3E%3Crect x='14' y='8' width='5' height='18' fill='%23e8a600'/%3E%3Crect x='21' y='13' width='5' height='13' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <div class="logo" aria-hidden="true"><i></i><i></i><i></i></div>
+      <h1>경영정보시각화 실기 랩</h1>
+      <span class="sub">POWER BI · DAX SIMULATOR</span>
+      <span class="spacer"></span>
+      <button class="theme-btn" id="themeBtn" type="button">테마: 자동</button>
+    </div>
+    <nav class="tabs" aria-label="메뉴">
+      <a href="#home">시험 개요</a>
+      <a href="#lab">DAX 랩</a>
+      <a href="#practice">연습문제</a>
+      <a href="#types">문제 유형</a>
+      <a href="#patterns">패턴·함수</a>
+      <a href="#quiz">퀴즈</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- 홈 -->
+  <section class="view" id="v-home" hidden>
+    <div class="panel hero">
+      <span class="eyebrow">대한상공회의소 국가기술자격 · 실기 Power BI</span>
+      <h2>Power BI를 켜지 않아도 DAX는 연습할 수 있습니다</h2>
+      <p class="lede">실기 시험의 계산식은 대부분 정해진 패턴(CALCULATE·FILTER, DATEADD, TOTALYTD, RANKX, DIVIDE…)에서 나옵니다. 이 사이트는 시험과 같은 구조의 판매 데이터 모델을 브라우저에 올려 두고, 식을 입력하면 행렬·슬라이서 필터 컨텍스트에서 바로 계산해 보여 줍니다. 화면 조작(서식·상호작용)은 체크리스트로 정리했습니다.</p>
+      <div class="row"><a class="btn primary" href="#lab">DAX 랩 열기</a><a class="btn" href="#practice">연습문제 풀기</a></div>
+    </div>
+
+    <div class="grid2">
+      <div class="panel" style="display:grid;gap:14px">
+        <h3>실기 시험 한눈에</h3>
+        <div class="facts">
+          <div><b>70분</b><span>시험 시간</span></div>
+          <div><b>70점↑</b><span>합격 기준 (100점 만점)</span></div>
+          <div><b>택1</b><span>Power BI 또는 Tableau</span></div>
+          <div><b>3문제</b><span>작업준비·단순·복합</span></div>
+        </div>
+        <div>
+          <div class="scorebar" role="img" aria-label="배점: 문제1 20점, 문제2 30점, 문제3 50점">
+            <div style="flex:20;background:#3a6ea5">문제1 20</div>
+            <div style="flex:30;background:#4b8a3e">문제2 30</div>
+            <div style="flex:50;background:#c06a12">문제3 50</div>
+          </div>
+          <p class="small muted" style="margin-top:6px">공식 모의문제 기준 배점. 문제3 안의 측정값 소문항만 15점 안팎이라 DAX를 확실히 잡으면 합격선이 가까워집니다.</p>
+        </div>
+        <p class="small muted">필기 합격 후 실기에 응시합니다. 시험용 Power BI Desktop 버전과 일정·응시 조건은 시행처 공지가 기준이니 응시 전에 꼭 확인하세요.</p>
+      </div>
+      <div class="panel" style="display:grid;gap:12px">
+        <h3>이 사이트로 공부하는 순서</h3>
+        <ol class="steps">
+          <li><div><b>개념 4가지 읽기</b><br><span class="small muted">아래 '필터 컨텍스트 · 행 컨텍스트 · 컨텍스트 전환 · CALCULATE'만 이해하면 시험 DAX는 거의 다 풀립니다.</span></div></li>
+          <li><div><b>DAX 랩에서 직접 바꿔 보기</b><br><span class="small muted">행·열·슬라이서를 바꾸며 같은 식의 값이 어떻게 달라지는지 보고, 셀을 눌러 그 셀의 필터를 확인하세요.</span></div></li>
+          <li><div><b>연습문제 자동 채점</b><br><span class="small muted">공식 모의문제 유형(매출_매장, 전월_매출, 연간_누계, 순위 등)을 포함한 32문제 — 측정값·계산 열·계산 테이블.</span></div></li>
+          <li><div><b>문제 유형 체크리스트로 Power BI에서 손으로 반복</b><br><span class="small muted">Power Query·서식·상호작용은 실제 프로그램에서 시간 재며 2~3회 반복하는 게 가장 효과적입니다.</span></div></li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="panel" style="display:grid;gap:14px">
+      <div><span class="eyebrow">연습 데이터 모델</span><h3>산길아웃도어 판매 (2023~2024, 가상 데이터)</h3></div>
+      <div class="grid3" id="modelCards"></div>
+      <div class="tblwrap" style="max-height:none"><table class="mx" id="relTable"></table></div>
+      <p class="small muted">시험과 같은 별(스타) 스키마입니다. 필터는 1쪽(제품·거래처·날짜) → 다쪽(판매)으로만 흐르고, 배송일 관계는 비활성(점선)이라 USERELATIONSHIP으로만 씁니다. 기본 측정값 5개(총수량·총매출금액·총원가·매출이익·매출이익률)가 들어 있습니다.</p>
+    </div>
+
+    <div class="grid4">
+      <div class="panel concept"><h3>① 필터 컨텍스트</h3><p>측정값은 '어떤 필터가 걸린 상태에서 계산되느냐'로 값이 정해집니다. 행렬의 '의류' 행, 슬라이서의 2024, 차트의 막대 하나가 모두 필터입니다. 같은 <code>SUM(판매[매출금액])</code>이 셀마다 다른 값을 내는 이유입니다.</p><p class="small muted">총계 셀은 행 필터가 없는 상태에서 다시 계산한 값이지, 위 셀들을 더한 값이 아닙니다(DISTINCTCOUNT·비율에서 차이가 납니다).</p></div>
+      <div class="panel concept"><h3>② 행 컨텍스트</h3><p>계산 열과 SUMX·FILTER 같은 반복 함수 안에서는 '지금 보고 있는 한 행'이 있습니다. 그래서 <code>판매[수량] * 판매[단가]</code>처럼 열을 바로 쓸 수 있습니다. 측정값 맨 바깥에서 <code>판매[수량]</code>만 쓰면 '어느 행?'을 알 수 없어 오류가 납니다.</p><p class="small muted">다른 테이블의 값은 RELATED(1쪽 값), RELATEDTABLE(다쪽 행들)로 가져옵니다.</p></div>
+      <div class="panel concept"><h3>③ 컨텍스트 전환</h3><p>행 컨텍스트 안에서 CALCULATE를 쓰거나 측정값을 부르면, 현재 행이 필터로 바뀝니다. 제품 테이블 계산 열에서 <code>SUM(판매[수량])</code>은 전체 합계지만 <code>CALCULATE(SUM(판매[수량]))</code>은 그 제품의 합계가 됩니다.</p><p class="small muted">RANKX(ALL(제품[제품명]), [총수량])가 동작하는 원리도 이것입니다.</p></div>
+      <div class="panel concept"><h3>④ CALCULATE 규칙</h3><p><code>CALCULATE(식, 필터…)</code>는 ① 필터 인수를 계산하고 ② 컨텍스트 전환 후 ③ ALL·REMOVEFILTERS 같은 수정자를 적용하고 ④ 필터를 넣습니다. <b>같은 열의 기존 필터는 덮어쓰고</b>, 다른 열의 필터는 그대로 둡니다.</p><p class="small muted">덮어쓰지 않고 교집합을 원하면 KEEPFILTERS, 비활성 관계는 USERELATIONSHIP.</p></div>
+    </div>
+
+    <div class="panel small muted">
+      <b>참고한 자료</b> — 시험 구성·배점은 공개된 시행처 모의문제 해설과 수험 정보를 바탕으로 정리했습니다:
+      <a href="https://powerbi.co.kr/5r398nmngkr162vwje7y" target="_blank" rel="noopener">PowerBI.co.kr 실기 모의문제(A형) 풀이</a> ·
+      <a href="https://wowpass.com/ExamInfo/265274" target="_blank" rel="noopener">와우패스 2026 수험정보</a> ·
+      <a href="https://maily.so/bdaa/posts/vpzl6wjxzk9" target="_blank" rel="noopener">BDA 뉴스레터 시험 소개</a> ·
+      <a href="https://license.korcham.net/co/examguide.do?mm=28&cd=0108" target="_blank" rel="noopener">대한상공회의소 자격평가사업단 종목 안내</a>.
+      연습 데이터와 문제는 모두 이 사이트에서 새로 만든 것입니다.
+    </div>
+  </section>
+
+  <!-- DAX 랩 -->
+  <section class="view" id="v-lab" hidden>
+    <div class="lab">
+      <aside class="side">
+        <div class="panel tight">
+          <div class="row" style="justify-content:space-between"><b class="small">필드</b><span class="small muted">눌러서 삽입</span></div>
+          <div class="tree" id="fieldTree"></div>
+        </div>
+        <div class="panel tight">
+          <div class="row" style="justify-content:space-between"><b class="small">측정값</b><button class="btn sm ghost" id="resetMs" type="button" title="내가 만든 측정값·계산 열 모두 삭제">초기화</button></div>
+          <div class="mslist" id="msList"></div>
+        </div>
+      </aside>
+      <div style="display:grid;gap:14px;min-width:0">
+        <div class="panel" style="display:grid;gap:10px">
+          <div class="toolbar">
+            <div class="seg" id="modeSeg" role="group" aria-label="계산 종류">
+              <button type="button" data-mode="measure" aria-pressed="true">측정값</button>
+              <button type="button" data-mode="column" aria-pressed="false">계산 열</button>
+              <button type="button" data-mode="table" aria-pressed="false">새 테이블</button>
+            </div>
+            <label class="small muted" id="colTableWrap" hidden>테이블 <select id="colTable"></select></label>
+            <span class="grow"></span>
+            <select id="exampleSel" aria-label="예제 불러오기"><option value="">예제 불러오기…</option></select>
+          </div>
+          <div id="labEditor"></div>
+          <div class="toolbar">
+            <button class="btn primary" id="runBtn" type="button">▶ 실행 <kbd>Ctrl+Enter</kbd></button>
+            <button class="btn" id="saveBtn" type="button">측정값으로 저장</button>
+            <label class="small muted">서식 <select id="fmtSel">
+              <option value="auto">자동</option><option value="#,##0">#,##0</option><option value="#,##0.00">#,##0.00</option>
+              <option value="0.0%">0.0%</option><option value="0.00%">0.00%</option><option value="#,##0,,">백만 단위 (#,##0,,)</option><option value="yyyy-mm-dd">yyyy-mm-dd</option><option value="">일반</option>
+            </select></label>
+          </div>
+          <p class="small muted" id="modeHelp"></p>
+        </div>
+        <div class="panel" style="display:grid;gap:12px" id="vizPanel">
+          <div class="vizbar" id="vizBar">
+            <label>행 <select id="rowSel"></select></label>
+            <label>열 <select id="colSel"></select></label>
+          </div>
+          <details id="slicerBox" open><summary class="small" style="cursor:pointer"><b>슬라이서</b> <span class="muted" id="slicerSum"></span></summary><div class="slicers" id="slicers" style="margin-top:8px"></div></details>
+        </div>
+        <div class="panel result" id="labResult"><p class="muted">식을 입력하고 실행하면 결과가 여기에 나옵니다.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 연습문제 -->
+  <section class="view" id="v-practice" hidden>
+    <div class="practice">
+      <aside class="plist panel tight" id="pList"></aside>
+      <div class="panel" style="display:grid;gap:14px;min-width:0" id="pDetail"></div>
+    </div>
+  </section>
+
+  <!-- 문제 유형 -->
+  <section class="view" id="v-types" hidden>
+    <div class="panel" style="display:grid;gap:10px">
+      <h2>문제 유형별 작업 체크리스트</h2>
+      <p class="lede">공식 모의문제의 소문항을 작업 단위로 쪼갰습니다. Power BI Desktop에서 직접 해 보고 할 수 있게 되면 체크하세요(이 기기에 저장). 70분 안에 끝내려면 서식은 '복사 후 필드 바꾸기', 측정값은 미리 외운 패턴으로 시간을 줄이는 게 핵심입니다.</p>
+      <div class="scorebar" role="img" aria-label="권장 시간 배분">
+        <div style="flex:15;background:#3a6ea5">문제1 ~15분</div>
+        <div style="flex:20;background:#4b8a3e">문제2 ~20분</div>
+        <div style="flex:30;background:#c06a12">문제3 ~30분</div>
+        <div style="flex:5;background:#6b737b">검토</div>
+      </div>
+    </div>
+    <div class="grid3" id="ckList" style="align-items:start"></div>
+  </section>
+
+  <!-- 패턴·함수 -->
+  <section class="view" id="v-patterns" hidden>
+    <div class="panel" style="display:grid;gap:12px">
+      <h2>시험에 나오는 DAX 패턴</h2>
+      <p class="lede">'랩에서 열기'를 누르면 DAX 랩에 식이 들어갑니다. 이름(=) 앞부분까지 정확히 쓰는 연습을 하세요 — 시험은 측정값 이름도 채점합니다.</p>
+      <div class="grid2" id="patList"></div>
+    </div>
+    <div class="panel" style="display:grid;gap:12px">
+      <div class="row" style="justify-content:space-between"><h3>지원 함수 목록</h3><input type="search" id="fnSearch" placeholder="함수 검색 (예: DATE, 누계)" aria-label="함수 검색"></div>
+      <div class="row" id="fnCats"></div>
+      <div class="fnlist" id="fnList"></div>
+      <p class="small muted">이 시뮬레이터는 실기에 필요한 범위의 DAX를 직접 구현한 것입니다. 확장 테이블·양방향 필터·일부 함수의 세부 동작은 Power BI와 다를 수 있으니, 결과가 이상하면 Power BI Desktop에서 한 번 더 확인하세요.</p>
+    </div>
+  </section>
+
+  <!-- 퀴즈 -->
+  <section class="view" id="v-quiz" hidden>
+    <div class="panel row" style="justify-content:space-between">
+      <div><h2>개념 퀴즈 20</h2><p class="small muted">Power Query·모델링·시각화 조작·DAX 개념을 섞었습니다.</p></div>
+      <div class="row"><b id="qScore" class="mono"></b><button class="btn sm" id="qReset" type="button">다시 풀기</button></div>
+    </div>
+    <div class="quiz" id="quizList"></div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">경영정보시각화 실기 랩 · 개인 학습용 · 데이터는 모두 가상입니다. Power BI는 Microsoft의 상표입니다. · <a href="../">MJ-best</a></div>
+</footer>
+
+<script src="data.js"></script>
+<script src="dax.js"></script>
+<script src="grid.js"></script>
+<script src="content.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
