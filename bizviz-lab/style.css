@@ -158,7 +158,7 @@ select,input[type=text],input[type=search]{border:1px solid var(--line);backgrou
 .cardviz span{font-size:.78rem;color:var(--muted)}
 .result{display:grid;gap:14px}
 .tblwrap{overflow:auto;border:1px solid var(--line);border-radius:7px;max-height:520px;background:var(--surface)}
-table.mx{border-collapse:collapse;font-size:.86rem;width:max-content;min-width:100%}
+table.mx{border-collapse:collapse;font-size:.86rem;width:100%}
 table.mx th,table.mx td{padding:5px 10px;border-bottom:1px solid var(--line-2);white-space:nowrap;text-align:right}
 table.mx th{position:sticky;top:0;background:var(--surface-2);z-index:1;font-weight:600;border-bottom:1px solid var(--line)}
 table.mx th:first-child,table.mx td:first-child{text-align:left;position:sticky;left:0;background:var(--surface);z-index:1}
@@ -249,3 +249,22 @@ footer a{color:inherit}
 .setbar .dots button.cur{border-color:var(--ink);font-weight:700}
 .setbar #setLeft{margin-left:auto}
 .setbar #setLeft.over{color:var(--bad);font-weight:600}
+
+/* 사용법·피드백 */
+.howto{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:10px}
+.howto>div{display:grid;grid-template-columns:28px 1fr;gap:8px;align-items:start;background:var(--surface-2);border:1px solid var(--line-2);border-radius:8px;padding:10px 12px;font-size:.9rem}
+.howto>div>b{width:26px;height:26px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-size:.85rem}
+.howto.big>div{font-size:.95rem;padding:14px}
+.howto-wrap{display:grid;gap:8px;border:1px dashed var(--accent);border-radius:8px;padding:10px 12px;background:var(--accent-soft)}
+.howto-wrap .row{justify-content:space-between}
+@keyframes flash{0%{box-shadow:0 0 0 3px var(--hi);background:var(--hi-soft)}100%{box-shadow:0 0 0 0 transparent}}
+.flash{animation:flash 1.1s ease-out}
+.stamp{font-family:var(--f-mono);font-size:.75rem;color:var(--muted)}
+.tut{display:grid;gap:10px;border-color:var(--accent)}
+.tut .steps2{display:flex;gap:6px;flex-wrap:wrap}
+.tut .steps2 button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 12px;font-size:.85rem}
+.tut .steps2 button.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
+.tut .steps2 button.done{border-color:var(--ok);color:var(--ok)}
+.tut .say{background:var(--surface-2);border-radius:8px;padding:10px 12px;font-size:.93rem}
+.tut .say code{font-size:.85rem}
+#labResult,#pOut,#pDetail{scroll-margin-top:110px}

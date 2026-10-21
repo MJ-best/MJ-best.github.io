@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=20261021c">
 </head>
 <body>
 <header class="top">
@@ -38,10 +38,15 @@
   <!-- 홈 -->
   <section class="view" id="v-home" hidden>
     <div class="panel hero">
-      <span class="eyebrow">대한상공회의소 국가기술자격 · 실기 Power BI</span>
-      <h2>Power BI를 켜지 않아도 DAX는 연습할 수 있습니다</h2>
-      <p class="lede">실기 시험의 계산식은 대부분 정해진 패턴(CALCULATE·FILTER, DATEADD, TOTALYTD, RANKX, DIVIDE…)에서 나옵니다. 이 사이트는 시험과 같은 구조의 판매 데이터 모델을 브라우저에 올려 두고, 식을 입력하면 행렬·슬라이서 필터 컨텍스트에서 바로 계산해 보여 줍니다. 시간이 가장 많이 드는 DAX만 집중해서, 손에 익을 때까지 반복하도록 만들었습니다.</p>
-      <div class="row"><a class="btn primary" href="#lab">DAX 랩 열기</a><a class="btn" href="#practice">연습문제 116개 풀기</a></div>
+      <span class="eyebrow">경영정보시각화능력 실기 · Power BI DAX 연습</span>
+      <h2>DAX 식을 쓰면 바로 채점해 주는 연습장입니다</h2>
+      <div class="howto big">
+        <div><b>1</b><p><b>연습문제</b> 탭에서 문제를 고릅니다.<br><span class="muted">처음이면 1번 '총수량'부터.</span></p></div>
+        <div><b>2</b><p>입력 칸의 <code>이름 =</code> 뒤에 DAX 식을 씁니다.<br><span class="muted">예) <code>총수량2 = SUM(판매[수량])</code></span></p></div>
+        <div><b>3</b><p><b>채점</b> 버튼(또는 Ctrl+Enter)을 누릅니다.<br><span class="muted">맞으면 초록색, 틀리면 어느 칸이 다른지 표로 보여 줍니다.</span></p></div>
+      </div>
+      <div class="row"><a class="btn primary" href="#practice/a01">1번 문제 풀어 보기 →</a><a class="btn" href="#lab">DAX 랩(자유 연습) 따라 해보기</a></div>
+      <p class="small muted">Power BI 없이 브라우저에서 계산합니다. 시험과 같은 구조의 가상 판매 데이터(판매·제품·거래처·날짜)를 씁니다.</p>
     </div>
 
     <div class="grid2">
@@ -112,6 +117,7 @@
         </div>
       </aside>
       <div style="display:grid;gap:14px;min-width:0">
+        <div class="panel tut" id="tut"></div>
         <div class="panel" style="display:grid;gap:10px">
           <div class="toolbar">
             <div class="seg" id="modeSeg" role="group" aria-label="계산 종류">
@@ -183,11 +189,11 @@
   <div class="wrap">경영정보시각화 실기 랩 · 개인 학습용 · 데이터는 모두 가상입니다. Power BI는 Microsoft의 상표입니다. · <a href="../">MJ-best</a></div>
 </footer>
 
-<script src="data.js"></script>
-<script src="dax.js"></script>
-<script src="grid.js"></script>
-<script src="content.js"></script>
-<script src="problems.js"></script>
-<script src="app.js"></script>
+<script src="data.js?v=20261021c"></script>
+<script src="dax.js?v=20261021c"></script>
+<script src="grid.js?v=20261021c"></script>
+<script src="content.js?v=20261021c"></script>
+<script src="problems.js?v=20261021c"></script>
+<script src="app.js?v=20261021c"></script>
 </body>
 </html>

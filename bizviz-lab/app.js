@@ -191,7 +191,7 @@
     h += "</tr></thead><tbody>";
     const cell = (v, r, c, cls) => {
       const key = (r === null ? "T" : K(r)) + "|" + (c === null ? "T" : K(c));
-      const b = bars && cls === "" && isNum(v) ? `<span class="bar" style="width:${Math.round((Math.abs(v) / max) * 60)}px"></span>` : "";
+      const b = bars && cls === "" && r !== null && isNum(v) ? `<span class="bar" style="width:${Math.min(60, Math.round((Math.abs(v) / max) * 60))}px"></span>` : "";
       return `<td class="num cell ${cls} ${bad.has(key) ? "bad" : ""}" data-r="${r === null ? "" : esc(K(r))}" data-c="${c === null ? "" : esc(K(c))}">${b}${esc(fmtV(v, fmt))}</td>`;
     };
     if (rRef) {
@@ -281,6 +281,7 @@
     $("#rowSel").addEventListener("change", () => { lab.rows = $("#rowSel").value; saveLab(); runLab(); });
     $("#colSel").addEventListener("change", () => { lab.cols = $("#colSel").value; saveLab(); runLab(); });
     buildSlicers();
+    if (window.innerWidth < 700 && !Object.keys(lab.slicers || {}).length) $("#slicerBox").open = false;
     $("#runBtn").addEventListener("click", runLab);
     $("#saveBtn").addEventListener("click", saveFromLab);
     $("#resetMs").addEventListener("click", () => {
@@ -291,7 +292,41 @@
     });
     $("#labResult").addEventListener("click", onCellClick);
     setMode(lab.mode, true);
-    renderFields(); renderMeasures();
+    renderFields(); renderMeasures(); renderTut();
+  }
+
+  // ───────── 랩 따라 해보기 ─────────
+  const TUT = [
+    { t: "① SUM 실행", code: "총매출 = SUM(판매[매출금액])", rows: "제품[분류명]", cols: "", slicers: {},
+      say: "<b>행렬의 행(분류명)이 곧 필터입니다.</b> 같은 SUM 식인데 신발·용품·의류 행마다 값이 다르고, 합계 행은 필터 없이 다시 계산한 값입니다. 표에서 아무 숫자나 눌러 보세요 — 그 칸에 걸린 필터가 아래에 나옵니다." },
+    { t: "② 슬라이서 걸기", code: "총매출 = SUM(판매[매출금액])", rows: "제품[분류명]", cols: "", slicers: { "날짜[연도]": [2024] },
+      say: "<b>슬라이서에서 2024를 골랐습니다.</b> 식은 그대로인데 모든 칸이 2024년 값으로 줄었습니다. 슬라이서 칩을 직접 눌러 껐다 켜 보세요." },
+    { t: "③ CALCULATE로 필터 바꾸기", code: "의류 매출 = CALCULATE([총매출금액], 제품[분류명] = \"의류\")", rows: "제품[분류명]", cols: "", slicers: {},
+      say: "<b>모든 행이 같은 값(의류 매출)이 됐습니다.</b> CALCULATE의 조건은 같은 열(분류명)에 걸린 행 필터를 덮어씁니다. 시험에서 가장 많이 헷갈리는 부분입니다." },
+    { t: "④ ALL로 비중 구하기", code: "매출 비중 = DIVIDE([총매출금액], CALCULATE([총매출금액], ALL(제품)))", rows: "제품[분류명]", cols: "", slicers: {},
+      say: "<b>분모는 ALL(제품)로 제품 필터를 지운 전체 매출입니다.</b> 그래서 각 행은 비중이 되고 합계는 100%. 이제 식에서 <code>ALL(제품)</code>을 지우고 실행해 보세요 — 모든 행이 100%가 됩니다." },
+    { t: "⑤ 시간 인텔리전스", code: "전월_매출 = CALCULATE([총매출금액], DATEADD('날짜'[날짜], -1, MONTH))", rows: "날짜[연월]", cols: "", slicers: {},
+      say: "<b>각 행에 바로 위 달의 매출이 나옵니다.</b> 첫 달(2023-01)은 이전 데이터가 없어 빈 값입니다. 이제 <b>연습문제</b> 탭에서 직접 써 보세요." },
+  ];
+  let tutStep = store.get("tutStep", -1);
+  function renderTut() {
+    const box = $("#tut"); if (!box) return;
+    if (store.get("tutOff", false)) { box.innerHTML = '<div class="row" style="justify-content:space-between"><span class="small muted">처음 쓰는 방법이 궁금하면</span><button class="btn sm" type="button" id="tutOn">따라 해보기 열기</button></div>'; $("#tutOn").onclick = () => { store.set("tutOff", false); renderTut(); }; return; }
+    const s = TUT[tutStep];
+    box.innerHTML = `<div class="row" style="justify-content:space-between"><b>따라 해보기 — 버튼을 순서대로 눌러 보세요</b><button class="btn sm ghost" type="button" id="tutHide">닫기</button></div>
+      <div class="steps2">${TUT.map((x, i) => `<button type="button" data-t="${i}" class="${i === tutStep ? "on" : i < tutStep ? "done" : ""}">${esc(x.t)}</button>`).join("")}</div>
+      <div class="say">${s ? s.say : "아래 칸에 DAX 식을 쓰고 <b>▶ 실행</b>을 누르면, 그 아래 표(행렬)에 계산 결과가 나옵니다. 처음이면 <b>① SUM 실행</b>부터 눌러 보세요."}</div>
+      ${s && tutStep < TUT.length - 1 ? `<div><button class="btn sm primary" type="button" data-t="${tutStep + 1}">다음 단계 →</button></div>` : s ? '<div><a class="btn sm primary" href="#practice/a01">연습문제 풀러 가기 →</a></div>' : ""}`;
+    box.onclick = (e) => {
+      if (e.target.closest("#tutHide")) { store.set("tutOff", true); renderTut(); return; }
+      const b = e.target.closest("[data-t]"); if (!b) return;
+      tutStep = +b.dataset.t; store.set("tutStep", tutStep);
+      const t = TUT[tutStep];
+      setMode("measure", true);
+      lab.rows = t.rows; lab.cols = t.cols; lab.slicers = JSON.parse(JSON.stringify(t.slicers)); lab.fmt = "auto"; $("#fmtSel").value = "auto";
+      syncViz(); labEd.set(t.code); store.set("labCode:measure", t.code);
+      renderTut(); runLab();
+    };
   }
   function saveLab() { const { sel, ...rest } = lab; void sel; store.set("lab", rest); }
   function syncViz() {
@@ -386,7 +421,18 @@
     if (ast.type === "ref") { const m = model.measures.get(ast.name.toLowerCase()); if (m) return m.format; }
     return undefined;
   }
+  function showResult(el) {
+    const now = new Date();
+    el.insertAdjacentHTML("afterbegin", `<div class="stamp">▶ ${now.toLocaleTimeString("ko-KR", { hour12: false })} 계산됨</div>`);
+    el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash");
+    const r = el.getBoundingClientRect();
+    if (r.top > window.innerHeight * 0.6 || r.bottom < 120) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
   function runLab() {
+    runLabInner();
+    showResult($("#labResult"));
+  }
+  function runLabInner() {
     const text = labEd.get();
     const out = $("#labResult");
     if (!text.trim()) { out.innerHTML = '<p class="muted">식을 입력하세요.</p>'; return; }
@@ -575,6 +621,10 @@
       <p class="task">${esc(p.task)}</p>
       <div class="setup">${setup.join("")}</div>
       <p class="small muted">${s.ok ? `✓ 해결함${s.best ? " · 최고 기록 " + mmss(s.best) : ""}` : s.tries ? `시도 ${s.tries}회 · 아직 미해결` : "처음 푸는 문제"}${s.peek ? " · 정답 확인함" : ""}</p>
+      ${store.get("howtoOff", false) ? "" : `<div class="howto-wrap"><div class="row"><b class="small">사용법</b><button class="btn sm ghost" type="button" id="howtoOff">다시 보지 않기</button></div><div class="howto">
+        <div><b>1</b><p>아래 칸의 <code>${esc(p.name)} =</code> 뒤에 식을 씁니다.</p></div>
+        <div><b>2</b><p><b>채점</b>(Ctrl+Enter)을 누릅니다.</p></div>
+        <div><b>3</b><p>틀리면 다른 칸을 표로 보여 줍니다. 막히면 <b>힌트</b> → <b>정답 보기</b>.</p></div></div></div>`}
       <div id="pEditor"></div>
       <div class="toolbar"><button class="btn primary" id="pRun" type="button">채점 <kbd>Ctrl+Enter</kbd></button><button class="btn" id="pHint" type="button">힌트</button><button class="btn" id="pAns" type="button">정답 보기</button><button class="btn ghost" id="pClear" type="button">지우고 다시</button><button class="btn ghost" id="pLab" type="button">랩에서 열기</button></div>
       <div id="pHintBox" class="note" hidden>${esc(p.hint || "정답 보기 전에 함수 목록(패턴·함수 탭)을 참고해 보세요.")}</div>
@@ -583,6 +633,7 @@
     pEd = Editor($("#pEditor"), { onRun: gradeCur, minHeight: 90, placeholder: `${p.name} = `, onChange: () => store.set("code:" + p.id, pEd.get()) });
     pEd.set(store.get("code:" + p.id, `${p.name} = `));
     $("#pRun").onclick = gradeCur;
+    const ho = $("#howtoOff"); if (ho) ho.onclick = () => { store.set("howtoOff", true); ho.closest(".howto-wrap").remove(); };
     $("#pHint").onclick = () => ($("#pHintBox").hidden = !$("#pHintBox").hidden);
     $("#pAns").onclick = () => {
       const box = $("#pAnsBox");
@@ -611,7 +662,7 @@
   function gradeCur() {
     const p = curP, text = pEd.get(), out = $("#pOut");
     const { name, expr, offset } = defParts(text);
-    if (!expr.trim() || (name && !expr.trim())) { out.innerHTML = '<div class="err">식을 입력하세요.</div>'; return; }
+    if (!expr.trim()) { out.innerHTML = `<div class="err"><b>식이 비어 있어요.</b> 입력 칸의 <code>${esc(p.name)} =</code> 뒤에 DAX 식을 이어서 쓰세요. 막히면 '힌트'를 눌러 보세요.</div>`; showResult(out); pEd.focus(); return; }
     const s = st(p.id);
     try {
       DAX.parse(expr);
@@ -632,6 +683,7 @@
         saveStats(); renderPList();
         if (pset && pset.ids.includes(p.id)) { const sb = $(".setbar"); if (sb) sb.outerHTML = setBanner(); }
         out.innerHTML = html + measurePreview(p, expr, name);
+        showResult(out);
         const g = $("#pGoNext");
         if (g) { g.onclick = () => (setDone ? finishSet() : openProblem(nx, true)); g.focus(); }
         return;
@@ -640,9 +692,11 @@
       html += `<div class="tblwrap" style="max-height:260px"><table class="mx diffs"><thead><tr><th>위치</th><th>정답</th><th>내 결과</th></tr></thead><tbody>${r.diffs.slice(0, 15).map((d) => `<tr><td>${esc(d.where)}</td><td class="e">${esc(d.expected) || "(빈 값)"}</td><td class="g">${esc(d.got) || "(빈 값)"}</td></tr>`).join("")}</tbody></table></div>`;
       saveStats(); renderPList();
       out.innerHTML = html + measurePreview(p, expr, name);
+      showResult(out);
     } catch (e) {
       pEd.markError(e.pos !== undefined ? e.pos + offset : undefined);
       out.innerHTML = errorHTML(e, text, offset);
+      showResult(out);
     }
   }
   function measurePreview(p, expr, name) {
@@ -775,10 +829,10 @@
     const h = location.hash.replace(/^#/, "");
     const [v, arg] = h.split("/");
     const view = VIEWS.includes(v) ? v : "home";
-    VIEWS.forEach((x) => ($("#v-" + x).hidden = x !== view));
+    VIEWS.forEach((x) => { const el = $("#v-" + x); if (el) el.hidden = x !== view; });
     $$("nav.tabs a").forEach((a) => a.setAttribute("aria-current", a.getAttribute("href") === "#" + view ? "page" : "false"));
     document.title = { home: "경영정보시각화 실기 랩", lab: "DAX 랩 · 경영정보시각화 실기 랩", practice: "연습문제 · 경영정보시각화 실기 랩", patterns: "DAX 패턴 · 경영정보시각화 실기 랩", quiz: "퀴즈 · 경영정보시각화 실기 랩" }[view];
-    if (view === "lab" && !inited.lab) { inited.lab = 1; initLab(); runLab(); }
+    if (view === "lab" && !inited.lab) { inited.lab = 1; initLab(); runLabInner(); }
     if (view === "practice") { if (!inited.practice) { inited.practice = 1; initPractice(); } if (!curP || (arg && arg !== curP.id)) openProblem(arg || store.get("lastP", C.PROBLEMS[0].id)); else renderPList(); store.set("lastP", curP.id); }
     if (view === "patterns" && !inited.patterns) { inited.patterns = 1; renderPatterns(); }
     if (view === "quiz" && !inited.quiz) { inited.quiz = 1; initQuiz(); renderQuiz(); }
