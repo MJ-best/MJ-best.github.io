@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="style.css?v=20261021c">
+<link rel="stylesheet" href="style.css?v=20261021d">
 </head>
 <body>
 <header class="top">
@@ -25,11 +25,11 @@
       <button class="theme-btn" id="themeBtn" type="button">테마: 자동</button>
     </div>
     <nav class="tabs" aria-label="메뉴">
-      <a href="#home">시험 개요</a>
-      <a href="#lab">DAX 랩</a>
-      <a href="#practice">연습문제</a>
-      <a href="#patterns">패턴·함수</a>
       <a href="#quiz">퀴즈</a>
+      <a href="#patterns">패턴</a>
+      <a href="#practice">직접 쓰기</a>
+      <a href="#lab">DAX 랩</a>
+      <a href="#home">시험 개요</a>
     </nav>
   </div>
 </header>
@@ -45,7 +45,7 @@
         <div><b>2</b><p>입력 칸의 <code>이름 =</code> 뒤에 DAX 식을 씁니다.<br><span class="muted">예) <code>총수량2 = SUM(판매[수량])</code></span></p></div>
         <div><b>3</b><p><b>채점</b> 버튼(또는 Ctrl+Enter)을 누릅니다.<br><span class="muted">맞으면 초록색, 틀리면 어느 칸이 다른지 표로 보여 줍니다.</span></p></div>
       </div>
-      <div class="row"><a class="btn primary" href="#practice/a01">1번 문제 풀어 보기 →</a><a class="btn" href="#lab">DAX 랩(자유 연습) 따라 해보기</a></div>
+      <div class="row"><a class="btn primary" href="#quiz">DAX 퀴즈 풀기 →</a><a class="btn" href="#patterns">패턴 사전</a><a class="btn" href="#practice/a01">직접 식 써 보기</a></div>
       <p class="small muted">Power BI 없이 브라우저에서 계산합니다. 시험과 같은 구조의 가상 판매 데이터(판매·제품·거래처·날짜)를 씁니다.</p>
     </div>
 
@@ -160,28 +160,26 @@
     </div>
   </section>
 
-  <!-- 패턴·함수 -->
+  <!-- 패턴 -->
   <section class="view" id="v-patterns" hidden>
     <div class="panel" style="display:grid;gap:12px">
-      <h2>시험에 나오는 DAX 패턴</h2>
-      <p class="lede">'랩에서 열기'를 누르면 DAX 랩에 식이 들어갑니다. 이름(=) 앞부분까지 정확히 쓰는 연습을 하세요 — 시험은 측정값 이름도 채점합니다.</p>
-      <div class="grid2" id="patList"></div>
+      <div class="row" style="justify-content:space-between;align-items:end"><div><h2>DAX 패턴 사전</h2><p class="small muted">시험에 나오는 식을 주제별로 모았습니다. 모든 식은 이 사이트의 데이터에서 실제로 계산됩니다. <b>▶ 랩에서 실행</b>으로 결과를 보고, 식을 조금씩 바꿔 보세요.</p></div>
+        <input type="search" id="patSearch" placeholder="검색 (예: 비중, DATEADD, RANKX)" aria-label="패턴 검색"></div>
+      <div class="row" id="patCats"></div>
     </div>
-    <div class="panel" style="display:grid;gap:12px">
-      <div class="row" style="justify-content:space-between"><h3>지원 함수 목록</h3><input type="search" id="fnSearch" placeholder="함수 검색 (예: DATE, 누계)" aria-label="함수 검색"></div>
-      <div class="row" id="fnCats"></div>
-      <div class="fnlist" id="fnList"></div>
-      <p class="small muted">이 시뮬레이터는 실기에 필요한 범위의 DAX를 직접 구현한 것입니다. 확장 테이블·양방향 필터·일부 함수의 세부 동작은 Power BI와 다를 수 있으니, 결과가 이상하면 Power BI Desktop에서 한 번 더 확인하세요.</p>
-    </div>
+    <div id="patList" style="display:grid;gap:18px"></div>
+    <details class="panel"><summary><b>지원 함수 목록</b> <span class="small muted">— 누르면 DAX 랩에 함수가 들어갑니다</span></summary>
+      <div style="display:grid;gap:12px;margin-top:12px">
+        <div class="row" style="justify-content:space-between"><div class="row" id="fnCats"></div><input type="search" id="fnSearch" placeholder="함수 검색" aria-label="함수 검색"></div>
+        <div class="fnlist" id="fnList"></div>
+        <p class="small muted">이 시뮬레이터는 실기에 필요한 범위의 DAX를 직접 구현한 것입니다. 일부 세부 동작은 Power BI와 다를 수 있습니다.</p>
+      </div>
+    </details>
   </section>
 
   <!-- 퀴즈 -->
   <section class="view" id="v-quiz" hidden>
-    <div class="panel row" style="justify-content:space-between">
-      <div><h2>DAX 개념 퀴즈 20</h2><p class="small muted">결과를 예측하는 문제 위주입니다. 틀린 문항은 랩에서 직접 돌려 보세요.</p></div>
-      <div class="row"><b id="qScore" class="mono"></b><button class="btn sm" id="qReset" type="button">다시 풀기</button></div>
-    </div>
-    <div class="quiz" id="quizList"></div>
+    <div id="quizRoot" style="display:grid;gap:16px"></div>
   </section>
 </main>
 
@@ -189,11 +187,13 @@
   <div class="wrap">경영정보시각화 실기 랩 · 개인 학습용 · 데이터는 모두 가상입니다. Power BI는 Microsoft의 상표입니다. · <a href="../">MJ-best</a></div>
 </footer>
 
-<script src="data.js?v=20261021c"></script>
-<script src="dax.js?v=20261021c"></script>
-<script src="grid.js?v=20261021c"></script>
-<script src="content.js?v=20261021c"></script>
-<script src="problems.js?v=20261021c"></script>
-<script src="app.js?v=20261021c"></script>
+<script src="data.js?v=20261021d"></script>
+<script src="dax.js?v=20261021d"></script>
+<script src="grid.js?v=20261021d"></script>
+<script src="content.js?v=20261021d"></script>
+<script src="problems.js?v=20261021d"></script>
+<script src="patterns.js?v=20261021d"></script>
+<script src="quiz.js?v=20261021d"></script>
+<script src="app.js?v=20261021d"></script>
 </body>
 </html>

@@ -1057,7 +1057,7 @@
   aggCol("SUM", (v) => { const n = nums(v); return n.length ? n.reduce((a, b) => a + b, 0) : null; }, "열의 합계");
   aggCol("AVERAGE", (v) => { const n = nums(v); return n.length ? n.reduce((a, b) => a + b, 0) / n.length : null; }, "열의 평균(빈 값 제외)");
   aggCol("MEDIAN", (v) => { const n = nums(v).sort((a, b) => a - b); if (!n.length) return null; const h = n.length >> 1; return n.length % 2 ? n[h] : (n[h - 1] + n[h]) / 2; }, "열의 중앙값");
-  aggCol("COUNT", (v) => { const c = v.filter((x) => typeof x === "number" || isDate(x)).length; return c || null; }, "숫자/날짜 값 개수");
+  aggCol("COUNT", (v) => { const c = v.filter((x) => !isBlank(x) && typeof x !== "boolean").length; return c || null; }, "빈 값이 아닌 값 개수(숫자·날짜·텍스트)");
   aggCol("COUNTA", (v) => { const c = v.filter((x) => !isBlank(x)).length; return c || null; }, "빈 값이 아닌 값 개수");
   aggCol("COUNTBLANK", (v) => { const c = v.filter((x) => isBlank(x) || x === "").length; return c || null; }, "빈 값 개수");
   aggCol("DISTINCTCOUNT", (v) => { const s = new Set(v.map(keyOf)); return s.size || null; }, "고유 값 개수");
@@ -1382,18 +1382,36 @@
   }, "CALENDARAUTO()", "모델의 날짜 범위로 날짜 테이블", "날짜");
 
   // 시간 인텔리전스
+  function yearEndOf(eng, node, env) {
+    if (!node || node.type === "empty") return null;
+    const v = eng.evalScalar(node, env);
+    const m = /^\s*(\d{1,2})\s*[-/.]\s*(\d{1,2})\s*$/.exec(String(v));
+    if (!m) throw eng.err(`연말일은 "6-30"처럼 "월-일" 텍스트로 씁니다.`, node);
+    return [+m[1], +m[2]];
+  }
+  function ytdStartOf(last, ye) {
+    const [y] = ymd(last);
+    if (!ye) return mk(y, 1, 1);
+    const endThis = mk(y, ye[0], Math.min(ye[1], lastDay(y, ye[0])));
+    const base = last > endThis ? endThis : mk(y - 1, ye[0], Math.min(ye[1], lastDay(y - 1, ye[0])));
+    return new Date(base.getTime() + DAY);
+  }
   function tiTotal(name, unit) {
-    def(name, 2, 3, false, function (a, e) {
+    def(name, 2, 4, false, function (a, e) {
       const ref = this.dateRef(a[1], e, name);
       const vis = this.visibleDates(ref, e);
       if (!vis.length) return null;
+      let filt = a[2] && a[2].type !== "empty" ? a[2] : null, ye = null;
+      if (unit === "YEAR") {
+        if (filt && filt.type === "lit" && typeof filt.v === "string") { ye = yearEndOf(this, filt, e); filt = null; }
+        if (a[3]) ye = yearEndOf(this, a[3], e);
+      }
       const last = vis[vis.length - 1], [y, m] = ymd(last);
-      const start = unit === "YEAR" ? mk(y, 1, 1) : unit === "QUARTER" ? mk(y, Math.floor((m - 1) / 3) * 3 + 1, 1) : mk(y, m, 1);
+      const start = unit === "YEAR" ? ytdStartOf(last, ye) : unit === "QUARTER" ? mk(y, Math.floor((m - 1) / 3) * 3 + 1, 1) : mk(y, m, 1);
       const dates = this.allDates(ref).filter((d) => d >= start && d <= last);
       const fake = { type: "__tv", tv: this.datesTV(ref, dates) };
-      const args = [fake].concat(a[2] ? [a[2]] : []);
-      return this.evalCalcWith(a[0], args, e);
-    }, `${name}(<식>, <날짜 열>, [필터])`, unit === "YEAR" ? "연간 누계(YTD)" : unit === "QUARTER" ? "분기 누계(QTD)" : "월간 누계(MTD)", "시간 인텔리전스");
+      return this.evalCalcWith(a[0], [fake].concat(filt ? [filt] : []), e);
+    }, unit === "YEAR" ? `${name}(<식>, <날짜 열>, [필터], [연말일 "6-30"])` : `${name}(<식>, <날짜 열>, [필터])`, unit === "YEAR" ? "연간 누계(YTD)" : unit === "QUARTER" ? "분기 누계(QTD)" : "월간 누계(MTD)", "시간 인텔리전스");
   }
   tiTotal("TOTALYTD", "YEAR"); tiTotal("TOTALQTD", "QUARTER"); tiTotal("TOTALMTD", "MONTH");
   Engine.prototype.evalCalcWith = function (exprNode, filterNodes, env) {
@@ -1420,7 +1438,11 @@
       return this.allDates(ref).filter((d) => d >= start && d <= last);
     };
   }
-  tiTable("DATESYTD", 1, 2, ytdLike("YEAR"), "DATESYTD(<날짜 열>)", "연초부터 현재까지의 날짜");
+  tiTable("DATESYTD", 1, 2, function (ref, vis, a, e) {
+    if (!vis.length) return [];
+    const last = vis[vis.length - 1], start = ytdStartOf(last, yearEndOf(this, a[1], e));
+    return this.allDates(ref).filter((d) => d >= start && d <= last);
+  }, "DATESYTD(<날짜 열>, [연말일])", "연초(또는 회계연도 시작)부터 현재까지의 날짜");
   tiTable("DATESQTD", 1, 1, ytdLike("QUARTER"), "DATESQTD(<날짜 열>)", "분기 초부터 현재까지");
   tiTable("DATESMTD", 1, 1, ytdLike("MONTH"), "DATESMTD(<날짜 열>)", "월초부터 현재까지");
   tiTable("SAMEPERIODLASTYEAR", 1, 1, function (ref, vis) { return this.shiftDates(ref, vis, -1, "YEAR"); }, "SAMEPERIODLASTYEAR(<날짜 열>)", "1년 전 같은 기간");

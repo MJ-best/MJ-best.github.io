@@ -758,59 +758,237 @@
     });
   }
 
-  // ───────── 패턴·함수 ─────────
+  // ───────── 패턴 사전 ─────────
+  const PATS = window.BIZVIZ_PATTERNS || [];
+  const QZ = window.BIZVIZ_QUIZ || [];
+  const PAT_BY = new Map(PATS.map((p) => [p.id, p]));
+  const TOPICS = [...new Set(QZ.map((q) => q.cat).concat(PATS.map((p) => p.cat)))];
+  function openPatternInLab(p) {
+    const mode = p.mode || "measure";
+    setMode(mode, true);
+    if (mode === "measure") { lab.rows = p.rows || ""; lab.cols = p.cols || ""; lab.slicers = {}; lab.fmt = "auto"; $("#fmtSel").value = "auto"; syncViz(); }
+    if (mode === "column") { lab.table = p.table; $("#colTable").value = p.table; saveLab(); }
+    labEd.set(p.c); store.set("labCode:" + mode, p.c);
+    location.hash = "#lab"; setTimeout(runLab, 0);
+  }
+  function patternCard(p, compact) {
+    const nq = QZ.filter((q) => q.p === p.id).length;
+    return `<div class="pat${compact ? " compact" : ""}" id="pat-${p.id}">
+      <div class="row" style="justify-content:space-between;align-items:start"><b>${esc(p.t)}</b>${compact ? `<span class="tag">${esc(p.cat)}</span>` : ""}</div>
+      <pre>${highlight(p.c)}</pre>
+      <p class="small"><span class="lbl ok">언제</span> ${p.when}</p>
+      <p class="small"><span class="lbl bad">주의</span> ${p.pit}</p>
+      <div class="row"><button class="btn sm" type="button" data-copy="${p.id}">복사</button><button class="btn sm" type="button" data-run="${p.id}">▶ 랩에서 실행</button>${nq && !compact ? `<button class="btn sm ghost" type="button" data-pq="${p.id}">관련 퀴즈 ${nq}문항</button>` : ""}</div>
+    </div>`;
+  }
+  async function copyText(t, btn) {
+    try { await navigator.clipboard.writeText(t); } catch (e) {
+      const ta = document.createElement("textarea"); ta.value = t; document.body.appendChild(ta); ta.select(); try { document.execCommand("copy"); } catch (x) { /* 무시 */ } ta.remove();
+    }
+    if (btn) { const o = btn.textContent; btn.textContent = "복사됨 ✓"; setTimeout(() => (btn.textContent = o), 1200); }
+  }
+  function patternActions(e) {
+    const c = e.target.closest("[data-copy]"); if (c) { copyText(PAT_BY.get(c.dataset.copy).c, c); return true; }
+    const r = e.target.closest("[data-run]"); if (r) { openPatternInLab(PAT_BY.get(r.dataset.run)); return true; }
+    const q = e.target.closest("[data-pq]"); if (q) { startQuiz({ pattern: q.dataset.pq }); location.hash = "#quiz"; return true; }
+    return false;
+  }
+  let patCat = "전체", patQ = "";
   function renderPatterns() {
-    $("#patList").innerHTML = C.PATTERNS.map((p, i) => `<div class="pat"><div class="row" style="justify-content:space-between"><b>${esc(p.t)}</b><button class="btn sm" type="button" data-pat="${i}">랩에서 열기</button></div><pre>${highlight(p.c)}</pre><p class="small muted">${esc(p.n)}</p></div>`).join("");
-    $("#patList").onclick = (e) => {
-      const b = e.target.closest("[data-pat]"); if (!b) return;
-      const p = C.PATTERNS[+b.dataset.pat];
-      const blocks = [];
-      p.c.split("\n").forEach((l) => {
-        if (blocks.length && (/^\s/.test(l) || /^(VAR|RETURN)\b/.test(l) || !/^[^\s(]+[^=(]*=/.test(l))) blocks[blocks.length - 1] += "\n" + l;
-        else blocks.push(l);
-      });
-      const code = blocks[0];
-      const isTable = /ADDCOLUMNS\(\s*\n?\s*CALENDAR/.test(p.c);
-      setMode(isTable ? "table" : "measure", true);
-      if (/DATEADD|SAMEPERIODLASTYEAR|TOTALYTD/.test(code)) { lab.rows = "날짜[월]"; lab.cols = "날짜[연도]"; syncViz(); }
-      if (/RANKX/.test(code)) { lab.rows = "제품[제품명]"; lab.cols = ""; syncViz(); }
-      labEd.set(code); store.set("labCode:" + lab.mode, code);
-      location.hash = "#lab"; setTimeout(runLab, 0);
+    const draw = () => {
+      const q = patQ.trim().toLowerCase();
+      const list = PATS.filter((p) => (patCat === "전체" || p.cat === patCat) && (!q || (p.t + p.c + p.when + p.pit + p.cat).toLowerCase().includes(q)));
+      $("#patCats").innerHTML = ["전체", ...new Set(PATS.map((p) => p.cat))].map((c) => `<button type="button" class="chip" aria-pressed="${c === patCat}" data-pc="${esc(c)}">${esc(c)}${c === "전체" ? "" : ` <span class="muted">${PATS.filter((p) => p.cat === c).length}</span>`}</button>`).join("");
+      const cats = [...new Set(list.map((p) => p.cat))];
+      $("#patList").innerHTML = cats.map((c) => `<div class="patgroup"><div class="row" style="justify-content:space-between"><h3>${esc(c)}</h3><button class="btn sm" type="button" data-qc="${esc(c)}">이 주제 퀴즈 풀기 (${QZ.filter((x) => x.cat === c).length})</button></div><div class="grid2">${list.filter((p) => p.cat === c).map((p) => patternCard(p)).join("")}</div></div>`).join("") || '<p class="muted">검색 결과가 없습니다.</p>';
     };
+    $("#patSearch").addEventListener("input", (e) => { patQ = e.target.value; draw(); });
+    $("#patCats").addEventListener("click", (e) => { const b = e.target.closest("[data-pc]"); if (b) { patCat = b.dataset.pc; draw(); } });
+    $("#patList").addEventListener("click", (e) => {
+      if (patternActions(e)) return;
+      const b = e.target.closest("[data-qc]"); if (b) { startQuiz({ cats: [b.dataset.qc] }); location.hash = "#quiz"; }
+    });
+    draw();
+    // 함수 목록
     const cats = ["전체", ...new Set(FN_LIST.map((f) => f.cat))];
     let cat = "전체";
-    const draw = () => {
+    const drawFn = () => {
       const q = $("#fnSearch").value.trim().toLowerCase();
       const list = FN_LIST.filter((f) => (cat === "전체" || f.cat === cat) && (!q || f.name.toLowerCase().includes(q) || f.desc.toLowerCase().includes(q))).sort((a, b) => a.name.localeCompare(b.name));
       $("#fnList").innerHTML = list.map((f) => `<button type="button" class="fn" data-fn="${esc(f.name)}"><b>${esc(f.name)}</b><code>${esc(f.sig)}</code><span>${esc(f.desc)}</span></button>`).join("") || '<p class="muted">검색 결과가 없습니다.</p>';
       $("#fnCats").innerHTML = cats.map((c) => `<button type="button" class="chip" aria-pressed="${c === cat}" data-cat="${esc(c)}">${esc(c)}</button>`).join("");
     };
-    $("#fnSearch").addEventListener("input", draw);
-    $("#fnCats").addEventListener("click", (e) => { const b = e.target.closest("[data-cat]"); if (b) { cat = b.dataset.cat; draw(); } });
+    $("#fnSearch").addEventListener("input", drawFn);
+    $("#fnCats").addEventListener("click", (e) => { const b = e.target.closest("[data-cat]"); if (b) { cat = b.dataset.cat; drawFn(); } });
     $("#fnList").addEventListener("click", (e) => {
       const b = e.target.closest("[data-fn]"); if (!b) return;
       location.hash = "#lab";
       setTimeout(() => { labEd.insert(b.dataset.fn + "("); }, 30);
     });
-    draw();
+    drawFn();
   }
 
   // ───────── 퀴즈 ─────────
-  function renderQuiz() {
-    const ans = store.get("quiz", {});
-    const right = Object.entries(ans).filter(([i, a]) => C.QUIZ[+i] && C.QUIZ[+i].a === a).length;
-    $("#qScore").textContent = `${right} / ${C.QUIZ.length}  (응답 ${Object.keys(ans).length})`;
-    $("#quizList").innerHTML = C.QUIZ.map((q, i) => {
-      const a = ans[i];
-      return `<div class="panel qz"><b>Q${i + 1}. ${esc(q.q)}</b><div class="opts">${q.o.map((o, j) => `<button type="button" data-q="${i}" data-o="${j}" class="${a === undefined ? "" : j === q.a ? "right" : j === a ? "wrong" : ""}" ${a !== undefined ? "disabled" : ""}>${String.fromCharCode(9312 + j)} ${esc(o)}</button>`).join("")}</div>${a !== undefined ? `<p class="why">${a === q.a ? "✅ 정답 · " : "❌ 오답 · "}${esc(q.e)}</p>` : ""}</div>`;
-    }).join("");
+  let qs = store.get("qstats", {});          // id → {n 시도, w 오답, last 마지막 정답 여부}
+  let qcfg = store.get("qcfg", { cats: [], size: 10, mode: "smart" });
+  let quiz = null;                           // 진행 중 세션
+  const saveQs = () => store.set("qstats", qs);
+  const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const mastered = (q) => qs[q.id] && qs[q.id].last === true;
+  const wrongNow = (q) => qs[q.id] && qs[q.id].last === false;
+  function pool(opts) {
+    let list = QZ;
+    if (opts.pattern) list = list.filter((q) => q.p === opts.pattern);
+    else if (opts.cats && opts.cats.length) list = list.filter((q) => opts.cats.includes(q.cat));
+    if (opts.ids) list = QZ.filter((q) => opts.ids.includes(q.id));
+    return list;
+  }
+  function pickQuestions(opts) {
+    let list = pool(opts);
+    const mode = opts.mode || "smart";
+    if (mode === "wrong") list = list.filter(wrongNow);
+    let ordered;
+    if (mode === "smart") {
+      // 틀린 것 → 안 푼 것 → 맞힌 것 순, 각 그룹 안은 무작위
+      const w = shuffle(list.filter(wrongNow)), n = shuffle(list.filter((q) => !qs[q.id])), r = shuffle(list.filter(mastered));
+      ordered = w.concat(n, r);
+    } else ordered = shuffle(list);
+    const size = opts.ids || opts.pattern ? ordered.length : opts.size === "all" ? ordered.length : +opts.size || 10;
+    return shuffle(ordered.slice(0, size));
+  }
+  function startQuiz(opts) {
+    opts = Object.assign({}, qcfg, opts || {});
+    const items = pickQuestions(opts);
+    if (!items.length) { quiz = null; renderQuizSetup(opts.mode === "wrong" ? "틀린 문항이 없습니다. 👍 다른 모드로 풀어 보세요." : "조건에 맞는 문항이 없습니다."); return; }
+    quiz = {
+      items: items.map((q) => ({ q, order: shuffle(q.o.map((_, i) => i)), pick: null })),
+      i: 0, started: Date.now(), label: opts.pattern ? "패턴: " + (PAT_BY.get(opts.pattern) || {}).t : opts.ids ? "틀린 문항 다시" : (opts.cats && opts.cats.length ? opts.cats.join(", ") : "전체 주제"),
+    };
+    renderQuizRun();
+  }
+  function topicStats(cat) {
+    const list = QZ.filter((q) => q.cat === cat);
+    return { total: list.length, ok: list.filter(mastered).length, wrong: list.filter(wrongNow).length, seen: list.filter((q) => qs[q.id]).length };
+  }
+  function renderQuizSetup(msg) {
+    const all = QZ.length, ok = QZ.filter(mastered).length, wr = QZ.filter(wrongNow).length, seen = QZ.filter((q) => qs[q.id]).length;
+    const sel = new Set(qcfg.cats || []);
+    const pick = (k, v, l) => `<button type="button" data-${k}="${v}" aria-pressed="${String(qcfg[k]) === String(v)}">${l}</button>`;
+    $("#quizRoot").innerHTML = `
+      <div class="panel qhead">
+        <div><h2>DAX 퀴즈</h2><p class="small muted">${all}문항 · 결과 예측·빈칸 채우기·오류 찾기·식 고르기. 틀린 문항은 자동으로 오답 노트에 쌓이고 다음 퀴즈에 먼저 나옵니다.</p></div>
+        <div class="facts qfacts"><div><b>${seen}/${all}</b><span>풀어 본 문항</span></div><div><b>${ok}</b><span>맞힘(최근)</span></div><div><b>${wr}</b><span>오답 노트</span></div></div>
+        <div class="row" style="flex-basis:100%"><button class="btn primary big" type="button" id="qStart">퀴즈 시작 ▶</button><span class="small muted">${(qcfg.cats || []).length ? esc(qcfg.cats.join(", ")) : "전체 주제"} · ${qcfg.size === "all" ? "전체" : qcfg.size + "문항"} · ${{ smart: "오답·새 문항 먼저", random: "무작위", wrong: "오답만" }[qcfg.mode] || ""}</span></div>
+      </div>
+      ${msg ? `<div class="note">${esc(msg)}</div>` : ""}
+      <div class="panel" style="display:grid;gap:14px">
+        <div><b>주제</b> <span class="small muted">— 아무것도 안 고르면 전체</span></div>
+        <div class="topics">${TOPICS.map((c) => { const s = topicStats(c); const pct = s.total ? Math.round((s.ok / s.total) * 100) : 0; return `<button type="button" class="topic" data-tp="${esc(c)}" aria-pressed="${sel.has(c)}"><span class="tn">${esc(c)}</span><span class="tc">${s.ok}/${s.total}${s.wrong ? ` · <em>오답 ${s.wrong}</em>` : ""}</span><span class="tbar"><i style="width:${pct}%"></i></span></button>`; }).join("")}</div>
+        <div class="row qopts"><span class="small muted">문항 수</span><div class="seg">${pick("size", 10, "10")}${pick("size", 20, "20")}${pick("size", "all", "전체")}</div>
+          <span class="small muted">순서</span><div class="seg">${pick("mode", "smart", "오답·새 문항 먼저")}${pick("mode", "random", "무작위")}${pick("mode", "wrong", `오답만 (${wr})`)}</div></div>
+        <div class="row"><button class="btn primary" type="button" id="qStart2">이 설정으로 시작 ▶</button><span class="small muted">키보드: 1~4 선택 · Enter 다음</span></div>
+      </div>
+      ${wr ? `<details class="panel"><summary><b>오답 노트 (${wr})</b> <span class="small muted">— 펼쳐서 다시 보기</span></summary><div class="wrongs">${QZ.filter(wrongNow).map((q) => reviewItem(q)).join("")}</div></details>` : ""}
+      <div class="row small muted" style="justify-content:flex-end"><button class="btn sm ghost" type="button" id="qResetAll">퀴즈 기록 초기화</button></div>`;
+  }
+  function reviewItem(q, picked) {
+    const p = q.p && PAT_BY.get(q.p);
+    return `<div class="rv"><div class="row"><span class="tag">${esc(q.cat)}</span><b>${esc(q.q)}</b></div>${q.c ? `<pre>${highlight(q.c)}</pre>` : ""}
+      ${picked !== undefined && picked !== null && picked !== q.a ? `<p class="small"><span class="lbl bad">내 답</span> ${q.oc ? `<code>${esc(q.o[picked])}</code>` : esc(q.o[picked])}</p>` : ""}
+      <p class="small"><span class="lbl ok">정답</span> ${q.oc ? `<code>${esc(q.o[q.a])}</code>` : esc(q.o[q.a])}</p><p class="small muted">${esc(q.e)}</p>
+      ${p ? `<p class="small"><a href="#patterns" data-goto-pat="${p.id}">관련 패턴: ${esc(p.t)} →</a></p>` : ""}</div>`;
+  }
+  function renderQuizRun() {
+    const it = quiz.items[quiz.i], q = it.q, n = quiz.items.length;
+    const done = quiz.items.filter((x) => x.pick !== null).length, right = quiz.items.filter((x) => x.pick === x.q.a).length;
+    const answered = it.pick !== null;
+    const p = q.p && PAT_BY.get(q.p);
+    $("#quizRoot").innerHTML = `
+      <div class="panel qrun">
+        <div class="row" style="justify-content:space-between"><span class="small muted">${esc(quiz.label)}</span><span class="mono small">${quiz.i + 1} / ${n} · 정답 ${right}</span></div>
+        <div class="progress"><i style="width:${Math.round((done / n) * 100)}%"></i></div>
+        <div class="row"><span class="tag">${esc(q.cat)}</span><span class="tag">${esc(q.ty)}</span><span class="tag" style="color:var(--hi)">${"★".repeat(q.lv)}${"☆".repeat(3 - q.lv)}</span>${qs[q.id] && qs[q.id].last === false ? '<span class="tag wrongtag">지난번에 틀림</span>' : ""}</div>
+        <h3 class="qq">${esc(q.q)}</h3>
+        ${q.c ? `<pre class="qcode">${highlight(q.c).replace(/____/g, '<span class="blank">____</span>')}</pre>` : ""}
+        <div class="opts">${it.order.map((oi, k) => {
+          const cls = !answered ? "" : oi === q.a ? "right" : oi === it.pick ? "wrong" : "dim";
+          return `<button type="button" data-opt="${oi}" class="${cls}" ${answered ? "disabled" : ""}><span class="k">${k + 1}</span><span class="${q.oc ? "mono" : ""}">${esc(q.o[oi])}</span>${answered && oi === q.a ? '<span class="mk">✓</span>' : answered && oi === it.pick ? '<span class="mk">✕</span>' : ""}</button>`;
+        }).join("")}</div>
+        ${answered ? `<div class="explain ${it.pick === q.a ? "good" : "badx"}"><b>${it.pick === q.a ? "정답!" : "오답"}</b> ${esc(q.e)}</div>
+          ${p ? `<div class="relpat"><p class="small muted">관련 패턴</p>${patternCard(p, true)}</div>` : ""}` : ""}
+        <div class="row" style="justify-content:space-between">
+          <button class="btn sm ghost" type="button" id="qQuit">그만하고 결과 보기</button>
+          ${answered ? `<button class="btn primary" type="button" id="qNext">${quiz.i + 1 < n ? "다음 문제 →" : "결과 보기 →"} <kbd>Enter</kbd></button>` : '<span class="small muted">보기를 누르거나 숫자 키 1~4</span>'}
+        </div>
+      </div>`;
+    const nb = $("#qNext"); if (nb) nb.focus({ preventScroll: true });
+  }
+  function answer(oi) {
+    const it = quiz.items[quiz.i]; if (it.pick !== null) return;
+    it.pick = oi;
+    const s = qs[it.q.id] || (qs[it.q.id] = { n: 0, w: 0, last: null });
+    s.n++; if (oi !== it.q.a) s.w++; s.last = oi === it.q.a; saveQs();
+    renderQuizRun();
+    const ex = $(".explain"); if (ex) { const r = ex.getBoundingClientRect(); if (r.bottom > window.innerHeight) ex.scrollIntoView({ behavior: "smooth", block: "center" }); }
+  }
+  function nextQ() {
+    if (quiz.i + 1 < quiz.items.length) { quiz.i++; renderQuizRun(); const r = $(".qrun").getBoundingClientRect(); if (r.top < 0) $(".qrun").scrollIntoView({ block: "start" }); }
+    else renderQuizSummary();
+  }
+  function renderQuizSummary() {
+    const items = quiz.items.filter((x) => x.pick !== null);
+    const right = items.filter((x) => x.pick === x.q.a).length;
+    const sec = Math.round((Date.now() - quiz.started) / 1000);
+    const byCat = {};
+    items.forEach((x) => { const c = byCat[x.q.cat] || (byCat[x.q.cat] = { n: 0, ok: 0 }); c.n++; if (x.pick === x.q.a) c.ok++; });
+    const wrong = items.filter((x) => x.pick !== x.q.a);
+    const hist = store.get("qhist", []); hist.unshift({ at: Date.now(), n: items.length, ok: right }); store.set("qhist", hist.slice(0, 30));
+    const pct = items.length ? Math.round((right / items.length) * 100) : 0;
+    $("#quizRoot").innerHTML = `
+      <div class="panel" style="display:grid;gap:14px">
+        <h2>결과</h2>
+        <div class="facts"><div><b>${right} / ${items.length}</b><span>정답</span></div><div><b>${pct}%</b><span>정답률</span></div><div><b>${Math.floor(sec / 60)}분 ${sec % 60}초</b><span>걸린 시간</span></div></div>
+        <div class="catbars">${Object.entries(byCat).map(([c, v]) => `<div><span>${esc(c)}</span><span class="tbar"><i style="width:${Math.round((v.ok / v.n) * 100)}%"></i></span><span class="mono small">${v.ok}/${v.n}</span></div>`).join("")}</div>
+        <div class="row">${wrong.length ? `<button class="btn primary" type="button" id="qRetryWrong">틀린 ${wrong.length}문항 다시 풀기</button>` : ""}<button class="btn ${wrong.length ? "" : "primary"}" type="button" id="qAgain">같은 설정으로 새 퀴즈</button><button class="btn ghost" type="button" id="qSetup">설정으로</button></div>
+      </div>
+      ${wrong.length ? `<div class="panel" style="display:grid;gap:10px"><h3>틀린 문항 복습</h3><div class="wrongs">${wrong.map((x) => reviewItem(x.q, x.pick)).join("")}</div></div>` : '<div class="note">전부 맞혔습니다! 문항 수를 늘리거나 다른 주제로 넘어가 보세요.</div>'}`;
+    quiz.done = true; quiz.wrongIds = wrong.map((x) => x.q.id);
+    window.scrollTo({ top: 0 });
   }
   function initQuiz() {
-    $("#quizList").addEventListener("click", (e) => {
-      const b = e.target.closest("[data-q]"); if (!b) return;
-      const ans = store.get("quiz", {}); ans[b.dataset.q] = +b.dataset.o; store.set("quiz", ans); renderQuiz();
+    const root = $("#quizRoot");
+    root.addEventListener("click", (e) => {
+      if (patternActions(e)) return;
+      const gp = e.target.closest("[data-goto-pat]"); if (gp) { e.preventDefault(); gotoPattern(gp.dataset.gotoPat); return; }
+      const tp = e.target.closest("[data-tp]");
+      if (tp) { const s = new Set(qcfg.cats || []); s.has(tp.dataset.tp) ? s.delete(tp.dataset.tp) : s.add(tp.dataset.tp); qcfg.cats = [...s]; store.set("qcfg", qcfg); renderQuizSetup(); return; }
+      const sz = e.target.closest("[data-size]"); if (sz) { qcfg.size = sz.dataset.size; store.set("qcfg", qcfg); renderQuizSetup(); return; }
+      const md = e.target.closest("[data-mode]"); if (md) { qcfg.mode = md.dataset.mode; store.set("qcfg", qcfg); renderQuizSetup(); return; }
+      if (e.target.closest("#qStart") || e.target.closest("#qStart2") || e.target.closest("#qAgain")) { startQuiz(); return; }
+      if (e.target.closest("#qSetup")) { quiz = null; renderQuizSetup(); return; }
+      if (e.target.closest("#qRetryWrong")) { startQuiz({ ids: quiz.wrongIds, mode: "random" }); return; }
+      if (e.target.closest("#qResetAll")) { if (confirm("퀴즈 기록(정답·오답 노트)을 모두 지울까요?")) { qs = {}; saveQs(); renderQuizSetup(); } return; }
+      const op = e.target.closest("[data-opt]"); if (op && quiz) { answer(+op.dataset.opt); return; }
+      if (e.target.closest("#qNext")) { nextQ(); return; }
+      if (e.target.closest("#qQuit")) { if (quiz.items.some((x) => x.pick !== null)) renderQuizSummary(); else { quiz = null; renderQuizSetup(); } }
     });
-    $("#qReset").addEventListener("click", () => { store.set("quiz", {}); renderQuiz(); });
+    document.addEventListener("keydown", (e) => {
+      if ($("#v-quiz").hidden || !quiz || quiz.done) return;
+      if (e.target.closest && e.target.closest("input,textarea,select")) return;
+      const it = quiz.items[quiz.i];
+      if (it.pick === null && /^[1-9]$/.test(e.key)) { const k = +e.key - 1; if (k < it.order.length) { e.preventDefault(); answer(it.order[k]); } }
+      else if (it.pick !== null && (e.key === "Enter" || e.key === "ArrowRight")) { e.preventDefault(); nextQ(); }
+    });
+  }
+  function gotoPattern(id) {
+    const p = PAT_BY.get(id); if (!p) return;
+    patCat = "전체"; patQ = "";
+    location.hash = "#patterns";
+    setTimeout(() => {
+      const s = $("#patSearch"); if (s) { s.value = ""; s.dispatchEvent(new Event("input")); }
+      const el = document.getElementById("pat-" + id);
+      if (el) { el.scrollIntoView({ behavior: "smooth", block: "center" }); el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash"); }
+    }, 60);
   }
 
   // ───────── 홈: 모델 카드 ─────────
@@ -823,19 +1001,20 @@
   }
 
   // ───────── 라우팅·테마 ─────────
-  const VIEWS = ["home", "lab", "practice", "patterns", "quiz"];
+  const VIEWS = ["quiz", "patterns", "practice", "lab", "home"];
   let inited = {};
   function route() {
     const h = location.hash.replace(/^#/, "");
     const [v, arg] = h.split("/");
-    const view = VIEWS.includes(v) ? v : "home";
+    const view = VIEWS.includes(v) ? v : "quiz";
     VIEWS.forEach((x) => { const el = $("#v-" + x); if (el) el.hidden = x !== view; });
     $$("nav.tabs a").forEach((a) => a.setAttribute("aria-current", a.getAttribute("href") === "#" + view ? "page" : "false"));
-    document.title = { home: "경영정보시각화 실기 랩", lab: "DAX 랩 · 경영정보시각화 실기 랩", practice: "연습문제 · 경영정보시각화 실기 랩", patterns: "DAX 패턴 · 경영정보시각화 실기 랩", quiz: "퀴즈 · 경영정보시각화 실기 랩" }[view];
+    if (view === "quiz" && inited.quiz && !quiz) renderQuizSetup();
+    document.title = { home: "시험 개요 · 경영정보시각화 실기 랩", lab: "DAX 랩 · 경영정보시각화 실기 랩", practice: "연습문제 · 경영정보시각화 실기 랩", patterns: "DAX 패턴 · 경영정보시각화 실기 랩", quiz: "DAX 퀴즈 · 경영정보시각화 실기 랩" }[view];
     if (view === "lab" && !inited.lab) { inited.lab = 1; initLab(); runLabInner(); }
     if (view === "practice") { if (!inited.practice) { inited.practice = 1; initPractice(); } if (!curP || (arg && arg !== curP.id)) openProblem(arg || store.get("lastP", C.PROBLEMS[0].id)); else renderPList(); store.set("lastP", curP.id); }
     if (view === "patterns" && !inited.patterns) { inited.patterns = 1; renderPatterns(); }
-    if (view === "quiz" && !inited.quiz) { inited.quiz = 1; initQuiz(); renderQuiz(); }
+    if (view === "quiz" && !inited.quiz) { inited.quiz = 1; initQuiz(); renderQuizSetup(); }
     if (view !== "lab") window.scrollTo(0, 0);
   }
   window.addEventListener("hashchange", route);

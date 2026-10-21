@@ -268,3 +268,56 @@ footer a{color:inherit}
 .tut .say{background:var(--surface-2);border-radius:8px;padding:10px 12px;font-size:.93rem}
 .tut .say code{font-size:.85rem}
 #labResult,#pOut,#pDetail{scroll-margin-top:110px}
+
+/* ── 퀴즈 ── */
+.qhead{display:flex;gap:16px;justify-content:space-between;align-items:center;flex-wrap:wrap}
+.qhead>div:first-child{flex:1 1 320px}
+.qfacts{flex:1 1 300px}
+.topics{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.topic{display:grid;gap:4px;text-align:left;border:1.5px solid var(--line);background:var(--surface);border-radius:8px;padding:9px 11px}
+.topic:hover{border-color:var(--muted)}
+.topic[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.topic .tn{font-weight:600;font-size:.92rem}
+.topic .tc{font-size:.76rem;color:var(--muted)}
+.topic .tc em{font-style:normal;color:var(--bad)}
+.tbar{display:block;height:5px;border-radius:3px;background:var(--line-2);overflow:hidden;min-width:60px}
+.tbar i{display:block;height:100%;background:var(--ok)}
+.qopts{gap:10px 12px}
+.btn.big{padding:10px 22px;font-size:1rem}
+.qrun{display:grid;gap:14px;max-width:860px;width:100%;margin:0 auto}
+.qq{font-size:1.15rem;line-height:1.5}
+.qcode,.rv pre,.pat pre{background:var(--code-bg);border:1px solid var(--line-2);border-radius:7px;padding:12px 14px;font-family:var(--f-mono);font-size:.88rem;line-height:1.6;white-space:pre-wrap;word-break:break-word;margin:0}
+.blank{background:var(--hi-soft);border-bottom:2px solid var(--hi);color:var(--hi);font-weight:700;padding:0 2px}
+.qrun .opts{display:grid;gap:8px}
+.qrun .opts button{display:flex;gap:10px;align-items:center;text-align:left;border:1.5px solid var(--line);background:var(--surface);border-radius:8px;padding:10px 12px;font-size:.95rem;min-height:48px}
+.qrun .opts button:not([disabled]):hover{border-color:var(--accent);background:var(--accent-soft)}
+.qrun .opts .k{flex:0 0 24px;height:24px;border-radius:6px;background:var(--surface-2);border:1px solid var(--line);display:grid;place-items:center;font-family:var(--f-mono);font-size:.78rem;color:var(--muted)}
+.qrun .opts .mono{font-family:var(--f-mono);font-size:.86rem}
+.qrun .opts .mk{margin-left:auto;font-weight:700}
+.qrun .opts button.right{border-color:var(--ok);background:var(--ok-soft)}
+.qrun .opts button.right .mk{color:var(--ok)}
+.qrun .opts button.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.qrun .opts button.wrong .mk{color:var(--bad)}
+.qrun .opts button.dim{opacity:.55}
+.qrun .opts button[disabled]{cursor:default;color:inherit}
+.explain{border-radius:8px;padding:12px 14px;font-size:.94rem;line-height:1.6}
+.explain.good{background:var(--ok-soft)}.explain.good b{color:var(--ok)}
+.explain.badx{background:var(--bad-soft)}.explain.badx b{color:var(--bad)}
+.relpat{display:grid;gap:4px}
+.wrongtag{color:var(--bad);border-color:var(--bad)}
+.catbars{display:grid;gap:6px}
+.catbars>div{display:grid;grid-template-columns:minmax(90px,140px) 1fr 48px;gap:10px;align-items:center;font-size:.88rem}
+.catbars .tbar{height:8px}
+.wrongs{display:grid;gap:10px;margin-top:10px}
+.rv{display:grid;gap:6px;border:1px solid var(--line-2);border-radius:8px;padding:12px;background:var(--surface)}
+.lbl{display:inline-block;font-size:.72rem;font-weight:700;border-radius:4px;padding:0 6px;margin-right:4px}
+.lbl.ok{background:var(--ok-soft);color:var(--ok)}.lbl.bad{background:var(--bad-soft);color:var(--bad)}
+details.panel>summary{cursor:pointer}
+/* ── 패턴 ── */
+.patgroup{display:grid;gap:10px}
+.pat{display:grid;gap:8px;align-content:start;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;box-shadow:var(--shadow);min-width:0}
+.pat.compact{box-shadow:none;background:var(--surface-2)}
+.pat p{line-height:1.6}
+#patSearch,#fnSearch{min-width:min(100%,260px)}
+.qfacts{grid-template-columns:repeat(3,1fr)}
+@media (max-width:500px){.topic{padding:7px 9px}.topic .tn{font-size:.85rem}.qfacts b{font-size:1rem}}
