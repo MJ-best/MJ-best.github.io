@@ -1,0 +1,1025 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="비전문가를 위한 스튜디오 촬영 기획 도구. 콘셉트·5컷 스토리라인·화각·앵글·프레이밍·조명을 실제 사진 예시와 함께 짜고, 배치도에서 조명을 옮겨 봅니다.">
+<meta property="og:title" content="스튜디오 콘티북">
+<meta property="og:description" content="스튜디오 촬영 기획을 실제 사진 예시와 함께 짜는 시뮬레이터">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>스튜디오 콘티북</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=IBM+Plex+Sans+KR:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: 촬영 콘티북 — 기획 → 콘셉트 → 콘티 → 조명·배치 시뮬레이터 → 레퍼런스 순서로 넘기는 낱장들. 손그림은 캔버스, 텍스트는 단정하게. */
+:root{
+  color-scheme:light;
+  --paper:#F3F4FA; --sheet:#FFFFFF; --ink:#2D3360; --ink-2:#6B7099; --grid:#E2E5F2;
+  --scrib:#7D8FE2; --scrib-2:#C6CEF3;
+  --tape:#D9DFFA; --tape-ink:#2D3360; --key:#EE9A3F; --fill:#3FAFC2; --rim:#EC6F9E;
+  --warn:#D64A3F; --ok:#3A9E72;
+  --f-hand:'Nanum Pen Script','Gaegu',cursive;
+  --f-body:'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif;
+  --f-mono:'IBM Plex Mono',ui-monospace,'SFMono-Regular',Menlo,monospace;
+}
+*{box-sizing:border-box}
+html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 56px;
+  background-image:radial-gradient(var(--grid) 1px,transparent 1.2px);background-size:22px 22px}
+.wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+a{color:inherit}
+:focus-visible{outline:2.5px solid var(--fill);outline-offset:2px}
+
+.mast{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:end;padding-top:8px}
+.eyebrow{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2)}
+h1{font-family:var(--f-hand);font-weight:400;font-size:clamp(52px,9vw,92px);line-height:.9;margin:6px 0 10px;text-wrap:balance}
+h1 .tape{color:var(--scrib);background:linear-gradient(transparent 60%,var(--tape) 60%,var(--tape) 90%,transparent 90%);padding:0 .08em}
+.lede{max-width:62ch;margin:0;color:var(--ink-2)}
+.mast-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+
+.sheet{position:relative;background:var(--sheet);border:1.5px solid var(--scrib);border-radius:3px;padding:22px clamp(16px,3vw,30px) 26px;
+  box-shadow:3px 4px 0 var(--scrib-2)}
+.sheet::before,.sheet::after{content:"";position:absolute;top:-11px;width:74px;height:22px;background:var(--tape);opacity:.82;pointer-events:none}
+.sheet::before{left:22px;transform:rotate(-4deg)}
+.sheet::after{right:26px;transform:rotate(3deg)}
+.sec-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+.sec-head h2{font-family:var(--f-hand);font-weight:400;font-size:40px;line-height:1;margin:0}
+.sec-head .no{font-family:var(--f-mono);font-size:12px;color:var(--ink-2);letter-spacing:.08em}
+.sec-head p{margin:0;color:var(--ink-2);font-size:14px;flex-basis:100%;max-width:70ch}
+
+/* brief */
+.brief{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 28px}
+fieldset{border:0;margin:0;padding:0;min-width:0}
+legend{font-weight:600;font-size:14px;margin-bottom:8px;padding:0}
+legend small{font-weight:400;color:var(--ink-2);margin-left:6px}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip input{position:absolute;opacity:0;pointer-events:none}
+.chip span{display:inline-block;border:1.5px solid var(--ink);border-radius:2px;padding:5px 11px;font-size:14px;cursor:pointer;background:var(--sheet);
+  transition:transform .12s ease}
+.chip span:hover{transform:translateY(-1px)}
+.chip input:checked+span{background:var(--ink);color:var(--sheet)}
+.chip input:focus-visible+span{outline:2.5px solid var(--fill);outline-offset:2px}
+.chip .sw{display:inline-block;width:10px;height:10px;margin-right:6px;border-radius:50%;vertical-align:0;border:1px solid color-mix(in srgb,var(--ink) 40%,transparent)}
+
+.btn{font:inherit;font-size:14px;border:1.5px solid var(--ink);background:var(--sheet);color:var(--ink);padding:7px 13px;border-radius:2px;cursor:pointer;font-weight:500}
+.btn:hover{background:var(--tape);color:var(--tape-ink);border-color:var(--ink)}
+.btn.solid{background:var(--ink);color:var(--sheet)}
+.btn.solid:hover{background:var(--tape);color:var(--tape-ink)}
+
+/* concept */
+.concept{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:26px}
+.c-title{font-family:var(--f-hand);font-size:clamp(44px,6vw,64px);line-height:1;margin:0 0 4px}
+.c-sub{font-family:var(--f-mono);font-size:12.5px;color:var(--ink-2);letter-spacing:.04em}
+.c-log{font-size:16.5px;max-width:58ch;margin:14px 0}
+.arc{display:flex;flex-wrap:wrap;gap:0;margin:0;padding:0;list-style:none;font-size:13.5px}
+.arc li{display:flex;align-items:center;gap:6px;padding:4px 0}
+.arc li+li::before{content:"→";color:var(--ink-2);margin:0 8px}
+.arc b{font-family:var(--f-mono);font-weight:500;font-size:11px;color:var(--ink-2)}
+.pal{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:16px}
+.pal div{display:flex;flex-direction:column;gap:4px;font-family:var(--f-mono);font-size:11px;color:var(--ink-2)}
+.pal i{display:block;height:54px;border:1.5px solid var(--ink);border-radius:2px}
+dl.spec{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 14px;margin:0;font-size:14px}
+dl.spec dt{font-weight:600;white-space:nowrap}
+dl.spec dd{margin:0;color:var(--ink)}
+
+/* storyboard */
+.board{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px}
+.shot{display:flex;flex-direction:column;gap:8px;min-width:0}
+.ph{margin:0;display:flex;flex-direction:column;gap:4px;min-width:0}
+.ph .fr{position:relative;display:block;aspect-ratio:4/5;max-width:100%;overflow:hidden;border-radius:3px;background:var(--grid);border:1.5px solid var(--scrib)}
+.ph img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s ease}
+.ph .fr:hover img{transform:scale(1.03)}
+.ph.tilt img{transform:rotate(-9deg) scale(1.32)}
+.ph.tilt .fr:hover img{transform:rotate(-9deg) scale(1.36)}
+.ph .badge{position:absolute;left:6px;top:6px;background:rgba(255,255,255,.9);color:var(--ink);font-size:11.5px;font-weight:600;padding:2px 7px;border-radius:2px}
+.ph figcaption{font-size:11px;color:var(--ink-2);line-height:1.35;overflow-wrap:anywhere}
+.ph figcaption a{color:inherit}
+.ph.broken .fr::after{content:"사진을 불러오지 못했어요 · 눌러서 원본 보기";position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:12px;font-size:12px;color:var(--ink-2)}
+.ph.broken img{display:none}
+.moodboard{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:16px}
+.ex{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.ex-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.shot .lab{display:flex;justify-content:space-between;align-items:baseline;gap:6px}
+.shot .lab b{font-family:var(--f-hand);font-weight:400;font-size:23px;line-height:1}
+.shot .lab span{font-family:var(--f-mono);font-size:11px;color:var(--ink-2);letter-spacing:.04em}
+.shot h3{margin:0;font-size:15px;line-height:1.35}
+.shot p{margin:0;font-size:13px;color:var(--ink-2);line-height:1.55}
+.tags{display:flex;flex-wrap:wrap;gap:4px}
+.tag{font-family:var(--f-mono);font-size:11px;border:1px solid color-mix(in srgb,var(--ink) 35%,transparent);padding:1px 6px;border-radius:2px;white-space:nowrap}
+.tag.k{border-color:var(--key);color:var(--key)}
+.shot .btn{margin-top:auto;font-size:13px;padding:5px 10px;align-self:flex-start}
+
+/* simulator */
+.shotbar{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.shotbar button{font:inherit;font-size:13px;border:1.5px solid var(--ink);background:var(--sheet);color:var(--ink);padding:4px 10px;border-radius:2px;cursor:pointer}
+.shotbar button[aria-pressed="true"]{background:var(--ink);color:var(--sheet)}
+.sim{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.85fr) minmax(0,1fr);gap:22px;align-items:start}
+.pane{display:flex;flex-direction:column;gap:8px;min-width:0}
+.pane-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:13px;color:var(--ink-2)}
+.pane-h b{font-family:var(--f-hand);font-weight:400;font-size:26px;color:var(--ink);line-height:1}
+#plan{width:100%;aspect-ratio:1/1.08;max-width:100%;touch-action:none;cursor:grab;display:block}
+#plan.drag{cursor:grabbing}
+.hint{font-size:12.5px;color:var(--ink-2)}
+.ctrls{display:grid;gap:12px}
+.ctrl{display:grid;gap:4px}
+.ctrl label,.ctrl .cl{font-size:13px;font-weight:600;display:flex;justify-content:space-between;gap:8px}
+.ctrl output{font-family:var(--f-mono);font-weight:400;font-variant-numeric:tabular-nums;color:var(--ink-2)}
+select{font:inherit;font-size:14px;border:1.5px solid var(--ink);border-radius:2px;background:var(--sheet);color:var(--ink);padding:5px 8px;width:100%}
+input[type=range]{width:100%;accent-color:var(--ink)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.toggles{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13.5px}
+.toggles label{display:flex;align-items:center;gap:6px;cursor:pointer}
+.toggles input{accent-color:var(--ink);width:16px;height:16px}
+.sw-key{color:var(--key)} .sw-fill{color:var(--fill)} .sw-rim{color:var(--rim)}
+.readout{border-top:1.5px dashed color-mix(in srgb,var(--ink) 40%,transparent);padding-top:12px;display:grid;gap:10px}
+.pat{font-family:var(--f-hand);font-size:34px;line-height:1}
+.pat-d{font-size:13.5px;margin:0}
+.nums{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.num{border:1px solid color-mix(in srgb,var(--ink) 30%,transparent);padding:6px 9px;border-radius:2px;min-width:0}
+.num span{display:block;font-size:11.5px;color:var(--ink-2)}
+.num b{font-family:var(--f-mono);font-weight:500;font-size:15px;font-variant-numeric:tabular-nums;word-break:keep-all}
+.notes{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-size:13px}
+.notes li{padding-left:18px;position:relative}
+.notes li::before{content:"";position:absolute;left:3px;top:.55em;width:8px;height:8px;border-radius:50%;background:var(--ok)}
+.notes li.w::before{background:var(--warn)}
+.notes li.w{color:var(--ink)}
+
+/* references */
+.refs{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px}
+.ref{display:grid;grid-template-columns:96px minmax(0,1fr);gap:12px;border:1px solid color-mix(in srgb,var(--ink) 28%,transparent);padding:10px;border-radius:2px;min-width:0}
+.ref .ph{width:96px}
+.ref .kind{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2)}
+.ref h3{margin:2px 0 4px;font-size:14.5px;line-height:1.35}
+.ref p{margin:0 0 8px;font-size:12.5px;color:var(--ink-2);line-height:1.5}
+.links{display:flex;flex-wrap:wrap;gap:5px}
+.links a{font-size:12px;text-decoration:none;border:1.5px solid var(--ink);padding:2px 8px;border-radius:2px;white-space:nowrap}
+.links a:hover{background:var(--tape);color:var(--tape-ink)}
+.links a::after{content:" ↗";font-size:10px}
+.refnote{font-size:12.5px;color:var(--ink-2);margin:14px 0 0}
+
+footer{font-size:12.5px;color:var(--ink-2);max-width:80ch}
+footer code{font-family:var(--f-mono);font-size:12px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--sheet);padding:8px 16px;border-radius:2px;font-size:14px;z-index:20}
+.copybox{width:100%;min-height:160px;font-family:var(--f-mono);font-size:12px;background:var(--sheet);color:var(--ink);border:1.5px solid var(--ink);margin-top:10px}
+
+@media (max-width:1080px){
+  .board{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .sim{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .sim .ctrlpane{grid-column:1/-1}
+}
+@media (max-width:720px){
+  .brief,.concept{grid-template-columns:minmax(0,1fr)}
+  .board{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .sim{grid-template-columns:minmax(0,1fr)}
+  .mast{grid-template-columns:minmax(0,1fr)}
+  .mast-actions{justify-content:flex-start}
+  .sec-head h2{font-size:34px}
+}
+@media (max-width:420px){ .board{grid-template-columns:minmax(0,1fr)} .ref{grid-template-columns:80px minmax(0,1fr)} .ref .ph{width:80px} }
+@media (prefers-reduced-motion:reduce){ *{transition:none!important;scroll-behavior:auto!important} }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="mast">
+    <div>
+      <div class="eyebrow">Studio shoot planner · 촬영 기획 시뮬레이터</div>
+      <h1>스튜디오 <span class="tape">콘티북</span></h1>
+      <p class="lede">무엇을, 어떤 분위기로 찍을지만 고르면 콘셉트와 다섯 컷짜리 스토리라인을 실제 모델 사진 예시와 함께 짜 줍니다. 컷마다 배치·화각·앵글·프레이밍·조명을 적어 두었고, 배치도에서 조명을 끌어 옮기면 그 조명 패턴의 실제 사진이 바로 바뀝니다.</p>
+    </div>
+    <div class="mast-actions">
+      <button class="btn" id="reseed" type="button">다른 예시 사진 보기</button>
+      <button class="btn solid" id="copy" type="button">콘티 텍스트 복사</button>
+    </div>
+  </header>
+
+  <section class="sheet" id="brief" aria-labelledby="h-brief">
+    <div class="sec-head"><span class="no">01</span><h2 id="h-brief">기획 메모</h2><p>네 가지만 고르면 아래 콘티가 모두 바뀝니다.</p></div>
+    <div class="brief">
+      <fieldset><legend>무엇을 찍나요</legend><div class="chips" id="f-subject"></div></fieldset>
+      <fieldset><legend>어떤 분위기</legend><div class="chips" id="f-mood"></div></fieldset>
+      <fieldset><legend>공간 크기 <small>배경지부터 반대편 벽까지</small></legend><div class="chips" id="f-room"></div></fieldset>
+      <fieldset><legend>조명 개수 <small>플래시·연속광 모두</small></legend><div class="chips" id="f-lights"></div></fieldset>
+    </div>
+  </section>
+
+  <section class="sheet" id="concept" aria-labelledby="h-concept">
+    <div class="sec-head"><span class="no">02</span><h2 id="h-concept">콘셉트 보드</h2></div>
+    <div class="concept">
+      <div>
+        <p class="c-title" id="c-title"></p>
+        <div class="c-sub" id="c-sub"></div>
+        <p class="c-log" id="c-log"></p>
+        <ol class="arc" id="c-arc"></ol>
+        <div class="moodboard" id="c-mood"></div>
+      </div>
+      <div>
+        <div class="pal" id="c-pal"></div>
+        <dl class="spec" id="c-spec"></dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="sheet" id="story" aria-labelledby="h-story">
+    <div class="sec-head"><span class="no">03</span><h2 id="h-story">스토리라인 콘티</h2><p>첫인상에서 여운까지 다섯 컷. 각 컷의 화각은 풀프레임 세로 촬영 기준이며, 크롭 바디(APS-C)는 표기값을 1.5로 나눈 렌즈를 쓰면 같은 화면이 나옵니다.</p></div>
+    <div class="board" id="board"></div>
+  </section>
+
+  <section class="sheet" id="sim-sec" aria-labelledby="h-sim">
+    <div class="sec-head"><span class="no">04</span><h2 id="h-sim">조명·배치 시뮬레이터</h2><p>평면도에서 조명 동그라미를 끌거나 슬라이더를 움직이세요. 카메라 거리는 프레이밍과 화각으로 자동 계산됩니다.</p></div>
+    <div class="shotbar" id="shotbar" role="group" aria-label="컷 선택"></div>
+    <div class="sim">
+      <div class="pane">
+        <div class="pane-h"><b>위에서 본 배치도</b><span id="plan-room"></span></div>
+        <canvas id="plan" aria-label="스튜디오 평면 배치도. 조명을 끌어 옮길 수 있습니다."></canvas>
+        <div class="hint">격자 한 칸 = 50 cm · <span class="sw-key">●키</span> <span class="sw-fill">●필</span> <span class="sw-rim">●림</span> 조명을 끌어 보세요.</div>
+      </div>
+      <div class="pane">
+        <div class="pane-h"><b>실제 사진 예시</b><button class="btn" id="sim-alt" type="button" style="font-size:12px;padding:3px 9px">다른 사진</button></div>
+        <div class="ex" id="sim-ex"></div>
+        <div class="hint">왼쪽은 지금 조명 패턴, 오른쪽은 지금 앵글·프레이밍의 예시입니다. 사진을 누르면 Unsplash 원본이 열립니다.</div>
+      </div>
+      <div class="pane ctrlpane">
+        <div class="ctrls">
+          <div class="two">
+            <div class="ctrl"><label for="s-framing">프레이밍</label><select id="s-framing"></select></div>
+            <div class="ctrl"><label for="s-angle">앵글</label><select id="s-angle"></select></div>
+          </div>
+          <div class="ctrl"><label for="s-focal">화각(초점거리) <output id="o-focal"></output></label><input type="range" id="s-focal" min="0" max="6" step="1"></div>
+          <div class="two">
+            <div class="ctrl"><label for="s-key"><span class="sw-key">키 조명 방향</span> <output id="o-key"></output></label><input type="range" id="s-key" min="-180" max="180" step="1"></div>
+            <div class="ctrl"><label for="s-elev">키 조명 높이 <output id="o-elev"></output></label><input type="range" id="s-elev" min="0" max="75" step="1"></div>
+          </div>
+          <div class="toggles">
+            <label><input type="checkbox" id="s-fill"><span class="sw-fill">필(보조광)</span></label>
+            <label><input type="checkbox" id="s-rim"><span class="sw-rim">림(윤곽광)</span></label>
+            <label><input type="checkbox" id="s-bg">배경 조명</label>
+          </div>
+          <div class="ctrl"><label for="s-ratio">키 : 필 밝기 비율 <output id="o-ratio"></output></label><select id="s-ratio">
+            <option value="1.5">1.5 : 1 · 거의 그림자 없음</option><option value="2">2 : 1 · 부드럽게</option><option value="3">3 : 1 · 자연스러운 입체</option><option value="4">4 : 1 · 또렷한 명암</option><option value="8">8 : 1 · 강한 명암</option>
+          </select></div>
+        </div>
+        <div class="readout">
+          <div><div class="pat" id="r-pat"></div><p class="pat-d" id="r-patd"></p></div>
+          <div class="nums">
+            <div class="num"><span>피사체–카메라 거리</span><b id="r-dist"></b></div>
+            <div class="num"><span>카메라 높이</span><b id="r-camh"></b></div>
+            <div class="num"><span>노출 시작값</span><b id="r-exp"></b></div>
+            <div class="num"><span>키 조명 거리·장비</span><b id="r-mod"></b></div>
+          </div>
+          <ul class="notes" id="r-notes"></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sheet" id="refs-sec" aria-labelledby="h-refs">
+    <div class="sec-head"><span class="no">05</span><h2 id="h-refs">레퍼런스</h2><p>지금 콘티에 쓰인 무드·조명·앵글·구도를 공개 자료에서 찾아볼 수 있게 묶었습니다.</p></div>
+    <div class="refs" id="refs"></div>
+    <p class="refnote">예시 사진은 모두 Unsplash의 무료 사진이며 사진마다 촬영자를 표기했습니다. 사진 설명을 기준으로 골랐기 때문에 조명 패턴이 교과서처럼 정확하지 않은 사진도 있을 수 있습니다. 버튼을 누르면 Unsplash·Pinterest·Behance 검색 결과나 위키백과 문서가 새 탭으로 열립니다.</p>
+  </section>
+
+  <footer>
+    거리 계산: 피사체–카메라 거리 ≈ 화면에 담을 세로 높이 × 초점거리 ÷ 36(풀프레임 세로 기준). 배경지 폭은 표준 롤 2.72 m 기준이며, 필요 공간은 피사체 뒤 1.2 m(배경 그림자 방지)와 촬영자 자리 0.6 m를 더해 계산합니다. 노출값은 스튜디오 플래시 기준의 출발점이니 테스트 컷으로 맞추세요.
+    <div id="copyhold"></div>
+  </footer>
+</div>
+
+<script>
+(() => {
+'use strict';
+/* ---------------- data ---------------- */
+const FOCALS = [24, 28, 35, 50, 85, 100, 135];
+const FR = {
+  ECU:{ko:'익스트림 클로즈업', s:'ECU', H:.16, yc:1.56},
+  CU:{ko:'클로즈업(얼굴)', s:'CU', H:.38, yc:1.52},
+  MCU:{ko:'바스트 샷', s:'MCU', H:.62, yc:1.40},
+  MS:{ko:'웨이스트 샷', s:'MS', H:1.05, yc:1.22},
+  FS:{ko:'풀 샷(전신)', s:'FS', H:2.05, yc:.92},
+  WS:{ko:'와이드 샷(공간)', s:'WS', H:3.1, yc:1.2}
+};
+const ANG = {eye:{ko:'눈높이'}, low:{ko:'로우 앵글'}, high:{ko:'하이 앵글'}, top:{ko:'탑뷰(부감)'}, dutch:{ko:'더치 앵글'}};
+const ROOMS = {
+  s:{ko:'작은 방', sub:'3 × 4 m', w:3, d:4},
+  m:{ko:'보통 스튜디오', sub:'5 × 6 m', w:5, d:6},
+  l:{ko:'큰 스튜디오', sub:'7 × 9 m', w:7, d:9}
+};
+const LIGHTS = {1:{ko:'1개'}, 2:{ko:'2개'}, 3:{ko:'3개 이상'}};
+
+const SUBJ = {
+  portrait:{ko:'개인 프로필', en:'portrait', who:'한 사람이', kind:'person', people:[{x:0,h:1.72}]},
+  couple:{ko:'커플·우정', en:'couple portrait', who:'두 사람이', kind:'person', group:1.35, people:[{x:-.2,h:1.78},{x:.22,h:1.63}]},
+  family:{ko:'가족', en:'family portrait', who:'가족이', kind:'person', group:1.75, people:[{x:-.38,h:1.78},{x:.36,h:1.62},{x:0,h:1.12}]},
+  pet:{ko:'반려동물', en:'dog portrait', who:'반려견이', kind:'pet', ref:.36, dog:{x:0,y:0,s:1}},
+  product:{ko:'제품·소품', en:'product photography', who:'제품이', kind:'product', ref:.17, gap:.5, paper:.9},
+  lookbook:{ko:'룩북·패션', en:'fashion lookbook', who:'모델이', kind:'person', people:[{x:0,h:1.78}]}
+};
+
+const MOODS = {
+  warm:{ko:'따뜻한', title:'오후 4시의 창가', en:'warm window light', key:{az:34,elev:35}, mod:'대형 소프트박스(창문 대신)', ratio:2, fill:true, rim:false, bg:'mid', bgLight:false,
+    pal:['#E6C59C','#C4865A','#8A5A3B','#F2E4CF'], palN:['오트','캐러멜','월넛','크림'],
+    arc:['편안한 인사','손끝의 온기','머무는 시간','가장 환한 웃음','노을 같은 여운'],
+    log:'{who} 등장하는 늦은 오후의 창가. 낮게 들어오는 부드러운 빛과 갈색 톤으로, 특별한 사건 없이도 기억하고 싶은 하루의 한 조각을 담습니다.',
+    wardrobe:'니트·린넨 셔츠, 베이지와 브라운. 큰 로고는 피하기', props:'머그잔, 손때 묻은 책, 마른 꽃 한 다발', bgDesc:'베이지 배경지 또는 리넨 커튼', gel:'키 조명에 CTO 1/4 젤(살짝 주황)'},
+  chic:{ko:'시크한', title:'그림자의 선', en:'low key moody', key:{az:82,elev:22}, mod:'스트립 박스 또는 뷰티 디시', ratio:8, fill:false, rim:true, bg:'dark', bgLight:false,
+    pal:['#121314','#3B3D40','#8D9095','#EDEDEA'], palN:['잉크','차콜','실버','본'],
+    arc:['무표정의 정면','선이 남는 손','등 돌린 자세','정면 응시','어둠으로 퇴장'],
+    log:'{who} 어둠 속에서 빛의 선 하나로만 드러나는 장면. 말수 적은 무채색, 얼굴 반을 덮는 그림자로 단단한 인상을 만듭니다.',
+    wardrobe:'블랙 재킷·화이트 셔츠, 무채색 단색', props:'철제 의자 하나, 안경, 가죽 장갑', bgDesc:'검정 또는 짙은 회색 배경지', gel:'젤 없음. 조명 앞에 그리드로 빛 번짐 차단'},
+  dreamy:{ko:'몽환적인', title:'반쯤 깬 꿈', en:'dreamy pastel backlight', key:{az:10,elev:40}, mod:'옥타박스 + 디퓨저 두 겹', ratio:1.5, fill:true, rim:true, bg:'light', bgLight:true, haze:true,
+    pal:['#D9CBEB','#F3C9D6','#BFD8EE','#FBF6F2'], palN:['라일락','로즈','미스트','밀크'],
+    arc:['흐릿한 등장','레이스 너머','천천히 도는 몸','빛 속의 미소','사라지는 실루엣'],
+    log:'{who} 빛 안개 속에 반쯤 녹아든 장면. 뒤에서 들어오는 빛과 파스텔 색이 경계를 지워, 현실보다 한 톤 가벼운 기억처럼 보이게 합니다.',
+    wardrobe:'시폰·튤, 파스텔 단색 또는 화이트', props:'튤 천, 프리즘(렌즈 앞 빛 번짐용), 꽃잎', bgDesc:'연보라·흰 배경지 + 헤이즈(연무기)', gel:'림 조명에 옅은 핑크 젤'},
+  fresh:{ko:'청량한', title:'화이트 스튜디오', en:'high key bright', key:{az:0,elev:45}, mod:'옥타박스 위 + 아래 반사판(클램셸)', ratio:1.5, fill:true, rim:false, bg:'white', bgLight:true,
+    pal:['#FFFFFF','#9FD3F2','#7FD6B6','#F9D65C'], palN:['화이트','스카이','민트','레몬'],
+    arc:['반가운 인사','작은 장난','점프 한 번','터지는 웃음','손 흔들며 안녕'],
+    log:'{who} 그림자 없는 하얀 공간에서 가볍게 움직이는 장면. 밝고 깨끗한 배경에 원색 하나만 포인트로 넣어 시원한 인상을 남깁니다.',
+    wardrobe:'흰 티셔츠·데님, 원색 포인트 하나', props:'과일, 풍선, 흰 스툴', bgDesc:'흰 배경지를 1스톱 밝게 날려 완전한 흰색으로', gel:'젤 없음. 배경에 조명 2개를 따로 비추면 이상적'},
+  dramatic:{ko:'드라마틱', title:'영화의 한 장면', en:'cinematic teal orange', key:{az:50,elev:45}, mod:'그리드 씌운 소프트박스', ratio:4, fill:true, rim:true, bg:'dark', bgLight:true,
+    pal:['#0F3B45','#1F7A80','#E0893B','#1B1714'], palN:['딥틸','틸','앰버','블랙'],
+    arc:['어둠 속 등장','결정적 단서','갈등의 순간','클라이맥스','긴 여운'],
+    log:'{who} 영화의 클라이맥스 직전에 멈춰 선 장면. 차가운 청록 배경과 따뜻한 키 조명이 부딪히며 다음 장면을 상상하게 만듭니다.',
+    wardrobe:'트렌치코트·가죽, 짙은 단색', props:'헤이즈, 낡은 의자, 유선 전화기', bgDesc:'짙은 회색 배경지 + 청록 젤 배경 조명', gel:'림·배경에 틸(청록) 젤, 키는 CTO 1/2'},
+  vintage:{ko:'빈티지', title:'1978년 사진관', en:'vintage film portrait', key:{az:32,elev:30}, mod:'텅스텐 프레넬 또는 반사 우산', ratio:3, fill:true, rim:false, bg:'mid', bgLight:false,
+    pal:['#C9A13B','#7A4E2D','#6B6B3A','#EFE2C4'], palN:['머스터드','브릭','올리브','바랜 크림'],
+    arc:['격식 있는 인사','낡은 소품','사진관 의자','어색한 웃음','빛바랜 마지막 장'],
+    log:'{who} 오래된 동네 사진관에서 기념사진을 남기는 장면. 따뜻한 텅스텐 색과 약간 어색한 정자세가 필름 사진 특유의 시간을 불러옵니다.',
+    wardrobe:'코듀로이, 니트 조끼, 작은 꽃무늬', props:'필름 카메라, 레코드판, 다이얼 전화기', bgDesc:'머스터드·브라운 배경지와 러그 한 장', gel:'모든 조명에 CTO 1/2(따뜻한 텅스텐 느낌)'}
+};
+
+const SHOTS = {
+  portrait:[
+    {t:'대표 프로필',fr:'MCU',an:'eye',f:85,light:'main',d:'몸은 카메라에서 45° 돌리고 얼굴만 정면으로. 턱을 살짝 앞으로 내밀면 턱선이 정리됩니다.'},
+    {t:'손과 표정',fr:'CU',an:'eye',f:100,light:'main',d:'손끝을 턱이나 머리카락 근처에 두되 얼굴을 가리지 않게. 손은 옆면이 보이도록 둡니다.'},
+    {t:'앉은 자세',fr:'MS',an:'low',f:50,light:'main',d:'스툴에 걸터앉아 팔꿈치를 무릎에. 카메라를 허리 높이로 낮춰 단단한 인상을 줍니다.'},
+    {t:'공간을 쓰는 전신',fr:'FS',an:'eye',f:50,light:'main',d:'배경지 가운데로 걸어오다 멈추는 순간. 연속 촬영 후 발이 교차한 컷을 고릅니다.'},
+    {t:'창밖을 보는 여운',fr:'CU',an:'high',f:85,light:'side',d:'시선을 조명 쪽 화면 밖으로. 키 조명을 옆으로 돌려 그림자를 크게 남깁니다.'}],
+  couple:[
+    {t:'나란히 첫 컷',fr:'MS',an:'eye',f:50,light:'main',d:'어깨가 살짝 겹치게 서고, 키 작은 사람이 반 걸음 앞으로 나옵니다.'},
+    {t:'맞잡은 손',fr:'ECU',an:'eye',f:100,light:'main',focusY:.92,solo:true,d:'두 손만 화면에. 반지나 소매 디테일이 보이게 손목 각도를 바꿔 봅니다.'},
+    {t:'마주 보는 웃음',fr:'MCU',an:'high',f:85,light:'main',d:'서로를 보며 농담을 주고받게 하고, 그 사이를 계속 찍습니다.'},
+    {t:'뒤에서 안기',fr:'FS',an:'low',f:35,light:'main',d:'한 사람이 뒤에서 감싸 안는 전신. 로우 앵글로 두 사람을 크게 담습니다.'},
+    {t:'이마를 맞댄 역광',fr:'MCU',an:'eye',f:85,light:'rim',d:'키 조명을 두 사람 뒤로 돌려 윤곽만 남깁니다. 배경은 어둡게 둡니다.'}],
+  family:[
+    {t:'가족 단체 컷',fr:'FS',an:'eye',f:35,light:'main',d:'키 큰 사람은 뒤, 아이는 앞. 얼굴이 한 줄로 나란하지 않게 높이를 엇갈립니다.'},
+    {t:'아이 눈높이',fr:'MCU',an:'eye',f:85,light:'main',focusY:.98,solo:true,scene:{people:[{x:0,h:1.12}]},d:'카메라를 아이 눈높이(약 1 m)까지 낮춥니다. 장난감을 렌즈 위에서 흔들어 시선을 모읍니다.'},
+    {t:'둘러앉은 장면',fr:'MS',an:'high',f:35,light:'main',d:'바닥에 둘러앉아 사진첩을 함께 봅니다. 사다리에 올라 내려다보듯 찍습니다.'},
+    {t:'손잡고 걸어오기',fr:'WS',an:'eye',f:35,light:'main',d:'배경지 끝에서 카메라 쪽으로 천천히. 아이를 가운데 두고 손을 잡습니다.'},
+    {t:'포개진 손',fr:'ECU',an:'top',f:50,light:'front',focusY:.9,solo:true,d:'세 사람의 손을 포개고 위에서. 손 크기의 차이가 그대로 이야기가 됩니다.'}],
+  pet:[
+    {t:'눈높이 정면',fr:'FS',an:'eye',f:50,light:'main',d:'바닥에 엎드려 반려견 눈높이에서. 바닥이 앞에 살짝 걸리면 깊이감이 생깁니다.'},
+    {t:'간식으로 시선',fr:'CU',an:'eye',f:85,light:'main',d:'렌즈 바로 위에서 간식을 흔들어 시선을 모읍니다. 초점은 카메라에 가까운 눈.'},
+    {t:'보호자 품에',fr:'MCU',an:'eye',f:50,light:'main',ref:1,scene:{people:[{x:-.06,h:1.72}],dog:{x:.13,y:1.02,s:.62}},d:'보호자가 가슴 높이로 안고 볼을 맞댑니다. 보호자 얼굴은 반만 걸려도 좋습니다.'},
+    {t:'달려오는 순간',fr:'FS',an:'high',f:35,light:'front',d:'이름을 부르면 달려오는 순간을 연속 촬영. 연속광이면 셔터 1/500초 이상.'},
+    {t:'털 윤곽 역광',fr:'MCU',an:'eye',f:85,light:'rim',d:'뒤쪽 조명으로 털끝에 빛 테두리를 만듭니다. 앞쪽은 반사판으로 살짝만 채웁니다.'}],
+  product:[
+    {t:'히어로 컷',fr:'MS',an:'eye',f:100,light:'main',d:'제품 정면, 라벨이 반듯하게. 모든 컷에서 그림자 방향을 같게 유지합니다.'},
+    {t:'질감 접사',fr:'ECU',an:'eye',f:100,light:'side',focusY:.2,d:'옆에서 비춰 표면 결을 살립니다. 조리개를 조이거나 초점 합성을 고려하세요.'},
+    {t:'플랫레이',fr:'FS',an:'top',f:50,light:'main',d:'위에서 내려다보며 소품과 함께. 소품은 세 개 이하, 삼각형으로 놓습니다.'},
+    {t:'윤곽 살리기',fr:'MS',an:'low',f:85,light:'rim',d:'뒤쪽 조명으로 병의 가장자리를 따라 빛 띠를 만듭니다. 앞은 검은 판으로 막아 대비를 키웁니다.'},
+    {t:'쓰임새 연출',fr:'WS',an:'eye',f:50,light:'main',d:'손이 제품을 집거나 따르는 장면. 사용 순간이 보이면 상세 페이지에 쓰기 좋습니다.'}],
+  lookbook:[
+    {t:'전신 착장',fr:'FS',an:'eye',f:50,light:'main',d:'카메라를 허리 높이에 두면 다리가 짧아 보이지 않습니다. 착장 전체를 한 컷에.'},
+    {t:'상반신 표정',fr:'MCU',an:'eye',f:85,light:'main',d:'칼라와 액세서리가 보이게. 고개 각도를 세 단계로 바꿔 가며 찍습니다.'},
+    {t:'로우 앵글 워킹',fr:'FS',an:'low',f:35,light:'main',d:'무릎 높이에서 올려다보면 다리가 길어 보입니다. 광각 왜곡이 가장자리에 오지 않게 인물은 가운데.'},
+    {t:'움직임 더치',fr:'MS',an:'dutch',f:35,light:'side',d:'재킷을 휘날리거나 돌아서는 동작. 카메라를 10~15° 기울여 긴장감을 줍니다.'},
+    {t:'신발 디테일',fr:'ECU',an:'eye',f:100,light:'main',focusY:.1,d:'신발·가방·소매 끝. 상세 이미지로 쓸 컷이라 배경은 단순하게 둡니다.'}]
+};
+
+const PATTERNS = {
+  flat:{ko:'플랫', en:'flat lighting', d:'조명이 카메라 축과 거의 겹쳐 그림자가 거의 없습니다. 피부는 매끈해 보이지만 입체감은 약합니다.'},
+  butterfly:{ko:'버터플라이', en:'butterfly lighting', d:'정면 위에서 내려오는 빛. 코 밑에 나비 모양 그림자가 생기고 광대가 살아납니다. 뷰티·프로필에 무난합니다.'},
+  loop:{ko:'루프', en:'loop lighting', d:'정면에서 30~40° 옆, 눈보다 조금 위. 코 그림자가 볼 쪽으로 작은 고리를 만듭니다. 대부분의 얼굴에 어울리는 기본값.'},
+  rembrandt:{ko:'렘브란트', en:'rembrandt lighting', wiki:'https://en.wikipedia.org/wiki/Rembrandt_lighting', d:'45° 옆, 높은 곳. 그림자 쪽 볼에 작은 빛 삼각형이 남습니다. 깊이 있고 회화적인 인상.'},
+  split:{ko:'스플릿', en:'split lighting', d:'정확히 옆(90°)에서 오는 빛. 얼굴이 반으로 나뉘어 강하고 긴장감 있는 인상이 됩니다.'},
+  rim:{ko:'림(윤곽광)', en:'rim lighting', d:'피사체 뒤쪽 옆에서 오는 빛. 얼굴 대부분은 어둡고 윤곽선만 밝게 빛납니다.'},
+  silhouette:{ko:'역광 실루엣', en:'backlit silhouette', d:'바로 뒤에서 오는 빛. 형태만 남는 실루엣이 됩니다. 헤이즈와 함께 쓰면 몽환적입니다.'}
+};
+function classify(az, elev){
+  const a = Math.abs(az);
+  if (a < 15) return elev > 25 ? 'butterfly' : 'flat';
+  if (a < 40) return 'loop';
+  if (a < 65) return elev >= 25 ? 'rembrandt' : 'loop';
+  if (a < 110) return 'split';
+  if (a < 155) return 'rim';
+  return 'silhouette';
+}
+
+/* ---------------- state ---------------- */
+let state = {subject:'portrait', mood:'warm', room:'m', lights:'2', seed:7};
+try { const s = JSON.parse(localStorage.getItem('conti-state')||'null'); if (s && SUBJ[s.subject] && MOODS[s.mood]) state = Object.assign(state, s); } catch(e) {}
+const save = () => { try { localStorage.setItem('conti-state', JSON.stringify(state)); } catch(e) {} };
+
+let shots = [];
+let sim = null;
+let simIndex = 0;
+
+function lightFor(kind, mood){
+  const k = mood.key;
+  if (kind === 'side') return {az: 86, elev: 20};
+  if (kind === 'rim') return {az: 140, elev: 30};
+  if (kind === 'front') return {az: 6, elev: 42};
+  return {az: k.az, elev: k.elev};
+}
+function buildShots(){
+  const S = SUBJ[state.subject], M = MOODS[state.mood], n = +state.lights;
+  return SHOTS[state.subject].map((t, i) => {
+    const key = lightFor(t.light, M);
+    const isRimKey = t.light === 'rim';
+    let fillOn = n >= 2 && M.fill && !isRimKey;
+    let rimOn = !isRimKey && (n >= 3 ? M.rim : (n === 2 && M.rim && !M.fill));
+    if (n === 2 && M.rim && M.fill && !isRimKey) { fillOn = !['dreamy','dramatic'].includes(state.mood); rimOn = !fillOn; }
+    if (isRimKey && n >= 2) fillOn = true;
+    return Object.assign({}, t, {
+      i, beat: M.arc[i], subject: state.subject, mood: state.mood,
+      framing: t.fr, angle: t.an, focal: t.f,
+      keyAz: key.az, keyElev: key.elev, fillOn, fillAz: -Math.sign(key.az || 1) * 32, ratio: isRimKey ? 2 : M.ratio,
+      rimOn, rimAz: -Math.sign(key.az || 1) * 150, bgOn: n >= 3 && M.bgLight,
+      seed: state.seed * 97 + i * 13
+    });
+  });
+}
+
+/* ---------------- helpers ---------------- */
+const TOK = {};
+function readTokens(){
+  const cs = getComputedStyle(document.documentElement);
+  ['paper','sheet','ink','ink-2','grid','scrib','scrib-2','tape','key','fill','rim','warn','ok'].forEach(k => TOK[k] = cs.getPropertyValue('--' + k).trim() || '#888');
+  TOK.dark = lum(TOK.sheet) < .4;
+}
+function hexRGB(h){ h = h.replace('#',''); if (h.length === 3) h = h.split('').map(c => c + c).join(''); const n = parseInt(h, 16); return [(n>>16)&255, (n>>8)&255, n&255]; }
+function lum(h){ try { const [r,g,b] = hexRGB(h); return (0.299*r + 0.587*g + 0.114*b)/255; } catch(e) { return 1; } }
+function rgba(h, a){ const [r,g,b] = hexRGB(h); return `rgba(${r},${g},${b},${a})`; }
+function mulberry(a){ return function(){ a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const rad = d => d * Math.PI / 180;
+const enc = s => encodeURIComponent(s);
+const slug = s => s.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
+/* sketch toolkit */
+class Sk {
+  constructor(ctx, seed, u){ this.c = ctx; this.r = mulberry(seed >>> 0); this.u = u; }
+  j(a){ return (this.r()*2 - 1) * a; }
+  wob(pts, amp, closed){
+    const out = [], P = closed ? pts.concat([pts[0]]) : pts;
+    for (let i = 0; i < P.length - 1; i++){
+      const [x0,y0] = P[i], [x1,y1] = P[i+1];
+      const n = Math.max(1, Math.ceil(Math.hypot(x1-x0, y1-y0) / (14*this.u)));
+      for (let k = 0; k < n; k++){ const t = k/n; out.push([x0 + (x1-x0)*t + this.j(amp), y0 + (y1-y0)*t + this.j(amp)]); }
+    }
+    const L = P[P.length-1]; out.push([L[0] + this.j(amp), L[1] + this.j(amp)]);
+    if (closed && out.length > 2){ const f = out[1]; out.push([f[0] + this.j(amp), f[1] + this.j(amp)]); }
+    return out;
+  }
+  line(pts, o = {}){
+    if (!pts || pts.length < 2) return;
+    const c = this.c; c.save();
+    c.strokeStyle = o.color || TOK.ink; c.lineCap = 'round'; c.lineJoin = 'round';
+    if (o.dash) c.setLineDash(o.dash.map(v => v*this.u));
+    if (o.alpha != null) c.globalAlpha = o.alpha;
+    const passes = o.passes ?? 2, amp = (o.amp ?? 1) * this.u;
+    let w = (o.w ?? 1.3) * this.u;
+    for (let p = 0; p < passes; p++){
+      c.lineWidth = w;
+      const q = this.wob(pts, amp, o.closed);
+      c.beginPath(); c.moveTo(q[0][0], q[0][1]);
+      for (let i = 1; i < q.length; i++){ const [x0,y0] = q[i-1], [x1,y1] = q[i]; c.quadraticCurveTo(x0, y0, (x0+x1)/2, (y0+y1)/2); }
+      c.lineTo(q[q.length-1][0], q[q.length-1][1]); c.stroke();
+      w *= .55;
+    }
+    c.restore();
+  }
+  ellPts(cx, cy, rx, ry, rot = 0, over = .35){
+    const n = Math.max(14, Math.round((rx + ry) / (2.2*this.u))), a0 = this.r()*Math.PI*2, pts = [];
+    for (let i = 0; i <= n; i++){
+      const a = a0 + (Math.PI*2 + over) * i / n, k = 1 + this.j(.025);
+      const x = Math.cos(a)*rx*k, y = Math.sin(a)*ry*k;
+      pts.push([cx + x*Math.cos(rot) - y*Math.sin(rot), cy + x*Math.sin(rot) + y*Math.cos(rot)]);
+    }
+    return pts;
+  }
+  ell(cx, cy, rx, ry, o = {}){ this.line(this.ellPts(cx, cy, rx, ry, o.rot || 0), Object.assign({amp:.5}, o)); }
+  hatch(clip, box, o = {}){
+    const c = this.c; c.save();
+    c.beginPath(); clip(c); c.clip(o.rule || 'nonzero');
+    if (o.clip2){ c.beginPath(); o.clip2(c); c.clip(); }
+    c.strokeStyle = o.color || TOK.ink; c.lineWidth = (o.w ?? .8) * this.u; c.lineCap = 'round';
+    c.globalAlpha = o.alpha ?? .85;
+    const draw = (ang, sp) => {
+      const [x, y, w, h] = box, cx = x + w/2, cy = y + h/2, R = Math.hypot(w, h)/2 + 4;
+      const dx = Math.cos(rad(ang)), dy = Math.sin(rad(ang));
+      c.beginPath();
+      for (let t = -R; t <= R; t += sp){
+        const px = cx - dy*t, py = cy + dx*t, j1 = this.j(sp*.35), j2 = this.j(sp*.35);
+        c.moveTo(px - dx*R + j1, py - dy*R + j2); c.lineTo(px + dx*R + j2, py + dy*R + j1);
+      }
+      c.stroke();
+    };
+    const sp = Math.max(1.6, (o.sp ?? 6) * this.u);
+    draw(o.ang ?? 55, sp);
+    if (o.cross) draw((o.ang ?? 55) + 78, sp * 1.25);
+    c.restore();
+  }
+  text(s, x, y, o = {}){
+    const c = this.c; c.save();
+    c.font = `${(o.size ?? 20) * this.u}px ${o.font || "'Nanum Pen Script', cursive"}`;
+    c.fillStyle = o.color || TOK.ink; c.textAlign = o.align || 'left'; c.textBaseline = o.base || 'alphabetic';
+    if (o.bg){ const m = c.measureText(s), w = m.width, h = (o.size ?? 20)*this.u; let bx = x; if (c.textAlign === 'center') bx -= w/2; if (c.textAlign === 'right') bx -= w; c.fillStyle = o.bg; c.fillRect(bx - 4*this.u, y - h*.82, w + 8*this.u, h*1.05); c.fillStyle = o.color || TOK.ink; }
+    c.fillText(s, x, y); c.restore();
+  }
+}
+function setupCanvas(cv){
+  const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+  const W = cv.clientWidth || 200, H = cv.clientHeight || 250;
+  cv.width = Math.round(W*dpr); cv.height = Math.round(H*dpr);
+  const ctx = cv.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.lineJoin = 'round';
+  return {ctx, W, H};
+}
+function polyPath(pts){ return c => { c.moveTo(pts[0][0], pts[0][1]); for (let i = 1; i < pts.length; i++) c.lineTo(pts[i][0], pts[i][1]); c.closePath(); }; }
+function ellPath(cx, cy, rx, ry){ return c => c.ellipse(cx, cy, Math.max(.1,rx), Math.max(.1,ry), 0, 0, Math.PI*2); }
+function fillPath(ctx, path, color){ ctx.save(); ctx.beginPath(); path(ctx); ctx.fillStyle = color; ctx.fill(); ctx.restore(); }
+
+/* ---------------- geometry ---------------- */
+function geom(p){
+  const S = SUBJ[p.subject], F = FR[p.framing];
+  const ref = p.ref ?? S.ref ?? 1;
+  const group = (p.solo || (p.ref === 1 && (S.ref ?? 1) !== 1)) ? 1 : (S.group || 1);
+  const Hf = F.H * ref * group;
+  let yc = p.focusY ?? F.yc * ref;
+  if (group > 1 && (p.framing === 'FS' || p.framing === 'WS')) yc = Math.max(yc, Hf/2 - .12);
+  const d = Hf * p.focal / 36;
+  const gap = S.gap ?? 1.2, paper = S.paper ?? 2.72;
+  let camH = yc;
+  if (p.angle === 'low') camH = Math.max(.15*ref + .1, yc - .75*Math.max(ref,.5));
+  if (p.angle === 'high') camH = yc + .65*Math.max(ref,.6);
+  if (p.angle === 'top') camH = (S.kind === 'product' ? .1 : yc) + Math.max(d, .6);
+  return {S, F, ref, group, Hf, Wf: Hf*.8, yc, d, gap, paper, camH};
+}
+
+/* ---------------- photo examples ---------------- */
+let tokRead = false;
+const PHOTOS = {"loop":[{"id":"photo-1544005313-94ddf0286df2","page":"https://unsplash.com/photos/smiling-woman-wearing-white-and-black-pinstriped-collared-top-QXevDflbl8A","alt":"smiling woman wearing white and black pinstriped collared top","by":"Štefan Štefančík"},{"id":"photo-1563170446-9c3c0622d8a9","page":"https://unsplash.com/photos/a-woman-with-blue-eyes-and-a-white-top-6eFmG1qWxJI","alt":"a woman with blue eyes and a white top","by":"Olena Bohovyk"},{"id":"photo-1517462964-21fdcec3f25b","page":"https://unsplash.com/photos/portrait-photograph-of-woman-in-gray-and-brown-coat-NTjSR3zYpsY","alt":"portrait photograph of woman in gray and brown coat","by":"Ethan Haddox"}],"rembrandt":[{"id":"photo-1579976092748-1a04ec89d489","page":"https://unsplash.com/photos/womans-face-in-dark-room-wyznP4L61Xw","alt":"woman's face in dark room","by":"Nora Hutton"},{"id":"photo-1746562280575-9aca53a0d989","page":"https://unsplash.com/photos/a-woman-is-lit-by-a-beam-of-light-L7V4c_jF5N4","alt":"A woman is lit by a beam of light","by":"YASU SHOTS"},{"id":"photo-1547256398-b62fc7852828","page":"https://unsplash.com/photos/man-facing-to-his-right-bgHrUON2nK8","alt":"man facing to his right","by":"M.T ElGassier"}],"split":[{"id":"photo-1503354531728-dedfa6cb4e8d","page":"https://unsplash.com/photos/silhouette-of-half-human-face-wPbbShdlEWI","alt":"silhouette of half human face","by":"Stormseeker"},{"id":"photo-1515138692129-197a2c608cfd","page":"https://unsplash.com/photos/womans-face-on-black-background-kEXMAGTivXA","alt":"woman's face on black background","by":"Christian Holzinger"},{"id":"photo-1541715301255-12a4839b424a","page":"https://unsplash.com/photos/womans-face-tSX6E9UextA","alt":"woman's face","by":"Alexander Krivitskiy"}],"butterfly":[{"id":"photo-1440589473619-3cde28941638","page":"https://unsplash.com/photos/woman-blonde-hair-and-red-lipstick-LyeduBb2Auk","alt":"woman blonde hair and red lipstick","by":"Roksolana Zasiadko"},{"id":"photo-1551184451-76b762941ad6","page":"https://unsplash.com/photos/portrait-of-woman-face-b2bXKspL5MY","alt":"portrait of woman face","by":"Kamila Maciejewska"},{"id":"photo-1581841064838-a470c740e8ee","page":"https://unsplash.com/photos/woman-in-black-hat-and-green-shirt-PdcNOb4iYFs","alt":"woman in black hat and green shirt","by":"Andrey Zvyagintsev"}],"rim":[{"id":"photo-1637059880830-59a90102de77","page":"https://unsplash.com/photos/a-man-with-a-beard-looking-up-in-the-dark-Jz3q45Kz5GI","alt":"a man with a beard looking up in the dark","by":"Goran Petkovic"},{"id":"photo-1518456798519-f1422366bee6","page":"https://unsplash.com/photos/a-woman-is-holding-her-hair-in-the-dark-sNLgf2M_eXE","alt":"a woman is holding her hair in the dark","by":"Richard Jaimes"},{"id":"photo-1636486183541-83634a8dc9a7","page":"https://unsplash.com/photos/a-close-up-of-a-person-with-long-hair-AzKvRnvmXW8","alt":"a close up of a person with long hair","by":"Adrian \"Rosco\" Stef"}],"silhouette":[{"id":"photo-1768386773945-1f7ad31efa68","page":"https://unsplash.com/photos/silhouette-of-a-woman-with-arms-raised-against-white-background-uC522JtYRWQ","alt":"Silhouette of a woman with arms raised against white background","by":"gabbiistudios"},{"id":"photo-1592479950461-2c8ef29f2a14","page":"https://unsplash.com/photos/silhouette-of-woman-in-front-of-white-wall-rQSL5gis5yM","alt":"silhouette of woman in front of white wall","by":"Muhammed Aslam Aslam"},{"id":"photo-1758513207254-9ffacf2570f2","page":"https://unsplash.com/photos/silhouette-of-a-woman-holding-a-flower-against-white-fabric-zUSRmjL1HLY","alt":"Silhouette of a woman holding a flower against white fabric","by":"Brooke Balentine"}],"lowkey":[{"id":"photo-1506863530036-1efeddceb993","page":"https://unsplash.com/photos/grayscale-photo-of-woman-wearing-necklace-and-top-0fN7Fxv1eWA","alt":"grayscale photo of woman wearing necklace and top","by":"Rachel McDermott"},{"id":"photo-1601412436009-d964bd02edbc","page":"https://unsplash.com/photos/woman-in-black-crew-neck-shirt-6xv4A1VA1rU","alt":"woman in black crew neck shirt","by":"OSPAN ALI"},{"id":"photo-1505274664176-44ccaa7969a8","page":"https://unsplash.com/photos/green-eye-in-deep-shadows-ouVAsbiwzlo","alt":"A close-up of a single green eye emerging from deep shadows","by":"Peter Forster"}],"highkey":[{"id":"photo-1771591742033-349d93271305","page":"https://unsplash.com/photos/a-woman-lies-on-her-side-against-a-white-background-0tK9nSbKAkw","alt":"A woman lies on her side against a white background","by":"Angga Pratama"},{"id":"photo-1780566036289-2ee30453f560","page":"https://unsplash.com/photos/a-young-woman-wearing-black-clothes-on-a-white-background-pEcc6vGpm74","alt":"A young woman wearing black clothes on a white background","by":"Anton K Wibowo"},{"id":"photo-1768696082358-92c161db2a14","page":"https://unsplash.com/photos/young-man-under-a-wooden-chair-on-white-background-3gC4TefPmcQ","alt":"Young man under a wooden chair on white background","by":"otabek xatipov"}],"angle_low":[{"id":"photo-1759786076436-94739ca56155","page":"https://unsplash.com/photos/young-woman-in-turtleneck-with-building-behind-EWvZxd4quiA","alt":"Young woman in turtleneck with building behind","by":"Hamed Hoseini Pur"},{"id":"photo-1717944105945-669b3dd77bfd","page":"https://unsplash.com/photos/a-woman-in-a-white-dress-on-a-runway-02A_RXHleDk","alt":"a woman in a white dress on a runway","by":"Dennis Zhang"},{"id":"photo-1780260411624-cd0de26906de","page":"https://unsplash.com/photos/young-woman-in-blue-dress-and-hat-arms-outstretched-GIcoLEbLT3A","alt":"Young woman in blue dress and hat, arms outstretched","by":"Margo Evardson"}],"angle_high":[{"id":"photo-1759163120617-b9fdd93839fc","page":"https://unsplash.com/photos/young-woman-with-long-red-hair-looking-up-rGF_0fkcNJY","alt":"Young woman with long red hair looking up","by":"Brooke Balentine"},{"id":"photo-1531860415933-7d5348a737d4","page":"https://unsplash.com/photos/woman-in-beige-top-looking-up-s5Kr_XcDmoM","alt":"woman in beige top looking up","by":"Bruce Dixon"},{"id":"photo-1768696082380-115a214b2d30","page":"https://unsplash.com/photos/young-man-looking-up-from-under-a-chair-tmgs7Z0hxRk","alt":"Young man looking up from under a chair","by":"otabek xatipov"}],"angle_dutch":[{"id":"photo-1770576568718-6747e3d85de8","page":"https://unsplash.com/photos/a-woman-with-long-wavy-hair-in-a-black-top-KE4bV4dKlwk","alt":"A woman with long, wavy hair in a black top","by":"Michael Dagonakis"},{"id":"photo-1776275716575-f62571c85934","page":"https://unsplash.com/photos/woman-leaning-against-a-wall-in-soft-light-y-uMkyZ5yps","alt":"Woman leaning against a wall in soft light","by":"Veronika Trushkevich"},{"id":"photo-1709158969612-8974f2787fb1","page":"https://unsplash.com/photos/a-woman-with-long-hair-standing-in-front-of-a-mirror-LWC86C6-75o","alt":"a woman with long hair standing in front of a mirror","by":"Illia Horokhovsky"}],"topview":[{"id":"photo-1477064996809-dae46985eee7","page":"https://unsplash.com/photos/gold-colored-framed-sunglasses-on-brown-hat-beside-white-and-black-leather-wristlet-surrounded-by-photos-on-white-and-gray-floral-textile-d6pLNFVZt_4","alt":"flat lay of sunglasses, hat and photos on floral textile","by":"Clarisse Meyer"},{"id":"photo-1643168343279-3f93c2e592ef","page":"https://unsplash.com/photos/a-table-topped-with-three-different-types-of-lipstick-70SXr5l-lGU","alt":"a table topped with three different types of lipstick","by":"Alejandra Ríos"},{"id":"photo-1637414165749-9b3cd88b8271","page":"https://unsplash.com/photos/a-cell-phone-wallet-earbuds-and-other-items-laid-out-on-lO-8kwA95vY","alt":"a cell phone, wallet, earbuds, and other items laid out","by":"Nubelson Fernandes"}],"frame_cu":[{"id":"photo-1520529277867-dbf8c5e0b340","page":"https://unsplash.com/photos/close-up-photo-of-womans-face-with-red-lipstick-MphctUUI9vA","alt":"close-up photo of woman's face with red lipstick","by":"Jota Lao"},{"id":"photo-1547729047-a1f1532c9a38","page":"https://unsplash.com/photos/close-up-photography-of-man-with-beard-Wg52NDKBW1Y","alt":"close-up photography of man with beard","by":"Jaime Lopes"},{"id":"photo-1674932668403-33398b81c92f","page":"https://unsplash.com/photos/a-close-up-of-a-woman-with-a-ponytail-YhMFYJZgMA0","alt":"a close up of a woman with a ponytail","by":"Yoad Shejtman"}],"frame_bust":[{"id":"photo-1500648767791-00dcc994a43e","page":"https://unsplash.com/photos/man-wearing-henley-top-portrait-7YVZYZeITc8","alt":"man wearing Henley top portrait","by":"Jurica Koletić"},{"id":"photo-1494790108377-be9c29b29330","page":"https://unsplash.com/photos/closeup-photography-of-woman-smiling-mEZ3PoFGs_k","alt":"closeup photography of woman smiling","by":"Michael Dam"},{"id":"photo-1507003211169-0a1dd7228f2d","page":"https://unsplash.com/photos/man-wearing-white-v-neck-shirt-iFgRcqHznqg","alt":"man wearing white V-neck shirt","by":"Joseph Gonzalez"}],"frame_full":[{"id":"photo-1780566760434-5f42a317b0a9","page":"https://unsplash.com/photos/a-young-woman-in-a-loose-top-and-blue-jeans-49hQ1AQLPLU","alt":"A young woman in a loose top and blue jeans","by":"Anton K Wibowo"},{"id":"photo-1792333171030-2059e9025d4a","page":"https://unsplash.com/photos/woman-in-brown-shirt-and-trousers-Qc5hYBZCsys","alt":"A woman in a brown t-shirt and black trousers against a beige background","by":"McFollis"},{"id":"photo-1790502041519-712df94041aa","page":"https://unsplash.com/photos/woman-in-leaf-print-jumpsuit-Cdeo72FRVaE","alt":"A woman in a leaf print jumpsuit posing on one leg","by":"McFollis"}],"couple":[{"id":"photo-1773870545292-3878d72a7b4e","page":"https://unsplash.com/photos/a-smiling-couple-poses-for-a-studio-portrait-qIHZe7k4mDE","alt":"A smiling couple poses for a studio portrait","by":"Diogo Albuquerque"},{"id":"photo-1608145640433-937abd82a4e1","page":"https://unsplash.com/photos/man-in-black-crew-neck-shirt-beside-woman-in-black-long-sleeve-shirt-ujEVPnfBDTY","alt":"man in black crew neck shirt beside woman in black long sleeve shirt","by":"Blake Carpenter"},{"id":"photo-1643288100686-f76461af405e","page":"https://unsplash.com/photos/a-man-and-a-woman-sitting-on-a-chair-P4Du-xEBVYU","alt":"a man and a woman sitting on a chair","by":"Bimo Agmi"}],"family":[{"id":"photo-1760328249117-18488466e34c","page":"https://unsplash.com/photos/family-of-five-posing-for-a-studio-portrait-gQiXRY2dgRs","alt":"Family of five posing for a studio portrait","by":"Devin Santiago"},{"id":"photo-1763013259000-da8b5c45ed64","page":"https://unsplash.com/photos/family-of-four-with-two-babies-on-plain-background-myhzFQgQa2U","alt":"Family of four with two babies on plain background","by":"Brooke Balentine"},{"id":"photo-1763013259097-ed4d8f95504f","page":"https://unsplash.com/photos/a-happy-family-of-four-with-two-young-children-yfFOccoKxmE","alt":"A happy family of four with two young children","by":"Brooke Balentine"}],"pet":[{"id":"photo-1598875184988-5e67b1a874b8","page":"https://unsplash.com/photos/golden-retriever-puppy-on-white-background-2JihaEVs8Dc","alt":"golden retriever puppy on white background","by":"Nita Anggraeni Goenawan"},{"id":"photo-1709777571247-39ad71a2d86e","page":"https://unsplash.com/photos/a-small-white-dog-sitting-on-a-pink-background-JGkGlJlgR1Y","alt":"a small white dog sitting on a pink background","by":"Karsten Winegeart"},{"id":"photo-1594592237655-9f7e51330b93","page":"https://unsplash.com/photos/golden-retriever-with-blue-background-qHfPFK16PeM","alt":"golden retriever with blue background","by":"Tony Heally"}],"product":[{"id":"photo-1585620384249-5cf9442c87f3","page":"https://unsplash.com/photos/brown-glass-bottle-on-black-surface-aklPUDqtMyY","alt":"brown glass bottle on black surface","by":"Joseph Gonzalez"},{"id":"photo-1735382506928-e3c50f62a04b","page":"https://unsplash.com/photos/a-bottle-of-narcico-on-a-reflective-surface-g1cpBpGSvG4","alt":"A bottle on a reflective surface","by":"Kate Laine"},{"id":"photo-1773372238338-f26460145162","page":"https://unsplash.com/photos/three-lipsticks-displayed-with-stones-on-pink-background--NLfVaPLwmQ","alt":"Three lipsticks displayed with stones on pink background","by":"Jen Vazquez"}],"fashion":[{"id":"photo-1758613654186-6ce234bf94ab","page":"https://unsplash.com/photos/model-posing-for-photographer-in-studio-setting-MfNVQxUAZB0","alt":"Model posing for photographer in studio setting","by":"Vitaly Gariev"},{"id":"photo-1629726343583-d9718b3e8f3f","page":"https://unsplash.com/photos/woman-in-white-blazer-and-white-pants-standing-beside-white-table-c7kxs1aA4v8","alt":"woman in white blazer and white pants standing beside white table","by":"Junior REIS"},{"id":"photo-1681993996237-60d6809d1d97","page":"https://unsplash.com/photos/a-man-in-a-black-suit-standing-in-front-of-a-red-background-EqgBDK44xHo","alt":"a man in a black suit standing in front of a red background","by":"ARTO SURAJ"}],"mood_warm":[{"id":"photo-1790069486560-623189ca3ee0","page":"https://unsplash.com/photos/woman-looking-up-in-golden-light-fmuBuRzRiko","alt":"A woman wearing glasses looking up into warm golden hour light","by":"Zulfugar Karimov"},{"id":"photo-1760003565878-84ee41cfdd46","page":"https://unsplash.com/photos/young-womans-profile-in-dappled-sunlight-0pR7j6pB8uk","alt":"Young woman's profile in dappled sunlight","by":"Chidera Faustina Okeke"},{"id":"photo-1600858504290-d58911c08592","page":"https://unsplash.com/photos/woman-in-red-and-white-floral-dress-standing-beside-window-ynz-KiVxaB8","alt":"woman in red and white floral dress standing beside window","by":"Gantas Vaičiulėnas"}],"mood_chic":[{"id":"photo-1635380318102-cfa0b2c7639d","page":"https://unsplash.com/photos/a-black-and-white-photo-of-a-woman-sitting-on-a-stool-rMOWYEgNc3w","alt":"a black and white photo of a woman sitting on a stool","by":"Sonny Mauricio"},{"id":"photo-1641901960200-1e878f0cbf63","page":"https://unsplash.com/photos/a-black-and-white-photo-of-a-woman-VQ0_RQ4TMds","alt":"a black and white photo of a woman","by":"Ana Itonishvili"},{"id":"photo-1568633782872-67d29d4615d2","page":"https://unsplash.com/photos/woman-wears-black-long-sleeved-dress-GC2UHBFeTYA","alt":"woman wears black long-sleeved dress","by":"Shoeib Abolhassani"}],"mood_dreamy":[{"id":"photo-1761099309607-388dfaa36d61","page":"https://unsplash.com/photos/blurred-portrait-of-a-young-womans-face-PQyIfi3O71E","alt":"Blurred portrait of a young woman's face","by":"Windah Limbai"},{"id":"photo-1765571313178-a4d56002aff0","page":"https://unsplash.com/photos/double-exposure-of-a-womans-face-with-dark-hair-l6nPR7E_pMU","alt":"Double exposure of a woman's face with dark hair","by":"Sofia Lasheva"},{"id":"photo-1716146813369-d28550a62d91","page":"https://unsplash.com/photos/a-woman-sitting-in-a-field-of-tall-grass-fbSGSPQGXG4","alt":"a woman sitting in a field of tall grass","by":"Vitaliy Shevchenko"}],"mood_fresh":[{"id":"photo-1788648010797-fbf8a7453a47","page":"https://unsplash.com/photos/woman-in-neon-jacket-against-blue-u42Br7pHIGE","alt":"A young woman in a neon yellow jacket against a blue gradient background","by":"Marina Nazina"},{"id":"photo-1585408641691-2500a721af54","page":"https://unsplash.com/photos/woman-with-white-eyeliner-and-yellow-jacket-9RFGGbPp7pk","alt":"Woman with white eyeliner and yellow jacket","by":"marcus pobee"},{"id":"photo-1646198008298-f90422676cf2","page":"https://unsplash.com/photos/a-woman-standing-in-front-of-an-orange-wall-4BKA55zyDBc","alt":"a woman standing in front of an orange wall","by":"Dalton Smith"}],"mood_dramatic":[{"id":"photo-1787001703164-8a0f21298a71","page":"https://unsplash.com/photos/woman-with-wavy-hair-in-light-2jp-mv0YhIc","alt":"A woman with long wavy hair lit by vibrant blue and yellow light","by":"Jahanzeb Ahsan"},{"id":"photo-1774544638315-c8f4833c2537","page":"https://unsplash.com/photos/woman-in-sunglasses-and-fur-coat-under-red-light-46LrQF-eUUs","alt":"Woman in sunglasses and fur coat under red light","by":"Laszlo Barta"},{"id":"photo-1785008854468-9b07a9d57859","page":"https://unsplash.com/photos/young-woman-illuminated-by-a-blue-star-shaped-light-fap-JaDYc14","alt":"Young woman illuminated by a blue star-shaped light","by":"Mohsen Taheri"}],"mood_vintage":[{"id":"photo-1754420888698-f0272292e086","page":"https://unsplash.com/photos/woman-is-holding-a-vintage-camera-to-her-eye-tbdrWdX_uZA","alt":"Woman is holding a vintage camera to her eye","by":"Caroline Badran"},{"id":"photo-1754420888702-7f4831bfda09","page":"https://unsplash.com/photos/a-woman-poses-with-two-cameras-tIND_bAhTRc","alt":"A woman poses with two cameras","by":"Caroline Badran"},{"id":"photo-1778877545187-5b16144f7aea","page":"https://unsplash.com/photos/black-and-white-profile-of-a-woman-with-pearls-8jLJfVBdtWY","alt":"Black and white profile of a woman with pearls","by":"Veronika Trushkevich"}]};
+const CAT_FOR_PATTERN = {flat:'highkey', butterfly:'butterfly', loop:'loop', rembrandt:'rembrandt', split:'split', rim:'rim', silhouette:'silhouette'};
+const CAT_LABEL = {loop:'루프 조명', rembrandt:'렘브란트 조명', split:'스플릿 조명', butterfly:'버터플라이 조명', rim:'림·역광', silhouette:'실루엣', lowkey:'로우키', highkey:'하이키·밝은 배경',
+  angle_low:'로우 앵글', angle_high:'하이 앵글', angle_dutch:'더치 앵글(기울여 연출)', topview:'탑뷰·플랫레이', frame_cu:'클로즈업', frame_bust:'바스트 샷', frame_full:'풀 샷(전신)',
+  couple:'커플', family:'가족', pet:'반려견', product:'제품', fashion:'패션·룩북', mood_warm:'따뜻한 무드', mood_chic:'시크한 무드', mood_dreamy:'몽환적 무드', mood_fresh:'청량한 무드', mood_dramatic:'드라마틱 무드', mood_vintage:'빈티지 무드'};
+let altSeed = 0, simAlt = 0;
+const esc = t => String(t).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const UTM = 'utm_source=studio_conti&utm_medium=referral';
+function photoUrl(ph, w = 600){ return `https://images.unsplash.com/${ph.id}?auto=format&fit=crop&w=${w}&h=${Math.round(w*1.25)}&q=70`; }
+function pick(cat, i){ const L = PHOTOS[cat] || []; if (!L.length) return null; const n = ((i % L.length) + L.length) % L.length; return L[n]; }
+function figure(ph, label, w = 600){
+  if (!ph) return `<figure class="ph broken"><span class="fr"></span></figure>`;
+  const page = `${ph.page}${ph.page.includes('?') ? '&' : '?'}${UTM}`;
+  return `<figure class="ph${label === CAT_LABEL.angle_dutch ? ' tilt' : ''}"><a class="fr" href="${page}" target="_blank" rel="noopener"><img src="${photoUrl(ph, w)}" alt="${esc(ph.alt)}" loading="lazy" decoding="async" onerror="this.closest('figure').classList.add('broken')">${label ? `<span class="badge">${esc(label)}</span>` : ''}</a><figcaption>Photo: <a href="${ph.byUrl || page}" target="_blank" rel="noopener">${esc(ph.by)}</a> / <a href="https://unsplash.com/?${UTM}" target="_blank" rel="noopener">Unsplash</a></figcaption></figure>`;
+}
+function shotCat(s){
+  const kind = SUBJ[s.subject].kind;
+  if (s.angle === 'top') return 'topview';
+  if (kind === 'person' && s.light === 'rim') return 'rim';
+  if (s.angle === 'low') return kind === 'product' ? 'product' : 'angle_low';
+  if (s.angle === 'high') return kind === 'pet' ? 'pet' : 'angle_high';
+  if (s.angle === 'dutch') return 'angle_dutch';
+  if (kind === 'product') return 'product';
+  if (kind === 'pet') return 'pet';
+  if (s.subject === 'couple') return 'couple';
+  if (s.subject === 'family') return 'family';
+  if (s.light === 'side') return 'split';
+  if (s.subject === 'lookbook') return s.framing === 'FS' || s.framing === 'WS' ? 'frame_full' : 'fashion';
+  if (s.framing === 'CU' || s.framing === 'ECU') return 'frame_cu';
+  if (s.framing === 'MCU') return 'frame_bust';
+  if (s.framing === 'FS' || s.framing === 'WS') return 'frame_full';
+  return CAT_FOR_PATTERN[classify(s.keyAz, s.keyElev)];
+}
+
+/* ---------------- plan renderer ---------------- */
+let planGeo = null;
+function lightRadius(kind, S){
+  const k = S.kind;
+  if (kind === 'key') return k === 'product' ? .75 : k === 'pet' ? 1.1 : 1.55;
+  if (kind === 'fill') return k === 'product' ? .85 : k === 'pet' ? 1.25 : 1.75;
+  return k === 'product' ? .42 : .95;
+}
+function renderPlan(cv, p){
+  const {ctx, W, H} = setupCanvas(cv);
+  const u = clamp(W/380, .55, 1.3);
+  const sk = new Sk(ctx, (p.seed || 1) + 5, u);
+  const g = geom(p), S = g.S, room = ROOMS[state.room];
+  ctx.fillStyle = TOK.sheet; ctx.fillRect(0, 0, W, H);
+  const topWall = -(g.gap + .35);
+  const bottomWall = topWall + room.d;
+  const ymin = topWall - .35, ymax = Math.max(bottomWall + .35, g.d + .7);
+  const xspan = room.w + .8;
+  const sc = Math.min(W/xspan, H/(ymax - ymin));
+  const ox = W/2, oy = -ymin*sc + (H - (ymax - ymin)*sc)/2;
+  const P = (x, y) => [ox + x*sc, oy + y*sc];
+  planGeo = {ox, oy, sc, S};
+
+  // grid
+  ctx.save(); ctx.strokeStyle = TOK.grid; ctx.lineWidth = 1;
+  for (let x = -Math.ceil(xspan); x <= xspan; x += .5){ const [px] = P(x, 0); ctx.globalAlpha = (Math.abs(x % 1) < .01) ? .9 : .45; ctx.beginPath(); ctx.moveTo(px, 0); ctx.lineTo(px, H); ctx.stroke(); }
+  for (let y = Math.floor(ymin*2)/2; y <= ymax; y += .5){ const [, py] = P(0, y); ctx.globalAlpha = (Math.abs(y % 1) < .01) ? .9 : .45; ctx.beginPath(); ctx.moveTo(0, py); ctx.lineTo(W, py); ctx.stroke(); }
+  ctx.restore();
+  // room walls
+  const r0 = P(-room.w/2, topWall), r1 = P(room.w/2, bottomWall);
+  sk.line([[r0[0], r0[1]], [r1[0], r0[1]], [r1[0], r1[1]], [r0[0], r1[1]]], {closed:true, w:2.6, amp:.8});
+  sk.text(`${room.ko} ${room.sub}`, r0[0] + 6*u, r1[1] - 8*u, {size:19, color:TOK['ink-2']});
+  // backdrop
+  const bl = P(-g.paper/2, -g.gap), br = P(g.paper/2, -g.gap);
+  ctx.save(); ctx.fillStyle = rgba(MOODS[p.mood].pal[0], .5); ctx.fillRect(bl[0], bl[1] - 6*u, br[0] - bl[0], 10*u); ctx.restore();
+  sk.line([bl, br], {w:2.4});
+  [bl, br].forEach(q => { fillPath(ctx, ellPath(q[0], q[1], 4*u, 4*u), TOK.ink); });
+  sk.text(`배경지 ${g.paper} m`, (bl[0] + br[0])/2, bl[1] - 10*u, {size:19, align:'center'});
+
+  // FOV cone
+  const half = Math.atan(12/p.focal);
+  const cam = P(0, g.d);
+  const reach = g.d + g.gap;
+  const fl = P(-Math.tan(half)*reach, -g.gap), fr = P(Math.tan(half)*reach, -g.gap);
+  const out = Math.tan(half)*reach > g.paper/2;
+  ctx.save(); ctx.fillStyle = rgba(out ? TOK.warn : TOK.fill, .07); ctx.beginPath(); ctx.moveTo(cam[0], cam[1]); ctx.lineTo(fl[0], fl[1]); ctx.lineTo(fr[0], fr[1]); ctx.closePath(); ctx.fill(); ctx.restore();
+  sk.line([cam, fl], {dash:[5,4], w:1.1, passes:1, color: out ? TOK.warn : TOK['ink-2']});
+  sk.line([cam, fr], {dash:[5,4], w:1.1, passes:1, color: out ? TOK.warn : TOK['ink-2']});
+
+  // subject
+  const subjScale = S.kind === 'product' ? 1 : 1;
+  if (S.kind === 'product'){
+    const t0 = P(-.16, -.1), t1 = P(.16, .1);
+    fillPath(ctx, polyPath([t0, [t1[0], t0[1]], t1, [t0[0], t1[1]]]), rgba(MOODS[p.mood].pal[3], .6));
+    sk.line([t0, [t1[0], t0[1]], t1, [t0[0], t1[1]]], {closed:true, w:1.3});
+    const [bx, by] = P(0, 0); sk.ell(bx, by, .04*sc, .04*sc, {w:1.4});
+    sk.text('제품', bx, by + .22*sc, {size:18, align:'center'});
+  } else {
+    const people = (p.scene && p.scene.people) || (S.kind === 'person' ? (p.solo && p.scene ? p.scene.people : S.people) : []);
+    (people || []).forEach(pp => {
+      const yo = pp.h < 1.3 ? .28 : 0;
+      const [x, y] = P(pp.x, yo);
+      const s = pp.h/1.72;
+      fillPath(ctx, ellPath(x, y, .22*s*sc, .1*s*sc), TOK['scrib-2']);
+      sk.ell(x, y, .22*s*sc, .1*s*sc, {w:1.2, color:TOK.scrib});
+      fillPath(ctx, ellPath(x, y - .02*s*sc, .08*s*sc, .08*s*sc), TOK.scrib);
+    });
+    const dog = (p.scene && p.scene.dog) || S.dog;
+    if (dog){
+      const [x, y] = P(dog.x, dog.y > .5 ? -.05 : 0.05);
+      const s = (dog.s ?? 1);
+      fillPath(ctx, ellPath(x, y, .14*s*sc, .24*s*sc), rgba(MOODS[p.mood].pal[3], .6));
+      sk.ell(x, y, .14*s*sc, .24*s*sc, {w:1.3});
+      sk.ell(x, y + .22*s*sc, .08*s*sc, .07*s*sc, {w:1.3});
+    }
+    sk.text(S.kind === 'pet' ? '반려견' : '피사체', P(0,0)[0] + .42*sc, P(0,0)[1] + 5*u, {size:18});
+  }
+
+  // lights
+  const lights = [];
+  const nL = +state.lights;
+  lights.push({kind:'key', az:p.keyAz, color:TOK.key, label:'키', w: S.kind === 'product' ? .45 : .9});
+  if (p.fillOn) lights.push({kind:'fill', az:p.fillAz, color:TOK.fill, label: nL === 1 ? '반사판' : '필', w: S.kind === 'product' ? .35 : .7, board: nL === 1});
+  if (p.rimOn) lights.push({kind:'rim', az:p.rimAz, color:TOK.rim, label:'림', w: S.kind === 'product' ? .2 : .35});
+  if (p.bgOn) lights.push({kind:'bg', fixed:true, pos:[.35*(S.kind === 'product' ? .3 : 1), -g.gap + .35], color:TOK.tape, label:'배경', w:.25});
+  planGeo.lights = [];
+  lights.forEach(Lt => {
+    let lx, ly;
+    if (Lt.fixed){ [lx, ly] = Lt.pos; }
+    else { const r = lightRadius(Lt.kind, S); lx = Math.sin(rad(Lt.az))*r; ly = Math.cos(rad(Lt.az))*r; }
+    const [px, py] = P(lx, ly);
+    const ang = Math.atan2(-ly, -lx); // pointing to subject
+    // beams
+    const tgt = Lt.kind === 'bg' ? P(lx*.2, -g.gap) : P(0, 0);
+    for (let b = -1; b <= 1; b++){
+      const ox2 = -Math.sin(ang)*b*Lt.w*.35*sc, oy2 = Math.cos(ang)*b*Lt.w*.35*sc;
+      sk.line([[px + ox2, py + oy2], [tgt[0] + ox2*.15, tgt[1] + oy2*.15]], {color:Lt.color, w:1, dash:[2,5], passes:1, alpha:.85});
+    }
+    ctx.save(); ctx.translate(px, py); ctx.rotate(ang + Math.PI/2);
+    const bw = Lt.w*sc, bh = Math.max(7*u, .16*sc);
+    ctx.fillStyle = Lt.board ? rgba(TOK.sheet, 1) : rgba(Lt.color, .85);
+    ctx.fillRect(-bw/2, -bh/2, bw, bh);
+    ctx.restore();
+    const corners = [[-bw/2,-bh/2],[bw/2,-bh/2],[bw/2,bh/2],[-bw/2,bh/2]].map(([a, b]) => { const c = Math.cos(ang + Math.PI/2), s = Math.sin(ang + Math.PI/2); return [px + a*c - b*s, py + a*s + b*c]; });
+    sk.line(corners, {closed:true, w:1.3, dash: Lt.board ? [4,3] : null, passes: Lt.board ? 1 : 2});
+    if (!Lt.fixed){
+      ctx.save(); ctx.strokeStyle = rgba(Lt.color, .9); ctx.setLineDash([3*u, 3*u]); ctx.lineWidth = 1.2*u; ctx.beginPath(); ctx.arc(px, py, 19*u, 0, Math.PI*2); ctx.stroke(); ctx.restore();
+      planGeo.lights.push({kind:Lt.kind, x:px, y:py});
+    }
+    const lxo = px + (lx >= 0 ? 24*u : -24*u);
+    sk.text(Lt.label, clamp(lxo, 24*u, W - 24*u), py + 6*u, {size:21, color:Lt.color, align: lx >= 0 ? 'left' : 'right', bg:rgba(TOK.sheet, .85)});
+  });
+
+  // camera
+  const camOut = g.d > bottomWall - .25;
+  const cc = camOut ? TOK.warn : TOK.ink;
+  const cw = .2*sc, ch = .12*sc;
+  ctx.save(); ctx.fillStyle = cc; ctx.fillRect(cam[0] - cw/2, cam[1], cw, ch); ctx.fillRect(cam[0] - cw*.22, cam[1] - ch*.6, cw*.44, ch*.6); ctx.restore();
+  sk.text(`카메라 · ${p.focal}mm`, cam[0] + cw*.7, cam[1] + ch*.9, {size:19, color:cc, bg:rgba(TOK.sheet, .8)});
+  if (camOut) sk.text('벽 밖! 공간이 모자라요', cam[0], cam[1] + ch + 22*u, {size:19, color:TOK.warn, align:'center', bg:rgba(TOK.sheet, .9)});
+  // distance dim
+  const d0 = P(0, S.kind === 'product' ? .12 : .16), d1 = P(0, g.d - .04);
+  if (d1[1] - d0[1] > 24*u){
+    const dx = -(S.kind === 'product' ? .28 : .55)*sc;
+    sk.line([[d0[0] + dx, d0[1]], [d1[0] + dx, d1[1]]], {w:1, passes:1, color:TOK['ink-2']});
+    sk.line([[d0[0] + dx - 5*u, d0[1]], [d0[0] + dx + 5*u, d0[1]]], {w:1, passes:1, color:TOK['ink-2']});
+    sk.line([[d1[0] + dx - 5*u, d1[1]], [d1[0] + dx + 5*u, d1[1]]], {w:1, passes:1, color:TOK['ink-2']});
+    sk.text(`${g.d.toFixed(2)} m`, d0[0] + dx - 6*u, (d0[1] + d1[1])/2 + 6*u, {size:21, align:'right', bg:rgba(TOK.sheet, .85)});
+  }
+  // scale bar
+  const sb = P(-room.w/2 + .2, ymax - .2);
+  sk.line([[sb[0], sb[1]], [sb[0] + sc, sb[1]]], {w:2, passes:1});
+  sk.text('1 m', sb[0] + sc/2, sb[1] - 6*u, {size:17, align:'center', color:TOK['ink-2']});
+}
+
+/* ---------------- readouts ---------------- */
+function exposure(p, g){
+  if (g.S.kind === 'pet' && p.focal <= 50 && p.angle === 'high') return '연속광 ISO 800 · 1/500s · f/4';
+  if (g.S.kind === 'product') return p.framing === 'ECU' ? 'ISO 100 · 1/125s · f/11–16' : 'ISO 100 · 1/125s · f/11';
+  if (state.subject === 'family' && !p.solo) return 'ISO 100 · 1/125s · f/11';
+  if (p.framing === 'CU' || p.framing === 'ECU') return 'ISO 100 · 1/125s · f/5.6';
+  return 'ISO 100 · 1/125s · f/8';
+}
+function notesFor(p, g){
+  const N = [], room = ROOMS[state.room];
+  const avail = room.d - g.gap - .35 - .6;
+  if (g.d > avail){
+    const fit = FOCALS.filter(f => g.Hf*f/36 <= avail).pop();
+    N.push({w:true, t: fit ? `이 공간에서 거리 ${g.d.toFixed(1)} m는 무리예요(쓸 수 있는 깊이 ${avail.toFixed(1)} m). ${fit}mm로 바꾸거나 프레이밍을 한 단계 좁히세요.` : `공간 깊이 ${avail.toFixed(1)} m로는 이 프레이밍이 어렵습니다. 한 단계 좁은 프레이밍을 고르세요.`});
+  } else N.push({t:`공간 여유 ${(avail - g.d).toFixed(1)} m. 카메라 뒤로 움직일 자리가 있습니다.`});
+  const half = Math.tan(Math.atan(12/p.focal))*(g.d + g.gap);
+  if (half > g.paper/2){
+    const den = g.paper/2 - g.Hf/3;
+    if (den <= 0) N.push({w:true, t:`이 프레이밍은 배경지(${g.paper} m)보다 넓게 찍힙니다. 3.55 m 롤이나 흰 벽을 쓰거나, 배경 끝을 후보정으로 지울 계획을 세우세요.`});
+    else { const fmin = 12*g.gap/den; const ok = FOCALS.find(f => f >= fmin); N.push({w:true, t:`화면 양옆으로 배경지 밖이 찍힙니다. ${ok ? ok + 'mm 이상으로 바꾸면' : '더 긴 렌즈를 쓰면'} 배경지 안에 들어옵니다.`}); }
+  }
+  if (g.S.kind === 'person' && ['CU','ECU','MCU'].includes(p.framing) && p.focal <= 35) N.push({w:true, t:'광각으로 얼굴을 가까이 찍으면 코와 이마가 커 보입니다. 얼굴 컷은 85mm 이상을 권합니다.'});
+  if (g.S.kind === 'product' && g.d < .3) N.push({w:true, t:`거리 ${Math.round(g.d*100)} cm는 일반 렌즈의 최단 초점거리보다 가깝습니다. 매크로 렌즈(100mm 매크로 약 30 cm)를 쓰세요.`});
+  if (p.keyElev > 60) N.push({w:true, t:'조명이 너무 높으면 눈두덩이에 그늘이 져 눈빛(캐치라이트)이 사라집니다.'});
+  if (p.keyElev < 10 && Math.abs(p.keyAz) < 110) N.push({t:'눈높이보다 낮은 조명은 부자연스러운 그림자를 만듭니다. 의도한 연출일 때만 쓰세요.'});
+  if (+state.lights === 1 && p.fillOn) N.push({t:'조명이 1개라 필 대신 흰 반사판(또는 흰 폼보드)을 키 반대편에 세웁니다.'});
+  if (p.angle === 'low' && g.S.kind === 'person') N.push({t:'로우 앵글은 렌즈를 피사체 허리 아래에 두고 살짝 올려다봅니다. 콧구멍이 보이지 않게 턱을 약간 내리게 하세요.'});
+  if (p.angle === 'high') N.push({t:'하이 앵글은 얼굴이 커지고 몸이 작아 보입니다. 사다리를 쓸 때는 다리를 잡아 줄 사람을 두세요.'});
+  if (p.angle === 'dutch') N.push({t:'더치 앵글은 한 세트에 1~2컷만. 많이 쓰면 화면이 산만해집니다.'});
+  if (g.S.kind === 'pet') N.push({t:'플래시가 낯선 반려동물은 연속광(LED)으로 바꾸고, 10분마다 쉬는 시간을 주세요.'});
+  return N;
+}
+function modText(p, g){
+  const r = lightRadius('key', g.S);
+  const M = MOODS[p.mood];
+  return `${r.toFixed(1)} m · ${M.mod}`;
+}
+
+/* ---------------- UI ---------------- */
+const $ = s => document.querySelector(s);
+function buildChips(){
+  const mk = (el, name, items, cur, sub) => {
+    el.innerHTML = '';
+    Object.entries(items).forEach(([k, v]) => {
+      const l = document.createElement('label'); l.className = 'chip';
+      const sw = name === 'mood' ? `<i class="sw" style="background:${v.pal[1]}"></i>` : '';
+      l.innerHTML = `<input type="radio" name="${name}" id="r-${name}-${k}" value="${k}" ${k === cur ? 'checked' : ''}><span>${sw}${v.ko}${sub && v.sub ? ' · ' + v.sub : ''}</span>`;
+      el.appendChild(l);
+    });
+    el.addEventListener('change', e => { state[name] = e.target.value; save(); rebuild(); });
+  };
+  mk($('#f-subject'), 'subject', SUBJ, state.subject);
+  mk($('#f-mood'), 'mood', MOODS, state.mood);
+  mk($('#f-room'), 'room', ROOMS, state.room, true);
+  mk($('#f-lights'), 'lights', LIGHTS, state.lights);
+}
+
+function renderConcept(){
+  const S = SUBJ[state.subject], M = MOODS[state.mood];
+  $('#c-title').textContent = M.title;
+  $('#c-sub').textContent = `${S.ko} · ${M.ko} 무드 · 조명 ${LIGHTS[state.lights].ko} · ${ROOMS[state.room].ko}`;
+  $('#c-log').textContent = M.log.replace('{who}', S.who);
+  $('#c-arc').innerHTML = M.arc.map((a, i) => `<li><b>S${i+1}</b>${a}</li>`).join('');
+  $('#c-pal').innerHTML = M.pal.map((c, i) => `<div><i style="background:${c}"></i>${M.palN[i]} ${c.toUpperCase()}</div>`).join('');
+  const n = +state.lights;
+  const setup = n === 1 ? `키 조명 1개 + 흰 반사판` : n === 2 ? (['dreamy','dramatic'].includes(state.mood) ? '키 + 림(윤곽광), 앞은 반사판' : '키 + 필(보조광)') : '키 + 필 + 림' + (M.bgLight ? ' + 배경 조명' : '');
+  const spec = [
+    ['대표 조명', `${PATTERNS[classify(M.key.az, M.key.elev)].ko} · ${M.mod}`],
+    ['조명 구성', setup],
+    ['명암 비율', `키 : 필 = ${M.ratio} : 1`],
+    ['색 보정', M.gel],
+    ['배경', M.bgDesc],
+    [S.kind === 'product' ? '연출 소품' : '의상', S.kind === 'product' ? M.props : M.wardrobe],
+  ];
+  if (S.kind !== 'product') spec.push(['소품', M.props]);
+  $('#c-spec').innerHTML = spec.map(([a, b]) => `<dt>${a}</dt><dd>${b}</dd>`).join('');
+}
+
+function renderBoard(){
+  const board = $('#board'); board.innerHTML = '';
+  shots.forEach((s, i) => {
+    const pat = PATTERNS[classify(s.keyAz, s.keyElev)];
+    const el = document.createElement('article'); el.className = 'shot';
+    el.innerHTML = `<div class="shot-ph" data-i="${i}"></div>
+      <div class="lab"><b>S${i+1} · ${s.beat}</b><span>${FR[s.framing].s}</span></div>
+      <h3>${s.t}</h3><p>${s.d}</p>
+      <div class="tags"><span class="tag">${FR[s.framing].ko}</span><span class="tag">${ANG[s.angle].ko}</span><span class="tag">${s.focal}mm</span><span class="tag k">${pat.ko}</span></div>
+      <button class="btn" type="button" data-i="${i}">시뮬레이터에서 열기</button>`;
+    board.appendChild(el);
+  });
+  board.querySelectorAll('button[data-i]').forEach(b => b.addEventListener('click', () => { loadShot(+b.dataset.i); document.getElementById('sim-sec').scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block:'start'}); }));
+  drawBoard();
+}
+function drawBoard(){
+  document.querySelectorAll('#board .shot-ph').forEach((el, i) => { const c = shotCat(shots[i]); el.innerHTML = figure(pick(c, i + altSeed), CAT_LABEL[c], 500); });
+}
+
+function buildSimControls(){
+  $('#s-framing').innerHTML = Object.entries(FR).map(([k, v]) => `<option value="${k}">${v.s} · ${v.ko}</option>`).join('');
+  $('#s-angle').innerHTML = Object.entries(ANG).map(([k, v]) => `<option value="${k}">${v.ko}</option>`).join('');
+  const on = (id, ev, fn) => $(id).addEventListener(ev, fn);
+  on('#s-framing', 'change', e => { sim.framing = e.target.value; sim.focusY = undefined; sim.solo = sim.solo; drawSim(); });
+  on('#s-angle', 'change', e => { sim.angle = e.target.value; drawSim(); });
+  on('#s-focal', 'input', e => { sim.focal = FOCALS[+e.target.value]; drawSim(); });
+  on('#s-key', 'input', e => { sim.keyAz = +e.target.value; drawSim(); });
+  on('#s-elev', 'input', e => { sim.keyElev = +e.target.value; drawSim(); });
+  on('#s-fill', 'change', e => { sim.fillOn = e.target.checked; drawSim(); });
+  on('#s-rim', 'change', e => { sim.rimOn = e.target.checked; drawSim(); });
+  on('#s-bg', 'change', e => { sim.bgOn = e.target.checked; drawSim(); });
+  on('#s-ratio', 'change', e => { sim.ratio = +e.target.value; drawSim(); });
+}
+function renderShotbar(){
+  const bar = $('#shotbar');
+  bar.innerHTML = shots.map((s, i) => `<button type="button" aria-pressed="${i === simIndex}" data-i="${i}">S${i+1} ${s.t}</button>`).join('');
+  bar.querySelectorAll('button').forEach(b => b.addEventListener('click', () => loadShot(+b.dataset.i)));
+}
+function loadShot(i){
+  simIndex = i;
+  sim = JSON.parse(JSON.stringify(shots[i]));
+  renderShotbar();
+  syncControls();
+  drawSim();
+}
+function syncControls(){
+  $('#s-framing').value = sim.framing;
+  $('#s-angle').value = sim.angle;
+  $('#s-focal').value = String(Math.max(0, FOCALS.indexOf(sim.focal)));
+  $('#s-key').value = String(Math.round(sim.keyAz));
+  $('#s-elev').value = String(Math.round(sim.keyElev));
+  $('#s-fill').checked = !!sim.fillOn;
+  $('#s-rim').checked = !!sim.rimOn;
+  $('#s-bg').checked = !!sim.bgOn;
+  const r = [1.5,2,3,4,8].reduce((a, b) => Math.abs(b - sim.ratio) < Math.abs(a - sim.ratio) ? b : a);
+  $('#s-ratio').value = String(r);
+}
+function azText(az){
+  const a = Math.round(az);
+  if (Math.abs(a) < 3) return '0° 정면';
+  return `${Math.abs(a)}° ${a > 0 ? '오른쪽' : '왼쪽'}`;
+}
+function drawSim(){
+  const g = geom(sim);
+  $('#o-focal').textContent = `${sim.focal}mm`;
+  $('#o-key').textContent = azText(sim.keyAz);
+  $('#o-elev').textContent = `${Math.round(sim.keyElev)}°`;
+  $('#o-ratio').textContent = sim.fillOn ? `${sim.ratio} : 1` : '필 꺼짐';
+  $('#s-ratio').disabled = !sim.fillOn;
+  renderPlan($('#plan'), sim);
+  { const pc = CAT_FOR_PATTERN[classify(sim.keyAz, sim.keyElev)], fc = shotCat(Object.assign({}, sim, {light: pc === 'rim' || pc === 'silhouette' ? 'rim' : 'main'}));
+    $('#sim-ex').innerHTML = figure(pick(pc, simAlt), CAT_LABEL[pc], 500) + figure(pick(fc === pc ? 'frame_bust' : fc, simAlt), CAT_LABEL[fc === pc ? 'frame_bust' : fc], 500); }
+  const pat = classify(sim.keyAz, sim.keyElev);
+  $('#r-pat').textContent = PATTERNS[pat].ko + ' 조명';
+  $('#r-patd').textContent = PATTERNS[pat].d;
+  $('#r-dist').textContent = g.d < 1 ? `약 ${Math.round(g.d*100)} cm` : `약 ${g.d.toFixed(2)} m`;
+  $('#r-camh').textContent = `${g.camH < 1 ? Math.round(g.camH*100) + ' cm' : g.camH.toFixed(1) + ' m'}${sim.angle === 'dutch' ? ' · 10–15° 기울임' : ''}`;
+  $('#r-exp').textContent = exposure(sim, g);
+  $('#r-mod').textContent = modText(sim, g);
+  $('#r-notes').innerHTML = notesFor(sim, g).map(n => `<li class="${n.w ? 'w' : ''}">${n.t}</li>`).join('');
+  $('#plan-room').textContent = `${ROOMS[state.room].ko} ${ROOMS[state.room].sub}`;
+}
+
+/* plan dragging */
+let drag = null;
+function planPointer(e){
+  const cv = $('#plan'); const r = cv.getBoundingClientRect();
+  return [e.clientX - r.left, e.clientY - r.top];
+}
+$('#plan').addEventListener('pointerdown', e => {
+  if (!planGeo || !planGeo.lights) return;
+  const [x, y] = planPointer(e);
+  let best = null, bd = 34;
+  planGeo.lights.forEach(l => { const d = Math.hypot(l.x - x, l.y - y); if (d < bd){ bd = d; best = l; } });
+  if (!best){
+    // pick closest light by angle when clicking empty space: move key
+    best = {kind:'key'};
+  }
+  drag = best.kind; $('#plan').classList.add('drag');
+  $('#plan').setPointerCapture(e.pointerId);
+  movePlan(x, y);
+});
+$('#plan').addEventListener('pointermove', e => { if (drag){ const [x, y] = planPointer(e); movePlan(x, y); } });
+const endDrag = () => { drag = null; $('#plan').classList.remove('drag'); };
+$('#plan').addEventListener('pointerup', endDrag);
+$('#plan').addEventListener('pointercancel', endDrag);
+function movePlan(x, y){
+  const {ox, oy, sc} = planGeo;
+  const wx = (x - ox)/sc, wy = (y - oy)/sc;
+  const az = Math.atan2(wx, wy)*180/Math.PI;
+  if (drag === 'key'){ sim.keyAz = az; $('#s-key').value = String(Math.round(az)); }
+  else if (drag === 'fill') sim.fillAz = az;
+  else if (drag === 'rim') sim.rimAz = az;
+  drawSim();
+}
+
+/* references */
+function renderRefs(){
+  const S = SUBJ[state.subject], M = MOODS[state.mood];
+  const cards = [];
+  const base = shots[0];
+  const kw = `${M.en} ${S.en}`;
+  cards.push({kind:'무드', title:`${M.title} — ${M.ko} 무드`, desc:`팔레트와 의상·배경 톤을 잡을 때 참고하세요. 검색어: “${kw}”.`, p: base, cat:'mood_' + state.mood,
+    links:[{l:'Unsplash', u:`https://unsplash.com/s/photos/${slug(kw)}`}, {l:'Pinterest', u:`https://www.pinterest.com/search/pins/?q=${enc(M.ko + ' ' + S.ko + ' 스튜디오 촬영')}`}, {l:'Behance', u:`https://www.behance.net/search/projects?search=${enc(kw + ' studio')}`}]});
+  const seen = new Set();
+  shots.forEach(s => {
+    const k = classify(s.keyAz, s.keyElev); if (seen.has(k)) return; seen.add(k);
+    const P = PATTERNS[k];
+    const q = S.kind === 'product' ? `product photography ${P.en}` : `${P.en} portrait`;
+    const links = [{l:'Unsplash', u:`https://unsplash.com/s/photos/${slug(q)}`}, {l:'Pinterest', u:`https://www.pinterest.com/search/pins/?q=${enc(P.en + ' diagram')}`}];
+    links.push(P.wiki ? {l:'위키백과', u:P.wiki} : {l:'위키백과', u:'https://en.wikipedia.org/wiki/Portrait_photography'});
+    cards.push({kind:'조명 패턴', title:`${P.ko} 조명`, desc:P.d, cat:CAT_FOR_PATTERN[k], p:Object.assign({}, s, {framing: S.kind === 'product' ? 'MS' : (S.kind === 'pet' ? 'CU' : 'CU'), angle:'eye', focal:85, scene:null, solo:true, focusY:undefined, ref:undefined}), links});
+  });
+  const tone = M.bg;
+  if (tone === 'dark') cards.push({kind:'톤', cat:'lowkey', title:'로우키(어두운 화면)', desc:'화면 대부분을 어둡게 두고 필요한 곳만 밝히는 방식. 배경과 피사체 사이 거리를 넉넉히 두면 배경이 더 어두워집니다.', p:Object.assign({}, base, {bgOn:false}), links:[{l:'위키백과', u:'https://en.wikipedia.org/wiki/Low-key_lighting'}, {l:'Unsplash', u:'https://unsplash.com/s/photos/low-key-portrait'}, {l:'키아로스쿠로', u:'https://en.wikipedia.org/wiki/Chiaroscuro'}]});
+  else cards.push({kind:'톤', cat: tone === 'mid' ? 'loop' : 'highkey', title: tone === 'mid' ? '중간 톤과 3점 조명' : '하이키(밝은 화면)', desc: tone === 'mid' ? '키·필·림 세 조명의 역할을 나눠 생각하면 어떤 조명을 하나 빼도 결과를 예측할 수 있습니다.' : '그림자를 최소로 하고 배경을 피사체보다 1스톱 밝게 비춥니다. 밝고 깨끗한 인상.', p:Object.assign({}, base, {bgOn:true}), links: tone === 'mid' ? [{l:'위키백과', u:'https://en.wikipedia.org/wiki/Three-point_lighting'}, {l:'Unsplash', u:'https://unsplash.com/s/photos/studio-portrait'}] : [{l:'위키백과', u:'https://en.wikipedia.org/wiki/High-key_lighting'}, {l:'Unsplash', u:'https://unsplash.com/s/photos/high-key-portrait'}]});
+  const angSeen = new Set();
+  const ANGREF = {low:{t:'로우 앵글', u:'https://en.wikipedia.org/wiki/Low-angle_shot', q:'low angle portrait', d:'아래에서 올려다보면 피사체가 크고 당당해 보입니다.'}, high:{t:'하이 앵글', u:'https://en.wikipedia.org/wiki/High-angle_shot', q:'high angle portrait', d:'위에서 내려다보면 피사체가 작고 친근해 보입니다.'}, dutch:{t:'더치 앵글', u:'https://en.wikipedia.org/wiki/Dutch_angle', q:'dutch angle fashion', d:'카메라를 기울여 불안정함과 움직임을 만듭니다.'}, top:{t:'탑뷰·부감', u:'https://en.wikipedia.org/wiki/Bird%27s-eye_view', q:'flat lay', d:'바로 위에서 내려다보는 시점. 배치 자체가 그림이 됩니다.'}};
+  shots.forEach(s => {
+    if (!ANGREF[s.angle] || angSeen.has(s.angle)) return; angSeen.add(s.angle);
+    const A = ANGREF[s.angle];
+    cards.push({kind:'앵글', cat: {low:'angle_low', high:'angle_high', dutch:'angle_dutch', top:'topview'}[s.angle], title:A.t, desc:A.d, p:s, links:[{l:'위키백과', u:A.u}, {l:'Unsplash', u:`https://unsplash.com/s/photos/${slug(A.q)}`}]});
+  });
+  cards.push({kind:'프레이밍', cat:'frame_full', title:'샷 크기', desc:'풀 샷·웨이스트·바스트·클로즈업. 같은 사람도 어디서 자르느냐에 따라 이야기가 달라집니다. 관절(무릎·허리·팔꿈치)에서 자르지 않는 것이 기본입니다.', p:Object.assign({}, base, {framing:'WS', angle:'eye', focal:35, solo: S.kind === 'person', scene: S.kind === 'person' ? {people:[{x:0,h:1.72}]} : base.scene}), overlay: S.kind === 'person' ? 'sizes' : null,
+    links:[{l:'위키백과', u:'https://en.wikipedia.org/wiki/Shot_(filmmaking)'}, {l:'클로즈업', u:'https://en.wikipedia.org/wiki/Close-up'}, {l:'3분할 구도', u:'https://en.wikipedia.org/wiki/Rule_of_thirds'}]});
+
+  const el = $('#refs');
+  el.innerHTML = cards.map((c, i) => `<article class="ref"><div data-r="${i}"></div><div style="min-width:0"><div class="kind">${c.kind}</div><h3>${c.title}</h3><p>${c.desc}</p><div class="links">${c.links.map(l => `<a href="${l.u}" target="_blank" rel="noopener">${l.l}</a>`).join('')}</div></div></article>`).join('');
+  renderRefs.cards = cards;
+  drawRefs();
+}
+function drawRefs(){
+  const cards = renderRefs.cards || [];
+  document.querySelectorAll('#refs [data-r]').forEach(el => { const c = cards[+el.dataset.r]; el.innerHTML = figure(pick(c.cat, altSeed + 1), '', 300); });
+}
+
+/* copy */
+function planText(){
+  const S = SUBJ[state.subject], M = MOODS[state.mood];
+  const lines = [`[스튜디오 콘티] ${M.title}`, `${S.ko} · ${M.ko} · ${ROOMS[state.room].ko}(${ROOMS[state.room].sub}) · 조명 ${LIGHTS[state.lights].ko}`, '', M.log.replace('{who}', S.who), '',
+    `팔레트: ${M.pal.map((c, i) => M.palN[i] + ' ' + c).join(', ')}`, `의상: ${M.wardrobe}`, `소품: ${M.props}`, `배경: ${M.bgDesc}`, `조명 장비: ${M.mod} / ${M.gel}`, ''];
+  shots.forEach((s, i) => {
+    const g = geom(s);
+    lines.push(`S${i+1} ${s.beat} — ${s.t}`);
+    lines.push(`  ${FR[s.framing].ko} · ${ANG[s.angle].ko} · ${s.focal}mm · ${PATTERNS[classify(s.keyAz, s.keyElev)].ko} 조명(${azText(s.keyAz)}, 높이 ${s.keyElev}°)`);
+    lines.push(`  거리 약 ${g.d.toFixed(2)} m · 카메라 높이 ${g.camH.toFixed(1)} m · ${exposure(s, g)}`);
+    lines.push(`  ${s.d}`);
+  });
+  return lines.join('\n');
+}
+function toast(msg){ const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; t.setAttribute('role', 'status'); document.body.appendChild(t); setTimeout(() => t.remove(), 1800); }
+$('#copy').addEventListener('click', () => {
+  const txt = planText();
+  const fallback = () => {
+    const h = $('#copyhold'); h.innerHTML = '<textarea class="copybox" id="copybox" aria-label="콘티 텍스트"></textarea>';
+    const ta = $('#copybox'); ta.value = txt; ta.focus(); ta.select();
+    toast('아래 상자의 텍스트를 복사하세요'); ta.scrollIntoView({block:'center'});
+  };
+  try { navigator.clipboard.writeText(txt).then(() => toast('콘티를 복사했어요'), fallback); } catch(e) { fallback(); }
+});
+$('#reseed').addEventListener('click', () => { altSeed++; simAlt++; drawBoard(); drawSim(); drawRefs(); renderMoodboard(); });
+$('#sim-alt').addEventListener('click', () => { simAlt++; drawSim(); });
+function renderMoodboard(){ const c = 'mood_' + state.mood; $('#c-mood').innerHTML = [0,1,2].map(k => figure(pick(c, k + altSeed*3), '', 400)).join(''); }
+
+/* ---------------- main ---------------- */
+function rebuild(){
+  shots = buildShots();
+  renderConcept();
+  renderMoodboard();
+  renderBoard();
+  if (simIndex >= shots.length) simIndex = 0;
+  loadShot(simIndex);
+  renderRefs();
+}
+function redrawAll(){ tokRead = false; readTokens(); tokRead = true; if (sim) drawSim(); }
+
+readTokens(); tokRead = true;
+buildChips();
+buildSimControls();
+rebuild();
+
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(redrawAll);
+try { document.fonts.load("20px 'Nanum Pen Script'").then(redrawAll); } catch(e) {}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', redrawAll);
+new MutationObserver(redrawAll).observe(document.documentElement, {attributes:true, attributeFilter:['data-theme']});
+let rt = null, lastW = innerWidth;
+addEventListener('resize', () => { if (Math.abs(innerWidth - lastW) < 2) return; lastW = innerWidth; clearTimeout(rt); rt = setTimeout(redrawAll, 150); });
+})();
+</script>
+</body>
+</html>
