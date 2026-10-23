@@ -103,6 +103,29 @@ dl.spec dd{margin:0;color:var(--ink)}
 .ph.broken img{display:none}
 .gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:14px}
 #gal-tabs .chip span{font-size:13px;padding:4px 9px}
+.mb-h{font-size:12.5px;font-weight:600;color:var(--ink-2);margin-top:16px}
+.mb-h + .moodboard{margin-top:6px}
+.region-box{margin-top:16px;border:1.5px dashed var(--scrib);border-radius:3px;padding:12px 14px;font-size:13.5px}
+.region-box h4{margin:0 0 6px;font-size:14.5px}
+.region-box p{margin:0 0 8px;color:var(--ink-2)}
+.region-box dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;margin:0 0 10px}
+.region-box dt{font-weight:600;white-space:nowrap}
+.region-box dd{margin:0}
+.drop{border:2px dashed var(--scrib);border-radius:4px;padding:22px 16px;text-align:center;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;background:var(--paper);cursor:copy}
+.drop.over{background:var(--tape)}
+.drop b{flex-basis:100%;font-size:15px}
+.drop span{font-size:13px;color:var(--ink-2)}
+.two-tags{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
+.two-tags input[type=text]{font:inherit;font-size:14px;border:1.5px solid var(--ink);border-radius:2px;padding:5px 8px;width:100%;background:var(--sheet);color:var(--ink)}
+.myref{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-top:12px}
+.myref figure{margin:0;display:flex;flex-direction:column;gap:4px;min-width:0}
+.myref img{width:100%;aspect-ratio:4/5;object-fit:cover;border:1.5px solid var(--scrib);border-radius:3px;display:block;background:var(--grid)}
+.myref .meta{display:flex;flex-wrap:wrap;gap:4px;align-items:center;font-size:11.5px;color:var(--ink-2)}
+.myref .meta button{margin-left:auto;font:inherit;font-size:11.5px;border:1px solid var(--warn);color:var(--warn);background:none;border-radius:2px;padding:1px 6px;cursor:pointer}
+.myref select{font-size:12px;padding:2px 4px;width:auto}
+.empty{grid-column:1/-1;color:var(--ink-2);font-size:13.5px;padding:10px 0}
+body.snap .studio-only{display:none}
+@media (max-width:720px){ .two-tags{grid-template-columns:minmax(0,1fr)} }
 .moodboard{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:16px}
 .ex{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .ex-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
@@ -193,7 +216,7 @@ footer code{font-family:var(--f-mono);font-size:12px}
     <div>
       <div class="eyebrow">Studio shoot planner · 촬영 기획 시뮬레이터</div>
       <h1>스튜디오 <span class="tape">콘티북</span></h1>
-      <p class="lede">무엇을, 어떤 분위기로 찍을지만 고르면 콘셉트와 다섯 컷짜리 스토리라인을 실제 모델 사진 예시와 함께 짜 줍니다. 컷마다 배치·화각·앵글·프레이밍·조명을 적어 두었고, 배치도에서 조명을 끌어 옮기면 그 조명 패턴의 실제 사진이 바로 바뀝니다.</p>
+      <p class="lede">스튜디오인지 야외 스냅인지, 어느 나라 스타일로 무엇을 어떤 분위기로 찍을지 고르면 콘셉트와 다섯 컷짜리 스토리라인을 실제 사진 예시와 함께 짜 줍니다. 컷마다 배치·화각·앵글·프레이밍·조명을 적어 두었고, 배치도에서 조명을 끌어 옮기면 그 조명 패턴의 실제 사진이 바로 바뀝니다.</p>
     </div>
     <div class="mast-actions">
       <button class="btn" id="reseed" type="button">다른 예시 사진 보기</button>
@@ -204,10 +227,12 @@ footer code{font-family:var(--f-mono);font-size:12px}
   <section class="sheet" id="brief" aria-labelledby="h-brief">
     <div class="sec-head"><span class="no">01</span><h2 id="h-brief">기획 메모</h2><p>네 가지만 고르면 아래 콘티가 모두 바뀝니다.</p></div>
     <div class="brief">
+      <fieldset><legend>촬영 형태</legend><div class="chips" id="f-mode"></div></fieldset>
+      <fieldset><legend>지역 스타일 <small>어느 나라 사진의 미감을 따를지</small></legend><div class="chips" id="f-region"></div></fieldset>
       <fieldset><legend>무엇을 찍나요</legend><div class="chips" id="f-subject"></div></fieldset>
       <fieldset><legend>어떤 분위기</legend><div class="chips" id="f-mood"></div></fieldset>
-      <fieldset><legend>공간 크기 <small>배경지부터 반대편 벽까지</small></legend><div class="chips" id="f-room"></div></fieldset>
-      <fieldset><legend>조명 개수 <small>플래시·연속광 모두</small></legend><div class="chips" id="f-lights"></div></fieldset>
+      <fieldset class="studio-only"><legend>공간 크기 <small>배경지부터 반대편 벽까지</small></legend><div class="chips" id="f-room"></div></fieldset>
+      <fieldset class="studio-only"><legend>조명 개수 <small>플래시·연속광 모두</small></legend><div class="chips" id="f-lights"></div></fieldset>
     </div>
   </section>
 
@@ -219,11 +244,15 @@ footer code{font-family:var(--f-mono);font-size:12px}
         <div class="c-sub" id="c-sub"></div>
         <p class="c-log" id="c-log"></p>
         <ol class="arc" id="c-arc"></ol>
+        <div class="mb-h">무드 예시</div>
         <div class="moodboard" id="c-mood"></div>
+        <div class="mb-h" id="c-region-h"></div>
+        <div class="moodboard" id="c-region-ph"></div>
       </div>
       <div>
         <div class="pal" id="c-pal"></div>
         <dl class="spec" id="c-spec"></dl>
+        <div class="region-box" id="c-region"></div>
       </div>
     </div>
   </section>
@@ -287,6 +316,24 @@ footer code{font-family:var(--f-mono);font-size:12px}
     <p class="refnote">예시 사진은 모두 Unsplash의 무료 사진이며 사진마다 촬영자를 표기했습니다. 사진 설명을 기준으로 골랐기 때문에 조명 패턴이 교과서처럼 정확하지 않은 사진도 있을 수 있습니다. 버튼을 누르면 Unsplash·Pinterest·Behance 검색 결과나 위키백과 문서가 새 탭으로 열립니다.</p>
   </section>
 
+  <section class="sheet" id="board-sec" aria-labelledby="h-myref">
+    <div class="sec-head"><span class="no">07</span><h2 id="h-myref">내 레퍼런스 보드</h2><p>인스타그램·핀터레스트·샤오홍슈에서 캡쳐한 사진을 여기에 끌어다 놓거나 붙여 넣으세요. 사진은 지금 쓰는 기기의 브라우저 안에만 저장되고 어디에도 올라가지 않습니다. 지역과 카테고리 태그로 나눠 비교할 수 있습니다.</p></div>
+    <div class="drop" id="drop" tabindex="0">
+      <b>사진을 여기에 끌어다 놓기</b>
+      <span>또는 캡쳐 후 이 상자를 눌러 붙여넣기(Ctrl/⌘+V) · </span>
+      <label class="btn" for="ref-file" style="display:inline-block">파일 고르기</label>
+      <input type="file" id="ref-file" accept="image/*" multiple hidden>
+    </div>
+    <div class="two-tags">
+      <div class="ctrl"><label for="ref-region">새 사진의 지역</label><select id="ref-region"></select></div>
+      <div class="ctrl"><label for="ref-cat">새 사진의 카테고리</label><select id="ref-cat"></select></div>
+      <div class="ctrl"><label for="ref-src">출처 메모(계정·링크)</label><input type="text" id="ref-src" placeholder="@계정명 또는 링크"></div>
+    </div>
+    <div class="chips" id="ref-filter" role="group" aria-label="지역별 보기" style="margin-top:12px"></div>
+    <div class="myref" id="myref"></div>
+    <p class="refnote" id="ref-status"></p>
+  </section>
+
   <section class="sheet" id="gallery-sec" aria-labelledby="h-gal">
     <div class="sec-head"><span class="no">06</span><h2 id="h-gal">예시 갤러리</h2><p>카테고리마다 실제 사진을 모아 두었습니다. 조명·앵글·피사체·무드를 골라 넘겨 보세요.</p></div>
     <div class="chips" id="gal-tabs" role="group" aria-label="갤러리 카테고리"></div>
@@ -326,8 +373,30 @@ const SUBJ = {
   family:{ko:'가족', en:'family portrait', who:'가족이', kind:'person', group:1.75, people:[{x:-.38,h:1.78},{x:.36,h:1.62},{x:0,h:1.12}]},
   pet:{ko:'반려동물', en:'dog portrait', who:'반려견이', kind:'pet', ref:.36, dog:{x:0,y:0,s:1}},
   product:{ko:'제품·소품', en:'product photography', who:'제품이', kind:'product', ref:.17, gap:.5, paper:.9},
-  lookbook:{ko:'룩북·패션', en:'fashion lookbook', who:'모델이', kind:'person', people:[{x:0,h:1.78}]}
+  lookbook:{ko:'룩북·패션', en:'fashion lookbook', who:'모델이', kind:'person', people:[{x:0,h:1.78}]},
+  wedding:{ko:'웨딩', en:'wedding portrait', who:'신랑 신부가', kind:'person', group:1.35, people:[{x:-.2,h:1.8},{x:.2,h:1.65}]}
 };
+const MODES = {studio:{ko:'스튜디오'}, snap:{ko:'야외 스냅'}};
+const IG = t => `https://www.instagram.com/explore/tags/${encodeURIComponent(t)}/`;
+const PIN = q => `https://www.pinterest.com/search/pins/?q=${encodeURIComponent(q)}`;
+const REGIONS = {
+  kr:{ko:'한국', sum:'맑고 깨끗한 피부 톤과 밝은 하이키가 기본입니다. 프로필·웨딩 스튜디오 문화가 발달해 배경·의상·포즈가 매우 정돈되어 있고, 웨딩은 실내 스튜디오 촬영과 야외 스냅을 함께 하는 경우가 많습니다.',
+    t:{조명:'크고 부드러운 정면광(버터플라이·클램셸). 그림자를 거의 남기지 않음', 색감:'화이트·베이지·파스텔, 약간 차가운 화이트 밸런스', 보정:'피부·윤곽 보정이 강한 편. 잡티 없는 매끈한 질감', '포즈·표정':'단정한 정자세, 은은한 미소, 손동작은 절제', '배경·의상':'단색 배경지, 깔끔한 셔츠·원피스. 웨딩은 미니멀한 실내 세트'},
+    links:[['#프로필사진', IG('프로필사진')], ['#웨딩스냅', IG('웨딩스냅')], ['#스튜디오촬영', IG('스튜디오촬영')], ['#본식스냅', IG('본식스냅')], ['Pinterest', PIN('korean studio profile photo')], ['Pinterest 웨딩', PIN('korean wedding studio photo')]]},
+  jp:{ko:'일본', sum:'공기감 있는 부드러운 사진이 특징입니다. 살짝 밝게 날린 노출, 낮은 대비, 필름 같은 색으로 일상의 한순간처럼 보이게 찍습니다. 웨딩은 결혼식 전 따로 찍는 前撮り(마에도리)가 흔합니다.',
+    t:{조명:'창가 자연광·역광 위주. 큰 디퓨저로 그림자를 흐리게', 색감:'채도 낮은 파스텔, 약간 녹색·청록 기운, 하이라이트 날림', 보정:'피부 보정 약하게, 필름 그레인·부드러운 대비', '포즈·표정':'자연스러운 동작, 시선 피하기, 웃음 직전의 표정', '배경·의상':'생활 공간, 흰 벽, 식물. 리넨·니트 같은 소재'},
+    links:[['#ポートレート', IG('ポートレート')], ['#前撮り', IG('前撮り')], ['#ウェディングフォト', IG('ウェディングフォト')], ['#写真好きな人と繋がりたい', IG('写真好きな人と繋がりたい')], ['Pinterest', PIN('japanese portrait photography airy')]]},
+  cn:{ko:'중국', sum:'완성도 높은 세트와 화려한 연출이 특징입니다. 진한 색과 강한 보정, 古风(고풍)·한푸 같은 콘셉트 촬영, 대형 웨딩 세트와 여행 웨딩 사진(旅拍)이 유행합니다.',
+    t:{조명:'여러 개의 조명으로 얼굴·배경·소품을 모두 밝힘. 강한 림 조명', 색감:'붉은색·금색·진한 채도, 영화 같은 컬러 그레이딩', 보정:'피부·체형 보정이 매우 강함, 매끈한 질감', '포즈·표정':'과감하고 연출된 포즈, 드레스·소매 자락을 크게 활용', '배경·의상':'대형 세트, 전통 의상(치파오·한푸), 꽃과 천으로 가득 찬 화면'},
+    links:[['샤오홍슈 婚纱照', 'https://www.xiaohongshu.com/search_result?keyword=' + encodeURIComponent('婚纱照')], ['샤오홍슈 写真', 'https://www.xiaohongshu.com/search_result?keyword=' + encodeURIComponent('写真 摄影')], ['샤오홍슈 古风', 'https://www.xiaohongshu.com/search_result?keyword=' + encodeURIComponent('古风写真')], ['Pinterest', PIN('chinese wedding photography')], ['#hanfu', IG('hanfu')]]},
+  eu:{ko:'유럽', sum:'에디토리얼 감성이 강합니다. 인물보다 분위기와 이야기를 중시해 창광·자연광, 필름 그레인, 절제된 색을 쓰고 무표정이나 응시도 자연스럽게 받아들입니다. 웨딩은 파인아트 웨딩 스타일이 대표적입니다.',
+    t:{조명:'창광·한 개의 조명, 그림자를 살린 렘브란트·스플릿', 색감:'탁하고 차분한 색, 흙빛·올리브·크림', 보정:'최소한의 보정, 피부 결과 주름도 남김', '포즈·표정':'무표정·응시, 정적인 자세, 손이 얼굴을 가리는 연출', '배경·의상':'오래된 건물, 질감 있는 벽, 빈티지·테일러드 의상'},
+    links:[['#fineartwedding', IG('fineartwedding')], ['#editorialportrait', IG('editorialportrait')], ['#filmportrait', IG('filmportrait')], ['Pinterest', PIN('european editorial portrait photography')], ['Pinterest 웨딩', PIN('fine art wedding photography europe')]]},
+  us:{ko:'미주', sum:'선명하고 대담한 상업 사진의 감각입니다. 높은 대비와 채도, 밝은 미소, 라이프스타일 연출이 많고 조명 셋업이 크고 분명합니다. 웨딩은 다큐멘터리식 스냅과 밝은 골든아워 사진이 강합니다.',
+    t:{조명:'키·필·림이 분명한 3점 조명, 배경 분리', 색감:'선명한 채도, 따뜻한 피부 톤, 깊은 블랙', 보정:'깔끔하지만 피부 결은 남기는 편', '포즈·표정':'활짝 웃는 표정, 역동적인 동작, 자신감 있는 자세', '배경·의상':'컬러 배경지, 도시·자연 로케이션, 캐주얼·스트리트'},
+    links:[['#headshotphotographer', IG('headshotphotographer')], ['#weddingphotography', IG('weddingphotography')], ['#goldenhourportrait', IG('goldenhourportrait')], ['Pinterest', PIN('american studio headshot photography')], ['Pinterest 웨딩', PIN('golden hour wedding photography')]]}
+};
+
 
 const MOODS = {
   warm:{ko:'따뜻한', title:'오후 4시의 창가', en:'warm window light', key:{az:34,elev:35}, mod:'대형 소프트박스(창문 대신)', ratio:2, fill:true, rim:false, bg:'mid', bgLight:false,
@@ -401,6 +470,32 @@ const SHOTS = {
     {t:'신발 디테일',fr:'ECU',an:'eye',f:100,light:'main',focusY:.1,d:'신발·가방·소매 끝. 상세 이미지로 쓸 컷이라 배경은 단순하게 둡니다.'}]
 };
 
+SHOTS.wedding = [
+  {t:'드레스 전신',fr:'FS',an:'eye',f:50,light:'main',d:'드레스 자락을 바닥에 펼치고 신부는 몸을 45° 틉니다. 카메라는 허리 높이에 둡니다.'},
+  {t:'부케와 반지',fr:'ECU',an:'eye',f:100,light:'main',focusY:.95,solo:true,d:'부케를 쥔 두 손과 반지. 손가락을 펴서 반지가 보이게 합니다.'},
+  {t:'마주 보는 두 사람',fr:'MCU',an:'eye',f:85,light:'main',d:'코끝이 닿을 듯 마주 보고 웃음이 터질 때까지 기다립니다.'},
+  {t:'베일 너머 윤곽',fr:'MCU',an:'eye',f:85,light:'rim',d:'베일 뒤쪽에서 조명을 비춰 윤곽과 베일 결을 살립니다.'},
+  {t:'의자 위 클래식',fr:'MS',an:'eye',f:85,light:'main',d:'신부는 의자에 앉고 신랑은 옆에 섭니다. 정면 정자세의 클래식 컷.'}];
+const SNAP = {
+  wedding:[
+    {t:'걸어오는 두 사람',fr:'FS',an:'eye',f:50,light:'golden',cat:'snap_wedding',d:'해를 두 사람 뒤에 두고 손잡고 천천히 걸어오게 합니다. 연속 촬영 후 발이 교차한 컷을 고릅니다.'},
+    {t:'베일 너머 역광',fr:'CU',an:'eye',f:85,light:'golden',cat:'snap_backlight',d:'베일을 바람에 띄우고 해를 베일 뒤로. 렌즈 후드를 빼면 빛 번짐(플레어)이 부드럽게 들어옵니다.'},
+    {t:'도심 속 투샷',fr:'WS',an:'eye',f:35,light:'shade',cat:'snap_city',d:'건물 그늘(오픈 셰이드)에 세우면 얼굴 빛이 고르게 됩니다. 건물 선이 수평·수직이 되게 맞춥니다.'},
+    {t:'이마 맞대기',fr:'MCU',an:'eye',f:85,light:'sidesun',cat:'snap_couple',d:'낮은 해를 옆에 두고 이마를 맞댑니다. 그림자 쪽은 흰 반사판으로 살짝 채웁니다.'},
+    {t:'노을 실루엣',fr:'FS',an:'low',f:35,light:'silhouette',cat:'snap_golden',d:'해가 진 직후 하늘을 배경으로. 노출은 하늘에 맞추고 두 사람의 형태만 남깁니다.'}],
+  couple:[
+    {t:'산책하듯 걷기',fr:'FS',an:'eye',f:50,light:'golden',cat:'snap_couple',d:'서로 보며 걷게 하고 앞에서 뒷걸음질로 따라가며 찍습니다.'},
+    {t:'역광 속 웃음',fr:'MCU',an:'eye',f:85,light:'golden',cat:'snap_backlight',d:'해를 머리 뒤에 두면 머리카락에 빛 테두리가 생깁니다. 얼굴 노출에 맞추세요.'},
+    {t:'골목 그늘 투샷',fr:'MS',an:'eye',f:50,light:'shade',cat:'snap_city',d:'밝은 길가 바로 옆 그늘에 세우면 부드러운 빛이 얼굴에 들어옵니다.'},
+    {t:'벤치 위 대화',fr:'MS',an:'high',f:35,light:'shade',cat:'angle_high',d:'벤치에 앉은 두 사람을 살짝 위에서. 서로에게 몸을 기울이게 합니다.'},
+    {t:'노을 실루엣',fr:'FS',an:'low',f:35,light:'silhouette',cat:'snap_golden',d:'해가 진 직후 하늘을 배경으로 노출을 하늘에 맞춥니다.'}],
+  portrait:[
+    {t:'그늘 속 프로필',fr:'MCU',an:'eye',f:85,light:'shade',cat:'snap_profile',d:'건물이나 나무 그늘 끝에 세워 밝은 쪽을 바라보게 하면 눈에 빛이 들어갑니다.'},
+    {t:'골든아워 역광',fr:'CU',an:'eye',f:85,light:'golden',cat:'snap_backlight',d:'해를 머리 뒤에 두고 반사판으로 얼굴을 채웁니다.'},
+    {t:'걷는 전신',fr:'FS',an:'eye',f:50,light:'shade',cat:'snap_city',d:'횡단보도·골목처럼 선이 있는 배경에서 걷는 순간을 연속 촬영합니다.'},
+    {t:'벽에 비친 햇빛',fr:'MS',an:'eye',f:50,light:'sidesun',cat:'snap_profile',d:'낮은 해가 벽에 만드는 빛 조각 안에 얼굴을 넣습니다. 노출은 밝은 부분에 맞춥니다.'},
+    {t:'노을 실루엣',fr:'FS',an:'low',f:35,light:'silhouette',cat:'snap_golden',d:'해가 진 직후 하늘을 배경으로 형태만 남깁니다.'}]
+};
 const PATTERNS = {
   flat:{ko:'플랫', en:'flat lighting', d:'조명이 카메라 축과 거의 겹쳐 그림자가 거의 없습니다. 피부는 매끈해 보이지만 입체감은 약합니다.'},
   butterfly:{ko:'버터플라이', en:'butterfly lighting', d:'정면 위에서 내려오는 빛. 코 밑에 나비 모양 그림자가 생기고 광대가 살아납니다. 뷰티·프로필에 무난합니다.'},
@@ -421,8 +516,8 @@ function classify(az, elev){
 }
 
 /* ---------------- state ---------------- */
-let state = {subject:'portrait', mood:'warm', room:'m', lights:'2', seed:7};
-try { const s = JSON.parse(localStorage.getItem('conti-state')||'null'); if (s && SUBJ[s.subject] && MOODS[s.mood]) state = Object.assign(state, s); } catch(e) {}
+let state = {subject:'portrait', mood:'warm', room:'m', lights:'2', seed:7, mode:'studio', region:'kr'};
+try { const s = JSON.parse(localStorage.getItem('conti-state')||'null'); if (s && SUBJ[s.subject] && MOODS[s.mood]) state = Object.assign(state, s); if (!MODES[state.mode]) state.mode = 'studio'; if (!REGIONS[state.region]) state.region = 'kr'; } catch(e) {}
 const save = () => { try { localStorage.setItem('conti-state', JSON.stringify(state)); } catch(e) {} };
 
 let shots = [];
@@ -434,12 +529,20 @@ function lightFor(kind, mood){
   if (kind === 'side') return {az: 86, elev: 20};
   if (kind === 'rim') return {az: 140, elev: 30};
   if (kind === 'front') return {az: 6, elev: 42};
+  if (kind === 'golden') return {az: 150, elev: 8};
+  if (kind === 'shade') return {az: 12, elev: 28};
+  if (kind === 'sidesun') return {az: 72, elev: 14};
+  if (kind === 'silhouette') return {az: 176, elev: 4};
   return {az: k.az, elev: k.elev};
 }
 function buildShots(){
   const S = SUBJ[state.subject], M = MOODS[state.mood], n = +state.lights;
-  return SHOTS[state.subject].map((t, i) => {
+  const snap = state.mode === 'snap';
+  const tpl = snap ? (SNAP[state.subject] || SNAP[state.subject === 'family' ? 'couple' : 'portrait']) : SHOTS[state.subject];
+  return tpl.map((t, i) => {
     const key = lightFor(t.light, M);
+    if (snap) return Object.assign({}, t, {i, beat: M.arc[i], subject: state.subject, mood: state.mood, framing: t.fr, angle: t.an, focal: t.f,
+      keyAz: key.az, keyElev: key.elev, fillOn: t.light !== 'silhouette', fillAz: -Math.sign(key.az || 1) * 40, ratio: 2, rimOn: false, rimAz: -150, bgOn: false, seed: state.seed*97 + i*13});
     const isRimKey = t.light === 'rim';
     let fillOn = n >= 2 && M.fill && !isRimKey;
     let rimOn = !isRimKey && (n >= 3 ? M.rim : (n === 2 && M.rim && !M.fill));
@@ -577,7 +680,9 @@ const PHOTOS = {"loop":[{"id":"photo-1544005313-94ddf0286df2","page":"https://un
 const CAT_FOR_PATTERN = {flat:'highkey', butterfly:'butterfly', loop:'loop', rembrandt:'rembrandt', split:'split', rim:'rim', silhouette:'silhouette'};
 const CAT_LABEL = {loop:'루프 조명', rembrandt:'렘브란트 조명', split:'스플릿 조명', butterfly:'버터플라이 조명', rim:'림·역광', silhouette:'실루엣', lowkey:'로우키', highkey:'하이키·밝은 배경',
   angle_low:'로우 앵글', angle_high:'하이 앵글', angle_dutch:'더치 앵글(기울여 연출)', topview:'탑뷰·플랫레이', frame_cu:'클로즈업', frame_bust:'바스트 샷', frame_full:'풀 샷(전신)',
-  couple:'커플', family:'가족', pet:'반려견', product:'제품', fashion:'패션·룩북', mood_warm:'따뜻한 무드', mood_chic:'시크한 무드', mood_dreamy:'몽환적 무드', mood_fresh:'청량한 무드', mood_dramatic:'드라마틱 무드', mood_vintage:'빈티지 무드'};
+  couple:'커플', family:'가족', pet:'반려견', product:'제품', fashion:'패션·룩북', mood_warm:'따뜻한 무드', mood_chic:'시크한 무드', mood_dreamy:'몽환적 무드', mood_fresh:'청량한 무드', mood_dramatic:'드라마틱 무드', mood_vintage:'빈티지 무드',
+  region_kr:'한국 스타일', region_jp:'일본 스타일', region_cn:'중국 스타일', region_eu:'유럽 스타일', region_us:'미주 스타일',
+  snap_wedding:'웨딩 스냅', snap_couple:'커플 스냅', snap_profile:'프로필 스냅', snap_golden:'골든아워·노을', snap_backlight:'야외 역광', snap_city:'도심 스냅'};
 let altSeed = 0, simAlt = 0;
 const esc = t => String(t).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const UTM = 'utm_source=studio_conti&utm_medium=referral';
@@ -589,7 +694,9 @@ function figure(ph, label, w = 600){
   return `<figure class="ph${label === CAT_LABEL.angle_dutch ? ' tilt' : ''}"><a class="fr" href="${page}" target="_blank" rel="noopener"><img src="${photoUrl(ph, w)}" alt="${esc(ph.alt)}" loading="lazy" decoding="async" onerror="this.closest('figure').classList.add('broken')">${label ? `<span class="badge">${esc(label)}</span>` : ''}</a><figcaption>Photo: <a href="${ph.byUrl || page}" target="_blank" rel="noopener">${esc(ph.by)}</a> / <a href="https://unsplash.com/?${UTM}" target="_blank" rel="noopener">Unsplash</a></figcaption></figure>`;
 }
 function shotCat(s){
+  if (s.cat) return s.cat;
   const kind = SUBJ[s.subject].kind;
+  if (s.subject === 'wedding') return s.light === 'rim' ? 'rim' : (s.framing === 'FS' ? 'region_' + state.region : 'couple');
   if (s.angle === 'top') return 'topview';
   if (kind === 'person' && s.light === 'rim') return 'rim';
   if (s.angle === 'low') return kind === 'product' ? 'product' : 'angle_low';
@@ -635,23 +742,28 @@ function renderPlan(cv, p){
   for (let x = -Math.ceil(xspan); x <= xspan; x += .5){ const [px] = P(x, 0); ctx.globalAlpha = (Math.abs(x % 1) < .01) ? .9 : .45; ctx.beginPath(); ctx.moveTo(px, 0); ctx.lineTo(px, H); ctx.stroke(); }
   for (let y = Math.floor(ymin*2)/2; y <= ymax; y += .5){ const [, py] = P(0, y); ctx.globalAlpha = (Math.abs(y % 1) < .01) ? .9 : .45; ctx.beginPath(); ctx.moveTo(0, py); ctx.lineTo(W, py); ctx.stroke(); }
   ctx.restore();
+  const SNAPM = state.mode === 'snap';
+  if (!SNAPM){
   // room walls
   const r0 = P(-room.w/2, topWall), r1 = P(room.w/2, bottomWall);
   sk.line([[r0[0], r0[1]], [r1[0], r0[1]], [r1[0], r1[1]], [r0[0], r1[1]]], {closed:true, w:2.6, amp:.8});
   sk.text(`${room.ko} ${room.sub}`, r0[0] + 6*u, r1[1] - 8*u, {size:19, color:TOK['ink-2']});
+  } else sk.text('야외 · 바닥 격자 50 cm', P(-room.w/2, topWall)[0] + 6*u, P(0, topWall)[1] + 18*u, {size:19, color:TOK['ink-2']});
   // backdrop
+  if (!SNAPM){
   const bl = P(-g.paper/2, -g.gap), br = P(g.paper/2, -g.gap);
   ctx.save(); ctx.fillStyle = rgba(MOODS[p.mood].pal[0], .5); ctx.fillRect(bl[0], bl[1] - 6*u, br[0] - bl[0], 10*u); ctx.restore();
   sk.line([bl, br], {w:2.4});
   [bl, br].forEach(q => { fillPath(ctx, ellPath(q[0], q[1], 4*u, 4*u), TOK.ink); });
   sk.text(`배경지 ${g.paper} m`, (bl[0] + br[0])/2, bl[1] - 10*u, {size:19, align:'center'});
+  }
 
   // FOV cone
   const half = Math.atan(12/p.focal);
   const cam = P(0, g.d);
   const reach = g.d + g.gap;
   const fl = P(-Math.tan(half)*reach, -g.gap), fr = P(Math.tan(half)*reach, -g.gap);
-  const out = Math.tan(half)*reach > g.paper/2;
+  const out = !SNAPM && Math.tan(half)*reach > g.paper/2;
   ctx.save(); ctx.fillStyle = rgba(out ? TOK.warn : TOK.fill, .07); ctx.beginPath(); ctx.moveTo(cam[0], cam[1]); ctx.lineTo(fl[0], fl[1]); ctx.lineTo(fr[0], fr[1]); ctx.closePath(); ctx.fill(); ctx.restore();
   sk.line([cam, fl], {dash:[5,4], w:1.1, passes:1, color: out ? TOK.warn : TOK['ink-2']});
   sk.line([cam, fr], {dash:[5,4], w:1.1, passes:1, color: out ? TOK.warn : TOK['ink-2']});
@@ -688,8 +800,8 @@ function renderPlan(cv, p){
   // lights
   const lights = [];
   const nL = +state.lights;
-  lights.push({kind:'key', az:p.keyAz, color:TOK.key, label:'키', w: S.kind === 'product' ? .45 : .9});
-  if (p.fillOn) lights.push({kind:'fill', az:p.fillAz, color:TOK.fill, label: nL === 1 ? '반사판' : '필', w: S.kind === 'product' ? .35 : .7, board: nL === 1});
+  lights.push({kind:'key', az:p.keyAz, color:TOK.key, label: SNAPM ? '해' : '키', w: S.kind === 'product' ? .45 : .9, sun: SNAPM});
+  if (p.fillOn) lights.push({kind:'fill', az:p.fillAz, color:TOK.fill, label: (nL === 1 || SNAPM) ? '반사판' : '필', w: S.kind === 'product' ? .35 : .7, board: nL === 1 || SNAPM});
   if (p.rimOn) lights.push({kind:'rim', az:p.rimAz, color:TOK.rim, label:'림', w: S.kind === 'product' ? .2 : .35});
   if (p.bgOn) lights.push({kind:'bg', fixed:true, pos:[.35*(S.kind === 'product' ? .3 : 1), -g.gap + .35], color:TOK.tape, label:'배경', w:.25});
   planGeo.lights = [];
@@ -704,6 +816,13 @@ function renderPlan(cv, p){
     for (let b = -1; b <= 1; b++){
       const ox2 = -Math.sin(ang)*b*Lt.w*.35*sc, oy2 = Math.cos(ang)*b*Lt.w*.35*sc;
       sk.line([[px + ox2, py + oy2], [tgt[0] + ox2*.15, tgt[1] + oy2*.15]], {color:Lt.color, w:1, dash:[2,5], passes:1, alpha:.85});
+    }
+    if (Lt.sun){
+      ctx.save(); ctx.fillStyle = rgba(Lt.color, .9); ctx.beginPath(); ctx.arc(px, py, 10*u, 0, Math.PI*2); ctx.fill();
+      ctx.strokeStyle = Lt.color; ctx.lineWidth = 2*u; ctx.beginPath(); for (let i = 0; i < 8; i++){ const t = i*Math.PI/4; ctx.moveTo(px + Math.cos(t)*14*u, py + Math.sin(t)*14*u); ctx.lineTo(px + Math.cos(t)*20*u, py + Math.sin(t)*20*u); } ctx.stroke(); ctx.restore();
+      planGeo.lights.push({kind:Lt.kind, x:px, y:py});
+      sk.text(Lt.label, clamp(px + (lx >= 0 ? 26*u : -26*u), 24*u, W - 24*u), py + 6*u, {size:21, color:Lt.color, align: lx >= 0 ? 'left' : 'right', bg:rgba(TOK.sheet, .85)});
+      return;
     }
     ctx.save(); ctx.translate(px, py); ctx.rotate(ang + Math.PI/2);
     const bw = Lt.w*sc, bh = Math.max(7*u, .16*sc);
@@ -721,7 +840,7 @@ function renderPlan(cv, p){
   });
 
   // camera
-  const camOut = g.d > bottomWall - .25;
+  const camOut = !SNAPM && g.d > bottomWall - .25;
   const cc = camOut ? TOK.warn : TOK.ink;
   const cw = .2*sc, ch = .12*sc;
   ctx.save(); ctx.fillStyle = cc; ctx.fillRect(cam[0] - cw/2, cam[1], cw, ch); ctx.fillRect(cam[0] - cw*.22, cam[1] - ch*.6, cw*.44, ch*.6); ctx.restore();
@@ -744,6 +863,12 @@ function renderPlan(cv, p){
 
 /* ---------------- readouts ---------------- */
 function exposure(p, g){
+  if (state.mode === 'snap'){
+    const pat = classify(p.keyAz, p.keyElev);
+    if (pat === 'silhouette') return 'ISO 100 · 1/1000s · f/8 (하늘에 노출)';
+    if (pat === 'rim') return 'ISO 200 · 1/500s · f/2.8 (얼굴에 노출 +1)';
+    return 'ISO 100–400 · 1/500s · f/2.8';
+  }
   if (g.S.kind === 'pet' && p.focal <= 50 && p.angle === 'high') return '연속광 ISO 800 · 1/500s · f/4';
   if (g.S.kind === 'product') return p.framing === 'ECU' ? 'ISO 100 · 1/125s · f/11–16' : 'ISO 100 · 1/125s · f/11';
   if (state.subject === 'family' && !p.solo) return 'ISO 100 · 1/125s · f/11';
@@ -752,6 +877,15 @@ function exposure(p, g){
 }
 function notesFor(p, g){
   const N = [], room = ROOMS[state.room];
+  if (state.mode === 'snap'){
+    const pat = classify(p.keyAz, p.keyElev);
+    N.push({t: pat === 'silhouette' ? '노을 실루엣은 일몰 직후 10~20분이 가장 좋습니다. 하늘 색이 남아 있을 때 찍으세요.' : (p.keyElev < 20 ? '해가 낮은 골든아워(일출 후·일몰 전 1시간)에 찍으면 피부가 따뜻하고 그림자가 부드럽습니다.' : '한낮에는 그늘(오픈 셰이드)로 옮기세요. 직사광선은 눈 밑에 진한 그림자를 만듭니다.')});
+    if (Math.abs(p.keyAz) > 110) N.push({t:'역광에서는 얼굴이 어두워지니 반사판을 얼굴 아래 앞쪽에서 비추고, 노출은 얼굴 기준 +1스톱 올립니다.'});
+    N.push({t:'흰 반사판은 접이식 5-in-1(지름 80 cm 이상)이 무난합니다. 금색 면은 노을빛을 더 따뜻하게 만듭니다.'});
+    if (state.subject === 'wedding') N.push({t:'웨딩 스냅은 장소 촬영 허가를 미리 확인하고, 드레스 자락을 정리해 줄 보조 인력을 한 명 두세요.'});
+    if (g.S.kind === 'person' && ['CU','ECU','MCU'].includes(p.framing) && p.focal <= 35) N.push({w:true, t:'광각으로 얼굴을 가까이 찍으면 코와 이마가 커 보입니다. 얼굴 컷은 85mm 이상을 권합니다.'});
+    return N;
+  }
   const avail = room.d - g.gap - .35 - .6;
   if (g.d > avail){
     const fit = FOCALS.filter(f => g.Hf*f/36 <= avail).pop();
@@ -775,6 +909,7 @@ function notesFor(p, g){
   return N;
 }
 function modText(p, g){
+  if (state.mode === 'snap'){ const pat = classify(p.keyAz, p.keyElev); return pat === 'silhouette' ? '해 · 피사체 바로 뒤' : (p.keyElev < 20 ? '해 · 낮은 골든아워' : '그늘 속 하늘빛'); }
   const r = lightRadius('key', g.S);
   const M = MOODS[p.mood];
   return `${r.toFixed(1)} m · ${M.mod}`;
@@ -793,6 +928,8 @@ function buildChips(){
     });
     el.addEventListener('change', e => { state[name] = e.target.value; save(); rebuild(); });
   };
+  mk($('#f-mode'), 'mode', MODES, state.mode);
+  mk($('#f-region'), 'region', REGIONS, state.region);
   mk($('#f-subject'), 'subject', SUBJ, state.subject);
   mk($('#f-mood'), 'mood', MOODS, state.mood);
   mk($('#f-room'), 'room', ROOMS, state.room, true);
@@ -802,7 +939,7 @@ function buildChips(){
 function renderConcept(){
   const S = SUBJ[state.subject], M = MOODS[state.mood];
   $('#c-title').textContent = M.title;
-  $('#c-sub').textContent = `${S.ko} · ${M.ko} 무드 · 조명 ${LIGHTS[state.lights].ko} · ${ROOMS[state.room].ko}`;
+  $('#c-sub').textContent = state.mode === 'snap' ? `${S.ko} · 야외 스냅 · ${M.ko} 무드 · ${REGIONS[state.region].ko} 스타일` : `${S.ko} · ${M.ko} 무드 · ${REGIONS[state.region].ko} 스타일 · 조명 ${LIGHTS[state.lights].ko} · ${ROOMS[state.room].ko}`;
   $('#c-log').textContent = M.log.replace('{who}', S.who);
   $('#c-arc').innerHTML = M.arc.map((a, i) => `<li><b>S${i+1}</b>${a}</li>`).join('');
   $('#c-pal').innerHTML = M.pal.map((c, i) => `<div><i style="background:${c}"></i>${M.palN[i]} ${c.toUpperCase()}</div>`).join('');
@@ -817,7 +954,13 @@ function renderConcept(){
     [S.kind === 'product' ? '연출 소품' : '의상', S.kind === 'product' ? M.props : M.wardrobe],
   ];
   if (S.kind !== 'product') spec.push(['소품', M.props]);
+  if (state.mode === 'snap'){ spec[0] = ['대표 빛', '골든아워 역광 + 그늘(오픈 셰이드)']; spec[1] = ['장비', '흰·금색 반사판, 85mm·35mm 단렌즈']; spec[2] = ['시간대', '일몰 전 1시간 ~ 일몰 후 20분']; spec[3] = ['색 보정', '화이트 밸런스를 그늘 6500K·골든아워 5000K 기준으로 맞추고, 지역 스타일에 맞춰 톤을 정리']; spec[4] = ['장소', '골목·공원·해변·옥상 등 배경 선이 정돈된 곳']; }
   $('#c-spec').innerHTML = spec.map(([a, b]) => `<dt>${a}</dt><dd>${b}</dd>`).join('');
+  const Rg = REGIONS[state.region];
+  $('#c-region').innerHTML = `<h4>${Rg.ko} 스타일로 찍는다면</h4><p>${Rg.sum}</p><dl>${Object.entries(Rg.t).map(([a, b]) => `<dt>${a}</dt><dd>${b}</dd>`).join('')}</dl><div class="links">${Rg.links.map(([l, u]) => `<a href="${u}" target="_blank" rel="noopener">${l}</a>`).join('')}</div>`;
+  $('#c-region-h').textContent = `${Rg.ko} 스타일 예시`;
+  $('#c-region-ph').innerHTML = [0,1,2].map(k => figure(pick('region_' + state.region, k + altSeed*3), '', 400)).join('');
+  document.body.classList.toggle('snap', state.mode === 'snap');
 }
 
 function renderBoard(){
@@ -889,6 +1032,7 @@ function drawSim(){
   $('#o-elev').textContent = `${Math.round(sim.keyElev)}°`;
   $('#o-ratio').textContent = sim.fillOn ? `${sim.ratio} : 1` : '필 꺼짐';
   $('#s-ratio').disabled = !sim.fillOn;
+  { const sp = document.querySelector('label[for="s-key"] span'); if (sp) sp.textContent = state.mode === 'snap' ? '해 방향' : '키 조명 방향'; const se = document.querySelector('label[for="s-elev"]'); if (se && se.firstChild) se.firstChild.textContent = state.mode === 'snap' ? '해 높이 ' : '키 조명 높이 '; }
   renderPlan($('#plan'), sim);
   { const pc = CAT_FOR_PATTERN[classify(sim.keyAz, sim.keyElev)], fc = shotCat(Object.assign({}, sim, {light: pc === 'rim' || pc === 'silhouette' ? 'rim' : 'main'}));
     $('#sim-ex').innerHTML = figure(pick(pc, simAlt), CAT_LABEL[pc], 500) + figure(pick(fc === pc ? 'frame_bust' : fc, simAlt), CAT_LABEL[fc === pc ? 'frame_bust' : fc], 500); }
@@ -900,7 +1044,7 @@ function drawSim(){
   $('#r-exp').textContent = exposure(sim, g);
   $('#r-mod').textContent = modText(sim, g);
   $('#r-notes').innerHTML = notesFor(sim, g).map(n => `<li class="${n.w ? 'w' : ''}">${n.t}</li>`).join('');
-  $('#plan-room').textContent = `${ROOMS[state.room].ko} ${ROOMS[state.room].sub}`;
+  $('#plan-room').textContent = state.mode === 'snap' ? '야외 로케이션' : `${ROOMS[state.room].ko} ${ROOMS[state.room].sub}`;
 }
 
 /* plan dragging */
@@ -1006,19 +1150,93 @@ $('#reseed').addEventListener('click', () => { altSeed++; simAlt++; drawBoard();
 $('#sim-alt').addEventListener('click', () => { simAlt++; drawSim(); });
 let galCat = 'mood_warm';
 function renderGallery(){
-  const groups = ['loop','rembrandt','split','butterfly','rim','silhouette','lowkey','highkey','frame_cu','frame_bust','frame_full','angle_low','angle_high','angle_dutch','topview','couple','family','pet','product','fashion','mood_warm','mood_chic','mood_dreamy','mood_fresh','mood_dramatic','mood_vintage'];
+  const groups = ['region_kr','region_jp','region_cn','region_eu','region_us','snap_wedding','snap_couple','snap_profile','snap_golden','snap_backlight','snap_city','loop','rembrandt','split','butterfly','rim','silhouette','lowkey','highkey','frame_cu','frame_bust','frame_full','angle_low','angle_high','angle_dutch','topview','couple','family','pet','product','fashion','mood_warm','mood_chic','mood_dreamy','mood_fresh','mood_dramatic','mood_vintage'];
   $('#gal-tabs').innerHTML = groups.map(g => `<label class="chip"><input type="radio" name="gal" value="${g}" ${g === galCat ? 'checked' : ''}><span>${CAT_LABEL[g]} ${(PHOTOS[g]||[]).length}</span></label>`).join('');
   $('#gal').innerHTML = (PHOTOS[galCat] || []).map(ph => figure(ph, '', 360)).join('');
 }
 $('#gal-tabs').addEventListener('change', e => { galCat = e.target.value; renderGallery(); });
 function renderMoodboard(){ const c = 'mood_' + state.mood; $('#c-mood').innerHTML = [0,1,2].map(k => figure(pick(c, k + altSeed*3), '', 400)).join(''); }
 
+
+/* ---------------- my reference board (browser-only, IndexedDB) ---------------- */
+const RB = (() => {
+  const DB = 'studio-conti-refs', ST = 'refs';
+  let db = null, items = [], filter = 'all';
+  const status = t => { const el = $('#ref-status'); if (el) el.textContent = t; };
+  function open(){
+    return new Promise((res, rej) => {
+      try {
+        const rq = indexedDB.open(DB, 1);
+        rq.onupgradeneeded = () => rq.result.createObjectStore(ST, {keyPath:'id'});
+        rq.onsuccess = () => res(rq.result); rq.onerror = () => rej(rq.error);
+      } catch(e){ rej(e); }
+    });
+  }
+  const tx = (mode, fn) => new Promise((res, rej) => { const t = db.transaction(ST, mode); const r = fn(t.objectStore(ST)); t.oncomplete = () => res(r && r.result); t.onerror = () => rej(t.error); });
+  async function load(){ items = await new Promise((res, rej) => { const t = db.transaction(ST, 'readonly').objectStore(ST).getAll(); t.onsuccess = () => res(t.result || []); t.onerror = () => rej(t.error); }); items.sort((a, b) => b.t - a.t); render(); }
+  function shrink(file){
+    return new Promise((res, rej) => {
+      const url = URL.createObjectURL(file), img = new Image();
+      img.onload = () => {
+        const m = 1100, k = Math.min(1, m / Math.max(img.width, img.height));
+        const c = document.createElement('canvas'); c.width = Math.round(img.width*k); c.height = Math.round(img.height*k);
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
+        c.toBlob(b => b ? res(b) : rej(new Error('변환 실패')), 'image/jpeg', .86);
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); rej(new Error('이미지를 읽지 못했어요')); };
+      img.src = url;
+    });
+  }
+  async function add(files){
+    if (!db){ status('이 브라우저에서는 저장소를 쓸 수 없어요(비공개 창이거나 저장이 막혀 있을 수 있습니다).'); return; }
+    const list = [...files].filter(f => f.type.startsWith('image/'));
+    if (!list.length){ status('이미지 파일만 넣을 수 있어요.'); return; }
+    let n = 0;
+    for (const f of list){
+      try {
+        const blob = await shrink(f);
+        await tx('readwrite', st => st.put({id: Date.now() + '-' + Math.random().toString(36).slice(2, 7), t: Date.now(), blob, region: $('#ref-region').value, cat: $('#ref-cat').value, src: $('#ref-src').value.trim()}));
+        n++;
+      } catch(e){ status('한 장을 저장하지 못했어요: ' + e.message); }
+    }
+    status(`${n}장을 이 기기에 저장했어요.`);
+    load();
+  }
+  const urls = [];
+  function render(){
+    urls.splice(0).forEach(u => URL.revokeObjectURL(u));
+    const counts = {all: items.length}; items.forEach(i => counts[i.region] = (counts[i.region] || 0) + 1);
+    $('#ref-filter').innerHTML = [['all', '전체'], ...Object.entries(REGIONS).map(([k, v]) => [k, v.ko]), ['etc', '기타']].map(([k, l]) => `<label class="chip"><input type="radio" name="reff" value="${k}" ${k === filter ? 'checked' : ''}><span>${l} ${counts[k] || 0}</span></label>`).join('');
+    const shown = items.filter(i => filter === 'all' || i.region === filter);
+    if (!shown.length){ $('#myref').innerHTML = `<div class="empty">${items.length ? '이 지역으로 저장한 사진이 아직 없어요.' : '아직 저장한 사진이 없어요. 위 상자에 캡쳐한 사진을 끌어다 놓으면 지역별로 모아 볼 수 있습니다.'}</div>`; return; }
+    $('#myref').innerHTML = shown.map(i => { const u = URL.createObjectURL(i.blob); urls.push(u);
+      return `<figure><img src="${u}" alt="${esc((REGIONS[i.region]?.ko || '기타') + ' · ' + (CAT_LABEL[i.cat] || ''))}"><div class="meta"><select data-id="${i.id}" data-f="region" aria-label="지역">${Object.entries(REGIONS).map(([k, v]) => `<option value="${k}" ${k === i.region ? 'selected' : ''}>${v.ko}</option>`).join('')}<option value="etc" ${i.region === 'etc' ? 'selected' : ''}>기타</option></select><span>${esc(CAT_LABEL[i.cat] || '')}</span><button type="button" data-del="${i.id}">삭제</button></div>${i.src ? `<div class="meta">${esc(i.src)}</div>` : ''}</figure>`; }).join('');
+  }
+  function init(){
+    $('#ref-region').innerHTML = Object.entries(REGIONS).map(([k, v]) => `<option value="${k}">${v.ko}</option>`).join('') + '<option value="etc">기타</option>';
+    $('#ref-region').value = state.region;
+    $('#ref-cat').innerHTML = Object.entries(CAT_LABEL).filter(([k]) => !k.startsWith('region_')).map(([k, v]) => `<option value="${k}">${v}</option>`).join('');
+    $('#ref-cat').value = state.mode === 'snap' ? 'snap_wedding' : 'frame_bust';
+    const drop = $('#drop');
+    ['dragenter','dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
+    ['dragleave','drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); }));
+    drop.addEventListener('drop', e => add(e.dataTransfer.files));
+    $('#ref-file').addEventListener('change', e => { add(e.target.files); e.target.value = ''; });
+    document.addEventListener('paste', e => { const fs = [...(e.clipboardData?.items || [])].filter(i => i.type.startsWith('image/')).map(i => i.getAsFile()).filter(Boolean); if (fs.length){ e.preventDefault(); add(fs); } });
+    $('#ref-filter').addEventListener('change', e => { filter = e.target.value; render(); });
+    $('#myref').addEventListener('click', async e => { const id = e.target.dataset?.del; if (!id) return; await tx('readwrite', st => st.delete(id)); status('삭제했어요.'); load(); });
+    $('#myref').addEventListener('change', async e => { const id = e.target.dataset?.id; if (!id) return; const it = items.find(i => i.id === id); if (!it) return; it.region = e.target.value; await tx('readwrite', st => st.put(it)); load(); });
+    open().then(d => { db = d; load(); }).catch(() => { status('이 브라우저에서는 저장소를 쓸 수 없어요. 일반(비공개가 아닌) 창에서 열어 주세요.'); render(); });
+  }
+  return {init, syncRegion(){ const el = $('#ref-region'); if (el) el.value = state.region; }};
+})();
 /* ---------------- main ---------------- */
 function rebuild(){
   shots = buildShots();
   renderConcept();
   renderMoodboard();
-  galCat = 'mood_' + state.mood; renderGallery();
+  galCat = 'region_' + state.region; renderGallery();
+  RB.syncRegion();
   renderBoard();
   if (simIndex >= shots.length) simIndex = 0;
   loadShot(simIndex);
@@ -1030,6 +1248,7 @@ readTokens(); tokRead = true;
 buildChips();
 buildSimControls();
 rebuild();
+RB.init();
 
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(redrawAll);
 try { document.fonts.load("20px 'Nanum Pen Script'").then(redrawAll); } catch(e) {}
