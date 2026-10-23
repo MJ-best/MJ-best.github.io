@@ -117,6 +117,21 @@ dl.spec dd{margin:0;color:var(--ink)}
 .drop span{font-size:13px;color:var(--ink-2)}
 .two-tags{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
 .two-tags input[type=text]{font:inherit;font-size:14px;border:1.5px solid var(--ink);border-radius:2px;padding:5px 8px;width:100%;background:var(--sheet);color:var(--ink)}
+.autorow{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-top:12px;font-size:13px}
+.autorow label{display:flex;gap:6px;align-items:center;cursor:pointer}
+.autorow input{accent-color:var(--ink);width:16px;height:16px}
+.tagrow{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px;align-items:center}
+.tagrow .tl{font-size:12px;font-weight:600;color:var(--ink-2);margin-right:4px}
+.tagb{font:inherit;font-size:12px;border:1px solid var(--scrib);background:var(--sheet);color:var(--ink);border-radius:2px;padding:2px 7px;cursor:pointer}
+.tagb b{font-weight:500;color:var(--ink-2)}
+.tagb[aria-pressed="true"]{background:var(--ink);color:var(--sheet)}
+.atags{display:flex;flex-wrap:wrap;gap:3px}
+.atags .at{font-size:11px;background:var(--paper);border:1px solid var(--grid);border-radius:2px;padding:0 5px;color:var(--ink)}
+.atags .at.on{background:var(--tape)}
+.apal{display:flex;gap:3px;align-items:center;flex-wrap:wrap}
+.apal i{width:14px;height:14px;border-radius:2px;border:1px solid var(--grid);display:inline-block}
+.tosim{margin-left:auto;font:inherit;font-size:11px;border:1px solid var(--ink);background:var(--sheet);color:var(--ink);border-radius:2px;padding:1px 6px;cursor:pointer}
+.tosim:hover{background:var(--tape)}
 .myref{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-top:12px}
 .myref figure{margin:0;display:flex;flex-direction:column;gap:4px;min-width:0}
 .myref img{width:100%;aspect-ratio:4/5;object-fit:cover;border:1.5px solid var(--scrib);border-radius:3px;display:block;background:var(--grid)}
@@ -331,7 +346,7 @@ footer code{font-family:var(--f-mono);font-size:12px}
   </section>
 
   <section class="sheet" id="board-sec" aria-labelledby="h-myref">
-    <div class="sec-head"><span class="no">07</span><h2 id="h-myref">내 레퍼런스 보드</h2><p>인스타그램·핀터레스트·샤오홍슈에서 캡쳐한 사진을 여기에 끌어다 놓거나 붙여 넣으세요. 사진은 지금 쓰는 기기의 브라우저 안에만 저장되고 어디에도 올라가지 않습니다. 지역과 카테고리 태그로 나눠 비교할 수 있습니다.</p></div>
+    <div class="sec-head"><span class="no">07</span><h2 id="h-myref">내 레퍼런스 보드</h2><p>인스타그램·핀터레스트·샤오홍슈에서 캡쳐한 사진을 여기에 끌어다 놓거나 붙여 넣으세요. 넣는 순간 브라우저 안의 인식 모델이 사진마다 프레이밍·앵글·조명 같은 태그를 자동으로 붙입니다. 사진과 분석은 모두 지금 쓰는 기기 안에서만 처리되고 어디에도 올라가지 않습니다.</p></div>
     <div class="drop" id="drop" tabindex="0">
       <b>사진을 여기에 끌어다 놓기</b>
       <span>또는 캡쳐 후 이 상자를 눌러 붙여넣기(Ctrl/⌘+V) · </span>
@@ -343,7 +358,9 @@ footer code{font-family:var(--f-mono);font-size:12px}
       <div class="ctrl"><label for="ref-cat">새 사진의 카테고리</label><select id="ref-cat"></select></div>
       <div class="ctrl"><label for="ref-src">출처 메모(계정·링크)</label><input type="text" id="ref-src" placeholder="@계정명 또는 링크"></div>
     </div>
+    <div class="autorow"><label><input type="checkbox" id="ref-auto" checked> 넣을 때 자동 태그 달기 (프레이밍·인원·앵글·얼굴 방향·조명 패턴·키 방향·명암비·톤·색감·배경·화각)</label><button class="btn" type="button" id="ref-retag">저장된 사진 모두 다시 태그</button></div>
     <div class="chips" id="ref-filter" role="group" aria-label="지역별 보기" style="margin-top:12px"></div>
+    <div class="tagrow" id="ref-tags"></div>
     <div class="myref" id="myref"></div>
     <p class="refnote" id="ref-status"></p>
   </section>
@@ -399,7 +416,7 @@ const REGIONS = {
     links:[['#프로필사진', IG('프로필사진')], ['#웨딩스냅', IG('웨딩스냅')], ['#스튜디오촬영', IG('스튜디오촬영')], ['#본식스냅', IG('본식스냅')], ['Pinterest', PIN('korean studio profile photo')], ['Pinterest 웨딩', PIN('korean wedding studio photo')]]},
   jp:{ko:'일본', sum:'공기감 있는 부드러운 사진이 특징입니다. 살짝 밝게 날린 노출, 낮은 대비, 필름 같은 색으로 일상의 한순간처럼 보이게 찍습니다. 웨딩은 결혼식 전 따로 찍는 前撮り(마에도리)가 흔합니다.',
     t:{조명:'창가 자연광·역광 위주. 큰 디퓨저로 그림자를 흐리게', 색감:'채도 낮은 파스텔, 약간 녹색·청록 기운, 하이라이트 날림', 보정:'피부 보정 약하게, 필름 그레인·부드러운 대비', '포즈·표정':'자연스러운 동작, 시선 피하기, 웃음 직전의 표정', '배경·의상':'생활 공간, 흰 벽, 식물. 리넨·니트 같은 소재'},
-    links:[['#ポートレート', IG('ポートレート')], ['#前撮り', IG('前撮り')], ['#ウェディングフォト', IG('ウェディングフォト')], ['#写真好きな人と繋がりたい', IG('写真好きな人と繋がりたい')], ['Pinterest', PIN('japanese portrait photography airy')]]},
+    links:[['NICO STOP 유튜브(니콘 이미징 재팬)', 'https://www.youtube.com/@nicostop'], ['#ポートレート', IG('ポートレート')], ['#前撮り', IG('前撮り')], ['#ウェディングフォト', IG('ウェディングフォト')], ['#写真好きな人と繋がりたい', IG('写真好きな人と繋がりたい')], ['Pinterest', PIN('japanese portrait photography airy')]]},
   cn:{ko:'중국', sum:'완성도 높은 세트와 화려한 연출이 특징입니다. 진한 색과 강한 보정, 古风(고풍)·한푸 같은 콘셉트 촬영, 대형 웨딩 세트와 여행 웨딩 사진(旅拍)이 유행합니다.',
     t:{조명:'여러 개의 조명으로 얼굴·배경·소품을 모두 밝힘. 강한 림 조명', 색감:'붉은색·금색·진한 채도, 영화 같은 컬러 그레이딩', 보정:'피부·체형 보정이 매우 강함, 매끈한 질감', '포즈·표정':'과감하고 연출된 포즈, 드레스·소매 자락을 크게 활용', '배경·의상':'대형 세트, 전통 의상(치파오·한푸), 꽃과 천으로 가득 찬 화면'},
     links:[['샤오홍슈 婚纱照', 'https://www.xiaohongshu.com/search_result?keyword=' + encodeURIComponent('婚纱照')], ['샤오홍슈 写真', 'https://www.xiaohongshu.com/search_result?keyword=' + encodeURIComponent('写真 摄影')], ['샤오홍슈 古风', 'https://www.xiaohongshu.com/search_result?keyword=' + encodeURIComponent('古风写真')], ['Pinterest', PIN('chinese wedding photography')], ['#hanfu', IG('hanfu')]]},
@@ -1297,10 +1314,170 @@ $('#gal-tabs').addEventListener('change', e => { galCat = e.target.value; render
 function renderMoodboard(){ const c = 'mood_' + state.mood; $('#c-mood').innerHTML = [0,1,2].map(k => figure(pick(c, k + altSeed*3), '', 400)).join(''); }
 
 
+/* ---------------- auto-tagging (in-browser ML: MediaPipe face + pose, plus color analysis) ---------------- */
+const AT = (() => {
+  const VER = '0.10.14';
+  const BASE = `https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${VER}`;
+  const FACE_M = 'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task';
+  const POSE_M = 'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task';
+  let ready = null, face = null, pose = null, failed = false;
+  async function mk(vision, fs, Cls, opts){
+    try { return await Cls.createFromOptions(fs, Object.assign({}, opts, {baseOptions: Object.assign({}, opts.baseOptions, {delegate:'GPU'})})); }
+    catch(e){ return await Cls.createFromOptions(fs, Object.assign({}, opts, {baseOptions: Object.assign({}, opts.baseOptions, {delegate:'CPU'})})); }
+  }
+  function load(onStatus){
+    if (ready) return ready;
+    ready = (async () => {
+      try {
+        onStatus && onStatus('인물 인식 모델을 불러오는 중이에요(처음 한 번, 약 10 MB)…');
+        const vision = await import(`${BASE}/vision_bundle.mjs`);
+        const fs = await vision.FilesetResolver.forVisionTasks(`${BASE}/wasm`);
+        face = await mk(vision, fs, vision.FaceLandmarker, {baseOptions:{modelAssetPath:FACE_M}, runningMode:'IMAGE', numFaces:6});
+        pose = await mk(vision, fs, vision.PoseLandmarker, {baseOptions:{modelAssetPath:POSE_M}, runningMode:'IMAGE', numPoses:4});
+      } catch(e){ failed = true; console.warn('auto-tag model load failed', e); }
+    })();
+    return ready;
+  }
+  /* EXIF focal length (35mm equivalent preferred) from an original JPEG */
+  async function exifFocal(file){
+    try {
+      if (!/jpe?g/i.test(file.type)) return null;
+      const buf = await file.slice(0, 131072).arrayBuffer(), v = new DataView(buf);
+      if (v.getUint16(0) !== 0xFFD8) return null;
+      let o = 2;
+      while (o < v.byteLength - 4){
+        const mk = v.getUint16(o), len = v.getUint16(o + 2);
+        if (mk === 0xFFE1 && v.getUint32(o + 4) === 0x45786966){
+          const t = o + 10, le = v.getUint16(t) === 0x4949;
+          const u16 = p => v.getUint16(p, le), u32 = p => v.getUint32(p, le);
+          const ifd = (p, want) => { const n = u16(p); for (let i = 0; i < n; i++){ const e = p + 2 + i*12, tag = u16(e); if (want[tag]) want[tag](e); } };
+          let exifPtr = null, f35 = null, f = null;
+          ifd(t + u32(t + 4), {0x8769: e => exifPtr = t + u32(e + 8)});
+          if (exifPtr) ifd(exifPtr, {0xA405: e => f35 = u16(e + 8), 0x920A: e => { const p = t + u32(e + 8); f = u32(p) / (u32(p + 4) || 1); }});
+          if (f35) return {mm: Math.round(f35), eq: true};
+          if (f) return {mm: Math.round(f), eq: false};
+          return null;
+        }
+        o += 2 + len;
+      }
+    } catch(e){}
+    return null;
+  }
+  const luma = (r, g, b) => .2126*r + .7152*g + .0722*b;
+  const lin = L => Math.pow(Math.max(L, 1)/255, 2.2);
+  const hex = c => '#' + c.map(x => Math.round(x).toString(16).padStart(2, '0')).join('');
+  function palette(d, W, H){
+    const px = [], step = Math.max(1, Math.floor(Math.sqrt(W*H/1600)));
+    for (let y = 0; y < H; y += step) for (let x = 0; x < W; x += step){ const i = (y*W + x)*4; px.push([d[i], d[i+1], d[i+2]]); }
+    let C = [0, .33, .66, .99].map(f => px[Math.floor(f*(px.length - 1))].slice());
+    for (let it = 0; it < 8; it++){
+      const S = C.map(() => [0, 0, 0, 0]);
+      px.forEach(p => { let bi = 0, bd = 1e9; C.forEach((c, k) => { const dd = (p[0]-c[0])**2 + (p[1]-c[1])**2 + (p[2]-c[2])**2; if (dd < bd){ bd = dd; bi = k; } }); const s = S[bi]; s[0] += p[0]; s[1] += p[1]; s[2] += p[2]; s[3]++; });
+      C = S.map((s, k) => s[3] ? [s[0]/s[3], s[1]/s[3], s[2]/s[3], s[3]] : C[k]);
+    }
+    return C.sort((a, b) => (b[3] || 0) - (a[3] || 0)).map(c => hex(c.slice(0, 3)));
+  }
+  async function analyze(blob, focalInfo){
+    const bmp = await createImageBitmap(blob);
+    const k = Math.min(1, 640/Math.max(bmp.width, bmp.height));
+    const W = Math.round(bmp.width*k), H = Math.round(bmp.height*k);
+    const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+    const cx = cv.getContext('2d', {willReadFrequently:true}); cx.drawImage(bmp, 0, 0, W, H);
+    const d = cx.getImageData(0, 0, W, H).data;
+    const T = {tags: [], sim: {}};
+    // global color & tone
+    let sl = 0, sw = 0, ss = 0, n = 0; const hist = new Array(16).fill(0);
+    for (let i = 0; i < d.length; i += 16){ const r = d[i], g = d[i+1], b = d[i+2], L = luma(r, g, b), mx = Math.max(r, g, b), mn = Math.min(r, g, b); sl += L; sw += r - b; ss += mx ? (mx - mn)/mx : 0; hist[Math.min(15, L >> 4)]++; n++; }
+    const mean = sl/n, warm = sw/n, sat = ss/n;
+    const dark = hist.slice(0, 4).reduce((a, b) => a + b, 0)/n;
+    const tone = mean > 160 && dark < .08 ? '하이키' : (mean < 85 || dark > .5) ? '로우키' : '중간 톤';
+    // border = background estimate
+    let bs = 0, bq = 0, bn = 0; const bw = Math.max(2, Math.round(Math.min(W, H)*.06));
+    for (let y = 0; y < H*.7; y += 3) for (let x = 0; x < W; x += 3){ if (x > bw && x < W - bw && y > bw) continue; const i = (y*W + x)*4, L = luma(d[i], d[i+1], d[i+2]); bs += L; bq += L*L; bn++; }
+    const bgMean = bs/bn, bgStd = Math.sqrt(Math.max(0, bq/bn - bgMean*bgMean));
+    T.tone = tone; T.palette = palette(d, W, H);
+    // people
+    let faces = [], poses = [];
+    if (face && pose){ try { faces = face.detect(cv).faceLandmarks || []; } catch(e){} try { poses = pose.detect(cv).landmarks || []; } catch(e){} }
+    const people = Math.max(faces.length, poses.length);
+    T.models = !!(face && pose);
+    // framing
+    let framing = null;
+    const P = poses[0];
+    const vis = i => P && P[i] && (P[i].visibility ?? 1) > .55 && P[i].y > -.02 && P[i].y < 1.02 && P[i].x > -.02 && P[i].x < 1.02;
+    if (P){
+      if (vis(27) || vis(28)){ const top = Math.min(P[0].y, P[11].y) - .08, span = Math.max(P[27].y, P[28].y) - top; framing = span < .5 ? 'WS' : 'FS'; }
+      else if (vis(25) || vis(26)) framing = 'KS';
+      else if (vis(23) || vis(24)) framing = 'MS';
+      else if (vis(11) || vis(12)) framing = 'MCU';
+    }
+    let F = null;
+    if (faces.length){
+      F = faces.slice().sort((a, b) => (Math.max(...b.map(p => p.y)) - Math.min(...b.map(p => p.y))) - (Math.max(...a.map(p => p.y)) - Math.min(...a.map(p => p.y))))[0];
+      const fh = F[152].y - F[10].y;
+      if (fh > .55) framing = 'ECU'; else if (fh > .3) framing = 'CU'; else if (!framing) framing = fh > .14 ? 'MCU' : 'MS';
+    }
+    const FRL = {ECU:'익스트림 클로즈업', CU:'클로즈업', MCU:'바스트 샷', MS:'웨이스트 샷', KS:'니 샷(무릎 위)', FS:'풀 샷', WS:'와이드 샷'};
+    if (framing){ T.tags.push(FRL[framing]); T.sim.framing = framing === 'KS' ? 'MS' : framing; }
+    if (people) T.tags.push(people === 1 ? '1인' : people === 2 ? '2인' : `${people}인`);
+    // face geometry: angle, facing, roll; lighting
+    if (F){
+      const px = i => [F[i].x*W, F[i].y*H];
+      const eyeY = (F[33].y + F[263].y)/2, r = (F[1].y - eyeY)/((F[152].y - eyeY) || 1);
+      const angle = r < .3 ? 'low' : r > .47 ? 'high' : 'eye';
+      T.tags.push({low:'로우 앵글(추정)', high:'하이 앵글(추정)', eye:'눈높이'}[angle]); T.sim.angle = angle;
+      const midX = (F[234].x + F[454].x)/2, halfW = Math.abs(F[454].x - F[234].x)/2 || 1e-3, yaw = (F[1].x - midX)/halfW;
+      T.tags.push(Math.abs(yaw) < .15 ? '얼굴 정면' : Math.abs(yaw) < .45 ? '얼굴 3/4' : '얼굴 측면');
+      const roll = Math.atan2((F[263].y - F[33].y)*H, (F[263].x - F[33].x)*W)*180/Math.PI;
+      let shoulderTilt = 0; if (P && vis(11) && vis(12)) shoulderTilt = Math.atan2((P[11].y - P[12].y)*H, (P[11].x - P[12].x)*W)*180/Math.PI;
+      if (Math.abs(roll) > 12 && Math.abs(shoulderTilt) > 9 && Math.sign(roll) === Math.sign(shoulderTilt)){ T.tags.push('기울어진 구도(더치 가능)'); T.sim.angle = 'dutch'; }
+      // sample luma around landmarks
+      const fw = Math.abs(F[454].x - F[234].x)*W, rad = Math.max(2, Math.round(fw*.045));
+      const at = idxs => { let s = 0, c = 0; idxs.forEach(i => { const [x0, y0] = px(i); for (let y = -rad; y <= rad; y += 2) for (let x = -rad; x <= rad; x += 2){ const X = Math.round(x0 + x), Y = Math.round(y0 + y); if (X < 0 || Y < 0 || X >= W || Y >= H) continue; const j = (Y*W + X)*4; s += luma(d[j], d[j+1], d[j+2]); c++; } }); return c ? s/c : 0; };
+      const sideA = at([50, 205, 187, 123]), sideB = at([280, 425, 411, 352]);
+      const aIsLeft = F[205].x < F[425].x;
+      const leftL = aIsLeft ? sideA : sideB, rightL = aIsLeft ? sideB : sideA;
+      const upA = at([118]), upB = at([347]);
+      const upLeft = aIsLeft ? upA : upB, upRight = aIsLeft ? upB : upA;
+      const fore = at([151, 9]), philtrum = at([164]);
+      const faceMean = (leftL + rightL + fore)/3;
+      const bright = Math.max(leftL, rightL), darkC = Math.min(leftL, rightL);
+      const ratio = lin(bright)/Math.max(lin(darkC), .002);
+      const keyLeft = leftL >= rightL;
+      let pat;
+      if (bgMean > faceMean*1.6 && faceMean < 70) pat = faceMean < 40 ? 'silhouette' : 'rim';
+      else if (ratio < 1.35) pat = (lin(philtrum) < lin(fore)*.55) ? 'butterfly' : 'flat';
+      else if (ratio < 2.6){ const upDark = keyLeft ? upRight : upLeft; pat = lin(upDark) > lin(darkC)*1.9 ? 'rembrandt' : 'loop'; }
+      else if (ratio < 5){ const upDark = keyLeft ? upRight : upLeft; pat = lin(upDark) > lin(darkC)*1.9 ? 'rembrandt' : 'split'; }
+      else pat = 'split';
+      T.tags.push(PATTERNS[pat].ko + ' 조명');
+      if (pat !== 'flat' && pat !== 'butterfly' && pat !== 'silhouette') T.tags.push(`키 조명 화면 ${keyLeft ? '왼쪽' : '오른쪽'}`);
+      const rr = [1.5, 2, 3, 4, 8].reduce((a, b) => Math.abs(Math.log(b) - Math.log(ratio)) < Math.abs(Math.log(a) - Math.log(ratio)) ? b : a);
+      if (pat !== 'silhouette' && pat !== 'rim') T.tags.push(`명암비 약 1:${rr}`);
+      // rim on edges
+      const edgeL = at([234, 127]), edgeR = at([454, 356]);
+      if (pat !== 'rim' && pat !== 'silhouette' && Math.max(edgeL, edgeR) > Math.max(leftL, rightL)*1.25) T.tags.push('림 조명 있음');
+      const AZ = {flat:0, butterfly:0, loop:35, rembrandt:50, split:86, rim:140, silhouette:176}, EL = {flat:12, butterfly:45, loop:35, rembrandt:45, split:20, rim:30, silhouette:5};
+      T.sim.keyAz = (keyLeft ? -1 : 1) * AZ[pat]; if (AZ[pat] === 0 || pat === 'silhouette') T.sim.keyAz = AZ[pat];
+      T.sim.keyElev = EL[pat]; T.sim.ratio = rr; T.sim.fillOn = rr <= 4; T.pattern = pat;
+    }
+    T.tags.push(tone);
+    T.tags.push(sat < .06 ? '흑백' : warm > 14 ? '따뜻한 색' : warm < -10 ? '차가운 색' : '중립 색');
+    if (sat >= .06) T.tags.push(sat < .2 ? '저채도' : sat > .45 ? '고채도' : '보통 채도');
+    T.tags.push(bgStd < 17 ? '단색 배경(스튜디오형)' : '복잡한 배경(로케이션형)');
+    if (focalInfo){ T.tags.push(`${focalInfo.mm}mm${focalInfo.eq ? '' : '(센서 실제값)'} · EXIF`); T.sim.focal = FOCALS.reduce((a, b) => Math.abs(b - focalInfo.mm) < Math.abs(a - focalInfo.mm) ? b : a); }
+    else if (framing){ const fr = {ECU:100, CU:85, MCU:85, MS:50, KS:50, FS:35, WS:35}[framing]; T.tags.push(`권장 ${fr}mm`); T.sim.focal = fr; }
+    bmp.close && bmp.close();
+    return T;
+  }
+  return {load, analyze, exifFocal, failed: () => failed, _mock(f, p){ face = f; pose = p; ready = Promise.resolve(); }};
+})();
+
+if (location.hash === '#attest') window.__AT = AT;
 /* ---------------- my reference board (browser-only, IndexedDB) ---------------- */
 const RB = (() => {
   const DB = 'studio-conti-refs', ST = 'refs';
-  let db = null, items = [], filter = 'all';
+  let db = null, items = [], filter = 'all', tagFilter = null;
   const status = t => { const el = $('#ref-status'); if (el) el.textContent = t; };
   function open(){
     return new Promise((res, rej) => {
@@ -1331,25 +1508,49 @@ const RB = (() => {
     const list = [...files].filter(f => f.type.startsWith('image/'));
     if (!list.length){ status('이미지 파일만 넣을 수 있어요.'); return; }
     let n = 0;
+    const auto = $('#ref-auto').checked;
+    if (auto) await AT.load(status);
     for (const f of list){
       try {
+        const focal = await AT.exifFocal(f);
         const blob = await shrink(f);
-        await tx('readwrite', st => st.put({id: Date.now() + '-' + Math.random().toString(36).slice(2, 7), t: Date.now(), blob, region: $('#ref-region').value, cat: $('#ref-cat').value, src: $('#ref-src').value.trim()}));
+        const it = {id: Date.now() + '-' + Math.random().toString(36).slice(2, 7), t: Date.now(), blob, region: $('#ref-region').value, cat: $('#ref-cat').value, src: $('#ref-src').value.trim(), focal};
+        if (auto){ status(`${n + 1}/${list.length}장 분석 중…`); try { it.auto = await AT.analyze(blob, focal); } catch(e){ console.warn(e); } }
+        await tx('readwrite', st => st.put(it));
         n++;
       } catch(e){ status('한 장을 저장하지 못했어요: ' + e.message); }
     }
-    status(`${n}장을 이 기기에 저장했어요.`);
+    status(`${n}장을 이 기기에 저장했어요.` + (auto ? (AT.failed() ? ' 인물 인식 모델을 불러오지 못해 색·톤 태그만 달았어요(인터넷 연결을 확인하세요).' : ' 자동 태그를 달았어요. 태그는 추정값이니 맞지 않으면 무시하세요.') : ''));
     load();
+  }
+  async function retagAll(){
+    if (!items.length){ status('분석할 사진이 없어요.'); return; }
+    await AT.load(status);
+    let n = 0;
+    for (const it of items){ status(`${++n}/${items.length}장 분석 중…`); try { it.auto = await AT.analyze(it.blob, it.focal); await tx('readwrite', st => st.put(it)); } catch(e){ console.warn(e); } }
+    status(AT.failed() ? '인물 인식 모델을 불러오지 못해 색·톤 태그만 다시 달았어요.' : `${n}장의 자동 태그를 새로 달았어요.`);
+    load();
+  }
+  function toSim(it){
+    const a = it.auto; if (!a) return;
+    const sims = Object.assign({}, a.sim);
+    if (!sim) return;
+    Object.assign(sim, sims, {camHman: null, scene: null, focusY: undefined, solo: true});
+    syncControls(); drawSim();
+    document.getElementById('sim-sec').scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block:'start'});
   }
   const urls = [];
   function render(){
     urls.splice(0).forEach(u => URL.revokeObjectURL(u));
     const counts = {all: items.length}; items.forEach(i => counts[i.region] = (counts[i.region] || 0) + 1);
     $('#ref-filter').innerHTML = [['all', '전체'], ...Object.entries(REGIONS).map(([k, v]) => [k, v.ko]), ['etc', '기타']].map(([k, l]) => `<label class="chip"><input type="radio" name="reff" value="${k}" ${k === filter ? 'checked' : ''}><span>${l} ${counts[k] || 0}</span></label>`).join('');
-    const shown = items.filter(i => filter === 'all' || i.region === filter);
+    const tagCounts = {}; items.filter(i => filter === 'all' || i.region === filter).forEach(i => (i.auto?.tags || []).forEach(t => tagCounts[t] = (tagCounts[t] || 0) + 1));
+    const topTags = Object.entries(tagCounts).sort((a, b) => b[1] - a[1]).slice(0, 24);
+    $('#ref-tags').innerHTML = topTags.length ? `<span class="tl">태그로 거르기</span>` + topTags.map(([t, c]) => `<button type="button" class="tagb" data-tag="${esc(t)}" aria-pressed="${t === tagFilter}">${esc(t)} <b>${c}</b></button>`).join('') + (tagFilter ? `<button type="button" class="tagb" data-tag="">모두 보기</button>` : '') : '';
+    const shown = items.filter(i => (filter === 'all' || i.region === filter) && (!tagFilter || (i.auto?.tags || []).includes(tagFilter)));
     if (!shown.length){ $('#myref').innerHTML = `<div class="empty">${items.length ? '이 지역으로 저장한 사진이 아직 없어요.' : '아직 저장한 사진이 없어요. 위 상자에 캡쳐한 사진을 끌어다 놓으면 지역별로 모아 볼 수 있습니다.'}</div>`; return; }
     $('#myref').innerHTML = shown.map(i => { const u = URL.createObjectURL(i.blob); urls.push(u);
-      return `<figure><img src="${u}" alt="${esc((REGIONS[i.region]?.ko || '기타') + ' · ' + (CAT_LABEL[i.cat] || ''))}"><div class="meta"><select data-id="${i.id}" data-f="region" aria-label="지역">${Object.entries(REGIONS).map(([k, v]) => `<option value="${k}" ${k === i.region ? 'selected' : ''}>${v.ko}</option>`).join('')}<option value="etc" ${i.region === 'etc' ? 'selected' : ''}>기타</option></select><span>${esc(CAT_LABEL[i.cat] || '')}</span><button type="button" data-del="${i.id}">삭제</button></div>${i.src ? `<div class="meta">${esc(i.src)}</div>` : ''}</figure>`; }).join('');
+      return `<figure><img src="${u}" alt="${esc((REGIONS[i.region]?.ko || '기타') + ' · ' + (CAT_LABEL[i.cat] || ''))}"><div class="meta"><select data-id="${i.id}" data-f="region" aria-label="지역">${Object.entries(REGIONS).map(([k, v]) => `<option value="${k}" ${k === i.region ? 'selected' : ''}>${v.ko}</option>`).join('')}<option value="etc" ${i.region === 'etc' ? 'selected' : ''}>기타</option></select><span>${esc(CAT_LABEL[i.cat] || '')}</span><button type="button" data-del="${i.id}">삭제</button></div>${i.auto ? `<div class="atags">${i.auto.tags.map(t => `<span class="at${t === tagFilter ? ' on' : ''}">${esc(t)}</span>`).join('')}</div><div class="apal">${(i.auto.palette || []).map(c => `<i style="background:${c}" title="${c}"></i>`).join('')}${i.auto.sim && i.auto.sim.framing ? `<button type="button" class="tosim" data-sim="${i.id}">이 설정으로 시뮬레이터</button>` : ''}</div>` : ''}${i.src ? `<div class="meta">${esc(i.src)}</div>` : ''}</figure>`; }).join('');
   }
   function init(){
     $('#ref-region').innerHTML = Object.entries(REGIONS).map(([k, v]) => `<option value="${k}">${v.ko}</option>`).join('') + '<option value="etc">기타</option>';
@@ -1363,6 +1564,9 @@ const RB = (() => {
     $('#ref-file').addEventListener('change', e => { add(e.target.files); e.target.value = ''; });
     document.addEventListener('paste', e => { const fs = [...(e.clipboardData?.items || [])].filter(i => i.type.startsWith('image/')).map(i => i.getAsFile()).filter(Boolean); if (fs.length){ e.preventDefault(); add(fs); } });
     $('#ref-filter').addEventListener('change', e => { filter = e.target.value; render(); });
+    $('#ref-tags').addEventListener('click', e => { const b = e.target.closest('[data-tag]'); if (!b) return; tagFilter = b.dataset.tag || null; render(); });
+    $('#ref-retag').addEventListener('click', retagAll);
+    $('#myref').addEventListener('click', e => { const b = e.target.closest('[data-sim]'); if (!b) return; const it = items.find(i => i.id === b.dataset.sim); if (it) toSim(it); });
     $('#myref').addEventListener('click', async e => { const id = e.target.dataset?.del; if (!id) return; await tx('readwrite', st => st.delete(id)); status('삭제했어요.'); load(); });
     $('#myref').addEventListener('change', async e => { const id = e.target.dataset?.id; if (!id) return; const it = items.find(i => i.id === id); if (!it) return; it.region = e.target.value; await tx('readwrite', st => st.put(it)); load(); });
     open().then(d => { db = d; load(); }).catch(() => { status('이 브라우저에서는 저장소를 쓸 수 없어요. 일반(비공개가 아닌) 창에서 열어 주세요.'); render(); });
