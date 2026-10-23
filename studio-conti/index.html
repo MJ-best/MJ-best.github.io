@@ -147,6 +147,8 @@ body.snap .studio-only{display:none}
 .pane{display:flex;flex-direction:column;gap:8px;min-width:0}
 .pane-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:13px;color:var(--ink-2)}
 .pane-h b{font-family:var(--f-hand);font-weight:400;font-size:26px;color:var(--ink);line-height:1}
+#side{width:100%;aspect-ratio:16/10;max-width:100%;display:block}
+.ctrl .auto input{accent-color:var(--ink);width:15px;height:15px}
 #plan{width:100%;aspect-ratio:1/1.08;max-width:100%;touch-action:none;cursor:grab;display:block}
 #plan.drag{cursor:grabbing}
 .hint{font-size:12.5px;color:var(--ink-2)}
@@ -270,6 +272,9 @@ footer code{font-family:var(--f-mono);font-size:12px}
         <div class="pane-h"><b>위에서 본 배치도</b><span id="plan-room"></span></div>
         <canvas id="plan" aria-label="스튜디오 평면 배치도. 조명을 끌어 옮길 수 있습니다."></canvas>
         <div class="hint">격자 한 칸 = 50 cm · <span class="sw-key">●키</span> <span class="sw-fill">●필</span> <span class="sw-rim">●림</span> 조명을 끌어 보세요.</div>
+        <div class="pane-h" style="margin-top:10px"><b>옆에서 본 높이</b><span id="side-cap"></span></div>
+        <canvas id="side" aria-label="옆에서 본 모델 키, 카메라·삼각대 높이, 조명 높이"></canvas>
+        <div class="hint">점선 사이가 카메라에 담기는 세로 범위입니다. 모델 키와 카메라 높이 슬라이더로 바꿔 보세요.</div>
       </div>
       <div class="pane">
         <div class="pane-h"><b>실제 사진 예시</b><button class="btn" id="sim-alt" type="button" style="font-size:12px;padding:3px 9px">다른 사진</button></div>
@@ -283,6 +288,11 @@ footer code{font-family:var(--f-mono);font-size:12px}
             <div class="ctrl"><label for="s-angle">앵글</label><select id="s-angle"></select></div>
           </div>
           <div class="ctrl"><label for="s-focal">화각(초점거리) <output id="o-focal"></output></label><input type="range" id="s-focal" min="0" max="6" step="1"></div>
+          <div class="two">
+            <div class="ctrl" id="ctrl-height"><label for="s-height">모델 키 <output id="o-height"></output></label><input type="range" id="s-height" min="90" max="200" step="1"></div>
+            <div class="ctrl"><label for="s-camh">카메라 높이 <output id="o-camh"></output></label><input type="range" id="s-camh" min="10" max="260" step="1">
+              <label class="auto" style="font-weight:400;justify-content:flex-start;gap:6px"><input type="checkbox" id="s-camauto"> 앵글에 맞춰 자동</label></div>
+          </div>
           <div class="two">
             <div class="ctrl"><label for="s-key"><span class="sw-key">키 조명 방향</span> <output id="o-key"></output></label><input type="range" id="s-key" min="-180" max="180" step="1"></div>
             <div class="ctrl"><label for="s-elev">키 조명 높이 <output id="o-elev"></output></label><input type="range" id="s-elev" min="0" max="75" step="1"></div>
@@ -303,6 +313,10 @@ footer code{font-family:var(--f-mono);font-size:12px}
             <div class="num"><span>카메라 높이</span><b id="r-camh"></b></div>
             <div class="num"><span>노출 시작값</span><b id="r-exp"></b></div>
             <div class="num"><span>키 조명 거리·장비</span><b id="r-mod"></b></div>
+            <div class="num"><span>삼각대 높이</span><b id="r-tri"></b></div>
+            <div class="num"><span>카메라 기울기</span><b id="r-tilt"></b></div>
+            <div class="num"><span id="r-keyh-l">키 조명 높이</span><b id="r-keyh"></b></div>
+            <div class="num"><span>모델 눈높이</span><b id="r-eye"></b></div>
           </div>
           <ul class="notes" id="r-notes"></ul>
         </div>
@@ -516,7 +530,7 @@ function classify(az, elev){
 }
 
 /* ---------------- state ---------------- */
-let state = {subject:'portrait', mood:'warm', room:'m', lights:'2', seed:7, mode:'studio', region:'kr'};
+let state = {subject:'portrait', mood:'warm', room:'m', lights:'2', seed:7, mode:'studio', region:'kr', modelH:1.7};
 try { const s = JSON.parse(localStorage.getItem('conti-state')||'null'); if (s && SUBJ[s.subject] && MOODS[s.mood]) state = Object.assign(state, s); if (!MODES[state.mode]) state.mode = 'studio'; if (!REGIONS[state.region]) state.region = 'kr'; } catch(e) {}
 const save = () => { try { localStorage.setItem('conti-state', JSON.stringify(state)); } catch(e) {} };
 
@@ -662,16 +676,19 @@ function geom(p){
   const S = SUBJ[p.subject], F = FR[p.framing];
   const ref = p.ref ?? S.ref ?? 1;
   const group = (p.solo || (p.ref === 1 && (S.ref ?? 1) !== 1)) ? 1 : (S.group || 1);
-  const Hf = F.H * ref * group;
-  let yc = p.focusY ?? F.yc * ref;
+  const hs = (S.kind === 'person' && !p.scene) ? (state.modelH || 1.7)/1.72 : 1;
+  const Hf = F.H * ref * group * ((p.framing === 'FS' || p.framing === 'WS') ? hs : 1);
+  let yc = (p.focusY ?? F.yc * ref) * hs;
   if (group > 1 && (p.framing === 'FS' || p.framing === 'WS')) yc = Math.max(yc, Hf/2 - .12);
   const d = Hf * p.focal / 36;
   const gap = S.gap ?? 1.2, paper = S.paper ?? 2.72;
   let camH = yc;
-  if (p.angle === 'low') camH = Math.max(.15*ref + .1, yc - .75*Math.max(ref,.5));
+  if (p.angle === 'low') camH = Math.max(.15*ref + .1, yc*.5, yc - .75*Math.max(ref,.5));
   if (p.angle === 'high') camH = yc + .65*Math.max(ref,.6);
   if (p.angle === 'top') camH = (S.kind === 'product' ? .1 : yc) + Math.max(d, .6);
-  return {S, F, ref, group, Hf, Wf: Hf*.8, yc, d, gap, paper, camH};
+  const camAuto = camH;
+  if (p.camHman != null && p.angle !== 'top') camH = p.camHman;
+  return {S, F, ref, group, Hf, Wf: Hf*.8, yc, d, gap, paper, camH, camAuto, hs};
 }
 
 /* ---------------- photo examples ---------------- */
@@ -856,11 +873,110 @@ function renderPlan(cv, p){
     sk.text(`${g.d.toFixed(2)} m`, d0[0] + dx - 6*u, (d0[1] + d1[1])/2 + 6*u, {size:21, align:'right', bg:rgba(TOK.sheet, .85)});
   }
   // scale bar
-  const sb = P(-room.w/2 + .2, ymax - .2);
+  const sb = P(room.w/2 - 1.2, ymax - .2);
   sk.line([[sb[0], sb[1]], [sb[0] + sc, sb[1]]], {w:2, passes:1});
   sk.text('1 m', sb[0] + sc/2, sb[1] - 6*u, {size:17, align:'center', color:TOK['ink-2']});
 }
 
+
+/* ---------------- heights (side view) ---------------- */
+const LENS_AXIS = .1; // tripod top (plate) to lens center
+function heights(p, g){
+  const S = g.S;
+  const mH = state.modelH || 1.7;
+  const eyeH = S.kind === 'person' ? (p.scene ? Math.max(...p.scene.people.map(q => q.h)) - .11 : mH - .11) : (S.kind === 'pet' ? .52 : .28);
+  const tilt = p.angle === 'top' ? -90 : Math.atan2(g.yc - g.camH, g.d) * 180/Math.PI;
+  const triH = g.camH - LENS_AXIS;
+  let tri;
+  if (p.angle === 'top') tri = '탑뷰: 붐 암·오버헤드 스탠드 또는 사다리';
+  else if (triH < .3) tri = `${Math.max(0, Math.round(triH*100))} cm · 다리를 최대로 벌리거나 바닥 거치(빈백·미니 삼각대)`;
+  else if (triH <= 1.5){ const sec = Math.min(3, Math.max(1, Math.ceil((triH - .35)/.38))); tri = `${Math.round(triH*100)} cm · 다리 ${sec}단 펼침, 센터 컬럼 내림`; }
+  else if (triH <= 1.85) tri = `${Math.round(triH*100)} cm · 다리 끝까지 + 센터 컬럼 ${Math.round((triH - 1.5)*100)} cm 올림`;
+  else tri = `${Math.round(triH*100)} cm · 일반 삼각대보다 높음, 사다리나 대형 스탠드 필요`;
+  const r = lightRadius('key', S);
+  const keyH = eyeH + r*Math.tan(rad(clamp(p.keyElev, 0, 80)));
+  return {mH, eyeH, tilt, triH, tri, keyH, r};
+}
+function renderSide(cv, p){
+  const {ctx, W, H} = setupCanvas(cv);
+  const u = clamp(W/380, .55, 1.3);
+  const sk = new Sk(ctx, (p.seed || 1) + 9, u);
+  const g = geom(p), S = g.S, h = heights(p, g), snapM = state.mode === 'snap';
+  ctx.fillStyle = TOK.sheet; ctx.fillRect(0, 0, W, H);
+  const lr = lightRadius('key', S), lxPlan = Math.cos(rad(p.keyAz))*lr;
+  const xmin = Math.min(snapM ? -.8 : -g.gap - .3, lxPlan - .5), xmax = Math.max(g.d + .7, lxPlan + .5);
+  const ymax = Math.max(S.kind === 'product' ? .8 : 2.3, g.camH + .45, (snapM ? 0 : h.keyH + .4), (state.modelH || 1.7) + .35);
+  const padL = 46*u, padB = 22*u, padT = 10*u;
+  const sc = Math.min((W - padL - 12*u)/(xmax - xmin), (H - padB - padT)/ymax);
+  const X = x => padL + (x - xmin)*sc, Y = y => H - padB - y*sc;
+  // grid every 0.5 m
+  ctx.save(); ctx.strokeStyle = TOK.grid; ctx.lineWidth = 1; ctx.font = `${11*u}px ${getComputedStyle(document.body).fontFamily}`; ctx.fillStyle = TOK['ink-2']; ctx.textAlign = 'right';
+  const stepY = ymax > 3 ? 1 : .5;
+  for (let y = 0; y <= ymax + .001; y += stepY){ ctx.globalAlpha = .9; ctx.beginPath(); ctx.moveTo(padL, Y(y)); ctx.lineTo(W, Y(y)); ctx.stroke(); ctx.globalAlpha = 1; ctx.fillText(`${y.toFixed(1)} m`, padL - 5*u, Y(y) + 4*u); }
+  ctx.restore();
+  sk.line([[padL, Y(0)], [W, Y(0)]], {w:2, amp:.5});
+  // backdrop
+  if (!snapM){ sk.line([[X(-g.gap), Y(0)], [X(-g.gap), Y(Math.min(ymax, 2.7))]], {w:2.2}); sk.text('배경지', X(-g.gap) + 5*u, Y(Math.min(ymax, 2.7)) + 18*u, {size:17, color:TOK['ink-2']}); }
+  // subject
+  if (S.kind === 'person'){
+    const people = p.scene ? p.scene.people : [{h: state.modelH || 1.7}];
+    const ph = Math.max(...people.map(q => q.h));
+    const k = ph/1.72;
+    const body = new Path2D();
+    body.roundRect ? body.roundRect(X(-.13*k), Y(ph - .24*k), .26*k*sc, (ph - .24*k)*sc, 10*u) : body.rect(X(-.13*k), Y(ph - .24*k), .26*k*sc, (ph - .24*k)*sc);
+    ctx.save(); ctx.fillStyle = TOK['scrib-2']; ctx.fill(body); ctx.fillStyle = TOK.scrib; ctx.beginPath(); ctx.arc(X(0), Y(ph - .11*k), .1*k*sc, 0, Math.PI*2); ctx.fill(); ctx.restore();
+    // height dimension
+    const dx = X(-.3*k);
+    sk.line([[dx, Y(0)], [dx, Y(ph)]], {w:1, passes:1, color:TOK['ink-2']});
+    sk.line([[dx - 4*u, Y(ph)], [dx + 4*u, Y(ph)]], {w:1, passes:1, color:TOK['ink-2']});
+    sk.text(`키 ${Math.round(ph*100)}`, dx - 4*u, Y(ph/2), {size:18, align:'right', bg:rgba(TOK.sheet, .85)});
+  } else if (S.kind === 'pet'){
+    ctx.save(); ctx.fillStyle = TOK['scrib-2']; ctx.beginPath(); ctx.ellipse(X(0), Y(.32), .26*sc, .14*sc, 0, 0, Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(X(.22), Y(.5), .1*sc, 0, Math.PI*2); ctx.fill(); ctx.fillRect(X(-.18), Y(.3), .05*sc, .3*sc); ctx.fillRect(X(.12), Y(.3), .05*sc, .3*sc); ctx.restore();
+  } else {
+    ctx.save(); ctx.fillStyle = TOK['scrib-2']; ctx.fillRect(X(-.2), Y(.11), .4*sc, .11*sc); ctx.fillRect(X(-.04), Y(.36), .08*sc, .25*sc); ctx.restore();
+  }
+  // eye line
+  ctx.save(); ctx.setLineDash([3*u, 4*u]); ctx.strokeStyle = rgba(TOK.ink, .45); ctx.beginPath(); ctx.moveTo(X(-.2), Y(h.eyeH)); ctx.lineTo(X(g.d), Y(h.eyeH)); ctx.stroke(); ctx.restore();
+  sk.text(`${S.kind === 'person' ? '눈' : '피사체'} ${Math.round(h.eyeH*100)} cm`, X(g.d*.45), Y(h.eyeH) - 5*u, {size:16, color:TOK['ink-2'], align:'center'});
+  // key light / sun
+  if (snapM){
+    const sx = clamp(X(lxPlan >= 0 ? xmax - .25 : xmin + .25), 20*u, W - 20*u);
+    const ang = rad(p.keyElev), sy = clamp(Y(h.eyeH) - Math.tan(ang)*Math.abs(sx - X(0)), padT + 14*u, Y(.2));
+    ctx.save(); ctx.fillStyle = rgba(TOK.key, .9); ctx.beginPath(); ctx.arc(sx, sy, 9*u, 0, Math.PI*2); ctx.fill(); ctx.restore();
+    sk.line([[sx, sy], [X(0), Y(h.eyeH)]], {color:TOK.key, w:1, dash:[2,5], passes:1});
+    sk.text(`해 ${Math.round(p.keyElev)}°`, sx + (lxPlan >= 0 ? -12*u : 12*u), sy - 12*u, {size:18, color:TOK.key, align: lxPlan >= 0 ? 'right' : 'left'});
+  } else {
+    const kx = X(lxPlan), kyH = Math.min(h.keyH, ymax - .1);
+    sk.line([[kx, Y(0)], [kx, Y(kyH)]], {w:1.4, color:TOK.key});
+    sk.line([[kx - .25*sc, Y(0)], [kx, Y(.45)], [kx + .25*sc, Y(0)]], {w:1.2, color:TOK.key, passes:1});
+    const ang = Math.atan2(Y(h.eyeH) - Y(kyH), X(0) - kx);
+    ctx.save(); ctx.translate(kx, Y(kyH)); ctx.rotate(ang); ctx.fillStyle = rgba(TOK.key, .85); ctx.fillRect(-4*u, -.3*sc, 10*u, .6*sc); ctx.restore();
+    sk.line([[kx, Y(kyH)], [X(0), Y(h.eyeH)]], {color:TOK.key, w:1, dash:[2,5], passes:1});
+    sk.text(`키 ${h.keyH.toFixed(2)} m`, kx + (lxPlan >= 0 ? 8*u : -8*u), Y(kyH) - 10*u, {size:18, color:TOK.key, align: lxPlan >= 0 ? 'left' : 'right', bg:rgba(TOK.sheet, .85)});
+  }
+  // field of view (vertical)
+  const cx = X(g.d), cy = Y(g.camH), halfV = Math.atan(18/p.focal), tilt = rad(Math.max(-89, h.tilt));
+  [tilt + halfV, tilt - halfV].forEach(a => {
+    const yAt0 = g.camH + Math.tan(a)*g.d;
+    sk.line([[cx, cy], [X(0), Y(yAt0)]], {dash:[5,4], w:1.1, passes:1, color:TOK.fill});
+  });
+  // tripod
+  const triTop = Y(Math.max(.05, h.triH));
+  if (p.angle !== 'top'){
+    sk.line([[cx, triTop], [cx, Y(Math.max(.05, h.triH) * .55)]], {w:1.6, passes:1});
+    sk.line([[cx, Y(Math.max(.05, h.triH)*.55)], [cx - .3*sc, Y(0)]], {w:1.3, passes:1});
+    sk.line([[cx, Y(Math.max(.05, h.triH)*.55)], [cx + .3*sc, Y(0)]], {w:1.3, passes:1});
+    sk.line([[cx, Y(Math.max(.05, h.triH)*.55)], [cx + .05*sc, Y(0)]], {w:1.1, passes:1});
+  }
+  // camera body (rotated by tilt, lens toward subject = -x)
+  ctx.save(); ctx.translate(cx, cy); ctx.rotate(-tilt); ctx.fillStyle = TOK.ink;
+  ctx.fillRect(-2*u, -9*u, 22*u, 18*u); ctx.fillRect(-14*u, -6*u, 13*u, 12*u); ctx.restore();
+  // labels
+  const lx = Math.min(cx + 18*u, W - 6*u);
+  sk.text(`카메라 ${g.camH.toFixed(2)} m`, lx, cy - 14*u, {size:18, align: cx + 120*u > W ? 'right' : 'left', bg:rgba(TOK.sheet, .88)});
+  if (p.angle !== 'top') sk.text(`삼각대 ${Math.max(0, Math.round(h.triH*100))} cm`, lx, Math.min(Y(.15), triTop + 26*u), {size:17, color:TOK['ink-2'], align: cx + 120*u > W ? 'right' : 'left', bg:rgba(TOK.sheet, .88)});
+  sk.text(`${g.d.toFixed(2)} m`, (X(0) + cx)/2, Y(0) + 17*u, {size:17, align:'center', color:TOK['ink-2']});
+}
 /* ---------------- readouts ---------------- */
 function exposure(p, g){
   if (state.mode === 'snap'){
@@ -901,6 +1017,11 @@ function notesFor(p, g){
   if (g.S.kind === 'product' && g.d < .3) N.push({w:true, t:`거리 ${Math.round(g.d*100)} cm는 일반 렌즈의 최단 초점거리보다 가깝습니다. 매크로 렌즈(100mm 매크로 약 30 cm)를 쓰세요.`});
   if (p.keyElev > 60) N.push({w:true, t:'조명이 너무 높으면 눈두덩이에 그늘이 져 눈빛(캐치라이트)이 사라집니다.'});
   if (p.keyElev < 10 && Math.abs(p.keyAz) < 110) N.push({t:'눈높이보다 낮은 조명은 부자연스러운 그림자를 만듭니다. 의도한 연출일 때만 쓰세요.'});
+  { const hh = heights(p, g);
+    if (p.angle !== 'top' && hh.triH > 1.85) N.push({w:true, t:`카메라 ${g.camH.toFixed(2)} m는 일반 삼각대 최대 높이(약 1.8 m)를 넘습니다. 사다리 위에서 찍거나 프레이밍을 바꾸세요.`});
+    if (g.camH > 1.55 && p.angle !== 'top') N.push({t:'카메라가 촬영자 눈보다 높으면 뷰파인더를 볼 수 없습니다. 틸트 액정이나 스마트폰 원격 앱을 쓰세요.'});
+    if (Math.abs(hh.tilt) > 15 && p.angle === 'eye') N.push({w:true, t:`눈높이 앵글인데 카메라가 ${Math.abs(Math.round(hh.tilt))}° 기울었습니다. 카메라 높이를 ${Math.round(g.yc*100)} cm 근처로 맞추면 세로선이 휘지 않습니다.`});
+    if (g.S.kind === 'person' && p.framing === 'FS' && g.camH > 1.3) N.push({t:'전신을 눈높이에서 찍으면 다리가 짧아 보입니다. 카메라를 허리(약 1 m) 높이로 내려 보세요.'}); }
   if (+state.lights === 1 && p.fillOn) N.push({t:'조명이 1개라 필 대신 흰 반사판(또는 흰 폼보드)을 키 반대편에 세웁니다.'});
   if (p.angle === 'low' && g.S.kind === 'person') N.push({t:'로우 앵글은 렌즈를 피사체 허리 아래에 두고 살짝 올려다봅니다. 콧구멍이 보이지 않게 턱을 약간 내리게 하세요.'});
   if (p.angle === 'high') N.push({t:'하이 앵글은 얼굴이 커지고 몸이 작아 보입니다. 사다리를 쓸 때는 다리를 잡아 줄 사람을 두세요.'});
@@ -987,10 +1108,13 @@ function buildSimControls(){
   $('#s-angle').innerHTML = Object.entries(ANG).map(([k, v]) => `<option value="${k}">${v.ko}</option>`).join('');
   const on = (id, ev, fn) => $(id).addEventListener(ev, fn);
   on('#s-framing', 'change', e => { sim.framing = e.target.value; sim.focusY = undefined; sim.solo = sim.solo; drawSim(); });
-  on('#s-angle', 'change', e => { sim.angle = e.target.value; drawSim(); });
+  on('#s-angle', 'change', e => { sim.angle = e.target.value; sim.camHman = null; drawSim(); });
   on('#s-focal', 'input', e => { sim.focal = FOCALS[+e.target.value]; drawSim(); });
   on('#s-key', 'input', e => { sim.keyAz = +e.target.value; drawSim(); });
   on('#s-elev', 'input', e => { sim.keyElev = +e.target.value; drawSim(); });
+  on('#s-height', 'input', e => { state.modelH = +e.target.value/100; save(); drawSim(); });
+  on('#s-camh', 'input', e => { sim.camHman = +e.target.value/100; $('#s-camauto').checked = false; drawSim(); });
+  on('#s-camauto', 'change', e => { if (e.target.checked) sim.camHman = null; else sim.camHman = geom(sim).camH; drawSim(); });
   on('#s-fill', 'change', e => { sim.fillOn = e.target.checked; drawSim(); });
   on('#s-rim', 'change', e => { sim.rimOn = e.target.checked; drawSim(); });
   on('#s-bg', 'change', e => { sim.bgOn = e.target.checked; drawSim(); });
@@ -1034,13 +1158,28 @@ function drawSim(){
   $('#s-ratio').disabled = !sim.fillOn;
   { const sp = document.querySelector('label[for="s-key"] span'); if (sp) sp.textContent = state.mode === 'snap' ? '해 방향' : '키 조명 방향'; const se = document.querySelector('label[for="s-elev"]'); if (se && se.firstChild) se.firstChild.textContent = state.mode === 'snap' ? '해 높이 ' : '키 조명 높이 '; }
   renderPlan($('#plan'), sim);
+  renderSide($('#side'), sim);
+  { const hh = heights(sim, g), person = g.S.kind === 'person';
+    $('#ctrl-height').style.visibility = person && !sim.scene ? 'visible' : 'hidden';
+    $('#s-height').value = String(Math.round((state.modelH || 1.7)*100));
+    $('#o-height').textContent = `${Math.round((state.modelH || 1.7)*100)} cm`;
+    $('#s-camh').value = String(Math.round(g.camH*100)); $('#s-camauto').checked = sim.camHman == null;
+    $('#s-camh').disabled = sim.angle === 'top';
+    $('#o-camh').textContent = `${Math.round(g.camH*100)} cm`;
+    $('#r-tri').textContent = hh.tri;
+    const t = Math.round(hh.tilt);
+    $('#r-tilt').textContent = sim.angle === 'top' ? '수직으로 내려봄 (−90°)' : (Math.abs(t) < 2 ? '수평 (0°)' : `${t > 0 ? '위로' : '아래로'} ${Math.abs(t)}°`) + (sim.angle === 'dutch' ? ' · 좌우 10–15° 기울임' : '');
+    $('#r-keyh-l').textContent = state.mode === 'snap' ? '해 높이' : '키 조명 높이(소프트박스 중심)';
+    $('#r-keyh').textContent = state.mode === 'snap' ? `지평선 위 ${Math.round(sim.keyElev)}°` : `${hh.keyH.toFixed(2)} m · 스탠드 ${Math.round((hh.keyH - .15)*100)} cm`;
+    $('#r-eye').textContent = `${Math.round(hh.eyeH*100)} cm`;
+    $('#side-cap').textContent = sim.camHman != null ? '카메라 높이 직접 지정' : `${ANG[sim.angle].ko} 기준 자동`; }
   { const pc = CAT_FOR_PATTERN[classify(sim.keyAz, sim.keyElev)], fc = shotCat(Object.assign({}, sim, {light: pc === 'rim' || pc === 'silhouette' ? 'rim' : 'main'}));
     $('#sim-ex').innerHTML = figure(pick(pc, simAlt), CAT_LABEL[pc], 500) + figure(pick(fc === pc ? 'frame_bust' : fc, simAlt), CAT_LABEL[fc === pc ? 'frame_bust' : fc], 500); }
   const pat = classify(sim.keyAz, sim.keyElev);
   $('#r-pat').textContent = PATTERNS[pat].ko + ' 조명';
   $('#r-patd').textContent = PATTERNS[pat].d;
   $('#r-dist').textContent = g.d < 1 ? `약 ${Math.round(g.d*100)} cm` : `약 ${g.d.toFixed(2)} m`;
-  $('#r-camh').textContent = `${g.camH < 1 ? Math.round(g.camH*100) + ' cm' : g.camH.toFixed(1) + ' m'}${sim.angle === 'dutch' ? ' · 10–15° 기울임' : ''}`;
+  $('#r-camh').textContent = `${Math.round(g.camH*100)} cm (렌즈 중심)` + (g.camH > 1.55 ? ' · 촬영자 눈보다 높음' : '');
   $('#r-exp').textContent = exposure(sim, g);
   $('#r-mod').textContent = modText(sim, g);
   $('#r-notes').innerHTML = notesFor(sim, g).map(n => `<li class="${n.w ? 'w' : ''}">${n.t}</li>`).join('');
