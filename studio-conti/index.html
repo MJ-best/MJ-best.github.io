@@ -103,6 +103,60 @@ dl.spec dd{margin:0;color:var(--ink)}
 .ph.broken img{display:none}
 .gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:14px}
 #gal-tabs .chip span{font-size:13px;padding:4px 9px}
+.wz-step{display:grid;gap:10px;padding-block:12px;border-top:1.5px dashed var(--scrib-2)}
+.wz-step:first-of-type{border-top:0;padding-top:0}
+.wz-l{font-weight:600;font-size:15px;display:flex;align-items:center;gap:8px}
+.wz-l span{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--ink);color:var(--sheet);font-size:13px;font-family:var(--f-mono)}
+.wz-l small{font-weight:400;color:var(--ink-2)}
+.pcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+.pcard{font:inherit;text-align:left;border:1.5px solid var(--scrib);background:var(--sheet);color:var(--ink);border-radius:4px;padding:10px 12px;cursor:pointer;display:grid;gap:2px;transition:transform .12s ease}
+.pcard:hover{transform:translateY(-1px)}
+.pcard .pi{font-size:22px}
+.pcard b{font-size:14px}
+.pcard small{font-size:12px;color:var(--ink-2);line-height:1.4}
+.pcard[aria-pressed="true"]{border-color:var(--ink);background:var(--tape);box-shadow:2px 2px 0 var(--ink)}
+.wz-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 20px;align-items:start}
+.wz-when{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.wz-when input,.wz-when select{font:inherit;font-size:14px;border:1.5px solid var(--ink);border-radius:2px;padding:4px 6px;width:100%;background:var(--sheet);color:var(--ink)}
+.mpicks{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+.mpick{font:inherit;border:1.5px solid var(--scrib-2);background:var(--grid);border-radius:4px;padding:0;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;color:var(--ink)}
+.mpick img{width:100%;aspect-ratio:4/5;object-fit:cover;display:block}
+.mpick span{font-size:13px;padding:4px;background:var(--sheet)}
+.mpick[aria-pressed="true"]{border-color:var(--ink);box-shadow:0 0 0 2px var(--tape)}
+.plan-sum{border:1.5px solid var(--ink);border-radius:4px;padding:12px 14px;display:grid;gap:10px;margin-bottom:16px;background:var(--paper)}
+.ps-main{display:flex;gap:10px;align-items:center;font-size:14px}
+.ps-main .pi{font-size:26px}
+.ps-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.ps-grid div{background:var(--sheet);border:1px solid var(--grid);border-radius:3px;padding:6px 9px}
+.ps-grid span{display:block;font-size:11.5px;color:var(--ink-2)}
+.ps-grid b{font-family:var(--f-mono);font-weight:500;font-size:15px}
+.cuts{display:grid;gap:14px}
+.cut{display:grid;grid-template-columns:200px minmax(0,1fr);gap:16px;border:1.5px solid var(--scrib);border-radius:4px;padding:12px;background:var(--sheet)}
+.cut-body{display:grid;gap:8px;min-width:0;align-content:start}
+.cut-h{display:flex;gap:10px;align-items:flex-start}
+.cut-h .cn{flex:none;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--ink);color:var(--sheet);font-family:var(--f-mono);font-size:14px}
+.cut-h h3{margin:0;font-size:16.5px}
+.cut-h h3 em{font-style:normal;font-size:11.5px;font-weight:500;border:1px solid var(--ink-2);color:var(--ink-2);padding:0 5px;border-radius:2px;vertical-align:2px}
+.cut-h .use{font-size:12.5px;color:var(--ink-2)}
+.cut-h .slot{margin-left:auto;font-family:var(--f-mono);font-size:13px;background:var(--tape);padding:2px 7px;border-radius:2px}
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:5px;font-size:13.5px;line-height:1.55}
+.steps li{display:grid;grid-template-columns:86px minmax(0,1fr);gap:8px}
+.steps b{font-size:12.5px;color:var(--ink-2);font-weight:600;padding-top:1px}
+.steps li.warn b{color:var(--warn)}
+.steps .pat{font-size:11px;border:1px solid var(--key);color:var(--key);border-radius:2px;padding:0 5px;margin-left:4px;white-space:nowrap}
+.cut .btn{justify-self:start;font-size:13px;padding:5px 10px}
+.plan-side{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:16px}
+.pbox{border:1.5px dashed var(--scrib);border-radius:4px;padding:12px 14px}
+.pbox h3{margin:0 0 8px;font-size:15px}
+.prep{display:grid;gap:6px;font-size:13.5px}
+.prep label{display:flex;gap:8px;align-items:flex-start;cursor:pointer}
+.prep input{accent-color:var(--ink);width:16px;height:16px;margin-top:3px;flex:none}
+.timeline{list-style:none;margin:0;padding:0;display:grid;gap:5px;font-size:13.5px}
+.timeline li{display:grid;grid-template-columns:52px minmax(0,1fr);gap:8px}
+.timeline time{font-family:var(--f-mono);font-variant-numeric:tabular-nums;color:var(--ink-2)}
+.mistakes{margin:0;padding-left:18px;display:grid;gap:5px;font-size:13.5px}
+@media (max-width:900px){ .plan-side{grid-template-columns:minmax(0,1fr)} .wz-row{grid-template-columns:minmax(0,1fr)} .mpicks{grid-template-columns:repeat(3,minmax(0,1fr))} .ps-grid{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media (max-width:620px){ .cut{grid-template-columns:minmax(0,1fr)} .cut-ph{max-width:220px} .steps li{grid-template-columns:minmax(0,1fr);gap:0} }
 .mb-h{font-size:12.5px;font-weight:600;color:var(--ink-2);margin-top:16px}
 .mb-h + .moodboard{margin-top:6px}
 .region-box{margin-top:16px;border:1.5px dashed var(--scrib);border-radius:3px;padding:12px 14px;font-size:13.5px}
@@ -247,56 +301,44 @@ footer code{font-family:var(--f-mono);font-size:12px}
 <div class="wrap">
   <header class="mast">
     <div>
-      <div class="eyebrow">Studio shoot planner · 촬영 기획 시뮬레이터</div>
+      <div class="eyebrow">Shoot planner · 촬영이 막막할 때</div>
       <h1>스튜디오 <span class="tape">콘티북</span></h1>
-      <p class="lede">스튜디오인지 야외 스냅인지, 어느 나라 스타일로 무엇을 어떤 분위기로 찍을지 고르면 콘셉트와 다섯 컷짜리 스토리라인을 실제 사진 예시와 함께 짜 줍니다. 컷마다 배치·화각·앵글·프레이밍·조명을 적어 두었고, 배치도에서 조명을 끌어 옮기면 그 조명 패턴의 실제 사진이 바로 바뀝니다.</p>
+      <p class="lede">어디에 쓸 사진인지 고르면, 꼭 찍어야 할 컷과 컷마다 따라 하는 방법(모델 포즈, 내가 설 위치와 높이, 카메라 설정, 빛, 건넬 말), 준비물, 당일 시간표까지 한 장의 촬영 계획서로 만들어 줍니다.</p>
     </div>
     <div class="mast-actions">
       <button class="btn" id="reseed" type="button">다른 예시 사진 보기</button>
-      <button class="btn solid" id="copy" type="button">콘티 텍스트 복사</button>
+      <button class="btn solid" id="copy" type="button">계획서 텍스트 복사</button>
     </div>
   </header>
 
-  <section class="sheet" id="brief" aria-labelledby="h-brief">
-    <div class="sec-head"><span class="no">01</span><h2 id="h-brief">기획 메모</h2><p>네 가지만 고르면 아래 콘티가 모두 바뀝니다.</p></div>
-    <div class="brief">
-      <fieldset><legend>촬영 형태</legend><div class="chips" id="f-mode"></div></fieldset>
-      <fieldset><legend>지역 스타일 <small>어느 나라 사진의 미감을 따를지</small></legend><div class="chips" id="f-region"></div></fieldset>
-      <fieldset><legend>무엇을 찍나요</legend><div class="chips" id="f-subject"></div></fieldset>
-      <fieldset><legend>어떤 분위기</legend><div class="chips" id="f-mood"></div></fieldset>
-      <fieldset class="studio-only"><legend>공간 크기 <small>배경지부터 반대편 벽까지</small></legend><div class="chips" id="f-room"></div></fieldset>
-      <fieldset class="studio-only"><legend>조명 개수 <small>플래시·연속광 모두</small></legend><div class="chips" id="f-lights"></div></fieldset>
-    </div>
-  </section>
+  
 
-  <section class="sheet" id="concept" aria-labelledby="h-concept">
-    <div class="sec-head"><span class="no">02</span><h2 id="h-concept">콘셉트 보드</h2></div>
-    <div class="concept">
-      <div>
-        <p class="c-title" id="c-title"></p>
-        <div class="c-sub" id="c-sub"></div>
-        <p class="c-log" id="c-log"></p>
-        <ol class="arc" id="c-arc"></ol>
-        <div class="mb-h">무드 예시</div>
-        <div class="moodboard" id="c-mood"></div>
-        <div class="mb-h" id="c-region-h"></div>
-        <div class="moodboard" id="c-region-ph"></div>
-      </div>
-      <div>
-        <div class="pal" id="c-pal"></div>
-        <dl class="spec" id="c-spec"></dl>
-        <div class="region-box" id="c-region"></div>
-      </div>
-    </div>
+  
+
+  
+
+  <section class="sheet" id="wiz" aria-labelledby="h-wiz">
+    <div class="sec-head"><span class="no">01</span><h2 id="h-wiz">무엇을 찍나요</h2><p>세 가지만 고르면 아래에 촬영 계획서가 만들어집니다.</p></div>
+    <div class="wz-step"><div class="wz-l"><span>1</span>어디에 쓸 사진인가요?</div><div class="pcards" id="wz-purpose"></div></div>
+    <div class="wz-step"><div class="wz-l"><span>2</span>어디서, 무엇으로 찍나요?</div>
+      <div class="wz-row"><fieldset><legend>장소</legend><div class="chips" id="wz-loc"></div></fieldset><fieldset><legend>장비</legend><div class="chips" id="wz-equip"></div></fieldset><div class="wz-when" id="wz-when"></div></div></div>
+    <div class="wz-step"><div class="wz-l"><span>3</span>어떤 느낌이 좋아요? <small>사진을 하나 고르세요</small></div><div class="mpicks" id="wz-mood"></div>
+      <fieldset style="margin-top:10px"><legend>지역 스타일 <small>보정·포즈의 기준</small></legend><div class="chips" id="wz-region"></div></fieldset></div>
   </section>
 
   <section class="sheet" id="story" aria-labelledby="h-story">
-    <div class="sec-head"><span class="no">03</span><h2 id="h-story">스토리라인 콘티</h2><p>첫인상에서 여운까지 다섯 컷. 각 컷의 화각은 풀프레임 세로 촬영 기준이며, 크롭 바디(APS-C)는 표기값을 1.5로 나눈 렌즈를 쓰면 같은 화면이 나옵니다.</p></div>
-    <div class="board" id="board"></div>
+    <div class="sec-head"><span class="no">02</span><h2 id="h-story">촬영 계획서</h2><p>위에서부터 순서대로 찍으면 됩니다. 각 컷의 '배치도·높이 보기'를 누르면 조명과 카메라 위치를 그림으로 보여 줍니다.</p></div>
+    <div class="plan-sum" id="plan-sum"></div>
+    <div class="cuts" id="board"></div>
+    <div class="plan-side">
+      <div class="pbox"><h3>준비물 체크리스트</h3><div class="prep" id="prep"></div></div>
+      <div class="pbox"><h3>당일 시간표</h3><ol class="timeline" id="timeline"></ol></div>
+      <div class="pbox"><h3>자주 하는 실수</h3><ul class="mistakes" id="mistakes"></ul></div>
+    </div>
   </section>
 
   <section class="sheet" id="sim-sec" aria-labelledby="h-sim">
-    <div class="sec-head"><span class="no">04</span><h2 id="h-sim">조명·배치 시뮬레이터</h2><p>평면도에서 조명 동그라미를 끌거나 슬라이더를 움직이세요. 카메라 거리는 프레이밍과 화각으로 자동 계산됩니다.</p></div>
+    <div class="sec-head"><span class="no">03</span><h2 id="h-sim">조명·배치 시뮬레이터</h2><p>평면도에서 조명 동그라미를 끌거나 슬라이더를 움직이세요. 카메라 거리는 프레이밍과 화각으로 자동 계산됩니다.</p></div>
     <div class="shotbar" id="shotbar" role="group" aria-label="컷 선택"></div>
     <div class="sim">
       <div class="pane">
@@ -368,8 +410,41 @@ footer code{font-family:var(--f-mono);font-size:12px}
     </div>
   </section>
 
+  <section class="sheet" id="concept" aria-labelledby="h-concept">
+    <div class="sec-head"><span class="no">04</span><h2 id="h-concept">무드·스타일 참고</h2></div>
+    <div class="concept">
+      <div>
+        <p class="c-title" id="c-title"></p>
+        <div class="c-sub" id="c-sub"></div>
+        <p class="c-log" id="c-log"></p>
+        <ol class="arc" id="c-arc"></ol>
+        <div class="mb-h">무드 예시</div>
+        <div class="moodboard" id="c-mood"></div>
+        <div class="mb-h" id="c-region-h"></div>
+        <div class="moodboard" id="c-region-ph"></div>
+      </div>
+      <div>
+        <div class="pal" id="c-pal"></div>
+        <dl class="spec" id="c-spec"></dl>
+        <div class="region-box" id="c-region"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sheet" id="brief" aria-labelledby="h-brief">
+    <div class="sec-head"><span class="no">05</span><h2 id="h-brief">세부 설정</h2><p>계획서를 더 손보고 싶을 때만 바꾸세요. 위의 선택이 바뀌면 여기도 다시 맞춰집니다.</p></div>
+    <div class="brief">
+      <fieldset><legend>촬영 형태</legend><div class="chips" id="f-mode"></div></fieldset>
+      <fieldset><legend>지역 스타일 <small>어느 나라 사진의 미감을 따를지</small></legend><div class="chips" id="f-region"></div></fieldset>
+      <fieldset><legend>무엇을 찍나요</legend><div class="chips" id="f-subject"></div></fieldset>
+      <fieldset><legend>어떤 분위기</legend><div class="chips" id="f-mood"></div></fieldset>
+      <fieldset class="studio-only"><legend>공간 크기 <small>배경지부터 반대편 벽까지</small></legend><div class="chips" id="f-room"></div></fieldset>
+      <fieldset class="studio-only"><legend>조명 개수 <small>플래시·연속광 모두</small></legend><div class="chips" id="f-lights"></div></fieldset>
+    </div>
+  </section>
+
   <section class="sheet" id="refs-sec" aria-labelledby="h-refs">
-    <div class="sec-head"><span class="no">05</span><h2 id="h-refs">레퍼런스</h2><p>지금 콘티에 쓰인 무드·조명·앵글·구도를 공개 자료에서 찾아볼 수 있게 묶었습니다.</p></div>
+    <div class="sec-head"><span class="no">06</span><h2 id="h-refs">레퍼런스</h2><p>지금 콘티에 쓰인 무드·조명·앵글·구도를 공개 자료에서 찾아볼 수 있게 묶었습니다.</p></div>
     <div class="refs" id="refs"></div>
     <p class="refnote">예시 사진은 모두 Unsplash의 무료 사진이며 사진마다 촬영자를 표기했습니다. 사진 설명을 기준으로 골랐기 때문에 조명 패턴이 교과서처럼 정확하지 않은 사진도 있을 수 있습니다. 버튼을 누르면 Unsplash·Pinterest·Behance 검색 결과나 위키백과 문서가 새 탭으로 열립니다.</p>
   </section>
@@ -395,7 +470,7 @@ footer code{font-family:var(--f-mono);font-size:12px}
   </section>
 
   <section class="sheet" id="gallery-sec" aria-labelledby="h-gal">
-    <div class="sec-head"><span class="no">06</span><h2 id="h-gal">예시 갤러리</h2><p>카테고리마다 실제 사진을 모아 두었습니다. 조명·앵글·피사체·무드를 골라 넘겨 보세요.</p></div>
+    <div class="sec-head"><span class="no">08</span><h2 id="h-gal">예시 갤러리</h2><p>카테고리마다 실제 사진을 모아 두었습니다. 조명·앵글·피사체·무드를 골라 넘겨 보세요.</p></div>
     <div class="chips" id="gal-tabs" role="group" aria-label="갤러리 카테고리"></div>
     <div class="gal" id="gal"></div>
   </section>
@@ -556,6 +631,94 @@ const SNAP = {
     {t:'벽에 비친 햇빛',fr:'MS',an:'eye',f:50,light:'sidesun',cat:'snap_profile',d:'낮은 해가 벽에 만드는 빛 조각 안에 얼굴을 넣습니다. 노출은 밝은 부분에 맞춥니다.'},
     {t:'노을 실루엣',fr:'FS',an:'low',f:35,light:'silhouette',cat:'snap_golden',d:'해가 진 직후 하늘을 배경으로 형태만 남깁니다.'}]
 };
+/* ---------------- purposes: what the photos are for → the cuts you must get ---------------- */
+const PURPOSES = {
+  profile_biz:{ko:'이력서·회사 프로필', ico:'💼', sub:'portrait', loc:'studio', mood:'fresh', d:'증명용 정면부터 링크드인용까지, 쓸 곳마다 한 장씩',
+    cuts:[
+      {t:'정면 증명 컷', use:'이력서·사원증·명함', fr:'MCU', an:'eye', f:85, light:'front', pose:'어깨를 카메라에서 15°만 돌리고 얼굴은 정면. 턱을 앞으로 1 cm 내밀었다가 살짝 내립니다.', say:'“턱만 살짝 앞으로… 좋아요. 입꼬리만 올려 볼게요.”', tip:'머리 위 여백은 손가락 한 마디. 정수리가 잘리지 않게 하세요.'},
+      {t:'링크드인 3/4 컷', use:'링크드인·사내 메신저', fr:'MCU', an:'eye', f:85, light:'main', pose:'몸을 45° 돌리고 얼굴만 카메라로. 팔짱을 끼거나 한 손을 주머니에.', say:'“동료한테 인사한다고 생각하고 편하게 보세요.”', tip:'어깨가 카메라와 평행하면 몸이 넓어 보입니다.'},
+      {t:'자연스러운 웃음', use:'회사 홈페이지 팀 소개', fr:'CU', an:'eye', f:100, light:'main', pose:'정면에 서서 손은 편하게 내립니다.', say:'“요즘 제일 웃겼던 일 하나만 떠올려 볼까요?” 웃음이 터지는 순간 연속 촬영.', tip:'억지 미소는 눈이 안 웃습니다. 웃음 직후 0.5초를 노리세요.'},
+      {t:'업무 상반신', use:'보도자료·강연 소개', fr:'MS', an:'eye', f:50, light:'main', pose:'책상 모서리에 살짝 기대거나 노트북 옆에 섭니다. 소품은 하나만.', say:'“평소 회의할 때처럼 설명하는 손동작을 해 볼게요.”', tip:'소품이 많으면 얼굴보다 물건이 먼저 보입니다.'},
+      {t:'전신 컷', use:'회사 소개 페이지·행사 포스터', fr:'FS', an:'eye', f:50, light:'main', opt:true, pose:'한 발을 반 걸음 앞으로, 체중은 뒷발에.', say:'“천천히 걸어오다가 제가 부르면 멈춰 주세요.”', tip:'카메라를 허리 높이로 내려야 다리가 짧아 보이지 않습니다.'}],
+    prep:['단색 상의 2벌(흰색 1, 짙은 색 1) — 다려서 옷걸이에', '안경 렌즈 닦기, 반사 확인용 테스트 컷', '파우더·립밤·빗·머리끈', '전신 거울', '배경: 흰색·회색 단색 벽이나 배경지'],
+    mist:['정수리 잘림·턱 아래 여백 과다', '안경에 조명 반사', '배경 주름·콘센트가 화면에 걸림']},
+  profile_sns:{ko:'SNS·포트폴리오 프로필', ico:'📱', sub:'portrait', loc:'home', mood:'warm', d:'창가 빛으로 자연스러운 분위기 컷',
+    cuts:[
+      {t:'창가 대표 컷', use:'인스타·포트폴리오 대표 사진', fr:'MCU', an:'eye', f:85, light:'window', pose:'창을 옆에 두고 서서 몸은 창 쪽, 얼굴만 카메라로.', say:'“창밖을 한 번 보고… 천천히 저를 봐 주세요.”', tip:'창이 등 뒤에 있으면 얼굴이 어두워집니다. 창은 옆이나 앞쪽에.'},
+      {t:'시선 피한 캔디드', use:'스토리·피드 중간 컷', fr:'CU', an:'eye', f:85, light:'side', pose:'창밖이나 손에 든 컵을 봅니다. 카메라는 보지 않기.', say:'“제가 말 걸 때까지 커피 향만 맡아 볼게요.”', tip:'가장 자연스러운 컷은 포즈 사이 쉬는 순간에 나옵니다.'},
+      {t:'앉은 상반신', use:'피드 메인', fr:'MS', an:'low', f:50, light:'window', pose:'의자 끝에 걸터앉아 팔꿈치를 무릎에, 상체는 살짝 앞으로.', say:'“저한테 비밀 얘기한다고 생각하고 몸을 조금만 기울여 주세요.”', tip:'의자 등받이에 기대면 몸이 구부정해 보입니다.'},
+      {t:'걷는 전신', use:'포트폴리오 표지', fr:'FS', an:'eye', f:35, light:'window', pose:'창 앞을 천천히 걸어 지나갑니다.', say:'“발끝 보지 말고 저 끝 벽을 보면서 천천히 걸어요.”', tip:'연속 촬영 후 발이 교차한 컷을 고르세요.'},
+      {t:'손·소품 디테일', use:'캐러셀 마지막 장', fr:'ECU', an:'eye', f:100, light:'window', focusY:.95, solo:true, pose:'책·카메라·컵처럼 나를 설명하는 물건을 손에.', say:'“손에 힘 빼고 물건만 살짝 잡아 주세요.”', tip:'손톱·소매 끝까지 정리했는지 확인하세요.'}],
+    prep:['큰 창이 있는 방(오후 2~4시 북향·동향 창이 부드러움)', '흰 벽이나 흰 침대 시트(반사판 대용)', '나를 설명하는 소품 2~3개', '단색 니트·셔츠 2벌', '창문 커튼(빛이 너무 강할 때 흰 커튼으로 거르기)'],
+    mist:['창을 등지고 찍어 얼굴이 시커멓게', '방 안 조명(형광등)과 창빛이 섞여 얼굴색이 얼룩덜룩', '배경에 빨래·전선이 걸림']},
+  wedding_snap:{ko:'웨딩 스냅(야외)', ico:'💍', sub:'wedding', loc:'outdoor', mood:'dreamy', d:'청첩장·모바일 청첩장에 쓸 야외 컷',
+    cuts:[
+      {t:'걸어오는 두 사람', use:'청첩장 메인', fr:'FS', an:'eye', f:50, light:'golden', cat:'snap_wedding', pose:'손잡고 서로 보며 천천히 걸어옵니다.', say:'“발 맞추지 말고, 서로 보면서 수다 떨듯 걸어와요.”', tip:'촬영자는 뒷걸음질로 따라가며 연속 촬영. 넘어지지 않게 보조 한 명이 뒤를 봐 주세요.'},
+      {t:'베일 너머 역광', use:'모바일 청첩장 표지', fr:'CU', an:'eye', f:85, light:'golden', cat:'snap_backlight', pose:'신부가 베일을 쓰고 해를 등집니다. 보조가 베일을 바람에 띄웁니다.', say:'“눈 감았다가 셋에 천천히 떠 볼게요. 하나, 둘, 셋.”', tip:'얼굴이 어두우면 노출을 +1 올리세요. 반사판은 얼굴 아래 앞쪽에서.'},
+      {t:'도심 투샷', use:'모바일 청첩장 갤러리', fr:'WS', an:'eye', f:35, light:'shade', cat:'snap_city', pose:'건물 그늘 가장자리에 나란히. 서로 어깨를 기대요.', say:'“신랑님이 신부님 귀에 아무 말이나 속삭여 주세요.”', tip:'건물 선이 기울지 않게 카메라를 수평으로.'},
+      {t:'이마 맞대기', use:'액자용', fr:'MCU', an:'eye', f:85, light:'sidesun', cat:'snap_couple', pose:'마주 보고 이마를 맞대고 눈을 감습니다.', say:'“코끝 닿게… 이제 웃음 참지 말고 웃어요.”', tip:'두 사람 코가 겹치지 않게 얼굴 각도를 엇갈리세요.'},
+      {t:'반지 디테일', use:'청첩장 속지', fr:'ECU', an:'eye', f:100, light:'shade', cat:'couple', focusY:.95, solo:true, pose:'두 손을 겹쳐 반지가 위로 오게.', say:'“손가락 힘 빼고 살짝만 펴 주세요.”', tip:'반지에 해가 반사되면 하얗게 날아갑니다. 그늘에서 찍으세요.'},
+      {t:'노을 실루엣', use:'예식 영상 엔딩·SNS', fr:'FS', an:'low', f:35, light:'silhouette', cat:'snap_golden', pose:'하늘을 배경으로 마주 서서 이마를 맞대거나 손을 높이 잡습니다.', say:'“팔을 크게, 모양이 보이게 해 주세요.”', tip:'노출은 하늘에 맞추고, 몸 사이에 틈이 있어야 형태가 읽힙니다.'}],
+    prep:['촬영지 허가 확인(공원·고궁은 사전 신청 필요한 곳 많음)', '접이식 반사판(흰·금)', '드레스 자락 정리할 보조 1명', '편한 신발(이동용) + 촬영용 구두', '물·간식·손수건·안전핀', '부케(조화도 OK)'],
+    mist:['해가 높은 한낮에 촬영 → 눈 밑 그림자', '드레스 밑단에 흙·주름', '골든아워 시간을 놓쳐 실루엣 컷 못 찍음']},
+  wedding_studio:{ko:'웨딩 스튜디오', ico:'👰', sub:'wedding', loc:'studio', mood:'fresh', d:'실내 스튜디오 정식 웨딩 촬영',
+    cuts:[
+      {t:'드레스 전신', use:'액자·앨범 메인', fr:'FS', an:'eye', f:50, light:'main', pose:'드레스 자락을 바닥에 펼치고 신부는 몸을 45° 틉니다.', say:'“어깨 내리고, 턱은 신랑님 쪽으로 살짝.”', tip:'카메라를 허리 높이에. 자락은 보조가 정리 후 한 걸음 빠지기.'},
+      {t:'의자 클래식', use:'부모님 선물 액자', fr:'MS', an:'eye', f:85, light:'main', pose:'신부는 의자에, 신랑은 옆에 서서 신부 어깨에 손.', say:'“두 분 다 저를 보고, 숨 들이쉬고… 내쉬면서 웃어요.”', tip:'두 사람 눈높이 차이를 크게 두면 화면이 안정적입니다.'},
+      {t:'마주 보는 두 사람', use:'앨범 중간 컷', fr:'MCU', an:'eye', f:85, light:'main', pose:'코끝이 닿을 듯 마주 봅니다.', say:'“먼저 웃는 사람이 지는 거예요. 시작!”', tip:'웃음이 터진 직후가 제일 좋은 컷입니다.'},
+      {t:'베일 윤곽', use:'앨범 표지', fr:'MCU', an:'eye', f:85, light:'rim', pose:'신부가 베일을 쓰고 옆모습으로 섭니다.', say:'“눈 감고 천천히 고개를 들어 볼게요.”', tip:'뒤쪽 조명이 렌즈에 직접 들어오면 뿌옇게 됩니다. 렌즈 후드를 쓰세요.'},
+      {t:'부케와 반지', use:'앨범 디테일', fr:'ECU', an:'eye', f:100, light:'main', focusY:.95, solo:true, pose:'부케를 쥔 두 손, 반지가 보이게.', say:'“손가락만 펴서 반지 보여 주세요.”', tip:'꽃잎·리본을 정리하고 찍으세요.'}],
+    prep:['드레스·턱시도 대여 확정, 피팅 시간', '헤어·메이크업 예약(촬영 2시간 전)', '부케·부토니에', '반지', '보조 1명(자락·베일 정리)'],
+    mist:['드레스 흰색이 하얗게 날아감 → 노출 −0.3', '베일 주름', '신랑이 굳어 표정이 딱딱함 → 대화로 풀기']},
+  couple:{ko:'커플·우정 기념', ico:'💑', sub:'couple', loc:'outdoor', mood:'warm', d:'기념일·여행에서 남길 두 사람 사진',
+    cuts:[
+      {t:'산책하듯 걷기', use:'SNS 대표', fr:'FS', an:'eye', f:50, light:'golden', cat:'snap_couple', pose:'손잡고 서로 보며 걷습니다.', say:'“오늘 점심 뭐 먹었는지 서로 얘기하면서 걸어요.”', tip:'걷는 방향 앞쪽에 여백을 남기세요.'},
+      {t:'역광 속 웃음', use:'프로필 사진', fr:'MCU', an:'eye', f:85, light:'golden', cat:'snap_backlight', pose:'어깨를 기대고 같이 웃습니다.', say:'“서로 볼 꼬집기 하나 해 볼까요?”', tip:'머리카락에 빛 테두리가 생기면 성공. 얼굴 노출은 +1.'},
+      {t:'골목 그늘 투샷', use:'앨범', fr:'MS', an:'eye', f:50, light:'shade', cat:'snap_city', pose:'벽에 나란히 기대 서로를 봅니다.', say:'“한 사람은 벽에 기대고, 한 사람은 그 앞에서 장난쳐 보세요.”', tip:'밝은 길가 바로 옆 그늘이 얼굴빛이 가장 고릅니다.'},
+      {t:'벤치 위 대화', use:'앨범', fr:'MS', an:'high', f:35, light:'shade', cat:'angle_high', pose:'벤치에 앉아 서로에게 몸을 기울입니다.', say:'“무릎이 닿을 정도로 가까이 앉아 주세요.”', tip:'살짝 위에서 찍으면 얼굴이 밝고 친근해 보입니다.'},
+      {t:'노을 실루엣', use:'여행 마지막 장', fr:'FS', an:'low', f:35, light:'silhouette', cat:'snap_golden', pose:'하늘 앞에서 마주 보거나 점프.', say:'“하나 둘 셋에 같이 점프!”', tip:'노출은 하늘에 맞추세요.'}],
+    prep:['촬영 장소 2곳(그늘 골목 + 노을 보이는 곳)', '반사판 또는 흰 쇼핑백', '톤을 맞춘 옷(한 사람이 무늬면 한 사람은 단색)', '삼각대(둘 다 나오는 컷용)·리모컨'],
+    mist:['한낮 직사광', '두 사람 옷 색이 너무 다름', '얼굴이 겹쳐 한 사람이 가려짐']},
+  family:{ko:'가족사진', ico:'👨‍👩‍👧', sub:'family', loc:'studio', mood:'warm', d:'거실 액자·부모님 선물용',
+    cuts:[
+      {t:'가족 단체 컷', use:'거실 액자', fr:'FS', an:'eye', f:35, light:'main', pose:'키 큰 사람 뒤, 아이 앞. 얼굴이 한 줄로 나란하지 않게 높이를 엇갈립니다.', say:'“모두 저 말고 렌즈 위 인형을 봐 주세요!”', tip:'여럿이면 조리개를 f/8 이상으로 조여 모두 선명하게.'},
+      {t:'아이 눈높이', use:'아이 성장 앨범', fr:'MCU', an:'eye', f:85, light:'main', focusY:.98, solo:true, scene:{people:[{x:0,h:1.12}]}, pose:'아이 혼자, 좋아하는 장난감을 들고.', say:'“이 인형이 무슨 말 하는지 들어 볼까?”', tip:'촬영자는 무릎을 꿇어 아이 눈높이(약 1 m)로.'},
+      {t:'둘러앉은 장면', use:'자연스러운 앨범 컷', fr:'MS', an:'high', f:35, light:'main', pose:'바닥에 둘러앉아 사진첩이나 그림책을 함께 봅니다.', say:'“엄마가 이 사진 찍을 때 이야기 해 줄래요?”', tip:'의자 위에서 살짝 내려다보면 모두의 얼굴이 보입니다.'},
+      {t:'부모님 투샷', use:'부모님 선물', fr:'MCU', an:'eye', f:85, light:'main', solo:true, scene:{people:[{x:-.2,h:1.75},{x:.2,h:1.62}]}, pose:'부모님 두 분이 어깨를 맞대고.', say:'“처음 만나셨을 때 얘기 한 번만 해 주세요.”', tip:'이 컷을 제일 먼저 찍으세요. 시간이 갈수록 지칩니다.'},
+      {t:'포개진 손', use:'앨범 마지막 장', fr:'ECU', an:'top', f:50, light:'front', focusY:.9, solo:true, pose:'모두의 손을 포갭니다.', say:'“제일 작은 손이 맨 위로!”', tip:'반지·시계를 정리하고 찍으세요.'}],
+    prep:['가족 옷 색 맞추기(2~3가지 색 안에서)', '아이 간식·장난감·여벌옷', '어르신 앉을 의자', '촬영 시간은 아이 낮잠 이후'],
+    mist:['아이가 지쳐 마지막엔 울음 → 중요한 컷 먼저', '눈 감은 사람 → 단체는 연속 촬영 5장 이상', '키 순서로 일렬 세우기(딱딱함)']},
+  pet:{ko:'반려동물', ico:'🐶', sub:'pet', loc:'home', mood:'fresh', d:'집에서 찍는 우리 아이 프로필',
+    cuts:[
+      {t:'눈높이 정면', use:'프로필·SNS 대표', fr:'FS', an:'eye', f:50, light:'window', pose:'창가 바닥에 앉혀 둡니다.', say:'이름을 부르고 렌즈 바로 위에서 간식을 보여 주세요.', tip:'촬영자는 바닥에 엎드려 반려견 눈높이로.'},
+      {t:'간식으로 시선', use:'굿즈·캘린더', fr:'CU', an:'eye', f:85, light:'window', pose:'얼굴만 크게.', say:'간식을 렌즈 옆에서 흔들다 렌즈 위로 천천히.', tip:'초점은 카메라에 가까운 눈. 셔터 1/250초 이상.'},
+      {t:'보호자 품에', use:'가족 액자', fr:'MCU', an:'eye', f:50, light:'window', ref:1, scene:{people:[{x:-.06,h:1.72}],dog:{x:.13,y:1.02,s:.62}}, pose:'보호자가 가슴 높이로 안고 볼을 맞댑니다.', say:'“보호자님은 아이만 보고 이름 불러 주세요.”', tip:'보호자 얼굴은 반만 걸려도 좋습니다.'},
+      {t:'달려오는 순간', use:'SNS 영상 썸네일', fr:'FS', an:'high', f:35, light:'window', pose:'복도 끝에서 출발.', say:'보조가 잡고 있다가 보호자가 부르면 놓기.', tip:'셔터 1/1000초, 연속 촬영, AF는 추적 모드.'},
+      {t:'털 윤곽 역광', use:'감성 컷', fr:'MCU', an:'eye', f:85, light:'rim', pose:'창을 등지고 앉힙니다.', say:'간식으로 고개를 살짝 들게.', tip:'얼굴이 어두우면 흰 종이로 앞쪽을 채우세요.'}],
+    prep:['간식 작게 잘라 한 주머니', '좋아하는 장난감(삑삑이)', '산책 후 촬영(에너지 빼기)', '털 정리 브러시', '보조 1명'],
+    mist:['셔터 속도가 느려 흔들림', '플래시로 놀라게 함 → 창빛·LED 사용', '30분 넘게 찍어 지침']},
+  product:{ko:'쇼핑몰 제품 상세', ico:'🛍️', sub:'product', loc:'home', mood:'fresh', d:'썸네일·상세 페이지·인스타용 제품 컷',
+    cuts:[
+      {t:'흰 배경 썸네일', use:'쇼핑몰 대표 이미지', fr:'MS', an:'eye', f:100, light:'window', pose:'제품 정면, 라벨이 반듯하게. 흰 종이를 벽~바닥까지 곡선으로.', say:'—', tip:'모든 컷의 그림자 방향을 같게. 삼각대 필수.'},
+      {t:'질감 접사', use:'상세 페이지 디테일', fr:'ECU', an:'eye', f:100, light:'side', focusY:.2, pose:'측광으로 표면 결을 살립니다.', say:'—', tip:'가까이 가면 초점이 얕아집니다. f/8 이상 또는 초점 합성.'},
+      {t:'플랫레이', use:'인스타 피드', fr:'FS', an:'top', f:50, light:'window', pose:'위에서 내려다보며 소품과 함께. 소품은 세 개 이하.', say:'—', tip:'카메라 센서가 바닥과 평행해야 사각형이 찌그러지지 않습니다.'},
+      {t:'윤곽 살리기', use:'상세 페이지 무드 컷', fr:'MS', an:'low', f:85, light:'rim', pose:'창을 제품 뒤쪽에, 앞은 검은 종이로 막습니다.', say:'—', tip:'투명한 병은 뒤에서 오는 빛이 가장 예쁩니다.'},
+      {t:'사용 장면', use:'상세 페이지 하단', fr:'WS', an:'eye', f:50, light:'window', pose:'손이 제품을 집거나 따르는 장면.', say:'“천천히, 세 번 반복해 주세요.”', tip:'손톱 정리, 손목 액세서리 빼기.'}],
+    prep:['흰 전지 2장(배경용) + 마스킹테이프', '흰 폼보드·검은 종이(반사·흡수용)', '삼각대', '먼지 제거용 극세사 천·에어블로워', '소품(천·잎·돌)'],
+    mist:['색이 실제와 다름 → 화이트밸런스 고정', '먼지·지문', '컷마다 각도가 달라 상세 페이지가 산만함']},
+  lookbook:{ko:'옷 판매·룩북', ico:'👗', sub:'lookbook', loc:'studio', mood:'chic', d:'착장 전체·디테일·움직임',
+    cuts:[
+      {t:'정면 전신', use:'상품 대표', fr:'FS', an:'eye', f:50, light:'main', pose:'한 발을 살짝 앞으로, 손은 옆선에.', say:'“어깨 툭 떨어뜨리고, 숨 내쉬면서.”', tip:'카메라는 허리 높이. 머리·발끝 여백을 컷마다 같게.'},
+      {t:'측면·뒷모습', use:'상세 페이지 핏', fr:'FS', an:'eye', f:50, light:'main', pose:'옆으로 돌기 → 뒤로 돌기. 같은 자리에서.', say:'“그 자리에서 시계 방향으로 90°씩 돌아요.”', tip:'핏을 보여 주는 컷이라 포즈보다 각도가 중요합니다.'},
+      {t:'로우 앵글 워킹', use:'메인 배너', fr:'FS', an:'low', f:35, light:'main', pose:'카메라 쪽으로 걸어옵니다.', say:'“런웨이처럼, 저 뒤 벽을 보면서.”', tip:'무릎 높이에서. 인물을 화면 가운데에 두면 광각 왜곡이 덜합니다.'},
+      {t:'상반신 표정', use:'SNS', fr:'MCU', an:'eye', f:85, light:'main', pose:'칼라·액세서리가 보이게.', say:'“고개를 왼쪽, 가운데, 오른쪽으로 천천히.”', tip:'목걸이·단추 위치를 매 컷 확인.'},
+      {t:'디테일 컷', use:'상세 페이지 소재 설명', fr:'ECU', an:'eye', f:100, light:'side', focusY:1.1, pose:'단추·원단·소매 끝.', say:'—', tip:'측광으로 원단 결이 보이게.'}],
+    prep:['착장 순서표(옷·액세서리 세트별)', '스팀다리미·보풀제거기·옷핀', '신발 바닥 보호 테이프', '모델 탈의 공간', '컬러 체커(색 정확도)'],
+    mist:['옷 주름·보풀', '착장마다 조명이 달라 색이 다름', '모델 키에 비해 카메라가 높아 다리가 짧아 보임']}
+};
+const LOCS = {studio:{ko:'스튜디오 대여'}, home:{ko:'집·실내(창가)'}, outdoor:{ko:'야외'}};
+const EQUIPS = {phone:{ko:'스마트폰'}, kit:{ko:'카메라 + 기본 줌렌즈'}, prime:{ko:'카메라 + 단렌즈'}, lights:{ko:'카메라 + 조명 장비'}};
+
 const PATTERNS = {
   flat:{ko:'플랫', en:'flat lighting', d:'조명이 카메라 축과 거의 겹쳐 그림자가 거의 없습니다. 피부는 매끈해 보이지만 입체감은 약합니다.'},
   butterfly:{ko:'버터플라이', en:'butterfly lighting', d:'정면 위에서 내려오는 빛. 코 밑에 나비 모양 그림자가 생기고 광대가 살아납니다. 뷰티·프로필에 무난합니다.'},
@@ -590,6 +753,7 @@ function lightFor(kind, mood){
   if (kind === 'rim') return {az: 140, elev: 30};
   if (kind === 'front') return {az: 6, elev: 42};
   if (kind === 'golden') return {az: 150, elev: 8};
+  if (kind === 'window') return {az: 45, elev: 18};
   if (kind === 'shade') return {az: 12, elev: 28};
   if (kind === 'sidesun') return {az: 72, elev: 14};
   if (kind === 'silhouette') return {az: 176, elev: 4};
@@ -598,7 +762,8 @@ function lightFor(kind, mood){
 function buildShots(){
   const S = SUBJ[state.subject], M = MOODS[state.mood], n = +state.lights;
   const snap = state.mode === 'snap';
-  const tpl = snap ? (SNAP[state.subject] || SNAP[state.subject === 'family' ? 'couple' : 'portrait']) : SHOTS[state.subject];
+  const usePurpose = typeof wiz !== 'undefined' && PURPOSES[wiz.purpose] && PURPOSES[wiz.purpose].sub === state.subject;
+  const tpl = usePurpose ? PURPOSES[wiz.purpose].cuts : snap ? (SNAP[state.subject] || SNAP[state.subject === 'family' ? 'couple' : 'portrait']) : SHOTS[state.subject];
   return tpl.map((t, i) => {
     const key = lightFor(t.light, M);
     if (snap) return Object.assign({}, t, {i, beat: M.arc[i], subject: state.subject, mood: state.mood, framing: t.fr, angle: t.an, focal: t.f,
@@ -732,6 +897,7 @@ function geom(p){
   if (p.angle === 'low') camH = Math.max(.15*ref + .1, yc*.5, yc - .75*Math.max(ref,.5));
   if (p.angle === 'high') camH = yc + .65*Math.max(ref,.6);
   if (p.angle === 'top') camH = (S.kind === 'product' ? .1 : yc) + Math.max(d, .6);
+  if ((p.framing === 'FS' || p.framing === 'WS') && p.angle === 'eye') camH = Math.min(camH, 1.45);
   const camAuto = camH;
   if (p.camHman != null && p.angle !== 'top') camH = p.camHman;
   return {S, F, ref, group, Hf, Wf: Hf*.8, yc, d, gap, paper, camH, camAuto, hs};
@@ -863,7 +1029,7 @@ function renderPlan(cv, p){
   // lights
   const lights = [];
   const nL = +state.lights;
-  lights.push({kind:'key', az:p.keyAz, color:TOK.key, label: SNAPM ? '해' : '키', w: S.kind === 'product' ? .45 : .9, sun: SNAPM});
+  lights.push({kind:'key', az:p.keyAz, color:TOK.key, label: SNAPM ? '해' : (typeof wiz !== 'undefined' && wiz.loc === 'home' ? '창문' : '키'), w: S.kind === 'product' ? .45 : .9, sun: SNAPM});
   if (p.fillOn) lights.push({kind:'fill', az:p.fillAz, color:TOK.fill, label: (nL === 1 || SNAPM) ? '반사판' : '필', w: S.kind === 'product' ? .35 : .7, board: nL === 1 || SNAPM});
   if (p.rimOn) lights.push({kind:'rim', az:p.rimAz, color:TOK.rim, label:'림', w: S.kind === 'product' ? .2 : .35});
   if (p.bgOn) lights.push({kind:'bg', fixed:true, pos:[.35*(S.kind === 'product' ? .3 : 1), -g.gap + .35], color:TOK.tape, label:'배경', w:.25});
@@ -1049,7 +1215,7 @@ function sunPos(utcMs, lat, lon){
   return {az, elev};
 }
 const KST = (dateStr, mins) => { const [y, m, d] = dateStr.split('-').map(Number); return Date.UTC(y, m - 1, d, 0, 0) - 9*3600000 + mins*60000; };
-const hhmm = m => `${String(Math.floor(m/60)).padStart(2,'0')}:${String(Math.round(m % 60)).padStart(2,'0')}`;
+const hhmm = m => { m = ((Math.round(m) % 1440) + 1440) % 1440; return `${String(Math.floor(m/60)).padStart(2,'0')}:${String(m % 60).padStart(2,'0')}`; };
 const BEAR = b => ['북','북북동','북동','동북동','동','동남동','남동','남남동','남','남남서','남서','서남서','서','서북서','북서','북북서'][Math.round(((b % 360) + 360) % 360/22.5) % 16];
 function dayInfo(dateStr, c){
   const ev = []; let prev = null;
@@ -1396,17 +1562,21 @@ function drawRefs(){
 
 /* copy */
 function planText(){
-  const S = SUBJ[state.subject], M = MOODS[state.mood];
-  const lines = [`[스튜디오 콘티] ${M.title}`, `${S.ko} · ${M.ko} · ${ROOMS[state.room].ko}(${ROOMS[state.room].sub}) · 조명 ${LIGHTS[state.lights].ko}`, '', M.log.replace('{who}', S.who), '',
-    `팔레트: ${M.pal.map((c, i) => M.palN[i] + ' ' + c).join(', ')}`, `의상: ${M.wardrobe}`, `소품: ${M.props}`, `배경: ${M.bgDesc}`, `조명 장비: ${M.mod} / ${M.gel}`, ''];
-  shots.forEach((s, i) => {
-    const g = geom(s);
-    lines.push(`S${i+1} ${s.beat} — ${s.t}`);
-    lines.push(`  ${FR[s.framing].ko} · ${ANG[s.angle].ko} · ${s.focal}mm · ${PATTERNS[classify(s.keyAz, s.keyElev)].ko} 조명(${azText(s.keyAz)}, 높이 ${s.keyElev}°)`);
-    lines.push(`  거리 약 ${g.d.toFixed(2)} m · 카메라 높이 ${g.camH.toFixed(1)} m · ${exposure(s, g)}`);
-    lines.push(`  ${s.d}`);
-  });
-  return lines.join('\n');
+  const P = PURPOSES[wiz.purpose], sched = schedule();
+  const L = [`[촬영 계획서] ${P.ko}`, `${LOCS[wiz.loc].ko} · ${EQUIPS[wiz.equip].ko} · ${MOODS[state.mood].ko} 무드 · ${REGIONS[state.region].ko} 스타일` + (wiz.loc === 'outdoor' ? ` · ${CITIES[sunCfg.city].ko} ${sunCfg.date}` : ''), ''];
+  L.push('■ 당일 시간표'); sched.forEach(it => L.push(`  ${hhmm(it.m)}  ${it.d}`)); L.push('');
+  L.push('■ 컷 리스트');
+  shots.forEach((s, i) => { const g = geom(s);
+    L.push(`${i + 1}. ${s.t}${s.opt ? ' (선택)' : ''} — ${s.use}${s._slot ? ' · ' + s._slot : ''}`);
+    L.push(`   모델: ${s.pose}`);
+    L.push(`   내 위치: ${g.d.toFixed(1)} m 거리, ${s.angle === 'top' ? '위에서 내려다보며' : camWords(g.camH) + ` (렌즈 높이 ${Math.round(g.camH*100)} cm)`}, ${FR[s.framing].ko}`);
+    L.push(`   카메라: ${lensText(s.focal)} · ${settingText(s)}`);
+    L.push(`   빛: ${lightText(s)}`);
+    L.push(`   말하기: ${s.say}`);
+    L.push(`   주의: ${s.tip}`); });
+  L.push(''); L.push('■ 준비물'); [...document.querySelectorAll('#prep label')].forEach(l => L.push(`  [${l.querySelector('input').checked ? 'x' : ' '}] ${l.textContent.trim()}`));
+  L.push(''); L.push('■ 자주 하는 실수'); P.mist.forEach(m => L.push(`  - ${m}`));
+  return L.join('\n');
 }
 function toast(msg){ const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; t.setAttribute('role', 'status'); document.body.appendChild(t); setTimeout(() => t.remove(), 1800); }
 $('#copy').addEventListener('click', () => {
@@ -1416,7 +1586,7 @@ $('#copy').addEventListener('click', () => {
     const ta = $('#copybox'); ta.value = txt; ta.focus(); ta.select();
     toast('아래 상자의 텍스트를 복사하세요'); ta.scrollIntoView({block:'center'});
   };
-  try { navigator.clipboard.writeText(txt).then(() => toast('콘티를 복사했어요'), fallback); } catch(e) { fallback(); }
+  try { navigator.clipboard.writeText(txt).then(() => toast('계획서를 복사했어요'), fallback); } catch(e) { fallback(); }
 });
 $('#reseed').addEventListener('click', () => { altSeed++; simAlt++; drawBoard(); drawSim(); drawRefs(); renderMoodboard(); });
 $('#sim-alt').addEventListener('click', () => { simAlt++; drawSim(); });
@@ -1689,6 +1859,152 @@ const RB = (() => {
   }
   return {init, syncRegion(){ const el = $('#ref-region'); if (el) el.value = state.region; }};
 })();
+/* ---------------- plan document ---------------- */
+let wiz = (() => { const d = {purpose:'profile_biz', loc:'studio', equip:'kit', start:'14:00', crew:'2', moodPick:null};
+  try { const s = JSON.parse(localStorage.getItem('conti-wiz') || 'null'); if (s && PURPOSES[s.purpose]) return Object.assign(d, s); } catch(e) {} return d; })();
+const saveWiz = () => { try { localStorage.setItem('conti-wiz', JSON.stringify(wiz)); } catch(e) {} };
+function applyWiz(){
+  const P = PURPOSES[wiz.purpose];
+  state.subject = P.sub;
+  state.mode = wiz.loc === 'outdoor' ? 'snap' : 'studio';
+  state.mood = wiz.moodPick || P.mood;
+  state.room = wiz.loc === 'home' ? 's' : 'm';
+  state.lights = wiz.loc === 'studio' && wiz.equip === 'lights' ? '3' : (wiz.loc === 'studio' ? '2' : '1');
+  save();
+}
+function camWords(h){
+  if (h < .45) return '바닥에 엎드리거나 앉아서';
+  if (h < .8) return '무릎을 꿇고';
+  if (h < 1.15) return '허리를 숙이거나 의자에 앉아서';
+  if (h < 1.6) return '선 채로 가슴~눈 높이에서';
+  if (h < 1.85) return '선 채로 카메라를 머리 높이로 들고';
+  return '의자·사다리 위에 올라서';
+}
+function lensText(f){
+  const e = wiz.equip;
+  if (e === 'phone'){ const z = f <= 30 ? '1x' : f <= 40 ? '1.5x(없으면 1x에서 반 걸음 앞으로)' : f <= 60 ? '2x' : '3x(없으면 2x로 찍고 살짝 자르기)'; return `폰 카메라 ${z} · 인물 모드 · 격자선 켜기`; }
+  if (e === 'kit'){ const mm = Math.round(f/1.5); return mm > 55 ? `줌을 55mm 끝까지(풀프레임이면 ${f}mm)` : `줌 ${mm}mm 근처(풀프레임이면 ${f}mm)`; }
+  return `${f}mm 단렌즈(크롭 바디면 ${Math.round(f/1.5)}mm 근처)`;
+}
+function settingText(s){
+  if (wiz.loc === 'studio' && wiz.equip === 'lights') return 'M 모드 · ISO 100 · 1/125초 · f/8 (플래시 기준)';
+  const pat = classify(s.keyAz, s.keyElev);
+  if (wiz.equip === 'phone') return pat === 'silhouette' ? '하늘을 터치해 노출 고정(AE/AF 잠금)' : pat === 'rim' ? '얼굴을 터치한 뒤 밝기 +0.3~+0.7' : '얼굴을 터치해 초점·노출 맞추기';
+  if (wiz.loc === 'outdoor') return pat === 'silhouette' ? 'ISO 100 · 1/1000초 · f/8 · 노출은 하늘 기준' : 'A 모드 · ISO 100~400 · f/2.8 · 셔터 1/500초 이상';
+  if (state.subject === 'pet') return 'S 모드 · 1/500초 이상 · ISO 자동(최대 3200)';
+  if (state.subject === 'product') return '삼각대 · ISO 100 · f/8 · 셔터는 노출계에 맞춤(2초 타이머)';
+  return 'A 모드 · ISO 400 · f/2.8 · 셔터 1/125초 이상';
+}
+function lightText(s){
+  const a = Math.abs(s.keyAz), side = s.keyAz >= 0 ? '오른쪽' : '왼쪽', other = s.keyAz >= 0 ? '왼쪽' : '오른쪽';
+  const pat = classify(s.keyAz, s.keyElev);
+  if (wiz.loc === 'home'){
+    if (a > 110) return `창을 모델 뒤 ${side}에 두세요(역광). 모델 앞쪽 아래에 흰 종이나 폼보드를 받쳐 얼굴을 밝힙니다.`;
+    if (a > 65) return `창이 카메라 기준 정확히 ${side} 옆에 오게 서세요. 얼굴 반쪽에 그림자가 생깁니다. 반대편(${other})에 흰 보드를 두면 부드러워집니다.`;
+    return `창이 카메라 기준 ${side} 앞 45°에 오게 서세요. ${other}에 흰 벽·흰 보드를 1 m 거리에 두어 그림자를 채웁니다. 방 안 조명은 끄세요.`;
+  }
+  if (wiz.loc === 'outdoor'){
+    const t = s._slot ? `${s._slot} 전후, ` : '';
+    if (pat === 'silhouette') return `${t}해를 피사체 바로 뒤 하늘에 두세요. 반사판은 쓰지 않습니다.`;
+    if (a > 110) return `${t}해를 모델 등 뒤 ${side}에 두세요(역광). 반사판을 얼굴 앞 아래쪽에서 비춰 얼굴을 채웁니다.`;
+    if (s.light === 'shade') return `건물·나무 그늘 가장자리에 세우고, 모델이 밝은 하늘 쪽을 보게 하세요. 직사광이 얼굴에 들지 않게.`;
+    if (a > 65) return `${t}해가 카메라 기준 ${side} 옆에서 낮게 들어오게 서세요. ${other}에서 흰 반사판으로 채웁니다.`;
+    return `${t}해를 촬영자 등 뒤 ${side}에 두세요. 눈부시면 모델이 눈을 감았다 셋에 뜨게 합니다.`;
+  }
+  const n = +state.lights;
+  return `키 조명(${MOODS[state.mood].mod})을 카메라 기준 ${a < 12 ? '정면 위' : side + ' ' + Math.round(a) + '°'}, 높이 ${heights(s, geom(s)).keyH.toFixed(1)} m에서 얼굴을 향하게. ` + (n >= 2 ? `${other}에 필 조명(키보다 1~2스톱 약하게)` : `${other}에 흰 반사판`) + (n >= 3 && MOODS[state.mood].rim ? ', 뒤쪽에 림 조명.' : '.');
+}
+function schedule(){
+  const P = PURPOSES[wiz.purpose], per = state.subject === 'product' ? 8 : state.subject === 'pet' ? 6 : 10;
+  const items = []; let t;
+  const toM = s => { const [h, m] = s.split(':').map(Number); return h*60 + m; };
+  if (wiz.loc === 'outdoor'){
+    const di = dayInfo(sunCfg.date, CITIES[sunCfg.city]);
+    const golden = shots.filter(s => ['golden', 'silhouette'].includes(s.light)), other = shots.filter(s => !['golden', 'silhouette'].includes(s.light));
+    const gs = Math.round((di.geS ?? 17*60)/5)*5;
+    t = gs - other.length*per - 40;
+    items.push({m:t, d:'장소 도착 · 의상·메이크업 확인'}); t += 25;
+    items.push({m:t, d:'반사판·카메라 세팅, 테스트 컷'}); t += 15;
+    other.forEach(s => { items.push({m:t, d:`${s.t} (${s.use})`, s}); s._slot = hhmm(t); t += per; });
+    t = Math.max(t, gs);
+    golden.filter(s => s.light !== 'silhouette').forEach(s => { items.push({m:t, d:`${s.t} (${s.use}) · 골든아워`, s}); s._slot = hhmm(t); t += per; });
+    golden.filter(s => s.light === 'silhouette').forEach(s => { const tm = Math.round(Math.max(t, (di.set ?? t) + 3)/5)*5; items.push({m:tm, d:`${s.t} (${s.use}) · 일몰 직후 하늘`, s}); s._slot = hhmm(tm); t = tm + per; });
+    items.push({m:t + 5, d:'마무리 · 백업 확인(메모리 2곳에 복사)'});
+  } else {
+    t = toM(wiz.start || '14:00');
+    items.push({m:t, d: wiz.loc === 'studio' ? '스튜디오 입실 · 배경지·조명 세팅' : '촬영 공간 정리 · 배경·반사판 세팅'}); t += wiz.loc === 'studio' ? 25 : 20;
+    items.push({m:t, d:'테스트 컷으로 노출·색 확인'}); t += 10;
+    shots.forEach((s, i) => { if (i === Math.ceil(shots.length/2) && state.subject !== 'product' && state.subject !== 'pet') { items.push({m:t, d:'휴식 · 의상 교체'}); t += 10; } items.push({m:t, d:`${s.t} (${s.use})`, s}); s._slot = hhmm(t); t += per; });
+    items.push({m:t, d:'마무리 · 백업 확인(메모리 2곳에 복사)'});
+  }
+  return items;
+}
+function renderWiz(){
+  $('#wz-purpose').innerHTML = Object.entries(PURPOSES).map(([k, v]) => `<button type="button" class="pcard" aria-pressed="${k === wiz.purpose}" data-p="${k}"><b>${v.ko}</b><small>${v.d}</small></button>`).join('');
+  const chip = (name, items, cur) => Object.entries(items).map(([k, v]) => `<label class="chip"><input type="radio" name="wz-${name}" value="${k}" ${k === cur ? 'checked' : ''}><span>${v.ko}</span></label>`).join('');
+  $('#wz-loc').innerHTML = chip('loc', LOCS, wiz.loc);
+  $('#wz-equip').innerHTML = chip('equip', EQUIPS, wiz.equip);
+  $('#wz-region').innerHTML = chip('region', REGIONS, state.region);
+  $('#wz-when').innerHTML = wiz.loc === 'outdoor'
+    ? `<div class="ctrl"><label for="wz-date">촬영 날짜</label><input type="date" id="wz-date" value="${sunCfg.date}"></div><div class="ctrl"><label for="wz-city">장소</label><select id="wz-city">${Object.entries(CITIES).map(([k, v]) => `<option value="${k}" ${k === sunCfg.city ? 'selected' : ''}>${v.ko}</option>`).join('')}</select></div>`
+    : `<div class="ctrl"><label for="wz-start">시작 시각</label><input type="time" id="wz-start" value="${wiz.start}" step="600"></div>`;
+  const moods = Object.keys(MOODS);
+  $('#wz-mood').innerHTML = moods.map((m, i) => { const ph = pick('mood_' + m, altSeed); return `<button type="button" class="mpick" aria-pressed="${(wiz.moodPick || PURPOSES[wiz.purpose].mood) === m}" data-m="${m}">${ph ? `<img src="${photoUrl(ph, 300)}" alt="${esc(ph.alt)}" loading="lazy" onerror="this.style.visibility='hidden'">` : ''}<span>${MOODS[m].ko}</span></button>`; }).join('');
+}
+function renderPlanDoc(){
+  const P = PURPOSES[wiz.purpose];
+  const sched = schedule();
+  const total = sched.length ? sched[sched.length - 1].m - sched[0].m + 10 : 0;
+  const di = wiz.loc === 'outdoor' ? dayInfo(sunCfg.date, CITIES[sunCfg.city]) : null;
+  $('#plan-sum').innerHTML = `<div class="ps-main"><div><b>${P.ko}</b> · ${LOCS[wiz.loc].ko} · ${EQUIPS[wiz.equip].ko} · ${MOODS[state.mood].ko} 무드 · ${REGIONS[state.region].ko} 스타일</div></div>
+    <div class="ps-grid"><div><span>꼭 찍을 컷</span><b>${shots.filter(s => !s.opt).length}컷${shots.some(s => s.opt) ? ` + 선택 ${shots.filter(s => s.opt).length}` : ''}</b></div><div><span>예상 소요</span><b>약 ${Math.round(total/10)*10}분</b></div><div><span>시작</span><b>${sched[0] ? hhmm(sched[0].m) : '-'}</b></div>${di ? `<div><span>골든아워</span><b>${di.geS != null ? hhmm(di.geS) + '–' + hhmm(di.geE) : '-'}</b></div>` : `<div><span>필요 인원</span><b>${wiz.loc === 'studio' ? '촬영자 + 보조 1' : '촬영자 1~2'}</b></div>`}</div>`;
+  const board = $('#board'); board.innerHTML = '';
+  shots.forEach((s, i) => {
+    const g = geom(s), hh = heights(s, g), pat = classify(s.keyAz, s.keyElev);
+    const el = document.createElement('article'); el.className = 'cut';
+    el.innerHTML = `<div class="cut-ph shot-ph" data-i="${i}"></div>
+      <div class="cut-body">
+        <div class="cut-h"><span class="cn">${i + 1}</span><div><h3>${s.t}${s.opt ? ' <em>선택</em>' : ''}</h3><div class="use">쓰는 곳: ${s.use}</div></div>${s._slot ? `<span class="slot">${s._slot}</span>` : ''}</div>
+        <ol class="steps">
+          <li><b>모델</b><span>${s.pose}</span></li>
+          <li><b>내 위치</b><span>모델에서 <strong>${g.d < 1 ? Math.round(g.d*100) + ' cm' : g.d.toFixed(1) + ' m'}</strong> 떨어져, ${s.angle === 'top' ? '바로 위에서 내려다보며' : camWords(g.camH) + ` (렌즈 높이 약 ${Math.round(g.camH*100)} cm)`}. 구도는 ${FR[s.framing].ko}${s.angle !== 'eye' && s.angle !== 'top' ? ` · ${ANG[s.angle].ko}` : ''}.</span></li>
+          <li><b>카메라</b><span>${lensText(s.focal)} · ${settingText(s)}</span></li>
+          <li><b>빛</b><span>${lightText(s)} <span class="pat">${PATTERNS[pat].ko}</span></span></li>
+          <li><b>이렇게 말하기</b><span>${s.say}</span></li>
+          <li class="warn"><b>주의</b><span>${s.tip}</span></li>
+        </ol>
+        <button class="btn" type="button" data-i="${i}">배치도·높이 보기</button>
+      </div>`;
+    board.appendChild(el);
+  });
+  board.querySelectorAll('button[data-i]').forEach(b => b.addEventListener('click', () => { loadShot(+b.dataset.i); document.getElementById('sim-sec').scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block:'start'}); }));
+  drawBoard();
+  // prep checklist
+  const gear = {phone:['스마트폰 충전·저장공간 확보', '렌즈 닦기', '삼각대(폰 거치대)'], kit:['배터리 2개·메모리카드 2장', '렌즈 닦기'], prime:['배터리 2개·메모리카드 2장', '렌즈 닦기'], lights:['배터리 2개·메모리카드 2장', '조명·스탠드·소프트박스 점검', '트리거·동조 테스트']}[wiz.equip];
+  const locPrep = {studio:['스튜디오 예약·배경지 색 확인'], home:['창가 정리·방 조명 끄기', '흰 폼보드 또는 흰 전지(반사판 대용)'], outdoor:[`날씨·일몰 시각 확인(${sunCfg.date} 일몰 ${di && di.set != null ? hhmm(di.set) : '-'})`, '접이식 반사판', '이동 동선·화장실 위치']}[wiz.loc];
+  const list = [...P.prep, ...locPrep, ...gear];
+  let checked = {}; try { checked = JSON.parse(localStorage.getItem('conti-check-' + wiz.purpose) || '{}'); } catch(e) {}
+  $('#prep').innerHTML = list.map((t, i) => `<label><input type="checkbox" data-k="${esc(t)}" ${checked[t] ? 'checked' : ''}> ${t}</label>`).join('');
+  $('#timeline').innerHTML = sched.map(it => `<li><time>${hhmm(it.m)}</time><span>${it.d}</span></li>`).join('');
+  $('#mistakes').innerHTML = P.mist.map(t => `<li>${t}</li>`).join('');
+}
+function initWiz(){
+  $('#wz-purpose').addEventListener('click', e => { const b = e.target.closest('[data-p]'); if (!b) return; wiz.purpose = b.dataset.p; wiz.loc = PURPOSES[wiz.purpose].loc; wiz.moodPick = null; saveWiz(); applyWiz(); renderWiz(); rebuild(); });
+  $('#wiz').addEventListener('change', e => {
+    const n = e.target.name, v = e.target.value;
+    if (n === 'wz-loc'){ wiz.loc = v; }
+    else if (n === 'wz-equip'){ wiz.equip = v; }
+    else if (n === 'wz-region'){ state.region = v; }
+    else if (e.target.id === 'wz-date'){ if (v){ sunCfg.date = v; saveSun(); } }
+    else if (e.target.id === 'wz-city'){ sunCfg.city = v; saveSun(); }
+    else if (e.target.id === 'wz-start'){ wiz.start = v || '14:00'; }
+    else return;
+    saveWiz(); applyWiz(); renderWiz(); rebuild();
+  });
+  $('#wz-mood').addEventListener('click', e => { const b = e.target.closest('[data-m]'); if (!b) return; wiz.moodPick = b.dataset.m; saveWiz(); applyWiz(); renderWiz(); rebuild(); });
+  $('#prep').addEventListener('change', e => { const k = e.target.dataset.k; if (!k) return; let c = {}; try { c = JSON.parse(localStorage.getItem('conti-check-' + wiz.purpose) || '{}'); } catch(er) {} c[k] = e.target.checked; try { localStorage.setItem('conti-check-' + wiz.purpose, JSON.stringify(c)); } catch(er) {} });
+}
+
 /* ---------------- main ---------------- */
 function rebuild(){
   shots = buildShots();
@@ -1696,8 +2012,8 @@ function rebuild(){
   renderMoodboard();
   galCat = 'region_' + state.region; renderGallery();
   RB.syncRegion();
-  renderBoard();
   if (simIndex >= shots.length) simIndex = 0;
+  renderPlanDoc();
   loadShot(simIndex);
   renderRefs();
 }
@@ -1707,6 +2023,9 @@ readTokens(); tokRead = true;
 buildChips();
 buildSimControls();
 initSun();
+applyWiz();
+renderWiz();
+initWiz();
 rebuild();
 RB.init();
 
