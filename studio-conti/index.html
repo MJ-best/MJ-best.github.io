@@ -140,6 +140,22 @@ dl.spec dd{margin:0;color:var(--ink)}
 .myref select{font-size:12px;padding:2px 4px;width:auto}
 .empty{grid-column:1/-1;color:var(--ink-2);font-size:13.5px;padding:10px 0}
 body.snap .studio-only{display:none}
+body:not(.snap) .snap-only{display:none}
+.sunbox{border:1.5px solid var(--key);border-radius:3px;padding:12px;margin-bottom:14px;display:grid;gap:8px;background:color-mix(in srgb,var(--key) 6%,var(--sheet))}
+.sb-h{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px}
+.sb-h b{font-family:var(--f-hand);font-weight:400;font-size:26px;line-height:1}
+.sb-h label{display:flex;gap:6px;align-items:center;cursor:pointer}
+.sb-h input{accent-color:var(--key);width:16px;height:16px}
+.sb-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 10px}
+.sunbox input[type=date],.sunbox input[type=time]{font:inherit;font-size:14px;border:1.5px solid var(--ink);border-radius:2px;padding:4px 6px;width:100%;background:var(--sheet);color:var(--ink)}
+#sun-scrub{accent-color:var(--key)}
+.sb-day{position:relative;height:26px;border-radius:2px;overflow:hidden;border:1px solid var(--grid)}
+.sb-day span{position:absolute;top:0;bottom:0}
+.sb-day i{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--ink)}
+.sb-day em{position:absolute;bottom:1px;font-style:normal;font-size:10px;color:var(--ink-2);transform:translateX(-50%)}
+.sb-btns{display:flex;flex-wrap:wrap;gap:6px}
+.sb-btns .btn{font-size:12px;padding:4px 9px}
+.sb-out{margin:0;font-size:13px;line-height:1.55}
 @media (max-width:720px){ .two-tags{grid-template-columns:minmax(0,1fr)} }
 .moodboard{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:16px}
 .ex{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
@@ -297,6 +313,19 @@ footer code{font-family:var(--f-mono);font-size:12px}
         <div class="hint">왼쪽은 지금 조명 패턴, 오른쪽은 지금 앵글·프레이밍의 예시입니다. 사진을 누르면 Unsplash 원본이 열립니다.</div>
       </div>
       <div class="pane ctrlpane">
+        <div class="sunbox snap-only" id="sunbox">
+          <div class="sb-h"><b>해 위치 계산</b><label><input type="checkbox" id="sun-auto"> 날짜·시각으로 해 위치 정하기</label></div>
+          <div class="sb-grid">
+            <div class="ctrl"><label for="sun-date">날짜</label><input type="date" id="sun-date"></div>
+            <div class="ctrl"><label for="sun-time">시각(한국 시간)</label><input type="time" id="sun-time" step="300"></div>
+            <div class="ctrl"><label for="sun-city">장소</label><select id="sun-city"></select></div>
+            <div class="ctrl"><label for="sun-bear">카메라가 바라보는 방향 <output id="o-bear"></output></label><input type="range" id="sun-bear" min="0" max="359" step="1"></div>
+          </div>
+          <input type="range" id="sun-scrub" min="0" max="1439" step="5" aria-label="하루 중 시각 바꾸기">
+          <div class="sb-day" id="sun-day"></div>
+          <div class="sb-btns"><button class="btn" type="button" id="sun-now">지금</button><button class="btn" type="button" id="sun-golden">저녁 골든아워로</button><button class="btn" type="button" id="sun-mgolden">아침 골든아워로</button><button class="btn" type="button" id="sun-back">해를 등지게(역광) 방향 맞추기</button></div>
+          <p class="sb-out" id="sun-out"></p>
+        </div>
         <div class="ctrls">
           <div class="two">
             <div class="ctrl"><label for="s-framing">프레이밍</label><select id="s-framing"></select></div>
@@ -782,7 +811,7 @@ function renderPlan(cv, p){
   const r0 = P(-room.w/2, topWall), r1 = P(room.w/2, bottomWall);
   sk.line([[r0[0], r0[1]], [r1[0], r0[1]], [r1[0], r1[1]], [r0[0], r1[1]]], {closed:true, w:2.6, amp:.8});
   sk.text(`${room.ko} ${room.sub}`, r0[0] + 6*u, r1[1] - 8*u, {size:19, color:TOK['ink-2']});
-  } else sk.text('야외 · 바닥 격자 50 cm', P(-room.w/2, topWall)[0] + 6*u, P(0, topWall)[1] + 18*u, {size:19, color:TOK['ink-2']});
+  } else sk.text('야외 · 격자 50 cm', 8*u, H - 10*u, {size:18, color:TOK['ink-2']});
   // backdrop
   if (!SNAPM){
   const bl = P(-g.paper/2, -g.gap), br = P(g.paper/2, -g.gap);
@@ -889,6 +918,14 @@ function renderPlan(cv, p){
     sk.line([[d1[0] + dx - 5*u, d1[1]], [d1[0] + dx + 5*u, d1[1]]], {w:1, passes:1, color:TOK['ink-2']});
     sk.text(`${g.d.toFixed(2)} m`, d0[0] + dx - 6*u, (d0[1] + d1[1])/2 + 6*u, {size:21, align:'right', bg:rgba(TOK.sheet, .85)});
   }
+  if (SNAPM){
+    const cxp = W - 30*u, cyp = 30*u, nb = rad(-sunCfg.bear); // screen up = camera's facing direction
+    ctx.save(); ctx.strokeStyle = TOK.ink; ctx.fillStyle = TOK.ink; ctx.lineWidth = 1.4*u;
+    ctx.beginPath(); ctx.arc(cxp, cyp, 18*u, 0, Math.PI*2); ctx.stroke();
+    const tip = [cxp + Math.sin(nb)*16*u, cyp - Math.cos(nb)*16*u];
+    ctx.beginPath(); ctx.moveTo(cxp - Math.sin(nb)*10*u, cyp + Math.cos(nb)*10*u); ctx.lineTo(tip[0], tip[1]); ctx.stroke();
+    ctx.font = `${12*u}px ${getComputedStyle(document.body).fontFamily}`; ctx.textAlign = 'center'; ctx.fillText('N', cxp + Math.sin(nb)*27*u, cyp - Math.cos(nb)*27*u + 4*u); ctx.restore();
+  }
   // scale bar
   const sb = P(room.w/2 - 1.2, ymax - .2);
   sk.line([[sb[0], sb[1]], [sb[0] + sc, sb[1]]], {w:2, passes:1});
@@ -925,7 +962,8 @@ function renderSide(cv, p){
   const ymax = Math.max(S.kind === 'product' ? .8 : 2.3, g.camH + .45, (snapM ? 0 : h.keyH + .4), (state.modelH || 1.7) + .35);
   const padL = 46*u, padB = 22*u, padT = 10*u;
   const sc = Math.min((W - padL - 12*u)/(xmax - xmin), (H - padB - padT)/ymax);
-  const X = x => padL + (x - xmin)*sc, Y = y => H - padB - y*sc;
+  const lift = Math.max(0, (H - padB - padT - ymax*sc)/2);
+  const X = x => padL + (x - xmin)*sc, Y = y => H - padB - lift - y*sc;
   // grid every 0.5 m
   ctx.save(); ctx.strokeStyle = TOK.grid; ctx.lineWidth = 1; ctx.font = `${11*u}px ${getComputedStyle(document.body).fontFamily}`; ctx.fillStyle = TOK['ink-2']; ctx.textAlign = 'right';
   const stepY = ymax > 3 ? 1 : .5;
@@ -994,6 +1032,79 @@ function renderSide(cv, p){
   if (p.angle !== 'top') sk.text(`삼각대 ${Math.max(0, Math.round(h.triH*100))} cm`, lx, Math.min(Y(.15), triTop + 26*u), {size:17, color:TOK['ink-2'], align: cx + 120*u > W ? 'right' : 'left', bg:rgba(TOK.sheet, .88)});
   sk.text(`${g.d.toFixed(2)} m`, (X(0) + cx)/2, Y(0) + 17*u, {size:17, align:'center', color:TOK['ink-2']});
 }
+
+/* ---------------- sun position (NOAA-style approximation, Korea) ---------------- */
+const CITIES = {seoul:{ko:'서울', lat:37.566, lon:126.978}, incheon:{ko:'인천', lat:37.456, lon:126.705}, gangneung:{ko:'강릉', lat:37.752, lon:128.876}, daejeon:{ko:'대전', lat:36.351, lon:127.385}, daegu:{ko:'대구', lat:35.871, lon:128.601}, gwangju:{ko:'광주', lat:35.160, lon:126.851}, busan:{ko:'부산', lat:35.180, lon:129.075}, jeju:{ko:'제주', lat:33.499, lon:126.531}};
+function sunPos(utcMs, lat, lon){
+  const d2r = Math.PI/180, n = utcMs/86400000 + 2440587.5 - 2451545.0;
+  const L = (280.460 + .9856474*n) % 360, g = ((357.528 + .9856003*n) % 360)*d2r;
+  const lam = (L + 1.915*Math.sin(g) + .020*Math.sin(2*g))*d2r, eps = (23.439 - .0000004*n)*d2r;
+  const ra = Math.atan2(Math.cos(eps)*Math.sin(lam), Math.cos(lam)), dec = Math.asin(Math.sin(eps)*Math.sin(lam));
+  const gmst = (280.46061837 + 360.98564736629*n) % 360;
+  const H = ((gmst + lon)*d2r - ra), la = lat*d2r;
+  const el = Math.asin(Math.sin(la)*Math.sin(dec) + Math.cos(la)*Math.cos(dec)*Math.cos(H));
+  let az = Math.atan2(-Math.sin(H), Math.tan(dec)*Math.cos(la) - Math.sin(la)*Math.cos(H)) / d2r;
+  az = (az + 360) % 360;
+  let elev = el/d2r; if (elev > -1) elev += 1.02/Math.tan((elev + 10.3/(elev + 5.11))*d2r)/60; // refraction
+  return {az, elev};
+}
+const KST = (dateStr, mins) => { const [y, m, d] = dateStr.split('-').map(Number); return Date.UTC(y, m - 1, d, 0, 0) - 9*3600000 + mins*60000; };
+const hhmm = m => `${String(Math.floor(m/60)).padStart(2,'0')}:${String(Math.round(m % 60)).padStart(2,'0')}`;
+const BEAR = b => ['북','북북동','북동','동북동','동','동남동','남동','남남동','남','남남서','남서','서남서','서','서북서','북서','북북서'][Math.round(((b % 360) + 360) % 360/22.5) % 16];
+function dayInfo(dateStr, c){
+  const ev = []; let prev = null;
+  for (let m = 0; m <= 1440; m += 2){ const e = sunPos(KST(dateStr, m), c.lat, c.lon).elev; if (prev != null){ [-6, -4, -.833, 6].forEach(t => { if ((prev - t)*(e - t) < 0) ev.push({t, m: m - 2 + 2*(prev - t)/(prev - e), up: e > prev}); }); } prev = e; }
+  const f = (t, up) => (ev.find(x => x.t === t && x.up === up) || {}).m;
+  let noon = 0, best = -99; for (let m = 600; m <= 840; m += 2){ const e = sunPos(KST(dateStr, m), c.lat, c.lon).elev; if (e > best){ best = e; noon = m; } }
+  return {rise: f(-.833, true), set: f(-.833, false), gmS: f(-4, true), gmE: f(6, true), geS: f(6, false), geE: f(-4, false), bmS: f(-6, true), beE: f(-6, false), noon, maxEl: best};
+}
+let sunCfg = (() => { const now = new Date(Date.now() + 9*3600000); const def = {auto: true, date: now.toISOString().slice(0, 10), mins: 17*60, city: 'seoul', bear: 90};
+  try { const s = JSON.parse(localStorage.getItem('conti-sun') || 'null'); if (s && CITIES[s.city]) return Object.assign(def, s); } catch(e) {} return def; })();
+const saveSun = () => { try { localStorage.setItem('conti-sun', JSON.stringify(sunCfg)); } catch(e) {} };
+function sunNow(){ const c = CITIES[sunCfg.city]; return sunPos(KST(sunCfg.date, sunCfg.mins), c.lat, c.lon); }
+function relAz(sunAz){ let r = sunAz - sunCfg.bear - 180; r = ((r + 540) % 360) - 180; return -r; }
+function applySun(){
+  if (state.mode !== 'snap' || !sunCfg.auto || !sim) return;
+  const sp = sunNow();
+  sim.keyAz = Math.round(relAz(sp.az));
+  sim.keyElev = Math.round(clamp(sp.elev, 0, 75));
+  sim.fillOn = sp.elev > -1;
+  sim._sun = sp;
+}
+function renderSunBox(){
+  const c = CITIES[sunCfg.city], di = dayInfo(sunCfg.date, c), sp = sunNow();
+  $('#sun-auto').checked = sunCfg.auto; $('#sun-date').value = sunCfg.date; $('#sun-time').value = hhmm(sunCfg.mins);
+  $('#sun-city').value = sunCfg.city; $('#sun-bear').value = String(Math.round(sunCfg.bear)); $('#sun-scrub').value = String(sunCfg.mins);
+  $('#o-bear').textContent = `${BEAR(sunCfg.bear)} ${Math.round(sunCfg.bear)}°`;
+  const pct = m => `${(m/1440*100).toFixed(2)}%`;
+  const seg = (a, b, col) => (a != null && b != null) ? `<span style="left:${pct(a)};width:${pct(b - a)};background:${col}"></span>` : '';
+  $('#sun-day').innerHTML = `<span style="left:0;width:100%;background:color-mix(in srgb,var(--ink) 18%,var(--sheet))"></span>`
+    + seg(di.rise, di.set, 'color-mix(in srgb,var(--fill) 22%,var(--sheet))')
+    + seg(di.bmS, di.gmS, 'color-mix(in srgb,var(--fill) 55%,var(--sheet))') + seg(di.geE, di.beE, 'color-mix(in srgb,var(--fill) 55%,var(--sheet))')
+    + seg(di.gmS, di.gmE, 'color-mix(in srgb,var(--key) 70%,var(--sheet))') + seg(di.geS, di.geE, 'color-mix(in srgb,var(--key) 70%,var(--sheet))')
+    + [6, 12, 18].map(h => `<em style="left:${pct(h*60)}">${h}시</em>`).join('') + `<i style="left:${pct(sunCfg.mins)}"></i>`;
+  const phase = sp.elev < -6 ? '밤' : sp.elev < -4 ? '블루아워' : sp.elev < 6 ? '골든아워' : sp.elev < 20 ? '해가 낮은 시간' : sp.elev < 45 ? '해가 중간 높이' : '해가 높은 한낮';
+  const rel = relAz(sp.az), relTxt = Math.abs(rel) < 25 ? '카메라 뒤(순광)' : Math.abs(rel) > 155 ? '피사체 뒤(역광)' : Math.abs(rel) > 110 ? `피사체 뒤 ${rel > 0 ? '오른쪽' : '왼쪽'}(반역광)` : `화면 ${rel > 0 ? '오른쪽' : '왼쪽'} 옆(측광)`;
+  $('#sun-out').innerHTML = `<b>${c.ko} ${sunCfg.date} ${hhmm(sunCfg.mins)}</b> · 해 방위 ${BEAR(sp.az)} ${Math.round(sp.az)}°, 고도 ${sp.elev.toFixed(1)}° (${phase})<br>`
+    + `이 방향으로 찍으면 해가 <b>${relTxt}</b>에 있습니다.<br>`
+    + `일출 ${di.rise != null ? hhmm(di.rise) : '-'} · 일몰 ${di.set != null ? hhmm(di.set) : '-'} · 남중 ${hhmm(di.noon)} (최고 고도 ${di.maxEl.toFixed(0)}°)<br>`
+    + `골든아워 아침 ${di.gmS != null ? hhmm(di.gmS) + '–' + hhmm(di.gmE) : '-'} · 저녁 ${di.geS != null ? hhmm(di.geS) + '–' + hhmm(di.geE) : '-'} · 블루아워 저녁 ${di.geE != null && di.beE != null ? hhmm(di.geE) + '–' + hhmm(di.beE) : '-'}`;
+  return di;
+}
+function initSun(){
+  $('#sun-city').innerHTML = Object.entries(CITIES).map(([k, v]) => `<option value="${k}">${v.ko}</option>`).join('');
+  const upd = () => { saveSun(); drawSim(); };
+  $('#sun-auto').addEventListener('change', e => { sunCfg.auto = e.target.checked; upd(); });
+  $('#sun-date').addEventListener('change', e => { if (e.target.value){ sunCfg.date = e.target.value; upd(); } });
+  $('#sun-time').addEventListener('change', e => { const [h, m] = (e.target.value || '17:00').split(':').map(Number); sunCfg.mins = h*60 + m; sunCfg.auto = true; upd(); });
+  $('#sun-scrub').addEventListener('input', e => { sunCfg.mins = +e.target.value; sunCfg.auto = true; upd(); });
+  $('#sun-city').addEventListener('change', e => { sunCfg.city = e.target.value; upd(); });
+  $('#sun-bear').addEventListener('input', e => { sunCfg.bear = +e.target.value; sunCfg.auto = true; upd(); });
+  $('#sun-now').addEventListener('click', () => { const now = new Date(Date.now() + 9*3600000); sunCfg.date = now.toISOString().slice(0, 10); sunCfg.mins = now.getUTCHours()*60 + now.getUTCMinutes(); sunCfg.auto = true; upd(); });
+  $('#sun-golden').addEventListener('click', () => { const di = dayInfo(sunCfg.date, CITIES[sunCfg.city]); if (di.geS != null){ sunCfg.mins = Math.round((di.geS + (di.geE - di.geS)*.3)/5)*5; sunCfg.auto = true; upd(); } });
+  $('#sun-mgolden').addEventListener('click', () => { const di = dayInfo(sunCfg.date, CITIES[sunCfg.city]); if (di.gmS != null){ sunCfg.mins = Math.round((di.gmS + (di.gmE - di.gmS)*.7)/5)*5; sunCfg.auto = true; upd(); } });
+  $('#sun-back').addEventListener('click', () => { const sp = sunNow(); sunCfg.bear = Math.round(((sp.az + 360) % 360)); sunCfg.auto = true; upd(); });
+}
 /* ---------------- readouts ---------------- */
 function exposure(p, g){
   if (state.mode === 'snap'){
@@ -1012,6 +1123,8 @@ function notesFor(p, g){
   const N = [], room = ROOMS[state.room];
   if (state.mode === 'snap'){
     const pat = classify(p.keyAz, p.keyElev);
+    if (sunCfg.auto && sim && sim._sun && sim._sun.elev < -1) N.push({w:true, t:'이 시각에는 해가 이미 졌습니다(또는 아직 뜨지 않았습니다). 하늘빛만 남아 있으니 ISO를 올리거나 보조광을 쓰세요.'});
+    else if (sunCfg.auto && sim && sim._sun && sim._sun.elev > 45) N.push({w:true, t:`해 고도 ${Math.round(sim._sun.elev)}°의 한낮입니다. 눈 밑 그림자가 진하니 그늘로 옮기거나 디퓨저(스크림)로 해를 가리세요.`});
     N.push({t: pat === 'silhouette' ? '노을 실루엣은 일몰 직후 10~20분이 가장 좋습니다. 하늘 색이 남아 있을 때 찍으세요.' : (p.keyElev < 20 ? '해가 낮은 골든아워(일출 후·일몰 전 1시간)에 찍으면 피부가 따뜻하고 그림자가 부드럽습니다.' : '한낮에는 그늘(오픈 셰이드)로 옮기세요. 직사광선은 눈 밑에 진한 그림자를 만듭니다.')});
     if (Math.abs(p.keyAz) > 110) N.push({t:'역광에서는 얼굴이 어두워지니 반사판을 얼굴 아래 앞쪽에서 비추고, 노출은 얼굴 기준 +1스톱 올립니다.'});
     N.push({t:'흰 반사판은 접이식 5-in-1(지름 80 cm 이상)이 무난합니다. 금색 면은 노을빛을 더 따뜻하게 만듭니다.'});
@@ -1127,8 +1240,8 @@ function buildSimControls(){
   on('#s-framing', 'change', e => { sim.framing = e.target.value; sim.focusY = undefined; sim.solo = sim.solo; drawSim(); });
   on('#s-angle', 'change', e => { sim.angle = e.target.value; sim.camHman = null; drawSim(); });
   on('#s-focal', 'input', e => { sim.focal = FOCALS[+e.target.value]; drawSim(); });
-  on('#s-key', 'input', e => { sim.keyAz = +e.target.value; drawSim(); });
-  on('#s-elev', 'input', e => { sim.keyElev = +e.target.value; drawSim(); });
+  on('#s-key', 'input', e => { sim.keyAz = +e.target.value; if (state.mode === 'snap' && sunCfg.auto){ const sp = sunNow(); sunCfg.bear = ((Math.round(sp.az - 180 + sim.keyAz) % 360) + 360) % 360; saveSun(); } drawSim(); });
+  on('#s-elev', 'input', e => { sim.keyElev = +e.target.value; if (state.mode === 'snap' && sunCfg.auto){ sunCfg.auto = false; saveSun(); } drawSim(); });
   on('#s-height', 'input', e => { state.modelH = +e.target.value/100; save(); drawSim(); });
   on('#s-camh', 'input', e => { sim.camHman = +e.target.value/100; $('#s-camauto').checked = false; drawSim(); });
   on('#s-camauto', 'change', e => { if (e.target.checked) sim.camHman = null; else sim.camHman = geom(sim).camH; drawSim(); });
@@ -1167,6 +1280,9 @@ function azText(az){
   return `${Math.abs(a)}° ${a > 0 ? '오른쪽' : '왼쪽'}`;
 }
 function drawSim(){
+  applySun();
+  if (state.mode === 'snap') renderSunBox();
+  if (state.mode === 'snap' && sunCfg.auto){ $('#s-key').value = String(Math.round(sim.keyAz)); $('#s-elev').value = String(Math.round(sim.keyElev)); }
   const g = geom(sim);
   $('#o-focal').textContent = `${sim.focal}mm`;
   $('#o-key').textContent = azText(sim.keyAz);
@@ -1230,7 +1346,7 @@ function movePlan(x, y){
   const {ox, oy, sc} = planGeo;
   const wx = (x - ox)/sc, wy = (y - oy)/sc;
   const az = Math.atan2(wx, wy)*180/Math.PI;
-  if (drag === 'key'){ sim.keyAz = az; $('#s-key').value = String(Math.round(az)); }
+  if (drag === 'key'){ sim.keyAz = az; $('#s-key').value = String(Math.round(az)); if (state.mode === 'snap' && sunCfg.auto){ const sp = sunNow(); sunCfg.bear = ((Math.round(sp.az - 180 + az) % 360) + 360) % 360; saveSun(); } }
   else if (drag === 'fill') sim.fillAz = az;
   else if (drag === 'rim') sim.rimAz = az;
   drawSim();
@@ -1590,6 +1706,7 @@ function redrawAll(){ tokRead = false; readTokens(); tokRead = true; if (sim) dr
 readTokens(); tokRead = true;
 buildChips();
 buildSimControls();
+initSun();
 rebuild();
 RB.init();
 
