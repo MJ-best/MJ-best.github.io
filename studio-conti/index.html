@@ -110,6 +110,46 @@ dl.spec dd{margin:0;color:var(--ink)}
 body.v-guide .wrap > section:not(#guide){display:none}
 body.v-guide .plan-only{display:none}
 body.v-plan #guide{display:none}
+.today{display:grid;gap:10px}
+.trow{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.tl{font-size:13px;font-weight:700;color:var(--ink-2);min-width:64px}
+.tchips{display:flex;flex-wrap:wrap;gap:6px;min-width:0;flex:1}
+.tchips button{font:inherit;font-size:14px;border:1.5px solid var(--scrib);background:var(--sheet);color:var(--ink);border-radius:999px;padding:6px 14px;cursor:pointer}
+.tchips button[aria-pressed="true"]{background:var(--ink);color:var(--sheet);border-color:var(--ink)}
+.tchips .chip span{border-radius:999px;font-size:13px;padding:4px 11px}
+.tsun{font-size:13.5px;background:color-mix(in srgb,var(--key) 9%,var(--sheet));border:1px solid color-mix(in srgb,var(--key) 40%,var(--sheet));border-radius:4px;padding:7px 10px}
+.tsun select{font:inherit;font-size:13px;border:1px solid var(--ink-2);border-radius:2px;padding:1px 4px;background:var(--sheet);color:var(--ink);width:auto}
+.tsun b{font-family:var(--f-mono);font-weight:500}
+.tbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:16px 0 10px}
+.tbar b{font-size:14px}.tsp{flex:1}
+.tbar .btn{font-size:13px;padding:6px 11px}
+.gc2{border:1.5px solid var(--scrib);border-radius:6px;padding:10px;display:grid;grid-template-columns:118px minmax(0,1fr);gap:12px;background:var(--sheet);align-items:start}
+.gc2.done{opacity:.6}
+.gc2 .gsvg{width:118px}
+.gc2 h3{margin:0;font-size:15.5px;display:flex;gap:8px;align-items:center}
+.gc2 h3 .cn{flex:none;display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--ink);color:var(--sheet);font-family:var(--f-mono);font-size:12px}
+.gc2 .why{font-size:12.5px;color:var(--ink-2);margin:2px 0 6px}
+.gc2 .kv{list-style:none;margin:0;padding:0;display:grid;gap:3px;font-size:13px;line-height:1.45}
+.gc2 .kv b{display:inline-block;min-width:34px;font-size:11.5px;color:var(--ink-2);font-weight:600}
+.gc2 .kv strong{font-family:var(--f-mono);font-weight:500;background:var(--tape);padding:0 4px;border-radius:2px}
+.gc2 .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:6px}
+.gc2 .dn{display:flex;gap:5px;align-items:center;font-size:12.5px;cursor:pointer}
+.gc2 .dn input{accent-color:var(--ink);width:16px;height:16px}
+.gc2 details{grid-column:1/-1;border-top:1px dashed var(--scrib-2);padding-top:6px}
+.gc2 summary{cursor:pointer;font-size:12.5px;font-weight:600;color:var(--ink-2)}
+.gc2 .more{display:grid;grid-template-columns:minmax(0,1fr) 120px;gap:12px;margin-top:8px;align-items:start}
+.gc2 .more .gl{font-size:13px}
+.gc2 .more .side{display:grid;gap:6px}
+.gc2 .more .hsvg{max-width:100px}
+.tcheck{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;margin-top:16px;font-size:13px}
+.tcheck ol{display:flex;flex-wrap:wrap;gap:6px 14px;margin:0;padding:0;list-style:none;flex:1;min-width:0}
+.tcheck li b{margin-right:4px}.tcheck li span{color:var(--ink-2)}
+.tmore{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}
+.tmore details{border:1.5px dashed var(--scrib);border-radius:4px;padding:9px 12px}
+.tmore summary{cursor:pointer;font-weight:600;font-size:14px}
+.tmore details[open] summary{margin-bottom:8px}
+@media (max-width:900px){ .tmore{grid-template-columns:minmax(0,1fr)} }
+@media (max-width:520px){ .gc2{grid-template-columns:96px minmax(0,1fr)} .gc2 .gsvg{width:96px} .gc2 .more{grid-template-columns:minmax(0,1fr)} .gc2 .more .side{grid-template-columns:80px minmax(0,140px);align-items:end} .tl{min-width:0;flex-basis:100%} }
 .gsits{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
 .gs{font:inherit;text-align:left;border:1.5px solid var(--scrib);background:var(--sheet);color:var(--ink);border-radius:4px;padding:9px 11px;cursor:pointer;display:grid;gap:2px}
 .gs b{font-size:14px}.gs small{font-size:11.5px;color:var(--ink-2);line-height:1.35}
@@ -125,7 +165,7 @@ body.v-plan #guide{display:none}
 .gbox h3{margin:0 0 8px;font-size:15px}
 .gcheck ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;font-size:13px}
 .gcheck li{display:grid;gap:2px}.gcheck b{font-size:13.5px}.gcheck span{color:var(--ink-2);line-height:1.45}
-.gshots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.gshots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-items:start}
 .gcard{border:1.5px solid var(--scrib);border-radius:4px;padding:12px;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:14px;background:var(--sheet)}
 .gvis{display:grid;grid-template-columns:minmax(0,1fr) 92px;gap:8px;align-items:start}
 .gside{display:grid;gap:8px}
@@ -361,14 +401,14 @@ footer code{font-family:var(--f-mono);font-size:12px}
 <div class="wrap">
   <header class="mast">
     <div>
-      <div class="eyebrow">Shoot planner · 촬영이 막막할 때</div>
-      <h1>스튜디오 <span class="tape">콘티북</span></h1>
-      <p class="lede">카메라를 들고 인물을 찍어야 할 때는 장소별로 꼭 찍을 컷과 구도·카메라 높이·렌즈·설정·포즈를 보여 주고, 제대로 준비하는 촬영이라면 용도에 맞춘 컷 리스트·준비물·당일 시간표를 담은 촬영 계획서를 만들어 줍니다.</p>
+      <div class="eyebrow">카메라 들고 나가기 전 30초</div>
+      <h1>오늘 뭐 <span class="tape">찍지</span></h1>
+      <p class="lede">갈 곳과 렌즈만 고르면 오늘 찍어 볼 컷 다섯 개를 구도 그림과 함께 보여 줍니다. 렌즈·거리·높이·설정은 카드에 한 줄씩, 자세한 건 펼쳐 보세요.</p>
     </div>
     <div class="mast-actions">
-      <div class="viewsw" role="group" aria-label="보기 선택"><button type="button" data-v="guide" aria-pressed="true">카메라 인물촬영 가이드</button><button type="button" data-v="plan" aria-pressed="false">촬영 계획서 만들기</button></div>
+      <div class="viewsw" role="group" aria-label="보기 선택"><button type="button" data-v="guide" aria-pressed="true">오늘 뭐 찍지</button><button type="button" data-v="plan" aria-pressed="false">스튜디오 도구</button></div>
       <button class="btn plan-only" id="reseed" type="button">다른 예시 사진 보기</button>
-      <button class="btn solid plan-only" id="copy" type="button">계획서 텍스트 복사</button>
+      <button class="btn solid plan-only" id="copy" type="button">컷 리스트 복사</button>
     </div>
   </header>
 
@@ -378,23 +418,21 @@ footer code{font-family:var(--f-mono);font-size:12px}
 
   
 
-  <section class="sheet" id="guide" aria-labelledby="h-guide">
-    <div class="sec-head"><span class="no">01</span><h2 id="h-guide">카메라로 인물 찍기 가이드</h2><p>카메라를 들고 나갔는데 무엇을 어떻게 찍을지 막막할 때. 장소와 내 카메라·렌즈를 고르면 꼭 찍을 컷마다 구도, 카메라 높이, 렌즈와 모델까지 거리, 조리개·셔터 설정, 빛, 포즈를 알려 줍니다.</p></div>
-    <div class="gsits" id="g-sit" role="group" aria-label="촬영 장소"></div>
-    <div class="gcam"><span class="gcl">내 카메라·렌즈</span><div class="chips" id="g-cam" role="group" aria-label="센서와 렌즈"></div></div>
-    <div class="gtop">
-      <div class="gbox gcheck"><h3>셔터 누르기 전 3초 체크</h3><ol id="g-check"></ol></div>
-      <button class="btn solid" type="button" id="g-fieldall">현장 모드로 한 컷씩 보기</button>
+  <section class="sheet" id="guide" aria-label="오늘 찍어 볼 컷">
+    <div class="today">
+      <div class="trow"><span class="tl">오늘은</span><div class="tchips" id="g-sit" role="group" aria-label="오늘 갈 곳"></div></div>
+      <div class="trow"><span class="tl">내 렌즈</span><div class="tchips" id="g-cam" role="group" aria-label="렌즈와 센서"></div></div>
+      <div class="trow tsun" id="g-sun"></div>
     </div>
+    <div class="tbar"><b id="g-progress"></b><span class="tsp"></span><button class="btn" type="button" id="g-shuffle">다른 예시 사진</button><button class="btn solid" type="button" id="g-fieldall">현장에서 한 컷씩</button></div>
     <div class="gshots" id="g-shots"></div>
-    <div class="grefs"><span class="gcl">이 장소의 참고 사진가·인스타 태그</span><div class="links" id="g-refs"></div></div>
-    <div class="gbottom">
-      <div class="gbox"><h3>찍히는 사람이 어색할 때</h3><ul class="gl" id="g-pose"></ul></div>
-      <div class="gbox"><h3>카메라 기본 설정</h3><ul class="gl" id="g-phone"></ul></div>
-      <div class="gbox"><h3>더 배우고 싶다면</h3><ul class="gl">
-        <li><b><a href="https://maily.so/0photo" target="_blank" rel="noopener">영뽀또 뉴스레터</a></b><span>스마트폰 구도·빛·보정을 쉽게 알려 주는 강의형 글</span></li>
-        <li><b><a href="https://apps.apple.com/kr/app/%ED%8F%AC%EC%A6%88-%ED%8F%AC%ED%86%A0%EC%8A%A4%ED%8C%9F-%EA%B5%AC%EB%8F%84-%EA%B0%80%EC%9D%B4%EB%93%9C/id1453658722" target="_blank" rel="noopener">포즈: 포토스팟·구도 가이드</a></b><span>카메라 화면에 구도 가이드를 겹쳐 주는 앱</span></li>
-        <li><b><a href="https://apps.apple.com/kr/app/%ED%8F%AC%EC%A6%88%ED%94%BC%EC%BB%A4-%EB%84%A4%EC%BB%B7%EC%82%AC%EC%A7%84-%ED%8F%AC%EC%A6%88%EC%B6%94%EC%B2%9C/id6474260471" target="_blank" rel="noopener">포즈피커</a></b><span>네컷·친구 사진 포즈 추천 앱</span></li></ul></div>
+    <div class="tcheck"><span class="tl">셔터 누르기 전</span><ol id="g-check"></ol></div>
+    <div class="tmore">
+      <details><summary>찍히는 사람이 어색할 때</summary><ul class="gl" id="g-pose"></ul></details>
+      <details><summary>카메라 기본 설정</summary><ul class="gl" id="g-phone"></ul></details>
+      <details><summary>참고 사진가 · 인스타 태그</summary><div class="links" id="g-refs"></div><ul class="gl" style="margin-top:10px">
+        <li><b><a href="https://maily.so/0photo" target="_blank" rel="noopener">영뽀또 뉴스레터</a></b><span>구도·빛·보정을 쉽게 알려 주는 강의형 글</span></li>
+        <li><b><a href="https://www.youtube.com/@nicostop" target="_blank" rel="noopener">NICO STOP (니콘 이미징 재팬)</a></b><span>일본식 사진 라이프스타일 채널</span></li></ul></details>
     </div>
   </section>
 
@@ -405,7 +443,7 @@ footer code{font-family:var(--f-mono);font-size:12px}
   </div>
 
   <section class="sheet" id="wiz" aria-labelledby="h-wiz">
-    <div class="sec-head"><span class="no">01</span><h2 id="h-wiz">무엇을 찍나요</h2><p>세 가지만 고르면 아래에 촬영 계획서가 만들어집니다.</p></div>
+    <div class="sec-head"><span class="no">01</span><h2 id="h-wiz">스튜디오·준비 촬영</h2><p>프로필·웨딩·제품처럼 미리 준비하는 촬영이라면 용도를 고르세요. 컷 리스트와 준비물, 시간표가 나옵니다.</p></div>
     <div class="wz-step"><div class="wz-l"><span>1</span>어디에 쓸 사진인가요?</div><div class="pcards" id="wz-purpose"></div></div>
     <div class="wz-step"><div class="wz-l"><span>2</span>어디서, 무엇으로 찍나요?</div>
       <div class="wz-row"><fieldset><legend>장소</legend><div class="chips" id="wz-loc"></div></fieldset><fieldset><legend>장비</legend><div class="chips" id="wz-equip"></div></fieldset><div class="wz-when" id="wz-when"></div></div></div>
@@ -414,7 +452,7 @@ footer code{font-family:var(--f-mono);font-size:12px}
   </section>
 
   <section class="sheet" id="story" aria-labelledby="h-story">
-    <div class="sec-head"><span class="no">02</span><h2 id="h-story">촬영 계획서</h2><p>위에서부터 순서대로 찍으면 됩니다. 각 컷의 '배치도·높이 보기'를 누르면 조명과 카메라 위치를 그림으로 보여 줍니다.</p></div>
+    <div class="sec-head"><span class="no">02</span><h2 id="h-story">컷 리스트</h2><p>위에서부터 순서대로 찍으면 됩니다. 각 컷의 '배치도·높이 보기'를 누르면 조명과 카메라 위치를 그림으로 보여 줍니다.</p></div>
     <div class="plan-sum" id="plan-sum"></div>
     <div class="cuts" id="board"></div>
     <div class="plan-side">
@@ -562,7 +600,7 @@ footer code{font-family:var(--f-mono);font-size:12px}
     <div class="gal" id="gal"></div>
   </section>
 
-  <footer>
+  <footer class="plan-only">
     거리 계산: 피사체–카메라 거리 ≈ 화면에 담을 세로 높이 × 초점거리 ÷ 36(풀프레임 세로 기준). 배경지 폭은 표준 롤 2.72 m 기준이며, 필요 공간은 피사체 뒤 1.2 m(배경 그림자 방지)와 촬영자 자리 0.6 m를 더해 계산합니다. 노출값은 스튜디오 플래시 기준의 출발점이니 테스트 컷으로 맞추세요.
     <div id="copyhold"></div>
   </footer>
@@ -2239,20 +2277,34 @@ function heightSVG(s){
   return `<svg class="hsvg" viewBox="0 0 ${W} ${H}" role="img" aria-label="카메라 높이 ${PH_TX[s.ph]}"><line class="g-gr" x1="4" y1="${fy}" x2="${W - 4}" y2="${fy}"/>${pictoSVG(30, fy, h, 'g-p')}<line class="g-lvl" x1="8" y1="${y}" x2="${W - 6}" y2="${y}"/><g transform="translate(${px} ${y}) rotate(${-ang})"><rect class="g-phone" x="-9" y="-8" width="18" height="15" rx="3"/><rect class="g-phone" x="-17" y="-5" width="9" height="10" rx="2"/><line class="g-ray" x1="-17" y1="0" x2="-30" y2="0"/></g></svg>`;
 }
 let gSit = (() => { try { const v = localStorage.getItem('conti-gsit'); if (SITU[v]) return v; } catch(e) {} return 'travel'; })();
+const SITU_SHORT = {travel:'여행지', cafe:'카페', street:'골목', nature:'바다·공원', pair:'둘이서', self:'혼자서'};
+let gDone = (() => { try { return JSON.parse(localStorage.getItem('conti-gdone') || '{}'); } catch(e) { return {}; } })();
+const todayKST = () => new Date(Date.now() + 9*3600000).toISOString().slice(0, 10);
+let gCity = (() => { try { const c = localStorage.getItem('conti-gcity'); if (CITIES[c]) return c; } catch(e) {} return 'seoul'; })();
 function renderGuide(){
-  $('#g-sit').innerHTML = Object.entries(SITU).map(([k, v]) => `<button type="button" class="gs" aria-pressed="${k === gSit}" data-s="${k}"><b>${v.ko}</b><small>${v.d}</small></button>`).join('');
-  $('#g-check').innerHTML = CHECK3.map(([a, b], i) => `<li><b>${i + 1}. ${a}</b><span>${b}</span></li>`).join('');
+  $('#g-sit').innerHTML = Object.keys(SITU).map(k => `<button type="button" aria-pressed="${k === gSit}" data-s="${k}">${SITU_SHORT[k]}</button>`).join('');
+  $('#g-cam').innerHTML = [['zoom','줌'],['35','35mm'],['50','50mm'],['85','85mm']].map(([k, l]) => `<label class="chip"><input type="radio" name="glens" value="${k}" ${gCam.lens === k ? 'checked' : ''}><span>${l}</span></label>`).join('')
+    + `<label class="chip" style="margin-left:6px"><input type="checkbox" name="gaps" ${gCam.sensor === 'aps' ? 'checked' : ''}><span>크롭 바디</span></label>`;
+  if (gSit !== 'cafe'){
+    const di = dayInfo(todayKST(), CITIES[gCity]);
+    $('#g-sun').hidden = false;
+    $('#g-sun').innerHTML = `오늘 <select id="g-city" aria-label="도시">${Object.entries(CITIES).map(([k, v]) => `<option value="${k}" ${k === gCity ? 'selected' : ''}>${v.ko}</option>`).join('')}</select> 골든아워 <b>${di.geS != null ? hhmm(di.geS) + '–' + hhmm(di.geE) : '-'}</b> · 일몰 <b>${di.set != null ? hhmm(di.set) : '-'}</b> · 한낮(${hhmm(di.noon)} 전후)엔 그늘에서 찍으세요`;
+  } else $('#g-sun').hidden = true;
+  $('#g-check').innerHTML = CHECK3.map(([a, b]) => `<li><b>${a}</b><span>${b}</span></li>`).join('');
   $('#g-pose').innerHTML = POSEFIX.map(([a, b]) => `<li><b>${a}</b><span>${b}</span></li>`).join('');
   $('#g-phone').innerHTML = PHONESET.map(([a, b]) => `<li><b>${a}</b><span>${b}</span></li>`).join('');
-  const list = GSHOTS[gSit];
-  $('#g-cam').innerHTML = `<label class="chip"><input type="radio" name="gsensor" value="ff" ${gCam.sensor === 'ff' ? 'checked' : ''}><span>풀프레임</span></label><label class="chip"><input type="radio" name="gsensor" value="aps" ${gCam.sensor === 'aps' ? 'checked' : ''}><span>APS-C(크롭)</span></label><span class="gsep"></span>` + [['zoom','줌렌즈'],['35','35mm 단렌즈'],['50','50mm 단렌즈'],['85','85mm 단렌즈']].map(([k, l]) => `<label class="chip"><input type="radio" name="glens" value="${k}" ${gCam.lens === k ? 'checked' : ''}><span>${l}</span></label>`).join('');
   $('#g-refs').innerHTML = (GREF[gSit] || []).map(([l, u]) => `<a href="${u}" target="_blank" rel="noopener">${l}</a>`).join('');
-  $('#g-shots').innerHTML = list.map((s, i) => { const cs = camSpec(s); return `<article class="gcard">
-    <div class="gvis">${frameSVG(s)}<div class="gside">${heightSVG(s)}<div class="gph">${figure(pick(s.cat, i + altSeed), '', 300)}</div></div></div>
-    <div class="gtxt"><div class="gh"><span class="cn">${i + 1}</span><div><h3>${s.t}</h3><div class="use">${s.why}</div></div></div>
-      <ul class="gkv"><li><b>렌즈 · 거리</b><span><strong>${cs.lensTx}</strong> · 모델과 ${cs.dist}</span></li><li><b>카메라 높이</b><span>${PH_TX[s.ph]} · ${TILT_TX[s.tilt]}</span></li><li><b>설정</b><span>${cs.set}</span></li>
-      <li><b>빛</b><span>${s.light}</span></li><li><b>찍히는 사람</b><span>${s.pose}</span></li><li><b>팁</b><span>${s.tip}</span></li><li class="warn"><b>흔한 실수</b><span>${s.miss}</span></li></ul>
-      <button class="btn" type="button" data-field="${i}">현장에서 크게 보기</button></div></article>`; }).join('');
+  const list = GSHOTS[gSit];
+  const done = list.filter((s, i) => gDone[gSit + i]).length;
+  $('#g-progress').textContent = `오늘 찍어 볼 컷 ${list.length}개` + (done ? ` · ${done}개 찍음` : '');
+  $('#g-shots').innerHTML = list.map((s, i) => { const cs = camSpec(s), dn = !!gDone[gSit + i]; return `<article class="gc2${dn ? ' done' : ''}">
+    ${frameSVG(s)}
+    <div><h3><span class="cn">${i + 1}</span>${s.t}</h3><div class="why">${s.why}</div>
+      <ul class="kv"><li><b>렌즈</b><strong>${cs.lensTx}</strong> · ${cs.dist}</li><li><b>높이</b>${PH_TX[s.ph]}${s.tilt !== 'level' ? ' · ' + TILT_TX[s.tilt] : ''}</li><li><b>설정</b>${cs.set}</li></ul>
+      <div class="row"><label class="dn"><input type="checkbox" data-done="${i}" ${dn ? 'checked' : ''}> 찍었어요</label></div></div>
+    <details><summary>포즈 · 빛 · 팁 · 예시 사진</summary><div class="more"><ul class="gl"><li><b>찍히는 사람</b><span>${s.pose}</span></li><li><b>빛</b><span>${s.light}</span></li><li><b>팁</b><span>${s.tip}</span></li><li><b style="color:var(--warn)">흔한 실수</b><span>${s.miss}</span></li></ul>
+      <div class="side">${heightSVG(s)}<div class="gph">${figure(pick(s.cat, i + altSeed), '', 300)}</div></div></div></details>
+  </article>`; }).join('');
 }
 const FM = {i:0, lock:null};
 function openField(i){
@@ -2270,8 +2322,10 @@ function drawField(){
 }
 function initGuide(){
   $('#g-sit').addEventListener('click', e => { const b = e.target.closest('[data-s]'); if (!b) return; gSit = b.dataset.s; try { localStorage.setItem('conti-gsit', gSit); } catch(er) {} renderGuide(); });
-  $('#g-cam').addEventListener('change', e => { if (e.target.name === 'gsensor') gCam.sensor = e.target.value; if (e.target.name === 'glens') gCam.lens = e.target.value; try { localStorage.setItem('conti-gcam', JSON.stringify(gCam)); } catch(er) {} renderGuide(); });
-  $('#g-shots').addEventListener('click', e => { const b = e.target.closest('[data-field]'); if (b) openField(+b.dataset.field); });
+  $('#g-cam').addEventListener('change', e => { if (e.target.name === 'gaps') gCam.sensor = e.target.checked ? 'aps' : 'ff'; if (e.target.name === 'glens') gCam.lens = e.target.value; try { localStorage.setItem('conti-gcam', JSON.stringify(gCam)); } catch(er) {} renderGuide(); });
+  $('#g-shots').addEventListener('change', e => { const i = e.target.dataset.done; if (i == null) return; gDone[gSit + i] = e.target.checked; try { localStorage.setItem('conti-gdone', JSON.stringify(gDone)); } catch(er) {} renderGuide(); });
+  $('#g-sun').addEventListener('change', e => { if (e.target.id !== 'g-city') return; gCity = e.target.value; try { localStorage.setItem('conti-gcity', gCity); } catch(er) {} renderGuide(); });
+  $('#g-shuffle').addEventListener('click', () => { altSeed++; renderGuide(); });
   $('#g-fieldall').addEventListener('click', () => openField(0));
   $('#f-close').addEventListener('click', closeField);
   $('#f-prev').addEventListener('click', () => { if (FM.i > 0){ FM.i--; drawField(); } });
