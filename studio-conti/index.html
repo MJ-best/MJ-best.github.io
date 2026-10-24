@@ -103,6 +103,62 @@ dl.spec dd{margin:0;color:var(--ink)}
 .ph.broken img{display:none}
 .gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:14px}
 #gal-tabs .chip span{font-size:13px;padding:4px 9px}
+.viewsw{display:flex;border:1.5px solid var(--ink);border-radius:3px;overflow:hidden;flex-basis:100%;justify-content:flex-end}
+.viewsw button{font:inherit;font-size:14px;font-weight:600;border:0;background:var(--sheet);color:var(--ink);padding:9px 16px;cursor:pointer;flex:1;white-space:nowrap}
+.viewsw button+button{border-left:1.5px solid var(--ink)}
+.viewsw button[aria-pressed="true"]{background:var(--ink);color:var(--sheet)}
+body.v-guide .wrap > section:not(#guide){display:none}
+body.v-guide .plan-only{display:none}
+body.v-plan #guide{display:none}
+.gsits{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+.gs{font:inherit;text-align:left;border:1.5px solid var(--scrib);background:var(--sheet);color:var(--ink);border-radius:4px;padding:9px 11px;cursor:pointer;display:grid;gap:2px}
+.gs b{font-size:14px}.gs small{font-size:11.5px;color:var(--ink-2);line-height:1.35}
+.gs[aria-pressed="true"]{border-color:var(--ink);background:var(--tape);box-shadow:2px 2px 0 var(--ink)}
+.gtop{display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;margin:16px 0}
+.gtop .gcheck{flex:1 1 520px;min-width:0}
+.gtop > .btn{flex:0 0 auto}
+.gbox{border:1.5px dashed var(--scrib);border-radius:4px;padding:12px 14px}
+.gbox h3{margin:0 0 8px;font-size:15px}
+.gcheck ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;font-size:13px}
+.gcheck li{display:grid;gap:2px}.gcheck b{font-size:13.5px}.gcheck span{color:var(--ink-2);line-height:1.45}
+.gshots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.gcard{border:1.5px solid var(--scrib);border-radius:4px;padding:12px;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:14px;background:var(--sheet)}
+.gvis{display:grid;grid-template-columns:minmax(0,1fr) 92px;gap:8px;align-items:start}
+.gside{display:grid;gap:8px}
+.gsvg{width:100%;height:auto;display:block}.hsvg{width:100%;height:auto;display:block}
+.gph .ph figcaption{display:none}
+.gtxt{display:grid;gap:8px;align-content:start;min-width:0}
+.gh{display:flex;gap:10px;align-items:flex-start}
+.gh .cn{flex:none;display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--ink);color:var(--sheet);font-family:var(--f-mono);font-size:13px}
+.gh h3{margin:0;font-size:16px}.gh .use{font-size:12.5px;color:var(--ink-2)}
+.gkv{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-size:13.5px;line-height:1.5}
+.gkv li{display:grid;gap:1px}.gkv b{font-size:12px;color:var(--ink-2)}.gkv li.warn b{color:var(--warn)}
+.gkv strong{background:var(--tape);padding:0 5px;border-radius:2px;font-family:var(--f-mono)}
+.gtxt .btn{justify-self:start;font-size:13px;padding:5px 10px}
+.gbottom{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:16px}
+.gl{list-style:none;margin:0;padding:0;display:grid;gap:7px;font-size:13px;line-height:1.5}
+.gl li{display:grid;gap:1px}.gl b{font-size:13.5px}.gl span{color:var(--ink-2)}
+.g-bg{fill:var(--paper)}.g-sky{fill:color-mix(in srgb,var(--fill) 14%,var(--paper))}
+.g-hz{stroke:var(--ink-2);stroke-width:2}.g-ln{stroke:var(--scrib-2);stroke-width:5}
+.g-p{fill:var(--scrib)}.g-p2{fill:color-mix(in srgb,var(--rim) 70%,var(--scrib))}.g-blur{fill:var(--scrib-2);opacity:.85}
+.g-obj{fill:var(--scrib)}.g-obj2{fill:var(--scrib-2)}
+.g-third line{stroke:var(--ink);stroke-opacity:.28;stroke-width:1.2;stroke-dasharray:5 6}
+.g-frame{fill:none;stroke:var(--ink);stroke-width:3}
+.g-note line{stroke:var(--key);stroke-width:3}.g-arh{fill:var(--key)}
+.g-note text,.g-lab{fill:var(--key);font:600 22px var(--f-body);paint-order:stroke;stroke:var(--paper);stroke-width:4px}
+.g-lab{fill:var(--ink-2)}
+.g-gr{stroke:var(--ink-2);stroke-width:2}.g-lvl{stroke:var(--key);stroke-width:2;stroke-dasharray:4 3}
+.g-phone{fill:var(--ink)}.g-ray{stroke:var(--key);stroke-width:2.5}
+.field{position:fixed;inset:0;z-index:30;background:var(--sheet);display:grid;grid-template-rows:auto minmax(0,1fr) auto;padding:calc(12px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));gap:10px}
+.fbar{display:flex;justify-content:space-between;align-items:center;font-size:14px;color:var(--ink-2)}
+.fbody{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:center;overflow:auto;max-width:1000px;margin:0 auto;width:100%}
+.fvis .gsvg{max-height:70vh;width:auto;max-width:100%;margin:0 auto}
+.ftxt h3{font-family:var(--f-hand);font-weight:400;font-size:44px;line-height:1;margin:0 0 10px}
+.ftxt p{font-size:17px;line-height:1.55;margin:0 0 10px}.ftxt b{color:var(--ink-2);font-size:14px;margin-right:6px}
+.ftxt .fbig{font-size:20px}.ftxt strong{background:var(--tape);padding:0 6px;border-radius:2px}
+.fnav{display:flex;gap:10px;justify-content:center}.fnav .btn{font-size:16px;padding:10px 22px}
+@media (max-width:1000px){ .gsits{grid-template-columns:repeat(3,minmax(0,1fr))} .gshots{grid-template-columns:minmax(0,1fr)} .gcheck ol{grid-template-columns:repeat(2,minmax(0,1fr))} .gbottom{grid-template-columns:minmax(0,1fr)} }
+@media (max-width:620px){ .gtop > .btn{flex:1 1 100%} .gcheck ol{grid-template-columns:minmax(0,1fr)} .gcard{grid-template-columns:minmax(0,1fr)} .gsits{grid-template-columns:repeat(2,minmax(0,1fr))} .fbody{grid-template-columns:minmax(0,1fr);align-items:start} .fvis .gsvg{max-height:44vh} .ftxt h3{font-size:34px} .ftxt p{font-size:15.5px} .viewsw button{font-size:13px;padding:8px 8px} }
 .wz-step{display:grid;gap:10px;padding-block:12px;border-top:1.5px dashed var(--scrib-2)}
 .wz-step:first-of-type{border-top:0;padding-top:0}
 .wz-l{font-weight:600;font-size:15px;display:flex;align-items:center;gap:8px}
@@ -303,11 +359,12 @@ footer code{font-family:var(--f-mono);font-size:12px}
     <div>
       <div class="eyebrow">Shoot planner · 촬영이 막막할 때</div>
       <h1>스튜디오 <span class="tape">콘티북</span></h1>
-      <p class="lede">어디에 쓸 사진인지 고르면, 꼭 찍어야 할 컷과 컷마다 따라 하는 방법(모델 포즈, 내가 설 위치와 높이, 카메라 설정, 빛, 건넬 말), 준비물, 당일 시간표까지 한 장의 촬영 계획서로 만들어 줍니다.</p>
+      <p class="lede">친구·가족을 폰으로 바로 찍어 줘야 할 때는 장소별로 꼭 찍을 컷과 구도·폰 높이·줌·포즈를 보여 주고, 제대로 준비하는 촬영이라면 용도에 맞춘 컷 리스트·준비물·당일 시간표를 담은 촬영 계획서를 만들어 줍니다.</p>
     </div>
     <div class="mast-actions">
-      <button class="btn" id="reseed" type="button">다른 예시 사진 보기</button>
-      <button class="btn solid" id="copy" type="button">계획서 텍스트 복사</button>
+      <div class="viewsw" role="group" aria-label="보기 선택"><button type="button" data-v="guide" aria-pressed="true">폰으로 바로 찍기 가이드</button><button type="button" data-v="plan" aria-pressed="false">촬영 계획서 만들기</button></div>
+      <button class="btn plan-only" id="reseed" type="button">다른 예시 사진 보기</button>
+      <button class="btn solid plan-only" id="copy" type="button">계획서 텍스트 복사</button>
     </div>
   </header>
 
@@ -316,6 +373,30 @@ footer code{font-family:var(--f-mono);font-size:12px}
   
 
   
+
+  <section class="sheet" id="guide" aria-labelledby="h-guide">
+    <div class="sec-head"><span class="no">01</span><h2 id="h-guide">폰으로 인물 찍어 주기</h2><p>친구·가족·연인을 찍어 줘야 하는데 막막할 때. 어디서 찍는지만 고르면 그 자리에서 꼭 찍어 줄 컷과 구도, 폰 높이, 줌, 빛, 포즈를 보여 줍니다.</p></div>
+    <div class="gsits" id="g-sit" role="group" aria-label="촬영 장소"></div>
+    <div class="gtop">
+      <div class="gbox gcheck"><h3>셔터 누르기 전 3초 체크</h3><ol id="g-check"></ol></div>
+      <button class="btn solid" type="button" id="g-fieldall">현장 모드로 한 컷씩 보기</button>
+    </div>
+    <div class="gshots" id="g-shots"></div>
+    <div class="gbottom">
+      <div class="gbox"><h3>찍히는 사람이 어색할 때</h3><ul class="gl" id="g-pose"></ul></div>
+      <div class="gbox"><h3>폰 카메라 설정</h3><ul class="gl" id="g-phone"></ul></div>
+      <div class="gbox"><h3>더 배우고 싶다면</h3><ul class="gl">
+        <li><b><a href="https://maily.so/0photo" target="_blank" rel="noopener">영뽀또 뉴스레터</a></b><span>스마트폰 구도·빛·보정을 쉽게 알려 주는 강의형 글</span></li>
+        <li><b><a href="https://apps.apple.com/kr/app/%ED%8F%AC%EC%A6%88-%ED%8F%AC%ED%86%A0%EC%8A%A4%ED%8C%9F-%EA%B5%AC%EB%8F%84-%EA%B0%80%EC%9D%B4%EB%93%9C/id1453658722" target="_blank" rel="noopener">포즈: 포토스팟·구도 가이드</a></b><span>카메라 화면에 구도 가이드를 겹쳐 주는 앱</span></li>
+        <li><b><a href="https://apps.apple.com/kr/app/%ED%8F%AC%EC%A6%88%ED%94%BC%EC%BB%A4-%EB%84%A4%EC%BB%B7%EC%82%AC%EC%A7%84-%ED%8F%AC%EC%A6%88%EC%B6%94%EC%B2%9C/id6474260471" target="_blank" rel="noopener">포즈피커</a></b><span>네컷·친구 사진 포즈 추천 앱</span></li></ul></div>
+    </div>
+  </section>
+
+  <div class="field" id="field" hidden role="dialog" aria-modal="true" aria-label="현장 모드">
+    <div class="fbar"><span id="f-count"></span><button type="button" class="btn" id="f-close">닫기</button></div>
+    <div class="fbody" id="f-body"></div>
+    <div class="fnav"><button type="button" class="btn" id="f-prev">이전</button><button type="button" class="btn solid" id="f-next">다음 컷</button></div>
+  </div>
 
   <section class="sheet" id="wiz" aria-labelledby="h-wiz">
     <div class="sec-head"><span class="no">01</span><h2 id="h-wiz">무엇을 찍나요</h2><p>세 가지만 고르면 아래에 촬영 계획서가 만들어집니다.</p></div>
@@ -1588,7 +1669,7 @@ $('#copy').addEventListener('click', () => {
   };
   try { navigator.clipboard.writeText(txt).then(() => toast('계획서를 복사했어요'), fallback); } catch(e) { fallback(); }
 });
-$('#reseed').addEventListener('click', () => { altSeed++; simAlt++; drawBoard(); drawSim(); drawRefs(); renderMoodboard(); });
+$('#reseed').addEventListener('click', () => { altSeed++; simAlt++; drawBoard(); drawSim(); drawRefs(); renderMoodboard(); renderGuide(); });
 $('#sim-alt').addEventListener('click', () => { simAlt++; drawSim(); });
 let galCat = 'mood_warm';
 function renderGallery(){
@@ -2005,6 +2086,167 @@ function initWiz(){
   $('#prep').addEventListener('change', e => { const k = e.target.dataset.k; if (!k) return; let c = {}; try { c = JSON.parse(localStorage.getItem('conti-check-' + wiz.purpose) || '{}'); } catch(er) {} c[k] = e.target.checked; try { localStorage.setItem('conti-check-' + wiz.purpose, JSON.stringify(c)); } catch(er) {} });
 }
 
+/* ---------------- quick phone guide for everyday portraits ---------------- */
+const SITU = {
+  travel:{ko:'여행지·명소', d:'어디 갔는지 보이게, 그리고 내가 예쁘게'},
+  cafe:{ko:'카페·실내', d:'창가 빛 하나로 분위기 있게'},
+  street:{ko:'골목·거리', d:'벽·선·그늘을 이용하기'},
+  nature:{ko:'바다·공원·노을', d:'해의 방향만 알면 반은 성공'},
+  pair:{ko:'친구·커플', d:'둘 사이 관계가 보이게'},
+  self:{ko:'혼자 찍기', d:'셀카·거울·타이머로 셀프 촬영'}
+};
+const GSHOTS = {
+  travel:[
+    {t:'장소가 주인공인 컷', why:'여행 대표 사진 · 어디 갔는지 한눈에', kind:'wide', sx:.33, horizon:.66, ph:'chest', tilt:'level', zoom:'1x', space:'right', light:'해를 찍는 사람 등 뒤나 옆에 두기', pose:'풍경을 바라보거나, 몸은 풍경 쪽·얼굴만 살짝 카메라로', tip:'인물은 가운데가 아니라 왼쪽·오른쪽 세로선에. 수평선은 아래쪽 가로선에 맞추면 하늘이 시원합니다.', miss:'인물을 정가운데 크게 두면 장소가 안 보입니다.', cat:'snap_city'},
+    {t:'다리 길어 보이는 전신', why:'착장 전체 · 인생샷', kind:'full', sx:.5, ph:'knee', tilt:'up', zoom:'1x', feet:true, light:'얼굴에 빛이 오는 방향으로 서기', pose:'한 발을 반 걸음 앞으로, 체중은 뒷발에. 앞발 끝은 카메라 쪽', tip:'폰을 무릎 높이로 내리고 발끝을 화면 맨 아래에 붙이세요. 폰을 아주 살짝 위로 기울이면 다리가 길어 보입니다.', miss:'눈높이에서 내려다보면 머리는 크고 다리는 짧아 보입니다.', cat:'frame_full'},
+    {t:'걷는 뒷모습', why:'자연스러운 여행 분위기 컷', kind:'full', sx:.62, ph:'waist', tilt:'level', zoom:'1x', space:'left', light:'역광이면 머리카락에 빛 테두리가 생겨 더 예쁩니다', pose:'앞을 보고 천천히 걷다가, 부르면 어깨 너머로 돌아보기', tip:'연사로 찍고 발이 앞뒤로 벌어진 컷을 고르세요. 걸어가는 쪽 앞에 여백을 남깁니다.', miss:'걸어가는 방향 앞이 막혀 있으면 답답해 보입니다.', cat:'snap_city'},
+    {t:'배경 흐린 상반신', why:'프로필 사진 · 얼굴이 잘 보이는 컷', kind:'waist', sx:.5, ph:'chest', tilt:'level', zoom:'2x', eyes:true, light:'그늘이나 해를 등진 쪽에서 찍으면 눈을 안 찡그려요', pose:'몸은 45° 돌리고 얼굴만 카메라로, 턱은 앞으로 살짝', tip:'2x로 두세 걸음 뒤에서 찍으면 얼굴이 자연스럽고 배경이 흐려집니다. 인물 모드를 켜세요.', miss:'1x로 바짝 다가가면 얼굴이 넓적해 보입니다.', cat:'frame_bust'},
+    {t:'손·소품 디테일', why:'사진 여러 장 올릴 때 사이에 넣는 컷', kind:'detail', ph:'chest', tilt:'down', zoom:'2x', light:'그늘에서 찍어야 반사가 없어요', pose:'티켓·음료·모자를 손에 들고 살짝 앞으로 내밀기', tip:'배경은 단순하게, 손톱과 소매 끝을 정리하고 찍습니다.', miss:'배경이 복잡하면 무엇을 찍었는지 안 보입니다.', cat:'topview'}],
+  cafe:[
+    {t:'창가 옆모습', why:'카페 분위기 대표 컷', kind:'bust', sx:.4, ph:'chest', tilt:'level', zoom:'2x', space:'right', light:'창이 인물 옆에 오게(찍는 사람 기준 옆쪽)', pose:'창밖을 보다가 천천히 고개를 카메라 쪽으로', tip:'창빛이 얼굴 한쪽에 들어와야 입체감이 생깁니다. 얼굴을 터치해 밝기를 맞추세요.', miss:'창을 등지고 앉히면 얼굴이 까맣게 나옵니다.', cat:'mood_warm'},
+    {t:'테이블 위에서 내려다보기', why:'음료·디저트와 손', kind:'top', ph:'above', tilt:'down', zoom:'1x', light:'창 쪽에서 빛이 오게 테이블 방향 잡기', pose:'컵을 두 손으로 감싸거나 포크를 든 손만', tip:'폰을 테이블과 평행하게 들고 바로 위에서. 격자선 교차점에 컵을 놓습니다.', miss:'비스듬히 찍으면 테이블이 사다리꼴로 찌그러집니다.', cat:'topview'},
+    {t:'마주 앉은 상반신', why:'친구가 찍어 주는 가장 흔한 컷', kind:'waist', sx:.5, ph:'chest', tilt:'level', zoom:'1x', light:'인물 뒤가 창이면 자리를 바꾸세요', pose:'팔꿈치를 테이블에 올리고 손을 턱 근처에 살짝', tip:'폰은 상대 가슴 높이에. 찍기 전에 빈 잔·휴지·폰을 치우세요.', miss:'테이블 위 잡동사니가 화면에 그대로 나옵니다.', cat:'frame_bust'},
+    {t:'딴짓하는 캔디드', why:'꾸미지 않은 듯한 자연스러운 컷', kind:'bust', sx:.6, ph:'chest', tilt:'level', zoom:'2x', space:'left', light:'창빛이 얼굴 앞쪽 45°에서 오게', pose:'메뉴판이나 책을 보다가 웃음 터뜨리기', tip:'포즈 잡기 전후의 순간을 연사로 계속 찍으세요. 가장 자연스러운 표정은 그 사이에 나옵니다.', miss:'“찍는다~” 하고 찍으면 표정이 굳습니다.', cat:'mood_warm'},
+    {t:'입구 앞 전신', why:'카페 간판과 함께 기록', kind:'full', sx:.5, ph:'knee', tilt:'up', zoom:'1x', feet:true, light:'간판이 그늘이면 인물도 그늘에', pose:'문 손잡이를 잡고 돌아보기', tip:'간판이 머리 위에 보이게 화면 위쪽을 넉넉히 남기세요.', miss:'간판 글자가 머리에 가려지면 기록 의미가 없어요.', cat:'frame_full'}],
+  street:[
+    {t:'벽에 기대기', why:'골목 감성 대표 컷', kind:'knee', sx:.4, ph:'waist', tilt:'level', zoom:'1x', space:'right', light:'벽에 해가 들면 그늘 쪽 벽으로', pose:'한쪽 어깨를 벽에 대고 반대쪽 발을 교차', tip:'벽과 길이 만드는 선이 인물 쪽으로 모이게 비스듬히 서서 찍으세요.', miss:'벽을 정면으로 찍으면 밋밋합니다.', cat:'snap_city'},
+    {t:'걸어오는 연사', why:'움직임이 살아 있는 전신', kind:'full', sx:.5, ph:'knee', tilt:'up', zoom:'1x', feet:true, light:'얼굴에 그늘이 고르게 지는 길을 고르세요', pose:'카메라 쪽으로 걸어오며 땅 대신 먼 곳 보기', tip:'찍는 사람은 쪼그려 앉고 연사로. 10장 중 다리가 교차한 컷 하나면 성공입니다.', miss:'멈춰 서서 걷는 척하면 어색해요.', cat:'snap_city'},
+    {t:'계단·횡단보도 선 이용', why:'시선이 인물에 모이는 구도', kind:'wide', sx:.5, horizon:null, ph:'chest', tilt:'level', zoom:'1x', lines:true, light:'선의 그림자가 또렷한 오후가 좋아요', pose:'선이 모이는 곳에 서서 카메라 보기', tip:'계단·차선·난간이 한 점으로 모이는 곳에 인물을 두세요.', miss:'0.5x를 쓰면 가장자리가 휘니 인물을 가장자리에 두지 마세요.', cat:'snap_city'},
+    {t:'그늘 속 얼굴', why:'피부가 가장 예쁘게 나오는 컷', kind:'face', sx:.5, ph:'eye', tilt:'level', zoom:'2x', eyes:true, light:'건물 그늘 가장자리에서 밝은 길 쪽을 보게', pose:'턱을 앞으로 1 cm, 살짝 내리기', tip:'그늘 끝에 서면 빛이 고르고 눈에 반짝임이 생깁니다.', miss:'한낮 햇빛 아래에서는 눈 밑에 진한 그림자가 생겨요.', cat:'frame_cu'},
+    {t:'어깨 너머 돌아보기', why:'영화 같은 한 장면', kind:'waist', sx:.62, ph:'chest', tilt:'level', zoom:'2x', space:'left', light:'해를 인물 앞쪽에', pose:'앞으로 걷다가 이름을 부르면 어깨 너머로 돌아보기', tip:'부르기 직전부터 연사를 누르고 있으세요.', miss:'돌아본 뒤 멈춘 컷은 대부분 굳어 있어요.', cat:'snap_profile'}],
+  nature:[
+    {t:'노을 역광 상반신', why:'머리카락에 빛이 걸리는 감성 컷', kind:'bust', sx:.5, ph:'chest', tilt:'level', zoom:'2x', light:'해를 인물 머리 바로 뒤에', pose:'바람을 등지고 서서 살짝 미소', tip:'얼굴을 터치한 뒤 밝기 바를 위로 올리세요. 흰 옷이나 흰 종이로 얼굴 앞을 밝히면 더 좋습니다.', miss:'자동 노출이면 얼굴이 까맣게 나옵니다.', cat:'snap_backlight'},
+    {t:'노을 실루엣', why:'형태만 남는 그림 같은 컷', kind:'full', sx:.4, horizon:.72, ph:'knee', tilt:'up', zoom:'1x', space:'right', light:'해가 진 직후의 밝은 하늘을 배경으로', pose:'팔이나 다리를 몸에서 떼서 모양을 크게', tip:'하늘을 길게 눌러 노출을 고정(AE/AF 잠금)하세요.', miss:'팔을 몸에 붙이면 실루엣이 덩어리로 뭉쳐 보여요.', cat:'snap_golden'},
+    {t:'앉아서 올려다보기', why:'얼굴이 작고 눈이 커 보이는 컷', kind:'waist', sx:.5, ph:'above', tilt:'down', zoom:'1x', light:'얼굴이 하늘을 향하니 빛이 고르게 들어와요', pose:'풀밭·모래·돗자리에 앉아 카메라를 올려다보기', tip:'찍는 사람은 서서 내려다보며. 턱이 들리면 얼굴선이 갸름해집니다.', miss:'너무 높이서 찍으면 몸이 아주 작아집니다.', cat:'angle_high'},
+    {t:'바람에 날리는 머리카락', why:'움직임이 있는 클로즈업', kind:'face', sx:.5, ph:'eye', tilt:'level', zoom:'2x', eyes:true, light:'옆에서 오는 낮은 해', pose:'바람을 등지거나 옆으로 서서 머리카락을 손으로 쓸어 넘기기', tip:'바람을 정면으로 맞으면 머리카락이 얼굴을 덮으니 등지게 서세요.', miss:'얼굴에 머리카락이 붙은 컷은 고르기 어려워요.', cat:'snap_profile'},
+    {t:'하늘만 배경인 로우 앵글', why:'깔끔한 배경 · 시원한 비율', kind:'full', sx:.5, horizon:.92, ph:'floor', tilt:'up', zoom:'1x', feet:true, light:'해를 찍는 사람 등 뒤에', pose:'점프하거나 팔을 넓게 벌리기', tip:'폰을 땅에 거의 붙이면 배경이 하늘만 남아 깔끔합니다.', miss:'0.5x로 아래에서 찍으면 다리는 길어도 얼굴이 작게 휘어요.', cat:'angle_low'}],
+  pair:[
+    {t:'나란히 걷기', why:'둘의 분위기가 한눈에', kind:'full', pair:true, sx:.5, ph:'knee', tilt:'up', zoom:'1x', feet:true, light:'둘 다 얼굴에 그늘이 고르게', pose:'손잡고 서로 보며 수다 떨듯 걷기', tip:'찍는 사람이 뒷걸음질로 따라가며 연사. 두 사람 사이 간격은 손 하나.', miss:'둘이 카메라만 보고 걸으면 어색해요.', cat:'snap_couple'},
+    {t:'서로 보며 웃기', why:'관계가 보이는 상반신', kind:'waist', pair:true, sx:.5, ph:'chest', tilt:'level', zoom:'2x', light:'두 얼굴에 같은 방향의 빛', pose:'마주 보고 먼저 웃는 사람이 지는 게임', tip:'웃음이 터진 직후를 노리세요. 둘의 키 차이가 크면 큰 사람이 살짝 고개를 숙입니다.', miss:'얼굴이 겹쳐 한 사람이 가려지지 않게.', cat:'couple'},
+    {t:'등 맞대기', why:'친구·커플 모두 쓰기 좋은 포즈', kind:'knee', pair:true, sx:.5, ph:'waist', tilt:'level', zoom:'1x', light:'옆에서 오는 빛', pose:'등을 맞대고 팔짱, 얼굴만 카메라 쪽으로', tip:'둘의 머리 높이를 엇갈리게 하면 화면이 안정적입니다.', miss:'둘이 일렬로 똑같이 서면 증명사진 같아요.', cat:'snap_couple'},
+    {t:'어깨 너머 한 사람', why:'한 사람 초점 + 한 사람 흐리게', kind:'bust', ots:true, sx:.64, ph:'chest', tilt:'level', zoom:'2x', light:'초점 받는 사람 얼굴 쪽에서 빛', pose:'앞사람 어깨 너머로 뒷사람이 웃으며 보기', tip:'앞사람 어깨를 화면 가장자리에 흐리게 걸치면 둘의 관계가 보입니다.', miss:'초점이 앞사람 어깨에 가면 실패. 뒷사람 얼굴을 터치하세요.', cat:'couple'},
+    {t:'손 디테일', why:'반지·팔찌·맞잡은 손', kind:'detail', ph:'chest', tilt:'down', zoom:'2x', light:'그늘에서', pose:'두 손을 겹치거나 깍지 끼기', tip:'손가락에 힘을 빼야 손이 예뻐 보입니다.', miss:'반지에 해가 비치면 하얗게 날아가요.', cat:'couple'}],
+  self:[
+    {t:'팔 뻗은 셀카', why:'가장 빠른 얼굴 컷', kind:'face', sx:.5, ph:'eyeup', tilt:'down', zoom:'1x', eyes:true, light:'창이나 밝은 하늘을 마주 보기', pose:'팔을 쭉 뻗고 폰을 눈보다 살짝 위로, 턱은 앞으로', tip:'전면 카메라는 0.5x(광각)로 바꾸면 얼굴이 늘어나요. 1x로 찍고 팔을 최대한 멀리.', miss:'폰을 턱 아래에서 들면 이중턱이 생깁니다.', cat:'frame_cu'},
+    {t:'거울 전신샷', why:'오늘의 착장 기록', kind:'full', sx:.5, ph:'chest', tilt:'level', zoom:'1x', feet:true, light:'거울을 등지지 말고 창을 마주 보게', pose:'폰을 얼굴 옆이 아닌 가슴 앞에, 한 발은 앞으로', tip:'거울에서 한두 걸음 떨어져야 발끝까지 들어옵니다. 거울을 먼저 닦으세요.', miss:'폰을 얼굴 앞에 들면 얼굴이 다 가려져요.', cat:'frame_full'},
+    {t:'타이머 전신', why:'혼자서도 남이 찍어 준 듯한 컷', kind:'full', sx:.5, ph:'knee', tilt:'up', zoom:'1x', feet:true, light:'해를 폰 뒤쪽에', pose:'타이머가 도는 동안 천천히 걷거나 머리를 넘기기', tip:'폰을 가방·벽·난간에 기대 무릎 높이에 두고, 10초 타이머 + 연사(셀피 연사·라이브 포토)를 켜세요.', miss:'폰을 높이 올려 두면 다리가 짧아 보입니다.', cat:'frame_full'},
+    {t:'동영상에서 캡처', why:'가장 자연스러운 표정 얻기', kind:'wide', sx:.5, horizon:.66, ph:'chest', tilt:'level', zoom:'1x', light:'해를 폰 뒤쪽에', pose:'걷기·돌기·웃기를 10초 동안 이어서', tip:'4K 동영상으로 찍고 마음에 드는 순간을 캡처하세요. 사진보다 표정이 훨씬 자연스럽습니다.', miss:'어두운 곳에서는 캡처 화질이 떨어져요.', cat:'snap_city'}]
+};
+const CHECK3 = [
+  ['수평', '격자선을 켜고 바닥·수평선을 가로선에 맞추세요.'],
+  ['자르는 곳', '발목·무릎·허리 같은 관절에서 자르지 말고, 전신이면 발끝까지 넣으세요.'],
+  ['머리 위', '전봇대·나무·간판이 머리에서 솟아 나오면 한 걸음 옆으로.'],
+  ['얼굴 빛', '얼굴이 어두우면 얼굴을 터치하고 밝기 바를 위로.'],
+  ['연사', '한 컷에 최소 5장. 눈 감은 컷이 꼭 섞여 있어요.']
+];
+const POSEFIX = [
+  ['손 둘 곳이 없을 때', '주머니에 엄지만 걸기, 가방끈 잡기, 머리카락 넘기기, 컵 들기'],
+  ['몸이 뻣뻣할 때', '체중을 한 발에 싣고 반대쪽 무릎을 살짝 굽히기'],
+  ['얼굴이 커 보일 때', '턱을 앞으로 1 cm 내밀었다가 살짝 내리기, 몸은 45° 돌리기'],
+  ['팔이 두꺼워 보일 때', '팔을 몸에서 주먹 하나만큼 떼기'],
+  ['렌즈 보기가 어색할 때', '렌즈 바로 위 1 cm를 보거나, 렌즈 옆을 보다가 셋에 렌즈로'],
+  ['웃음이 굳을 때', '“김치” 대신 웃긴 질문 하나, 숨을 내쉬면서 웃기'],
+  ['다리가 짧아 보일 때', '찍는 사람이 무릎 높이로 내려가고, 발끝을 화면 맨 아래에']
+];
+const PHONESET = [
+  ['격자선 켜기', '아이폰: 설정 → 카메라 → 격자 / 갤럭시: 카메라 설정 → 수직/수평 안내선'],
+  ['비율', '3:4로 찍으면 인스타 4:5로 잘라도 여유가 있어요'],
+  ['줌', '얼굴·상반신은 2x, 전신·풍경은 1x, 0.5x는 풍경과 건물에만'],
+  ['밝기', '얼굴을 한 번 터치하고 해·전구 아이콘을 위아래로 밀기'],
+  ['노출 고정', '화면을 길게 눌러 AE/AF 잠금 → 역광·실루엣에 필수'],
+  ['연사', '셔터를 왼쪽으로 밀거나(아이폰) 길게 누르기(갤럭시)'],
+  ['인물 모드', '2~3 m 거리에서 쓰면 배경이 자연스럽게 흐려져요']
+];
+const PH_LV = {floor:.06, knee:.28, waist:.52, chest:.72, eye:.92, eyeup:1.0, above:1.12};
+const PH_TX = {floor:'바닥에 거의 붙여서', knee:'무릎 높이(쪼그려 앉기)', waist:'허리 높이', chest:'가슴 높이', eye:'눈높이', eyeup:'눈보다 살짝 위', above:'머리 위에서 내려다보기'};
+const TILT_TX = {up:'살짝 위로 기울이기', down:'아래로 내려다보기', level:'똑바로(수평)'};
+function pictoSVG(cx, fy, h, cls){
+  const r = .075*h, top = fy - h, sh = top + 2*r + .015*h;
+  const rr = (x, y, w, hh, rad) => `<rect x="${(x).toFixed(1)}" y="${(y).toFixed(1)}" width="${Math.max(0,w).toFixed(1)}" height="${Math.max(0,hh).toFixed(1)}" rx="${rad.toFixed(1)}"/>`;
+  return `<g class="${cls}"><circle cx="${cx.toFixed(1)}" cy="${(top + r).toFixed(1)}" r="${r.toFixed(1)}"/>`
+    + rr(cx - .15*h, sh, .30*h, fy - .49*h - sh, .06*h)
+    + rr(cx - .215*h, sh + .02*h, .058*h, .40*h, .03*h) + rr(cx + .157*h, sh + .02*h, .058*h, .40*h, .03*h)
+    + rr(cx - .125*h, fy - .53*h, .105*h, .53*h, .04*h) + rr(cx + .02*h, fy - .53*h, .105*h, .53*h, .04*h) + `</g>`;
+}
+function frameSVG(s){
+  const W = 300, H = 400; let out = '';
+  const kind = s.kind;
+  const add = x => out += x;
+  if (s.horizon != null) add(`<rect class="g-sky" x="0" y="0" width="${W}" height="${H*s.horizon}"/><line class="g-hz" x1="0" y1="${H*s.horizon}" x2="${W}" y2="${H*s.horizon}"/>`);
+  if (s.lines){ [[0, H], [W, H], [W*.15, H], [W*.85, H]].forEach(([x, y]) => add(`<line class="g-ln" x1="${x}" y1="${y}" x2="${W*.5}" y2="${H*.38}"/>`)); }
+  let h, fy, sx = (s.sx ?? .5)*W;
+  if (kind === 'full'){ h = .76*H; fy = .955*H; }
+  else if (kind === 'knee'){ h = 1.26*H; fy = H + .27*h; }
+  else if (kind === 'waist'){ h = 1.73*H; fy = H + .48*h; }
+  else if (kind === 'bust'){ h = 2.8*H; fy = H + .68*h; }
+  else if (kind === 'face'){ h = 4.7*H; fy = H + .8*h; }
+  else if (kind === 'wide'){ h = .3*H; fy = (s.horizon != null ? Math.min(.95, s.horizon + .2) : .78)*H; }
+  if (kind === 'detail' || kind === 'top'){
+    if (kind === 'top'){ add(`<ellipse class="g-obj2" cx="${W*.5}" cy="${H*.5}" rx="${W*.42}" ry="${H*.36}"/><circle class="g-obj" cx="${W*.6}" cy="${H*.44}" r="${W*.13}"/><circle class="g-sky" cx="${W*.6}" cy="${H*.44}" r="${W*.08}"/>`); }
+    else add(`<rect class="g-obj2" x="${W*.18}" y="${H*.52}" width="${W*.64}" height="${H*.5}" rx="40"/><rect class="g-obj" x="${W*.38}" y="${H*.3}" width="${W*.24}" height="${H*.34}" rx="12"/>`);
+    add(`<text class="g-lab" x="${W*.5}" y="${H*.2}" style="text-anchor:middle">손 · 소품</text>`);
+  } else if (s.ots){
+    add(pictoSVG(sx, fy, h, 'g-p'));
+    add(pictoSVG(-W*.05, H + .66*h*1.25, h*1.25, 'g-p g-blur'));
+  } else if (s.pair){
+    const off = .2*h; add(pictoSVG(sx - off, fy, h, 'g-p')); add(pictoSVG(sx + off, fy + .02*h, h*.94, 'g-p g-p2'));
+  } else add(pictoSVG(sx, fy, h, 'g-p'));
+  add(`<g class="g-third"><line x1="${W/3}" y1="0" x2="${W/3}" y2="${H}"/><line x1="${2*W/3}" y1="0" x2="${2*W/3}" y2="${H}"/><line x1="0" y1="${H/3}" x2="${W}" y2="${H/3}"/><line x1="0" y1="${2*H/3}" x2="${W}" y2="${H*2/3}"/></g>`);
+  if (s.feet) add(`<g class="g-note"><line x1="20" y1="${H - 6}" x2="${W - 20}" y2="${H - 6}"/><text x="${W/2}" y="${H - 16}" style="text-anchor:middle">발끝 = 화면 맨 아래</text></g>`);
+  if (s.eyes) add(`<g class="g-note"><text x="${W - 10}" y="${H/3 - 10}" style="text-anchor:end">눈은 이 선 근처</text></g>`);
+  if (s.space){ const L = s.space === 'left', x0 = L ? sx - 50 : sx + 50, x1 = L ? 22 : W - 22; add(`<g class="g-note"><line x1="${x0}" y1="${H*.5}" x2="${x1}" y2="${H*.5}" marker-end="url(#ar)"/><text x="${(x0 + x1)/2}" y="${H*.5 - 12}" style="text-anchor:middle">여백</text></g>`); }
+  if (s.horizon != null && s.horizon > .5 && s.horizon < .9) add(`<g class="g-note"><text x="10" y="${H*s.horizon - 10}" style="text-anchor:start">수평선</text></g>`);
+  return `<svg class="gsvg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(s.t)} 구도 가이드"><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="g-arh"/></marker><clipPath id="fc"><rect width="${W}" height="${H}" rx="14"/></clipPath></defs><g clip-path="url(#fc)"><rect class="g-bg" width="${W}" height="${H}"/>${out}</g><rect class="g-frame" x="1.5" y="1.5" width="${W - 3}" height="${H - 3}" rx="14"/></svg>`;
+}
+function heightSVG(s){
+  const W = 92, H = 170, fy = 158, h = 140, lv = PH_LV[s.ph] ?? .72, y = fy - h*Math.min(lv, 1.08);
+  const ang = {up:-14, down:22, level:0}[s.tilt] || 0, px = 70;
+  return `<svg class="hsvg" viewBox="0 0 ${W} ${H}" role="img" aria-label="폰 높이 ${PH_TX[s.ph]}"><line class="g-gr" x1="4" y1="${fy}" x2="${W - 4}" y2="${fy}"/>${pictoSVG(30, fy, h, 'g-p')}<line class="g-lvl" x1="8" y1="${y}" x2="${W - 6}" y2="${y}"/><g transform="translate(${px} ${y}) rotate(${-ang})"><rect class="g-phone" x="-6" y="-12" width="12" height="24" rx="3"/><line class="g-ray" x1="-6" y1="0" x2="-24" y2="0"/></g></svg>`;
+}
+let gSit = (() => { try { const v = localStorage.getItem('conti-gsit'); if (SITU[v]) return v; } catch(e) {} return 'travel'; })();
+function renderGuide(){
+  $('#g-sit').innerHTML = Object.entries(SITU).map(([k, v]) => `<button type="button" class="gs" aria-pressed="${k === gSit}" data-s="${k}"><b>${v.ko}</b><small>${v.d}</small></button>`).join('');
+  $('#g-check').innerHTML = CHECK3.map(([a, b], i) => `<li><b>${i + 1}. ${a}</b><span>${b}</span></li>`).join('');
+  $('#g-pose').innerHTML = POSEFIX.map(([a, b]) => `<li><b>${a}</b><span>${b}</span></li>`).join('');
+  $('#g-phone').innerHTML = PHONESET.map(([a, b]) => `<li><b>${a}</b><span>${b}</span></li>`).join('');
+  const list = GSHOTS[gSit];
+  $('#g-shots').innerHTML = list.map((s, i) => `<article class="gcard">
+    <div class="gvis">${frameSVG(s)}<div class="gside">${heightSVG(s)}<div class="gph">${figure(pick(s.cat, i + altSeed), '', 300)}</div></div></div>
+    <div class="gtxt"><div class="gh"><span class="cn">${i + 1}</span><div><h3>${s.t}</h3><div class="use">${s.why}</div></div></div>
+      <ul class="gkv"><li><b>폰 위치</b><span>${PH_TX[s.ph]} · ${TILT_TX[s.tilt]} · <strong>${s.zoom}</strong></span></li>
+      <li><b>빛</b><span>${s.light}</span></li><li><b>찍히는 사람</b><span>${s.pose}</span></li><li><b>팁</b><span>${s.tip}</span></li><li class="warn"><b>흔한 실수</b><span>${s.miss}</span></li></ul>
+      <button class="btn" type="button" data-field="${i}">현장에서 크게 보기</button></div></article>`).join('');
+}
+const FM = {i:0, lock:null};
+function openField(i){
+  FM.i = i; $('#field').hidden = false; document.body.style.overflow = 'hidden'; drawField();
+  try { navigator.wakeLock && navigator.wakeLock.request('screen').then(l => FM.lock = l).catch(() => {}); } catch(e) {}
+  $('#f-next').focus();
+}
+function closeField(){ $('#field').hidden = true; document.body.style.overflow = ''; try { FM.lock && FM.lock.release(); } catch(e) {} FM.lock = null; }
+function drawField(){
+  const list = GSHOTS[gSit], s = list[FM.i];
+  $('#f-count').textContent = `${SITU[gSit].ko} · ${FM.i + 1} / ${list.length}`;
+  $('#f-body').innerHTML = `<div class="fvis">${frameSVG(s)}</div><div class="ftxt"><h3>${s.t}</h3><p class="fbig">${PH_TX[s.ph]} · ${TILT_TX[s.tilt]} · <strong>${s.zoom}</strong></p><p><b>찍히는 사람</b> ${s.pose}</p><p><b>빛</b> ${s.light}</p><p><b>팁</b> ${s.tip}</p></div>`;
+  $('#f-prev').disabled = FM.i === 0; $('#f-next').textContent = FM.i === list.length - 1 ? '처음으로' : '다음 컷';
+}
+function initGuide(){
+  $('#g-sit').addEventListener('click', e => { const b = e.target.closest('[data-s]'); if (!b) return; gSit = b.dataset.s; try { localStorage.setItem('conti-gsit', gSit); } catch(er) {} renderGuide(); });
+  $('#g-shots').addEventListener('click', e => { const b = e.target.closest('[data-field]'); if (b) openField(+b.dataset.field); });
+  $('#g-fieldall').addEventListener('click', () => openField(0));
+  $('#f-close').addEventListener('click', closeField);
+  $('#f-prev').addEventListener('click', () => { if (FM.i > 0){ FM.i--; drawField(); } });
+  $('#f-next').addEventListener('click', () => { FM.i = (FM.i + 1) % GSHOTS[gSit].length; drawField(); });
+  document.addEventListener('keydown', e => { if ($('#field').hidden) return; if (e.key === 'Escape') closeField(); if (e.key === 'ArrowRight') $('#f-next').click(); if (e.key === 'ArrowLeft') $('#f-prev').click(); });
+  let sx0 = null; $('#field').addEventListener('pointerdown', e => sx0 = e.clientX); $('#field').addEventListener('pointerup', e => { if (sx0 == null) return; const dx = e.clientX - sx0; sx0 = null; if (Math.abs(dx) > 60){ (dx < 0 ? $('#f-next') : $('#f-prev')).click(); } });
+}
+function setView(v){
+  document.body.classList.toggle('v-guide', v === 'guide'); document.body.classList.toggle('v-plan', v !== 'guide');
+  document.querySelectorAll('.viewsw button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === v)));
+  try { localStorage.setItem('conti-view', v); history.replaceState(null, '', '#' + v); } catch(e) {}
+  if (v !== 'guide' && sim) drawSim();
+}
+
 /* ---------------- main ---------------- */
 function rebuild(){
   shots = buildShots();
@@ -2023,11 +2265,15 @@ readTokens(); tokRead = true;
 buildChips();
 buildSimControls();
 initSun();
+renderGuide();
+initGuide();
+document.querySelector('.viewsw').addEventListener('click', e => { const b = e.target.closest('[data-v]'); if (b) setView(b.dataset.v); });
 applyWiz();
 renderWiz();
 initWiz();
 rebuild();
 RB.init();
+setView((() => { const h = location.hash.replace('#', ''); if (h === 'plan' || h === 'guide') return h; if (['wiz','story','sim-sec'].includes(h)) return 'plan'; try { return localStorage.getItem('conti-view') || 'guide'; } catch(e) { return 'guide'; } })());
 
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(redrawAll);
 try { document.fonts.load("20px 'Nanum Pen Script'").then(redrawAll); } catch(e) {}
