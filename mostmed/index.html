@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MostMed — лечение в Корее с медицинским переводчиком</title>
+<meta name="description" content="Пластическая хирургия, дерматология, ортопедия, чекап и онкология в Южной Корее. Подбор клиники, сопровождение и медицинский перевод на русский.">
+<meta property="og:title" content="MostMed — лечение в Корее">
+<meta property="og:description" content="Подбор клиники в Корее и личный медицинский переводчик. Ответ в Telegram и WhatsApp.">
+<meta name="theme-color" content="#15213a">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%232e7d6f'/%3E%3Cpath d='M7 20c3-6 6-6 9 0s6 6 9 0' stroke='white' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Noto+Sans+KR:wght@400;500;700&family=Unbounded:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="demo-bar" id="demoBar"></div>
+
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="#/">
+      <span class="logo-mark"><svg width="20" height="20" viewBox="0 0 32 32"><path d="M4 20c4-8 8-8 12 0s8 8 12 0" stroke="#fff" stroke-width="3.4" fill="none" stroke-linecap="round"/></svg></span>
+      <span>MostMed<small id="logoSub"></small></span>
+    </a>
+    <nav>
+      <a class="nl" href="#/" data-go="cats" data-i18n="nav_services"></a>
+      <a class="nl" href="#/" data-go="how" data-i18n="nav_how"></a>
+      <a class="nl" href="#/" data-go="about" data-i18n="nav_about"></a>
+      <a class="nl" href="#/" data-go="faq">FAQ</a>
+      <div class="lang"><button data-lang="ru">RU</button><button data-lang="ko">KO</button></div>
+    </nav>
+  </div>
+</header>
+
+<main id="app"></main>
+
+<div class="fab" id="fab"></div>
+
+<div class="planbar" id="planbar">
+  <div class="cnt" id="planCnt"></div>
+  <button class="btn btn-main btn-sm" id="planOpen"></button>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true"><button class="x" id="sheetX" aria-label="Close">×</button><div class="sheet-in" id="sheetIn"></div></div>
+<div class="toast" id="toast"></div>
+
+<script src="assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+[
+  {"id":"c1","name":"Clinic A · Каннам","city":{"ru":"Сеул, Каннам","ko":"서울 강남"},"type":{"ru":"Клиника пластической хирургии","ko":"성형외과 전문병원"},"categories":["plastic"],"tags":["ru","transfer","online"]},
+  {"id":"c2","name":"Clinic B · Синса","city":{"ru":"Сеул, Синса","ko":"서울 신사"},"type":{"ru":"Пластика и дерматология","ko":"성형·피부 클리닉"},"categories":["plastic","derma"],"tags":["ru","online"]},
+  {"id":"c3","name":"Clinic C · Апкучжон","city":{"ru":"Сеул, Апкучжон","ko":"서울 압구정"},"type":{"ru":"Дерматологическая клиника","ko":"피부과"},"categories":["derma"],"tags":["ru"]},
+  {"id":"c4","name":"Hospital D","city":{"ru":"Сеул","ko":"서울"},"type":{"ru":"Университетская больница","ko":"대학병원"},"categories":["checkup","onco","cardio","ortho","women"],"tags":["ru","transfer","intl"]},
+  {"id":"c5","name":"Hospital E","city":{"ru":"Сеул","ko":"서울"},"type":{"ru":"Многопрофильный медцентр","ko":"종합병원"},"categories":["checkup","onco","cardio","eye"],"tags":["ru","intl","online"]},
+  {"id":"c6","name":"Spine Center F","city":{"ru":"Кимпхо (10 мин от аэропорта)","ko":"김포 (공항 10분)"},"type":{"ru":"Центр позвоночника и суставов","ko":"척추·관절 전문병원"},"categories":["ortho"],"tags":["ru","transfer","intl"]},
+  {"id":"c7","name":"Eye Center G","city":{"ru":"Сеул","ko":"서울"},"type":{"ru":"Офтальмологический центр","ko":"안과 전문병원"},"categories":["eye"],"tags":["ru","online"]},
+  {"id":"c8","name":"Dental H","city":{"ru":"Пусан","ko":"부산"},"type":{"ru":"Стоматологическая клиника","ko":"치과"},"categories":["dental"],"tags":["ru","transfer"]},
+  {"id":"c9","name":"Women's Clinic I","city":{"ru":"Сеул","ko":"서울"},"type":{"ru":"Центр репродуктологии","ko":"난임·여성 전문병원"},"categories":["women"],"tags":["ru","online"]},
+  {"id":"c10","name":"Medical Center J","city":{"ru":"Инчхон","ko":"인천"},"type":{"ru":"Медцентр для иностранных пациентов","ko":"외국인환자 특화 병원"},"categories":["checkup","ortho","dental","eye"],"tags":["ru","transfer","intl"]}
+]
