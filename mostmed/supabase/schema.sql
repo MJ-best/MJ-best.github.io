@@ -5,8 +5,10 @@ create table categories (
   sort int not null default 0,
   name_ru text not null,
   name_ko text not null,
+  name_en text,
   short_ru text,
-  short_ko text
+  short_ko text,
+  short_en text
 );
 
 create table procedures (
@@ -14,10 +16,13 @@ create table procedures (
   category_id text not null references categories(id),
   name_ru text not null,
   name_ko text not null,
+  name_en text,
   desc_ru text,
   desc_ko text,
+  desc_en text,
   recovery_ru text,
   recovery_ko text,
+  recovery_en text,
   price_from_usd int,
   price_to_usd int,
   stay_days int,
@@ -29,8 +34,8 @@ create table procedures (
 create table clinics (
   id text primary key,
   name text not null,
-  city_ru text, city_ko text,
-  type_ru text, type_ko text,
+  city_ru text, city_ko text, city_en text,
+  type_ru text, type_ko text, type_en text,
   categories text[] default '{}',
   tags text[] default '{}',           -- ru | transfer | online | intl
   is_foreign_patient_registered boolean default false,

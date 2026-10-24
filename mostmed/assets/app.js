@@ -4,8 +4,8 @@
 
 // ===== 운영자 설정 — 실제 연락처로 바꾸세요 =====
 const CONFIG = {
-  agentName: { ru: 'Ольга Ермолаева', ko: '올가 예르몰라예바' },  // 대표·의료통역사
-  agentInitials: 'ОЕ',
+  agentName: { ru: 'Ольга Ермолаева', ko: '올가 예르몰라예바', en: 'Olga Ermolaeva' },  // 대표·의료통역사
+  agentInitials: { ru: 'ОЕ', ko: 'OE', en: 'OE' },
   telegram: '+821087403600',                          // 텔레그램 아이디가 생기면 @ 없이 아이디로 교체 (지금은 전화번호 링크)
   whatsapp: '821087403600',                           // 국가번호 포함, 숫자만
   phone: '+82 10-8740-3600',
@@ -20,7 +20,9 @@ const store = {
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
 };
 
-let LANG = store.get(LS_LANG, (navigator.language || 'ru').startsWith('ko') ? 'ko' : 'ru');
+const NL = (navigator.language || 'ru').slice(0, 2);
+let LANG = store.get(LS_LANG, NL === 'ko' ? 'ko' : NL === 'en' ? 'en' : 'ru');
+if (!['ru', 'ko', 'en'].includes(LANG)) LANG = 'ru';
 let DB = { categories: [], procedures: [], clinics: [] };
 let plan = store.get(LS_PLAN, []);
 let query = '';
@@ -151,7 +153,72 @@ const T = {
     msg_head: '안녕하세요! MostMed 사이트 문의', msg_proc: '관심 시술', msg_general: '일반 상담', msg_name: '이름', msg_city: '도시', msg_contact: '연락처', msg_note: '메모',
     write: '문의',
   },
+  en: {
+    demo: 'Demo version: clinics and prices are sample data',
+    logoSub: 'treatment in Korea',
+    nav_services: 'Treatments', nav_how: 'How it works', nav_about: 'About',
+    eyebrow: 'Medical interpreter · Seoul',
+    h1: 'Treatment in Korea — <em>in your language</em>',
+    lead: 'I find the right clinic for your case, request quotes, and stay by your side at every appointment — from the first consultation to discharge.',
+    search_ph: 'e.g. knee, nose, check-up',
+    search_btn: 'Search',
+    chips: ['stem cells', 'knee', 'herniated disc', 'rhinoplasty', 'check-up', 'implants'],
+    stats: [['9', 'medical specialties'], ['24–48 h', 'quotes from clinics'], ['Free', 'first consultation']],
+    role: 'Founder of MostMed · Korean ↔ Russian medical interpreter',
+    perks: ['2–3 clinics selected and prices compared', 'Interpreting at every visit and document translation', 'Airport pickup, hotel and transfers', 'In touch throughout your treatment'],
+    resp: `Usually replies within 15 minutes · ${CONFIG.hours}`,
+    cats_h: 'Medical specialties', cats_sub: 'Choose a specialty to see procedures, stay length and approximate prices',
+    pop_h: 'Most requested', found: n => `Found: ${n}`, nothing: 'Nothing found. Describe your problem in your own words — I will tell you which doctor you need.',
+    how_h: 'How it works',
+    steps: [
+      ['Request', 'Message me on Telegram or WhatsApp, or build a plan right on the site.'],
+      ['Documents', 'Send your records, MRI and test results — I translate them for Korean doctors.'],
+      ['Offer', 'Within 24–48 hours: 2–3 clinics with a cost estimate and timeline.'],
+      ['Trip', 'Help with dates, hotel and airport transfer.'],
+      ['Treatment and after', 'Interpreting at appointments, discharge papers translated, follow-up after you return home.'],
+    ],
+    about_h: 'Olga Ermolaeva — founder of MostMed',
+    about_p: 'My name is Olga. I am a native Russian speaker and a professional Korean medical interpreter. You deal with one person who knows both your medical history and the Korean hospital from the inside.',
+    about_li: ['Interpreting at consultations, examinations and discharge', 'Translation of medical documents', 'University hospitals and specialized clinics', 'Transparent: the clinic issues the estimate on its own letterhead'],
+    faq_h: 'FAQ',
+    faq: [
+      ['How much do your services cost?', 'The first consultation and clinic selection are free. Terms for accompaniment are agreed in advance, before the trip.'],
+      ['Are the prices on the site final?', 'No, they are a guide. The clinic gives an exact estimate after reviewing your documents or an examination.'],
+      ['Can I get a consultation before the trip?', 'Yes. A doctor reviews your scans and records remotely, and I translate the conclusion. Many clinics also offer online consultations.'],
+      ['Do I need a visa?', 'Entry rules depend on your citizenship and length of treatment. I will tell you the current requirements and help get an invitation from the clinic if needed.'],
+      ['How do I pay for treatment?', 'You pay the clinic directly. We confirm the available payment methods before you buy tickets.'],
+      ['How many days do I need to stay in Korea?', 'It is shown on each procedure card. For a check-up, patients often come for 2–3 days.'],
+    ],
+    band_h: 'Not sure which doctor you need?', band_p: 'Describe your problem in your own words — I will find the specialist and clinic.',
+    procs: n => `${n} ${n === 1 ? 'procedure' : 'procedures'}`,
+    home: 'Home', popular: 'Popular', from: 'from', approx: 'approximate',
+    stay: d => d === 0 ? 'No trip needed' : `${d}+ days in Korea`,
+    add: '+ Add to plan', added: '✓ In plan', ask: 'Get a quote',
+    price_note: 'Prices are approximate (USD) and depend on the clinic, doctor and your case. The clinic gives an exact estimate after reviewing your documents.',
+    clinics_h: 'Clinics for this specialty', clinics_sub: 'The partner clinic has a detailed page. Other cards are for demonstration.',
+    tags: { ru: 'Russian-speaking coordinator', transfer: 'Transfer', online: 'Online consultation', intl: 'International patients', partner: 'Partner', mri: 'In-house MRI', rehab: 'Rehabilitation' },
+    on_request: 'Price on request', after_mri: 'estimate after MRI and exam', req_note: 'The cost depends on the stage and scope of treatment. Send your MRI or medical report — the clinic will prepare an estimate and I will translate it.',
+    partner: 'partner', partner_clinic: 'Partner clinic', partner_h: 'Partner clinic', partner_sub: 'Knee, spine and sports injuries — with clinic photos',
+    clinic_more: 'More about the clinic', clinic_procs: 'Treatments at the clinic', inside: 'Inside the clinic',
+    doctor: 'Doctor', website: 'Official website', ask_clinic: 'Book a consultation', source: 'Source', photo: 'Photo',
+    plan_cnt: n => n ? `In plan: <b>${n}</b> ${n === 1 ? 'procedure' : 'procedures'}` : '',
+    plan_open: 'Send', plan_h: 'My treatment plan', plan_empty: 'Your plan is empty — that is fine. Send a request for a general consultation.',
+    total: 'Plan estimate',
+    f_name: 'Your name', f_city: 'Where are you from', f_city_ph: 'City, country', f_channel: 'Preferred contact',
+    f_contact: { telegram: 'Telegram (@username or phone)', whatsapp: 'WhatsApp (number)', phone: 'Phone' },
+    f_msg: 'Briefly about your situation', f_msg_ph: 'Age, diagnosis, preferred travel dates…',
+    consent: 'I agree to the processing of my personal and medical data for clinic selection',
+    send: 'Send request', need: 'Please fill in your name, contact and consent',
+    ok_h: 'Your request is ready!', ok_tg: 'The text is copied. Telegram will open — paste it into the chat.', ok_wa: 'WhatsApp will open with the message ready.', ok_ph: 'I will call you back shortly.',
+    open_tg: 'Open Telegram', open_wa: 'Open WhatsApp', copied: 'Copied', close: 'Close',
+    detail_price: 'Price', detail_stay: 'Stay', detail_rec: 'Recovery', category: 'Specialty',
+    msg_head: 'Hello! Request from the MostMed website', msg_proc: 'Interested in', msg_general: 'General consultation', msg_name: 'Name', msg_city: 'City', msg_contact: 'Contact', msg_note: 'Comment',
+    write: 'Write',
+    call: 'Call', copy: 'Copy text',
+  },
 };
+T.ru.call = 'Звонок'; T.ru.copy = 'Копировать текст';
+T.ko.call = '전화'; T.ko.copy = '텍스트 복사';
 const t = k => T[LANG][k];
 function plural(n, one, few, many) {
   const m10 = n % 10, m100 = n % 100;
@@ -159,7 +226,7 @@ function plural(n, one, few, many) {
   if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return few;
   return many;
 }
-const L = o => (o && (o[LANG] ?? o.ru)) || '';
+const L = o => (o && (o[LANG] ?? o.en ?? o.ru)) || '';
 const money = n => '$' + new Intl.NumberFormat('ru-RU').format(n);
 const hasPrice = p => p.price_from_usd != null;
 const priceRange = p => !hasPrice(p) ? t('on_request') : p.price_to_usd && p.price_to_usd !== p.price_from_usd
@@ -229,7 +296,7 @@ function searchResults() {
   if (!q) return DB.procedures.filter(p => p.popular);
   return DB.procedures.filter(p => {
     const c = catById(p.category);
-    const hay = [p.name.ru, p.name.ko, p.desc.ru, p.desc.ko, c.name.ru, c.name.ko, ...(p.keywords || [])].join(' ').toLowerCase();
+    const hay = [p.name.ru, p.name.ko, p.name.en, p.desc.ru, p.desc.ko, p.desc.en, c.name.ru, c.name.ko, c.name.en, ...(p.keywords || []), ...(p.keywords_en || [])].join(' ').toLowerCase();
     return q.split(/\s+/).every(w => hay.includes(w));
   });
 }
@@ -257,7 +324,7 @@ function renderHome() {
       <div class="stats">${t('stats').map(([b, s]) => `<div class="stat"><b>${b}</b><span>${s}</span></div>`).join('')}</div>
     </div>
     <aside class="hero-card">
-      <div class="agent"><div class="avatar">${CONFIG.agentInitials}</div><div><b>${esc(name)}</b><span>${t('role')}</span></div></div>
+      <div class="agent"><div class="avatar">${L(CONFIG.agentInitials)}</div><div><b>${esc(name)}</b><span>${t('role')}</span></div></div>
       <ul>${t('perks').map(p => `<li>${ICON.check}<span>${p}</span></li>`).join('')}</ul>
       <div class="row">${messengerButtons()}</div>
       <div class="resp">${t('resp')}</div>
@@ -283,7 +350,7 @@ function renderHome() {
 
   <section id="about"><div class="wrap">
     <div class="about">
-      <div class="big-av">${CONFIG.agentInitials}</div>
+      <div class="big-av">${L(CONFIG.agentInitials)}</div>
       <div><h2>${t('about_h')}</h2><p style="font-size:17px">${t('about_p')}</p><ul>${t('about_li').map(x => `<li>${x}</li>`).join('')}</ul>
       <div style="display:flex;gap:8px;flex-wrap:wrap">${messengerButtons()}</div></div>
     </div>
@@ -444,7 +511,7 @@ function openPlan() {
       <label class="field"><span>${t('f_name')}</span><input name="name" required value="${esc(draft.name || '')}"></label>
       <label class="field"><span>${t('f_city')}</span><input name="city" placeholder="${esc(t('f_city_ph'))}" value="${esc(draft.city || '')}"></label>
       <div class="field"><span>${t('f_channel')}</span><div class="channels">
-        ${['telegram', 'whatsapp', 'phone'].map(c => `<label><input type="radio" name="channel" value="${c}" ${c === ch ? 'checked' : ''}>${c === 'telegram' ? 'Telegram' : c === 'whatsapp' ? 'WhatsApp' : (LANG === 'ru' ? 'Звонок' : '전화')}</label>`).join('')}
+        ${['telegram', 'whatsapp', 'phone'].map(c => `<label><input type="radio" name="channel" value="${c}" ${c === ch ? 'checked' : ''}>${c === 'telegram' ? 'Telegram' : c === 'whatsapp' ? 'WhatsApp' : t('call')}</label>`).join('')}
       </div></div>
       <label class="field"><span id="contactLbl">${t('f_contact')[ch]}</span><input name="contact" required value="${esc(draft.contact || '')}"></label>
       <label class="field"><span>${t('f_msg')}</span><textarea name="message" rows="3" placeholder="${esc(t('f_msg_ph'))}">${esc(draft.message || '')}</textarea></label>
@@ -484,7 +551,7 @@ async function submitLead(f) {
     <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
       ${d.channel !== 'whatsapp' ? `<a class="btn btn-tg" href="${tgUrl}" target="_blank" rel="noopener" id="goTg">${ICON.tg} ${t('open_tg')}</a>` : ''}
       ${d.channel !== 'telegram' ? `<a class="btn btn-wa" href="${waUrl}" target="_blank" rel="noopener">${ICON.wa} ${t('open_wa')}</a>` : ''}
-      <button class="btn btn-ghost" id="copyMsg">${LANG === 'ru' ? 'Копировать текст' : '텍스트 복사'}</button>
+      <button class="btn btn-ghost" id="copyMsg">${t('copy')}</button>
     </div></div>`);
   $('#goTg')?.addEventListener('click', () => navigator.clipboard?.writeText(msg).catch(() => {}));
   $('#copyMsg').onclick = () => navigator.clipboard?.writeText(msg).then(() => toast(t('copied'))).catch(() => {});
