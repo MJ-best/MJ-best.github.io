@@ -114,6 +114,10 @@ body.v-plan #guide{display:none}
 .gs{font:inherit;text-align:left;border:1.5px solid var(--scrib);background:var(--sheet);color:var(--ink);border-radius:4px;padding:9px 11px;cursor:pointer;display:grid;gap:2px}
 .gs b{font-size:14px}.gs small{font-size:11.5px;color:var(--ink-2);line-height:1.35}
 .gs[aria-pressed="true"]{border-color:var(--ink);background:var(--tape);box-shadow:2px 2px 0 var(--ink)}
+.gcam,.grefs{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin-top:12px}
+.gcl{font-size:13px;font-weight:600;color:var(--ink-2)}
+.gsep{width:1px;height:22px;background:var(--grid)}
+.grefs{margin-top:16px;border:1.5px solid var(--scrib-2);border-radius:4px;padding:10px 12px}
 .gtop{display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;margin:16px 0}
 .gtop .gcheck{flex:1 1 520px;min-width:0}
 .gtop > .btn{flex:0 0 auto}
@@ -126,7 +130,7 @@ body.v-plan #guide{display:none}
 .gvis{display:grid;grid-template-columns:minmax(0,1fr) 92px;gap:8px;align-items:start}
 .gside{display:grid;gap:8px}
 .gsvg{width:100%;height:auto;display:block}.hsvg{width:100%;height:auto;display:block}
-.gph .ph figcaption{display:none}
+.gph .ph figcaption{font-size:10px;line-height:1.3}
 .gtxt{display:grid;gap:8px;align-content:start;min-width:0}
 .gh{display:flex;gap:10px;align-items:flex-start}
 .gh .cn{flex:none;display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--ink);color:var(--sheet);font-family:var(--f-mono);font-size:13px}
@@ -359,10 +363,10 @@ footer code{font-family:var(--f-mono);font-size:12px}
     <div>
       <div class="eyebrow">Shoot planner · 촬영이 막막할 때</div>
       <h1>스튜디오 <span class="tape">콘티북</span></h1>
-      <p class="lede">친구·가족을 폰으로 바로 찍어 줘야 할 때는 장소별로 꼭 찍을 컷과 구도·폰 높이·줌·포즈를 보여 주고, 제대로 준비하는 촬영이라면 용도에 맞춘 컷 리스트·준비물·당일 시간표를 담은 촬영 계획서를 만들어 줍니다.</p>
+      <p class="lede">카메라를 들고 인물을 찍어야 할 때는 장소별로 꼭 찍을 컷과 구도·카메라 높이·렌즈·설정·포즈를 보여 주고, 제대로 준비하는 촬영이라면 용도에 맞춘 컷 리스트·준비물·당일 시간표를 담은 촬영 계획서를 만들어 줍니다.</p>
     </div>
     <div class="mast-actions">
-      <div class="viewsw" role="group" aria-label="보기 선택"><button type="button" data-v="guide" aria-pressed="true">폰으로 바로 찍기 가이드</button><button type="button" data-v="plan" aria-pressed="false">촬영 계획서 만들기</button></div>
+      <div class="viewsw" role="group" aria-label="보기 선택"><button type="button" data-v="guide" aria-pressed="true">카메라 인물촬영 가이드</button><button type="button" data-v="plan" aria-pressed="false">촬영 계획서 만들기</button></div>
       <button class="btn plan-only" id="reseed" type="button">다른 예시 사진 보기</button>
       <button class="btn solid plan-only" id="copy" type="button">계획서 텍스트 복사</button>
     </div>
@@ -375,16 +379,18 @@ footer code{font-family:var(--f-mono);font-size:12px}
   
 
   <section class="sheet" id="guide" aria-labelledby="h-guide">
-    <div class="sec-head"><span class="no">01</span><h2 id="h-guide">폰으로 인물 찍어 주기</h2><p>친구·가족·연인을 찍어 줘야 하는데 막막할 때. 어디서 찍는지만 고르면 그 자리에서 꼭 찍어 줄 컷과 구도, 폰 높이, 줌, 빛, 포즈를 보여 줍니다.</p></div>
+    <div class="sec-head"><span class="no">01</span><h2 id="h-guide">카메라로 인물 찍기 가이드</h2><p>카메라를 들고 나갔는데 무엇을 어떻게 찍을지 막막할 때. 장소와 내 카메라·렌즈를 고르면 꼭 찍을 컷마다 구도, 카메라 높이, 렌즈와 모델까지 거리, 조리개·셔터 설정, 빛, 포즈를 알려 줍니다.</p></div>
     <div class="gsits" id="g-sit" role="group" aria-label="촬영 장소"></div>
+    <div class="gcam"><span class="gcl">내 카메라·렌즈</span><div class="chips" id="g-cam" role="group" aria-label="센서와 렌즈"></div></div>
     <div class="gtop">
       <div class="gbox gcheck"><h3>셔터 누르기 전 3초 체크</h3><ol id="g-check"></ol></div>
       <button class="btn solid" type="button" id="g-fieldall">현장 모드로 한 컷씩 보기</button>
     </div>
     <div class="gshots" id="g-shots"></div>
+    <div class="grefs"><span class="gcl">이 장소의 참고 사진가·인스타 태그</span><div class="links" id="g-refs"></div></div>
     <div class="gbottom">
       <div class="gbox"><h3>찍히는 사람이 어색할 때</h3><ul class="gl" id="g-pose"></ul></div>
-      <div class="gbox"><h3>폰 카메라 설정</h3><ul class="gl" id="g-phone"></ul></div>
+      <div class="gbox"><h3>카메라 기본 설정</h3><ul class="gl" id="g-phone"></ul></div>
       <div class="gbox"><h3>더 배우고 싶다면</h3><ul class="gl">
         <li><b><a href="https://maily.so/0photo" target="_blank" rel="noopener">영뽀또 뉴스레터</a></b><span>스마트폰 구도·빛·보정을 쉽게 알려 주는 강의형 글</span></li>
         <li><b><a href="https://apps.apple.com/kr/app/%ED%8F%AC%EC%A6%88-%ED%8F%AC%ED%86%A0%EC%8A%A4%ED%8C%9F-%EA%B5%AC%EB%8F%84-%EA%B0%80%EC%9D%B4%EB%93%9C/id1453658722" target="_blank" rel="noopener">포즈: 포토스팟·구도 가이드</a></b><span>카메라 화면에 구도 가이드를 겹쳐 주는 앱</span></li>
@@ -2097,47 +2103,55 @@ const SITU = {
 };
 const GSHOTS = {
   travel:[
-    {t:'장소가 주인공인 컷', why:'여행 대표 사진 · 어디 갔는지 한눈에', kind:'wide', sx:.33, horizon:.66, ph:'chest', tilt:'level', zoom:'1x', space:'right', light:'해를 찍는 사람 등 뒤나 옆에 두기', pose:'풍경을 바라보거나, 몸은 풍경 쪽·얼굴만 살짝 카메라로', tip:'인물은 가운데가 아니라 왼쪽·오른쪽 세로선에. 수평선은 아래쪽 가로선에 맞추면 하늘이 시원합니다.', miss:'인물을 정가운데 크게 두면 장소가 안 보입니다.', cat:'snap_city'},
-    {t:'다리 길어 보이는 전신', why:'착장 전체 · 인생샷', kind:'full', sx:.5, ph:'knee', tilt:'up', zoom:'1x', feet:true, light:'얼굴에 빛이 오는 방향으로 서기', pose:'한 발을 반 걸음 앞으로, 체중은 뒷발에. 앞발 끝은 카메라 쪽', tip:'폰을 무릎 높이로 내리고 발끝을 화면 맨 아래에 붙이세요. 폰을 아주 살짝 위로 기울이면 다리가 길어 보입니다.', miss:'눈높이에서 내려다보면 머리는 크고 다리는 짧아 보입니다.', cat:'frame_full'},
-    {t:'걷는 뒷모습', why:'자연스러운 여행 분위기 컷', kind:'full', sx:.62, ph:'waist', tilt:'level', zoom:'1x', space:'left', light:'역광이면 머리카락에 빛 테두리가 생겨 더 예쁩니다', pose:'앞을 보고 천천히 걷다가, 부르면 어깨 너머로 돌아보기', tip:'연사로 찍고 발이 앞뒤로 벌어진 컷을 고르세요. 걸어가는 쪽 앞에 여백을 남깁니다.', miss:'걸어가는 방향 앞이 막혀 있으면 답답해 보입니다.', cat:'snap_city'},
-    {t:'배경 흐린 상반신', why:'프로필 사진 · 얼굴이 잘 보이는 컷', kind:'waist', sx:.5, ph:'chest', tilt:'level', zoom:'2x', eyes:true, light:'그늘이나 해를 등진 쪽에서 찍으면 눈을 안 찡그려요', pose:'몸은 45° 돌리고 얼굴만 카메라로, 턱은 앞으로 살짝', tip:'2x로 두세 걸음 뒤에서 찍으면 얼굴이 자연스럽고 배경이 흐려집니다. 인물 모드를 켜세요.', miss:'1x로 바짝 다가가면 얼굴이 넓적해 보입니다.', cat:'frame_bust'},
-    {t:'손·소품 디테일', why:'사진 여러 장 올릴 때 사이에 넣는 컷', kind:'detail', ph:'chest', tilt:'down', zoom:'2x', light:'그늘에서 찍어야 반사가 없어요', pose:'티켓·음료·모자를 손에 들고 살짝 앞으로 내밀기', tip:'배경은 단순하게, 손톱과 소매 끝을 정리하고 찍습니다.', miss:'배경이 복잡하면 무엇을 찍었는지 안 보입니다.', cat:'topview'}],
+    {t:'장소가 주인공인 컷', why:'여행 대표 사진 · 어디 갔는지 한눈에', kind:'wide', sx:.33, horizon:.66, ph:'chest', tilt:'level', zoom:'35', space:'right', light:'해를 찍는 사람 등 뒤나 옆에 두기', pose:'풍경을 바라보거나, 몸은 풍경 쪽·얼굴만 살짝 카메라로', tip:'인물은 가운데가 아니라 왼쪽·오른쪽 세로선에. 수평선은 아래쪽 가로선에 맞추면 하늘이 시원합니다.', miss:'인물을 정가운데 크게 두면 장소가 안 보입니다.', cat:'snap_city'},
+    {t:'다리 길어 보이는 전신', why:'착장 전체 · 인생샷', kind:'full', sx:.5, ph:'knee', tilt:'up', zoom:'35', feet:true, light:'얼굴에 빛이 오는 방향으로 서기', pose:'한 발을 반 걸음 앞으로, 체중은 뒷발에. 앞발 끝은 카메라 쪽', tip:'카메라를 무릎 높이로 내리고 발끝을 화면 맨 아래에 붙이세요. 아주 살짝 위로 기울이면 다리가 길어 보입니다. 틸트 액정을 쓰면 편합니다.', miss:'눈높이에서 내려다보면 머리는 크고 다리는 짧아 보입니다.', cat:'frame_full'},
+    {t:'걷는 뒷모습', why:'자연스러운 여행 분위기 컷', kind:'full', sx:.62, ph:'waist', tilt:'level', zoom:'35', space:'left', light:'역광이면 머리카락에 빛 테두리가 생겨 더 예쁩니다', pose:'앞을 보고 천천히 걷다가, 부르면 어깨 너머로 돌아보기', tip:'AF-C + 연사, 셔터 1/500초 이상. 발이 앞뒤로 벌어진 컷을 고르세요. 걸어가는 쪽 앞에 여백을 남깁니다.', miss:'걸어가는 방향 앞이 막혀 있으면 답답해 보입니다.', cat:'snap_city'},
+    {t:'배경 흐린 상반신', why:'프로필 사진 · 얼굴이 잘 보이는 컷', kind:'waist', sx:.5, ph:'chest', tilt:'level', zoom:'85', eyes:true, light:'그늘이나 해를 등진 쪽에서 찍으면 눈을 안 찡그려요', pose:'몸은 45° 돌리고 얼굴만 카메라로, 턱은 앞으로 살짝', tip:'85mm로 두세 걸음 뒤에서 조리개를 개방(f/1.8~2.8)하면 얼굴이 자연스럽고 배경이 흐려집니다.', miss:'광각(24~35mm)으로 바짝 다가가면 얼굴이 넓적해 보입니다.', cat:'frame_bust'},
+    {t:'손·소품 디테일', why:'사진 여러 장 올릴 때 사이에 넣는 컷', kind:'detail', ph:'chest', tilt:'down', zoom:'50', light:'그늘에서 찍어야 반사가 없어요', pose:'티켓·음료·모자를 손에 들고 살짝 앞으로 내밀기', tip:'배경은 단순하게, 손톱과 소매 끝을 정리하고 찍습니다.', miss:'배경이 복잡하면 무엇을 찍었는지 안 보입니다.', cat:'topview'}],
   cafe:[
-    {t:'창가 옆모습', why:'카페 분위기 대표 컷', kind:'bust', sx:.4, ph:'chest', tilt:'level', zoom:'2x', space:'right', light:'창이 인물 옆에 오게(찍는 사람 기준 옆쪽)', pose:'창밖을 보다가 천천히 고개를 카메라 쪽으로', tip:'창빛이 얼굴 한쪽에 들어와야 입체감이 생깁니다. 얼굴을 터치해 밝기를 맞추세요.', miss:'창을 등지고 앉히면 얼굴이 까맣게 나옵니다.', cat:'mood_warm'},
-    {t:'테이블 위에서 내려다보기', why:'음료·디저트와 손', kind:'top', ph:'above', tilt:'down', zoom:'1x', light:'창 쪽에서 빛이 오게 테이블 방향 잡기', pose:'컵을 두 손으로 감싸거나 포크를 든 손만', tip:'폰을 테이블과 평행하게 들고 바로 위에서. 격자선 교차점에 컵을 놓습니다.', miss:'비스듬히 찍으면 테이블이 사다리꼴로 찌그러집니다.', cat:'topview'},
-    {t:'마주 앉은 상반신', why:'친구가 찍어 주는 가장 흔한 컷', kind:'waist', sx:.5, ph:'chest', tilt:'level', zoom:'1x', light:'인물 뒤가 창이면 자리를 바꾸세요', pose:'팔꿈치를 테이블에 올리고 손을 턱 근처에 살짝', tip:'폰은 상대 가슴 높이에. 찍기 전에 빈 잔·휴지·폰을 치우세요.', miss:'테이블 위 잡동사니가 화면에 그대로 나옵니다.', cat:'frame_bust'},
-    {t:'딴짓하는 캔디드', why:'꾸미지 않은 듯한 자연스러운 컷', kind:'bust', sx:.6, ph:'chest', tilt:'level', zoom:'2x', space:'left', light:'창빛이 얼굴 앞쪽 45°에서 오게', pose:'메뉴판이나 책을 보다가 웃음 터뜨리기', tip:'포즈 잡기 전후의 순간을 연사로 계속 찍으세요. 가장 자연스러운 표정은 그 사이에 나옵니다.', miss:'“찍는다~” 하고 찍으면 표정이 굳습니다.', cat:'mood_warm'},
-    {t:'입구 앞 전신', why:'카페 간판과 함께 기록', kind:'full', sx:.5, ph:'knee', tilt:'up', zoom:'1x', feet:true, light:'간판이 그늘이면 인물도 그늘에', pose:'문 손잡이를 잡고 돌아보기', tip:'간판이 머리 위에 보이게 화면 위쪽을 넉넉히 남기세요.', miss:'간판 글자가 머리에 가려지면 기록 의미가 없어요.', cat:'frame_full'}],
+    {t:'창가 옆모습', why:'카페 분위기 대표 컷', kind:'bust', sx:.4, ph:'chest', tilt:'level', zoom:'85', space:'right', light:'창이 인물 옆에 오게(찍는 사람 기준 옆쪽)', pose:'창밖을 보다가 천천히 고개를 카메라 쪽으로', tip:'창빛이 얼굴 한쪽에 들어와야 입체감이 생깁니다. 노출은 밝은 쪽 볼에 맞추세요.', miss:'창을 등지고 앉히면 얼굴이 까맣게 나옵니다.', cat:'mood_warm'},
+    {t:'테이블 위에서 내려다보기', why:'음료·디저트와 손', kind:'top', ph:'above', tilt:'down', zoom:'35', light:'창 쪽에서 빛이 오게 테이블 방향 잡기', pose:'컵을 두 손으로 감싸거나 포크를 든 손만', tip:'카메라 센서를 테이블과 평행하게 들고 바로 위에서. 틸트 액정이 있으면 펼쳐서 보세요. 격자선 교차점에 컵을 놓습니다.', miss:'비스듬히 찍으면 테이블이 사다리꼴로 찌그러집니다.', cat:'topview'},
+    {t:'마주 앉은 상반신', why:'친구가 찍어 주는 가장 흔한 컷', kind:'waist', sx:.5, ph:'chest', tilt:'level', zoom:'50', light:'인물 뒤가 창이면 자리를 바꾸세요', pose:'팔꿈치를 테이블에 올리고 손을 턱 근처에 살짝', tip:'카메라는 상대 가슴 높이에. 찍기 전에 빈 잔·휴지·폰을 치우세요.', miss:'테이블 위 잡동사니가 화면에 그대로 나옵니다.', cat:'frame_bust'},
+    {t:'딴짓하는 캔디드', why:'꾸미지 않은 듯한 자연스러운 컷', kind:'bust', sx:.6, ph:'chest', tilt:'level', zoom:'85', space:'left', light:'창빛이 얼굴 앞쪽 45°에서 오게', pose:'메뉴판이나 책을 보다가 웃음 터뜨리기', tip:'포즈 잡기 전후의 순간을 연사로 계속 찍으세요. 가장 자연스러운 표정은 그 사이에 나옵니다.', miss:'“찍는다~” 하고 찍으면 표정이 굳습니다.', cat:'mood_warm'},
+    {t:'입구 앞 전신', why:'카페 간판과 함께 기록', kind:'full', sx:.5, ph:'knee', tilt:'up', zoom:'35', feet:true, light:'간판이 그늘이면 인물도 그늘에', pose:'문 손잡이를 잡고 돌아보기', tip:'간판이 머리 위에 보이게 화면 위쪽을 넉넉히 남기세요.', miss:'간판 글자가 머리에 가려지면 기록 의미가 없어요.', cat:'frame_full'}],
   street:[
-    {t:'벽에 기대기', why:'골목 감성 대표 컷', kind:'knee', sx:.4, ph:'waist', tilt:'level', zoom:'1x', space:'right', light:'벽에 해가 들면 그늘 쪽 벽으로', pose:'한쪽 어깨를 벽에 대고 반대쪽 발을 교차', tip:'벽과 길이 만드는 선이 인물 쪽으로 모이게 비스듬히 서서 찍으세요.', miss:'벽을 정면으로 찍으면 밋밋합니다.', cat:'snap_city'},
-    {t:'걸어오는 연사', why:'움직임이 살아 있는 전신', kind:'full', sx:.5, ph:'knee', tilt:'up', zoom:'1x', feet:true, light:'얼굴에 그늘이 고르게 지는 길을 고르세요', pose:'카메라 쪽으로 걸어오며 땅 대신 먼 곳 보기', tip:'찍는 사람은 쪼그려 앉고 연사로. 10장 중 다리가 교차한 컷 하나면 성공입니다.', miss:'멈춰 서서 걷는 척하면 어색해요.', cat:'snap_city'},
-    {t:'계단·횡단보도 선 이용', why:'시선이 인물에 모이는 구도', kind:'wide', sx:.5, horizon:null, ph:'chest', tilt:'level', zoom:'1x', lines:true, light:'선의 그림자가 또렷한 오후가 좋아요', pose:'선이 모이는 곳에 서서 카메라 보기', tip:'계단·차선·난간이 한 점으로 모이는 곳에 인물을 두세요.', miss:'0.5x를 쓰면 가장자리가 휘니 인물을 가장자리에 두지 마세요.', cat:'snap_city'},
-    {t:'그늘 속 얼굴', why:'피부가 가장 예쁘게 나오는 컷', kind:'face', sx:.5, ph:'eye', tilt:'level', zoom:'2x', eyes:true, light:'건물 그늘 가장자리에서 밝은 길 쪽을 보게', pose:'턱을 앞으로 1 cm, 살짝 내리기', tip:'그늘 끝에 서면 빛이 고르고 눈에 반짝임이 생깁니다.', miss:'한낮 햇빛 아래에서는 눈 밑에 진한 그림자가 생겨요.', cat:'frame_cu'},
-    {t:'어깨 너머 돌아보기', why:'영화 같은 한 장면', kind:'waist', sx:.62, ph:'chest', tilt:'level', zoom:'2x', space:'left', light:'해를 인물 앞쪽에', pose:'앞으로 걷다가 이름을 부르면 어깨 너머로 돌아보기', tip:'부르기 직전부터 연사를 누르고 있으세요.', miss:'돌아본 뒤 멈춘 컷은 대부분 굳어 있어요.', cat:'snap_profile'}],
+    {t:'벽에 기대기', why:'골목 감성 대표 컷', kind:'knee', sx:.4, ph:'waist', tilt:'level', zoom:'50', space:'right', light:'벽에 해가 들면 그늘 쪽 벽으로', pose:'한쪽 어깨를 벽에 대고 반대쪽 발을 교차', tip:'벽과 길이 만드는 선이 인물 쪽으로 모이게 비스듬히 서서 찍으세요.', miss:'벽을 정면으로 찍으면 밋밋합니다.', cat:'snap_city'},
+    {t:'걸어오는 연사', why:'움직임이 살아 있는 전신', kind:'full', sx:.5, ph:'knee', tilt:'up', zoom:'35', feet:true, light:'얼굴에 그늘이 고르게 지는 길을 고르세요', pose:'카메라 쪽으로 걸어오며 땅 대신 먼 곳 보기', tip:'쪼그려 앉아 AF-C(추적) + 연사, 셔터 1/500초. 10장 중 다리가 교차한 컷 하나면 성공입니다.', miss:'멈춰 서서 걷는 척하면 어색해요.', cat:'snap_city'},
+    {t:'계단·횡단보도 선 이용', why:'시선이 인물에 모이는 구도', kind:'wide', sx:.5, horizon:null, ph:'chest', tilt:'level', zoom:'35', lines:true, light:'선의 그림자가 또렷한 오후가 좋아요', pose:'선이 모이는 곳에 서서 카메라 보기', tip:'계단·차선·난간이 한 점으로 모이는 곳에 인물을 두세요.', miss:'광각에서는 가장자리가 늘어나니 인물을 가장자리에 두지 마세요.', cat:'snap_city'},
+    {t:'그늘 속 얼굴', why:'피부가 가장 예쁘게 나오는 컷', kind:'face', sx:.5, ph:'eye', tilt:'level', zoom:'85', eyes:true, light:'건물 그늘 가장자리에서 밝은 길 쪽을 보게', pose:'턱을 앞으로 1 cm, 살짝 내리기', tip:'그늘 끝에 서면 빛이 고르고 눈에 반짝임이 생깁니다.', miss:'한낮 햇빛 아래에서는 눈 밑에 진한 그림자가 생겨요.', cat:'frame_cu'},
+    {t:'어깨 너머 돌아보기', why:'영화 같은 한 장면', kind:'waist', sx:.62, ph:'chest', tilt:'level', zoom:'85', space:'left', light:'해를 인물 앞쪽에', pose:'앞으로 걷다가 이름을 부르면 어깨 너머로 돌아보기', tip:'부르기 직전부터 연사를 누르고 있으세요.', miss:'돌아본 뒤 멈춘 컷은 대부분 굳어 있어요.', cat:'snap_profile'}],
   nature:[
-    {t:'노을 역광 상반신', why:'머리카락에 빛이 걸리는 감성 컷', kind:'bust', sx:.5, ph:'chest', tilt:'level', zoom:'2x', light:'해를 인물 머리 바로 뒤에', pose:'바람을 등지고 서서 살짝 미소', tip:'얼굴을 터치한 뒤 밝기 바를 위로 올리세요. 흰 옷이나 흰 종이로 얼굴 앞을 밝히면 더 좋습니다.', miss:'자동 노출이면 얼굴이 까맣게 나옵니다.', cat:'snap_backlight'},
-    {t:'노을 실루엣', why:'형태만 남는 그림 같은 컷', kind:'full', sx:.4, horizon:.72, ph:'knee', tilt:'up', zoom:'1x', space:'right', light:'해가 진 직후의 밝은 하늘을 배경으로', pose:'팔이나 다리를 몸에서 떼서 모양을 크게', tip:'하늘을 길게 눌러 노출을 고정(AE/AF 잠금)하세요.', miss:'팔을 몸에 붙이면 실루엣이 덩어리로 뭉쳐 보여요.', cat:'snap_golden'},
-    {t:'앉아서 올려다보기', why:'얼굴이 작고 눈이 커 보이는 컷', kind:'waist', sx:.5, ph:'above', tilt:'down', zoom:'1x', light:'얼굴이 하늘을 향하니 빛이 고르게 들어와요', pose:'풀밭·모래·돗자리에 앉아 카메라를 올려다보기', tip:'찍는 사람은 서서 내려다보며. 턱이 들리면 얼굴선이 갸름해집니다.', miss:'너무 높이서 찍으면 몸이 아주 작아집니다.', cat:'angle_high'},
-    {t:'바람에 날리는 머리카락', why:'움직임이 있는 클로즈업', kind:'face', sx:.5, ph:'eye', tilt:'level', zoom:'2x', eyes:true, light:'옆에서 오는 낮은 해', pose:'바람을 등지거나 옆으로 서서 머리카락을 손으로 쓸어 넘기기', tip:'바람을 정면으로 맞으면 머리카락이 얼굴을 덮으니 등지게 서세요.', miss:'얼굴에 머리카락이 붙은 컷은 고르기 어려워요.', cat:'snap_profile'},
-    {t:'하늘만 배경인 로우 앵글', why:'깔끔한 배경 · 시원한 비율', kind:'full', sx:.5, horizon:.92, ph:'floor', tilt:'up', zoom:'1x', feet:true, light:'해를 찍는 사람 등 뒤에', pose:'점프하거나 팔을 넓게 벌리기', tip:'폰을 땅에 거의 붙이면 배경이 하늘만 남아 깔끔합니다.', miss:'0.5x로 아래에서 찍으면 다리는 길어도 얼굴이 작게 휘어요.', cat:'angle_low'}],
+    {t:'노을 역광 상반신', why:'머리카락에 빛이 걸리는 감성 컷', kind:'bust', sx:.5, ph:'chest', tilt:'level', zoom:'85', light:'해를 인물 머리 바로 뒤에', pose:'바람을 등지고 서서 살짝 미소', tip:'노출 보정 +1~+1.7 또는 얼굴에 스팟 측광. 접이식 반사판으로 얼굴 앞을 밝히면 더 좋습니다.', miss:'평가(멀티) 측광 그대로면 얼굴이 까맣게 나옵니다.', cat:'snap_backlight'},
+    {t:'노을 실루엣', why:'형태만 남는 그림 같은 컷', kind:'full', sx:.4, horizon:.72, ph:'knee', tilt:'up', zoom:'35', space:'right', light:'해가 진 직후의 밝은 하늘을 배경으로', pose:'팔이나 다리를 몸에서 떼서 모양을 크게', tip:'하늘에 측광하고 노출 고정(AE-L) 또는 노출 보정 −1~−2스톱.', miss:'팔을 몸에 붙이면 실루엣이 덩어리로 뭉쳐 보여요.', cat:'snap_golden'},
+    {t:'앉아서 올려다보기', why:'얼굴이 작고 눈이 커 보이는 컷', kind:'waist', sx:.5, ph:'above', tilt:'down', zoom:'50', light:'얼굴이 하늘을 향하니 빛이 고르게 들어와요', pose:'풀밭·모래·돗자리에 앉아 카메라를 올려다보기', tip:'찍는 사람은 서서 내려다보며. 턱이 들리면 얼굴선이 갸름해집니다.', miss:'너무 높이서 찍으면 몸이 아주 작아집니다.', cat:'angle_high'},
+    {t:'바람에 날리는 머리카락', why:'움직임이 있는 클로즈업', kind:'face', sx:.5, ph:'eye', tilt:'level', zoom:'85', eyes:true, light:'옆에서 오는 낮은 해', pose:'바람을 등지거나 옆으로 서서 머리카락을 손으로 쓸어 넘기기', tip:'바람을 정면으로 맞으면 머리카락이 얼굴을 덮으니 등지게 서세요.', miss:'얼굴에 머리카락이 붙은 컷은 고르기 어려워요.', cat:'snap_profile'},
+    {t:'하늘만 배경인 로우 앵글', why:'깔끔한 배경 · 시원한 비율', kind:'full', sx:.5, horizon:.92, ph:'floor', tilt:'up', zoom:'35', feet:true, light:'해를 찍는 사람 등 뒤에', pose:'점프하거나 팔을 넓게 벌리기', tip:'카메라를 땅에 거의 붙이고 틸트 액정으로 보면 배경이 하늘만 남아 깔끔합니다.', miss:'16~24mm 초광각으로 아래에서 찍으면 다리는 길어도 얼굴이 작게 휘어요.', cat:'angle_low'}],
   pair:[
-    {t:'나란히 걷기', why:'둘의 분위기가 한눈에', kind:'full', pair:true, sx:.5, ph:'knee', tilt:'up', zoom:'1x', feet:true, light:'둘 다 얼굴에 그늘이 고르게', pose:'손잡고 서로 보며 수다 떨듯 걷기', tip:'찍는 사람이 뒷걸음질로 따라가며 연사. 두 사람 사이 간격은 손 하나.', miss:'둘이 카메라만 보고 걸으면 어색해요.', cat:'snap_couple'},
-    {t:'서로 보며 웃기', why:'관계가 보이는 상반신', kind:'waist', pair:true, sx:.5, ph:'chest', tilt:'level', zoom:'2x', light:'두 얼굴에 같은 방향의 빛', pose:'마주 보고 먼저 웃는 사람이 지는 게임', tip:'웃음이 터진 직후를 노리세요. 둘의 키 차이가 크면 큰 사람이 살짝 고개를 숙입니다.', miss:'얼굴이 겹쳐 한 사람이 가려지지 않게.', cat:'couple'},
-    {t:'등 맞대기', why:'친구·커플 모두 쓰기 좋은 포즈', kind:'knee', pair:true, sx:.5, ph:'waist', tilt:'level', zoom:'1x', light:'옆에서 오는 빛', pose:'등을 맞대고 팔짱, 얼굴만 카메라 쪽으로', tip:'둘의 머리 높이를 엇갈리게 하면 화면이 안정적입니다.', miss:'둘이 일렬로 똑같이 서면 증명사진 같아요.', cat:'snap_couple'},
-    {t:'어깨 너머 한 사람', why:'한 사람 초점 + 한 사람 흐리게', kind:'bust', ots:true, sx:.64, ph:'chest', tilt:'level', zoom:'2x', light:'초점 받는 사람 얼굴 쪽에서 빛', pose:'앞사람 어깨 너머로 뒷사람이 웃으며 보기', tip:'앞사람 어깨를 화면 가장자리에 흐리게 걸치면 둘의 관계가 보입니다.', miss:'초점이 앞사람 어깨에 가면 실패. 뒷사람 얼굴을 터치하세요.', cat:'couple'},
-    {t:'손 디테일', why:'반지·팔찌·맞잡은 손', kind:'detail', ph:'chest', tilt:'down', zoom:'2x', light:'그늘에서', pose:'두 손을 겹치거나 깍지 끼기', tip:'손가락에 힘을 빼야 손이 예뻐 보입니다.', miss:'반지에 해가 비치면 하얗게 날아가요.', cat:'couple'}],
+    {t:'나란히 걷기', why:'둘의 분위기가 한눈에', kind:'full', pair:true, sx:.5, ph:'knee', tilt:'up', zoom:'35', feet:true, light:'둘 다 얼굴에 그늘이 고르게', pose:'손잡고 서로 보며 수다 떨듯 걷기', tip:'뒷걸음질로 따라가며 AF-C(연속 AF) + 연사. 둘 다 선명하게 f/4 이상. 두 사람 사이 간격은 손 하나.', miss:'둘이 카메라만 보고 걸으면 어색해요.', cat:'snap_couple'},
+    {t:'서로 보며 웃기', why:'관계가 보이는 상반신', kind:'waist', pair:true, sx:.5, ph:'chest', tilt:'level', zoom:'85', light:'두 얼굴에 같은 방향의 빛', pose:'마주 보고 먼저 웃는 사람이 지는 게임', tip:'웃음이 터진 직후를 노리세요. 둘의 키 차이가 크면 큰 사람이 살짝 고개를 숙입니다.', miss:'얼굴이 겹쳐 한 사람이 가려지지 않게.', cat:'couple'},
+    {t:'등 맞대기', why:'친구·커플 모두 쓰기 좋은 포즈', kind:'knee', pair:true, sx:.5, ph:'waist', tilt:'level', zoom:'50', light:'옆에서 오는 빛', pose:'등을 맞대고 팔짱, 얼굴만 카메라 쪽으로', tip:'둘의 머리 높이를 엇갈리게 하면 화면이 안정적입니다.', miss:'둘이 일렬로 똑같이 서면 증명사진 같아요.', cat:'snap_couple'},
+    {t:'어깨 너머 한 사람', why:'한 사람 초점 + 한 사람 흐리게', kind:'bust', ots:true, sx:.64, ph:'chest', tilt:'level', zoom:'85', light:'초점 받는 사람 얼굴 쪽에서 빛', pose:'앞사람 어깨 너머로 뒷사람이 웃으며 보기', tip:'앞사람 어깨를 화면 가장자리에 흐리게 걸치면 둘의 관계가 보입니다.', miss:'초점이 앞사람 어깨에 가면 실패. 눈 인식 AF가 뒷사람 눈을 잡았는지 확인하세요.', cat:'couple'},
+    {t:'손 디테일', why:'반지·팔찌·맞잡은 손', kind:'detail', ph:'chest', tilt:'down', zoom:'50', light:'그늘에서', pose:'두 손을 겹치거나 깍지 끼기', tip:'손가락에 힘을 빼야 손이 예뻐 보입니다.', miss:'반지에 해가 비치면 하얗게 날아가요.', cat:'couple'}],
   self:[
-    {t:'팔 뻗은 셀카', why:'가장 빠른 얼굴 컷', kind:'face', sx:.5, ph:'eyeup', tilt:'down', zoom:'1x', eyes:true, light:'창이나 밝은 하늘을 마주 보기', pose:'팔을 쭉 뻗고 폰을 눈보다 살짝 위로, 턱은 앞으로', tip:'전면 카메라는 0.5x(광각)로 바꾸면 얼굴이 늘어나요. 1x로 찍고 팔을 최대한 멀리.', miss:'폰을 턱 아래에서 들면 이중턱이 생깁니다.', cat:'frame_cu'},
-    {t:'거울 전신샷', why:'오늘의 착장 기록', kind:'full', sx:.5, ph:'chest', tilt:'level', zoom:'1x', feet:true, light:'거울을 등지지 말고 창을 마주 보게', pose:'폰을 얼굴 옆이 아닌 가슴 앞에, 한 발은 앞으로', tip:'거울에서 한두 걸음 떨어져야 발끝까지 들어옵니다. 거울을 먼저 닦으세요.', miss:'폰을 얼굴 앞에 들면 얼굴이 다 가려져요.', cat:'frame_full'},
-    {t:'타이머 전신', why:'혼자서도 남이 찍어 준 듯한 컷', kind:'full', sx:.5, ph:'knee', tilt:'up', zoom:'1x', feet:true, light:'해를 폰 뒤쪽에', pose:'타이머가 도는 동안 천천히 걷거나 머리를 넘기기', tip:'폰을 가방·벽·난간에 기대 무릎 높이에 두고, 10초 타이머 + 연사(셀피 연사·라이브 포토)를 켜세요.', miss:'폰을 높이 올려 두면 다리가 짧아 보입니다.', cat:'frame_full'},
-    {t:'동영상에서 캡처', why:'가장 자연스러운 표정 얻기', kind:'wide', sx:.5, horizon:.66, ph:'chest', tilt:'level', zoom:'1x', light:'해를 폰 뒤쪽에', pose:'걷기·돌기·웃기를 10초 동안 이어서', tip:'4K 동영상으로 찍고 마음에 드는 순간을 캡처하세요. 사진보다 표정이 훨씬 자연스럽습니다.', miss:'어두운 곳에서는 캡처 화질이 떨어져요.', cat:'snap_city'}]
+    {t:'삼각대 상반신(앱 리모트)', why:'혼자서도 프로필 같은 얼굴 컷', kind:'waist', sx:.5, ph:'chest', tilt:'level', zoom:'85', eyes:true, light:'창이나 밝은 하늘을 마주 보기', pose:'몸은 45°, 얼굴만 렌즈로. 손에 리모트가 보이지 않게 허리 뒤로', tip:'카메라 제조사 앱(스마트폰)으로 화면을 보며 원격 셔터. 눈 인식 AF를 켜 두면 초점이 따라옵니다.', miss:'초점을 미리 고정하면 몸이 조금만 움직여도 흐려져요.', cat:'frame_bust'},
+    {t:'카메라를 든 거울샷', why:'카메라 자체가 소품이 되는 착장 기록', kind:'full', sx:.5, ph:'chest', tilt:'level', zoom:'35', feet:true, light:'거울을 등지지 말고 창을 마주 보게', pose:'카메라를 얼굴 옆이 아닌 가슴 앞에, 한 발은 앞으로', tip:'거울에서 한두 걸음 떨어져야 발끝까지 들어옵니다. 초점은 거울 속 나(거울까지 거리 × 2)에 맞춰야 선명합니다.', miss:'거울 표면에 초점이 가면 내 모습이 흐려져요. 거울을 먼저 닦으세요.', cat:'frame_full'},
+    {t:'삼각대 전신', why:'혼자서도 남이 찍어 준 듯한 전신', kind:'full', sx:.5, ph:'knee', tilt:'up', zoom:'35', feet:true, light:'해를 카메라 뒤쪽에', pose:'타이머가 도는 동안 천천히 걷거나 머리를 넘기기', tip:'삼각대를 무릎 높이로 낮추고, 셀프타이머 10초 + 연속 촬영(타이머 연사 3~5장)으로 설정하세요.', miss:'삼각대를 눈높이로 올리면 다리가 짧아 보입니다.', cat:'frame_full'},
+    {t:'인터벌로 걷기', why:'가장 자연스러운 움직임 얻기', kind:'wide', sx:.5, horizon:.66, ph:'chest', tilt:'level', zoom:'35', light:'해를 카메라 뒤쪽에', pose:'카메라 앞을 여러 번 오가며 걷기·돌기·웃기', tip:'인터벌 촬영을 1초 간격·60장으로 설정하고 화면 안을 왕복하세요. 초점은 걷는 길 중간에 수동으로 고정.', miss:'걷는 길이 초점 위치를 벗어나면 대부분 흐립니다.', cat:'snap_city'}]
+};
+const GREF = {
+  travel:[['Jessica Kobeissi · 야외 인물', 'https://fx.macphun.com/blog/creator-profile-jessica-kobeissi'], ['Manny Ortiz · 야외 인물 실수 5가지', 'https://www.shutterbug.com/node/562623'], ['#travelportrait', 'https://www.instagram.com/explore/tags/travelportrait/'], ['#여행스냅', 'https://www.instagram.com/explore/tags/%EC%97%AC%ED%96%89%EC%8A%A4%EB%83%85/']],
+  cafe:[['Hideaki Hamada · 창가 빛의 일상 사진', 'https://rangefinderonline.com/?p=35225'], ['Irene Rudnyk · 인물 사진가', 'https://www.lexar.com/global/photographer/Irene-Rudnyk'], ['#windowlightportrait', 'https://www.instagram.com/explore/tags/windowlightportrait/'], ['#카페스냅', 'https://www.instagram.com/explore/tags/%EC%B9%B4%ED%8E%98%EC%8A%A4%EB%83%85/']],
+  street:[['Manny Ortiz · 야외 인물 팁', 'https://www.shutterbug.com/node/586765'], ['Jessica Kobeissi · 같은 모델 4인 4색', 'https://www.slrlounge.com/4-photographers-shoot-the-same-model-props-edition-w-jessica-kobeissi/'], ['#streetportrait', 'https://www.instagram.com/explore/tags/streetportrait/'], ['#85mm', 'https://www.instagram.com/explore/tags/85mm/']],
+  nature:[['Irene Rudnyk · 인물 사진가', 'https://www.lexar.com/global/photographer/Irene-Rudnyk'], ['Brandon Woelfel · 빛과 보케 인물 (@brandonwoelfel)', 'https://www.instagram.com/brandonwoelfel/'], ['#goldenhourportrait', 'https://www.instagram.com/explore/tags/goldenhourportrait/'], ['#backlitportrait', 'https://www.instagram.com/explore/tags/backlitportrait/']],
+  pair:[['Jose Villa · 파인아트 웨딩 인터뷰', 'https://100layercake.substack.com/p/jose-villa-interview'], ['Manny Ortiz · 두 사람 함께 찍기', 'https://cdn.shutterbug.com/node/559225'], ['#couplesphotography', 'https://www.instagram.com/explore/tags/couplesphotography/'], ['#커플스냅', 'https://www.instagram.com/explore/tags/%EC%BB%A4%ED%94%8C%EC%8A%A4%EB%83%85/']],
+  self:[['Brandon Woelfel · 촬영·보정 비결 인터뷰', 'https://fstoppers.com/business/photographer-brandon-woelfel-shares-shooting-and-editing-secrets-gained-him-3-408866?page=1'], ['#selfportraitphotography', 'https://www.instagram.com/explore/tags/selfportraitphotography/'], ['#셀프포트레이트', 'https://www.instagram.com/explore/tags/%EC%85%80%ED%94%84%ED%8F%AC%ED%8A%B8%EB%A0%88%EC%9D%B4%ED%8A%B8/']]
 };
 const CHECK3 = [
-  ['수평', '격자선을 켜고 바닥·수평선을 가로선에 맞추세요.'],
+  ['수평', '격자선·전자 수준계를 켜고 바닥·수평선을 가로선에 맞추세요.'],
   ['자르는 곳', '발목·무릎·허리 같은 관절에서 자르지 말고, 전신이면 발끝까지 넣으세요.'],
   ['머리 위', '전봇대·나무·간판이 머리에서 솟아 나오면 한 걸음 옆으로.'],
-  ['얼굴 빛', '얼굴이 어두우면 얼굴을 터치하고 밝기 바를 위로.'],
-  ['연사', '한 컷에 최소 5장. 눈 감은 컷이 꼭 섞여 있어요.']
+  ['얼굴 빛', '역광이라 얼굴이 어두우면 노출 보정 +1, 또는 반사판.'],
+  ['초점', '눈 인식 AF가 가까운 눈을 잡았는지 확인하고 연사로 최소 5장.']
 ];
 const POSEFIX = [
   ['손 둘 곳이 없을 때', '주머니에 엄지만 걸기, 가방끈 잡기, 머리카락 넘기기, 컵 들기'],
@@ -2149,16 +2163,37 @@ const POSEFIX = [
   ['다리가 짧아 보일 때', '찍는 사람이 무릎 높이로 내려가고, 발끝을 화면 맨 아래에']
 ];
 const PHONESET = [
-  ['격자선 켜기', '아이폰: 설정 → 카메라 → 격자 / 갤럭시: 카메라 설정 → 수직/수평 안내선'],
-  ['비율', '3:4로 찍으면 인스타 4:5로 잘라도 여유가 있어요'],
-  ['줌', '얼굴·상반신은 2x, 전신·풍경은 1x, 0.5x는 풍경과 건물에만'],
-  ['밝기', '얼굴을 한 번 터치하고 해·전구 아이콘을 위아래로 밀기'],
-  ['노출 고정', '화면을 길게 눌러 AE/AF 잠금 → 역광·실루엣에 필수'],
-  ['연사', '셔터를 왼쪽으로 밀거나(아이폰) 길게 누르기(갤럭시)'],
-  ['인물 모드', '2~3 m 거리에서 쓰면 배경이 자연스럽게 흐려져요']
+  ['촬영 모드', 'A(조리개 우선)로 시작. ISO 자동(최대 6400), 최저 셔터 속도 1/250초로 제한'],
+  ['초점', '눈 인식 AF + 연속 AF(AF-C·AI 서보). 걷는 컷은 추적(트래킹) 영역'],
+  ['드라이브', '중속 연사. 표정·눈 감음을 대비해 한 컷에 5장 이상'],
+  ['측광·노출', '평가(멀티) 측광 기본. 역광은 노출 보정 +1~+1.7, 실루엣은 −1~−2'],
+  ['화이트밸런스', '한 장소에서는 고정(맑음·그늘·흐림). 자동이면 컷마다 피부색이 달라져요'],
+  ['파일', 'RAW+JPEG. 역광·실내에서 보정 여유가 큽니다'],
+  ['방향', '인물은 세로 촬영이 기본. 장소가 주인공인 컷만 가로로'],
+  ['APS-C 바디', '아래 mm는 풀프레임 기준. APS-C는 ÷1.5(캐논 ÷1.6) — 85mm는 약 56mm, 35mm는 약 24mm']
 ];
 const PH_LV = {floor:.06, knee:.28, waist:.52, chest:.72, eye:.92, eyeup:1.0, above:1.12};
 const PH_TX = {floor:'바닥에 거의 붙여서', knee:'무릎 높이(쪼그려 앉기)', waist:'허리 높이', chest:'가슴 높이', eye:'눈높이', eyeup:'눈보다 살짝 위', above:'머리 위에서 내려다보기'};
+const KIND_H = {full:2.05, knee:1.4, waist:1.05, bust:.72, face:.42, wide:6, detail:.35, top:.6};
+let gCam = (() => { const d = {sensor:'ff', lens:'zoom'}; try { const v = JSON.parse(localStorage.getItem('conti-gcam') || 'null'); if (v) return Object.assign(d, v); } catch(e) {} return d; })();
+function camSpec(s){
+  const ff = +s.zoom || 50, crop = gCam.sensor === 'aps' ? 1.5 : 1;
+  const want = Math.round(ff / crop);
+  let lensTx, eq = ff, extra = '';
+  if (gCam.lens === 'zoom'){ lensTx = `${want}mm` + (gCam.sensor === 'aps' ? ` (풀프레임 환산 ${ff}mm)` : ''); }
+  else { const own = +gCam.lens, ownEq = own * crop; eq = ownEq; lensTx = `${own}mm 단렌즈` + (crop > 1 ? ` (환산 ${Math.round(ownEq)}mm)` : ''); const r = ownEq / ff; extra = r > 1.25 ? ' · 추천보다 망원이라 한두 걸음 더 뒤로' : r < .8 ? (s.kind === 'face' || s.kind === 'bust' ? ' · 광각이라 얼굴이 넓적해질 수 있어 한 단계 넓게 찍고 잘라내기' : ' · 추천보다 광각이라 한두 걸음 앞으로') : ''; }
+  const d = (KIND_H[s.kind] || 1) * eq / 36 * (s.pair ? 1.25 : 1);
+  const dist = s.kind === 'top' ? '피사체 바로 위 약 0.6 m' : (d < 1 ? `약 ${Math.round(d*100)} cm` : `약 ${d.toFixed(1)} m`);
+  let ap = {wide:'f/5.6~8', full:'f/2.8~4', knee:'f/2.8', waist:'f/2~2.8', bust:'f/1.8~2.8', face:'f/2~2.8', detail:'f/2.8~4', top:'f/4~5.6'}[s.kind] || 'f/2.8';
+  if (s.pair) ap = 'f/4';
+  let ss = '1/250초 이상', ev = '';
+  if (/걷|걸어|돌아보|연사|달려|점프|바람/.test(s.t + s.pose)) ss = '1/500초 이상';
+  if (/역광|해를 인물 머리|노을 역광/.test(s.t + s.light)) ev = ' · 노출 보정 +1~+1.7';
+  if (/실루엣/.test(s.t)) { ev = ' · 노출 보정 −1~−2 (하늘 기준)'; ap = 'f/8'; ss = '1/1000초'; }
+  if (gSit === 'cafe' || /창|실내|카페|거울/.test(s.light + s.t)) ss = ss === '1/500초 이상' ? '1/500초' : '1/125초 이상, ISO 자동';
+  if (gSit === 'self' && /인터벌|삼각대/.test(s.t)) ss = '1/250초 · 삼각대';
+  return {lensTx: lensTx + extra, dist, set: `${ap} · ${ss}${ev}`};
+}
 const TILT_TX = {up:'살짝 위로 기울이기', down:'아래로 내려다보기', level:'똑바로(수평)'};
 function pictoSVG(cx, fy, h, cls){
   const r = .075*h, top = fy - h, sh = top + 2*r + .015*h;
@@ -2201,7 +2236,7 @@ function frameSVG(s){
 function heightSVG(s){
   const W = 92, H = 170, fy = 158, h = 140, lv = PH_LV[s.ph] ?? .72, y = fy - h*Math.min(lv, 1.08);
   const ang = {up:-14, down:22, level:0}[s.tilt] || 0, px = 70;
-  return `<svg class="hsvg" viewBox="0 0 ${W} ${H}" role="img" aria-label="폰 높이 ${PH_TX[s.ph]}"><line class="g-gr" x1="4" y1="${fy}" x2="${W - 4}" y2="${fy}"/>${pictoSVG(30, fy, h, 'g-p')}<line class="g-lvl" x1="8" y1="${y}" x2="${W - 6}" y2="${y}"/><g transform="translate(${px} ${y}) rotate(${-ang})"><rect class="g-phone" x="-6" y="-12" width="12" height="24" rx="3"/><line class="g-ray" x1="-6" y1="0" x2="-24" y2="0"/></g></svg>`;
+  return `<svg class="hsvg" viewBox="0 0 ${W} ${H}" role="img" aria-label="카메라 높이 ${PH_TX[s.ph]}"><line class="g-gr" x1="4" y1="${fy}" x2="${W - 4}" y2="${fy}"/>${pictoSVG(30, fy, h, 'g-p')}<line class="g-lvl" x1="8" y1="${y}" x2="${W - 6}" y2="${y}"/><g transform="translate(${px} ${y}) rotate(${-ang})"><rect class="g-phone" x="-9" y="-8" width="18" height="15" rx="3"/><rect class="g-phone" x="-17" y="-5" width="9" height="10" rx="2"/><line class="g-ray" x1="-17" y1="0" x2="-30" y2="0"/></g></svg>`;
 }
 let gSit = (() => { try { const v = localStorage.getItem('conti-gsit'); if (SITU[v]) return v; } catch(e) {} return 'travel'; })();
 function renderGuide(){
@@ -2210,12 +2245,14 @@ function renderGuide(){
   $('#g-pose').innerHTML = POSEFIX.map(([a, b]) => `<li><b>${a}</b><span>${b}</span></li>`).join('');
   $('#g-phone').innerHTML = PHONESET.map(([a, b]) => `<li><b>${a}</b><span>${b}</span></li>`).join('');
   const list = GSHOTS[gSit];
-  $('#g-shots').innerHTML = list.map((s, i) => `<article class="gcard">
+  $('#g-cam').innerHTML = `<label class="chip"><input type="radio" name="gsensor" value="ff" ${gCam.sensor === 'ff' ? 'checked' : ''}><span>풀프레임</span></label><label class="chip"><input type="radio" name="gsensor" value="aps" ${gCam.sensor === 'aps' ? 'checked' : ''}><span>APS-C(크롭)</span></label><span class="gsep"></span>` + [['zoom','줌렌즈'],['35','35mm 단렌즈'],['50','50mm 단렌즈'],['85','85mm 단렌즈']].map(([k, l]) => `<label class="chip"><input type="radio" name="glens" value="${k}" ${gCam.lens === k ? 'checked' : ''}><span>${l}</span></label>`).join('');
+  $('#g-refs').innerHTML = (GREF[gSit] || []).map(([l, u]) => `<a href="${u}" target="_blank" rel="noopener">${l}</a>`).join('');
+  $('#g-shots').innerHTML = list.map((s, i) => { const cs = camSpec(s); return `<article class="gcard">
     <div class="gvis">${frameSVG(s)}<div class="gside">${heightSVG(s)}<div class="gph">${figure(pick(s.cat, i + altSeed), '', 300)}</div></div></div>
     <div class="gtxt"><div class="gh"><span class="cn">${i + 1}</span><div><h3>${s.t}</h3><div class="use">${s.why}</div></div></div>
-      <ul class="gkv"><li><b>폰 위치</b><span>${PH_TX[s.ph]} · ${TILT_TX[s.tilt]} · <strong>${s.zoom}</strong></span></li>
+      <ul class="gkv"><li><b>렌즈 · 거리</b><span><strong>${cs.lensTx}</strong> · 모델과 ${cs.dist}</span></li><li><b>카메라 높이</b><span>${PH_TX[s.ph]} · ${TILT_TX[s.tilt]}</span></li><li><b>설정</b><span>${cs.set}</span></li>
       <li><b>빛</b><span>${s.light}</span></li><li><b>찍히는 사람</b><span>${s.pose}</span></li><li><b>팁</b><span>${s.tip}</span></li><li class="warn"><b>흔한 실수</b><span>${s.miss}</span></li></ul>
-      <button class="btn" type="button" data-field="${i}">현장에서 크게 보기</button></div></article>`).join('');
+      <button class="btn" type="button" data-field="${i}">현장에서 크게 보기</button></div></article>`; }).join('');
 }
 const FM = {i:0, lock:null};
 function openField(i){
@@ -2227,11 +2264,13 @@ function closeField(){ $('#field').hidden = true; document.body.style.overflow =
 function drawField(){
   const list = GSHOTS[gSit], s = list[FM.i];
   $('#f-count').textContent = `${SITU[gSit].ko} · ${FM.i + 1} / ${list.length}`;
-  $('#f-body').innerHTML = `<div class="fvis">${frameSVG(s)}</div><div class="ftxt"><h3>${s.t}</h3><p class="fbig">${PH_TX[s.ph]} · ${TILT_TX[s.tilt]} · <strong>${s.zoom}</strong></p><p><b>찍히는 사람</b> ${s.pose}</p><p><b>빛</b> ${s.light}</p><p><b>팁</b> ${s.tip}</p></div>`;
+  const cs = camSpec(s);
+  $('#f-body').innerHTML = `<div class="fvis">${frameSVG(s)}</div><div class="ftxt"><h3>${s.t}</h3><p class="fbig"><strong>${cs.lensTx}</strong> · ${cs.dist}</p><p><b>카메라 높이</b> ${PH_TX[s.ph]} · ${TILT_TX[s.tilt]}</p><p><b>설정</b> ${cs.set}</p><p><b>찍히는 사람</b> ${s.pose}</p><p><b>빛</b> ${s.light}</p><p><b>팁</b> ${s.tip}</p></div>`;
   $('#f-prev').disabled = FM.i === 0; $('#f-next').textContent = FM.i === list.length - 1 ? '처음으로' : '다음 컷';
 }
 function initGuide(){
   $('#g-sit').addEventListener('click', e => { const b = e.target.closest('[data-s]'); if (!b) return; gSit = b.dataset.s; try { localStorage.setItem('conti-gsit', gSit); } catch(er) {} renderGuide(); });
+  $('#g-cam').addEventListener('change', e => { if (e.target.name === 'gsensor') gCam.sensor = e.target.value; if (e.target.name === 'glens') gCam.lens = e.target.value; try { localStorage.setItem('conti-gcam', JSON.stringify(gCam)); } catch(er) {} renderGuide(); });
   $('#g-shots').addEventListener('click', e => { const b = e.target.closest('[data-field]'); if (b) openField(+b.dataset.field); });
   $('#g-fieldall').addEventListener('click', () => openField(0));
   $('#f-close').addEventListener('click', closeField);
