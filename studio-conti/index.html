@@ -184,6 +184,75 @@ body.v-plan #mboard,body.v-guide #mboard{display:none}
 .mb-pgrid img{width:100%;height:100%;object-fit:cover;display:block}
 .mb-pgrid button:hover{outline:3px solid var(--tile)}
 @media (max-width:760px){ .mb-canvas{flex-direction:column;align-items:stretch;gap:40px;padding:24px 16px} .mb-col,.mb-notes{flex:none;width:100%} .mb-grid{grid-template-columns:repeat(2,minmax(0,1fr))} .mb-tools{opacity:1;position:static;justify-content:flex-end;width:100%} .mb-addcol{flex:none;flex-direction:row;padding-top:0} }
+.g3{--green:#79B064;--yellow:#F2C94C}
+.g3top{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin-bottom:14px}
+.g3title{font-family:var(--f-hand);font-weight:400;font-size:clamp(30px,4.6vw,44px);line-height:1;margin:0}
+.g3title span{font-size:.5em;color:var(--green);margin-left:6px;vertical-align:.25em}
+.g3sub{margin:6px 0 0;color:var(--ink-2);font-size:14px}
+.g3count{font-size:13px;color:var(--ink-2);white-space:nowrap}
+.g3tools{display:flex;flex-wrap:wrap;gap:12px;align-items:stretch;margin:16px 0 14px}
+.g3grids{display:flex;gap:8px;flex-wrap:wrap}
+.g3grids button{font:inherit;border:1px solid var(--grid);background:var(--sheet);border-radius:14px;padding:8px 10px 6px;display:grid;justify-items:center;gap:3px;cursor:pointer;color:var(--ink);font-size:11.5px;box-shadow:0 1px 3px rgba(38,43,92,.06)}
+.g3grids svg{width:34px;height:34px}.g3grids svg line,.g3grids svg circle,.g3grids svg rect{fill:none;stroke:var(--scrib);stroke-width:1.6}.g3grids svg .d{fill:var(--tile);stroke:none}
+.g3grids button[aria-pressed="true"]{border-color:var(--tile);box-shadow:0 0 0 2px var(--tape)}
+.g3toggle{display:flex;gap:10px;align-items:center;border:1px solid var(--grid);border-radius:14px;padding:8px 14px;cursor:pointer;margin-left:auto;box-shadow:0 1px 3px rgba(38,43,92,.06)}
+.g3toggle input{position:absolute;opacity:0;pointer-events:none}
+.g3toggle .sw{width:44px;height:26px;border-radius:999px;background:var(--grid);position:relative;flex:none;transition:background .15s}
+.g3toggle .sw::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:transform .15s}
+.g3toggle input:checked + .sw{background:var(--tile)}.g3toggle input:checked + .sw::after{transform:translateX(18px)}
+.g3toggle input:focus-visible + .sw{outline:2.5px solid var(--fill);outline-offset:2px}
+.g3toggle b{display:block;font-size:13.5px}.g3toggle small{font-size:11.5px;color:var(--ink-2)}
+.g3cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px 16px;align-items:start}
+.g3c{display:flex;flex-direction:column;gap:8px;min-width:0}
+.g3c.done .ssvg{opacity:.55}
+.ssvg{width:100%;height:auto;display:block;border-radius:18px;box-shadow:0 2px 10px rgba(38,43,92,.1)}
+.s-grid line,.s-grid circle{stroke:#FFFFFF;stroke-opacity:.75;stroke-width:1.4}.s-grid .s-dot{fill:#FFFFFF;stroke:none}
+.s-frame{fill:none;stroke:#FFFFFF;stroke-width:3.5}
+.g3h{display:flex;gap:9px;align-items:center}
+.g3n{flex:none;display:grid;place-items:center;width:26px;height:26px;border-radius:8px;background:var(--green);color:#fff;font-weight:700;font-size:14px}
+.g3h b{font-size:16.5px;line-height:1.25}
+.g3d{margin:0;font-size:13.5px;color:var(--ink-2);line-height:1.5;white-space:pre-line;padding-left:35px}
+.g3chips{display:flex;flex-wrap:wrap;gap:4px;padding-left:35px}
+.g3chips span{font-size:11.5px;background:var(--paper);border:1px solid var(--grid);border-radius:999px;padding:1px 8px;color:var(--ink)}
+.g3chips .w{background:color-mix(in srgb,var(--yellow) 25%,var(--sheet));border-color:color-mix(in srgb,var(--yellow) 60%,var(--sheet))}
+.g3row{display:flex;gap:10px;align-items:center;padding-left:35px;flex-wrap:wrap}
+.g3row .dn{display:flex;gap:5px;align-items:center;font-size:12.5px;cursor:pointer}.g3row .dn input{accent-color:var(--green);width:16px;height:16px}
+.g3c details{padding-left:35px}.g3c summary{cursor:pointer;font-size:12.5px;font-weight:600;color:var(--tile)}
+.g3c .more{display:grid;gap:8px;margin-top:8px}.g3c .more .gl{font-size:12.5px}
+.g3c .more .gph{max-width:140px}
+.g3tip{margin-top:20px;border:1px solid var(--grid);border-radius:16px;padding:14px 16px;box-shadow:0 1px 3px rgba(38,43,92,.06)}
+.g3tip summary{display:flex;gap:12px;align-items:center;cursor:pointer;list-style:none}
+.g3tip summary::-webkit-details-marker{display:none}
+.g3tip summary svg{width:26px;height:26px;fill:none;stroke:var(--tile);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.g3tip summary b{display:block;font-size:15.5px}.g3tip summary small{color:var(--ink-2);font-size:13px}
+.g3tip summary::after{content:"›";margin-left:auto;font-size:24px;color:var(--ink-2);transition:transform .15s}
+.g3tip[open] summary::after{transform:rotate(90deg)}
+.g3tip ol{margin:12px 0 0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;font-size:13px}
+.g3tip li b{display:block}.g3tip li span{color:var(--ink-2)}
+#field{background:#0E1024;padding:0}
+#field .cam-cap,#field .cam-list li{color:#fff}
+.cam{height:100%;display:grid;grid-template-rows:auto minmax(0,1fr) auto;color:#fff;padding:calc(10px + env(safe-area-inset-top,0px)) max(14px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(14px,env(safe-area-inset-left,0px));gap:10px}
+.cam-top{display:flex;align-items:center;gap:14px;font-size:13px;font-family:var(--f-mono);color:#C9CCEA}
+.cam-x{margin-left:auto;font:inherit;font-size:22px;width:36px;height:36px;border-radius:50%;border:0;background:rgba(255,255,255,.12);color:#fff;cursor:pointer}
+.cam-main{display:grid;grid-template-columns:220px minmax(0,1fr) 96px;gap:14px;align-items:center;min-height:0}
+.cam-view{display:grid;place-items:center;min-height:0;height:100%}
+.cam-view{overflow:hidden}
+.cam-view .ssvg{height:min(calc(100dvh - 170px), 100%);max-height:calc(100vh - 170px);width:auto;max-width:100%;border-radius:12px;box-shadow:none}
+.cam-list{list-style:none;margin:0;padding:0;display:grid;gap:8px;align-content:center}
+.cam-list li{display:flex;gap:8px;align-items:flex-start;background:rgba(255,255,255,.1);border-radius:12px;padding:8px 10px;font-size:13px;line-height:1.4}
+.cam-list li i{flex:none;font-style:normal;display:grid;place-items:center;width:20px;height:20px;border-radius:6px;background:#79B064;font-size:11px;font-weight:700}
+.cam-list li b{display:block;font-size:11px;color:#AEB3E0;font-weight:500}
+.cam-side{display:grid;justify-items:center;gap:14px}
+.cam-shutter{width:68px;height:68px;border-radius:50%;border:4px solid #fff;background:transparent;cursor:pointer;position:relative}
+.cam-shutter::after{content:"";position:absolute;inset:5px;border-radius:50%;background:#fff}
+.cam-shutter:active::after{inset:9px}
+.cam-nav{font:inherit;font-size:24px;width:40px;height:40px;border-radius:50%;border:0;background:rgba(255,255,255,.12);color:#fff;cursor:pointer}
+.cam-nav:disabled{opacity:.3}
+.cam-hint{font-size:11px;color:#AEB3E0}
+.cam-cap{text-align:center;font-size:14px;color:#E4E6F7}.cam-cap b{font-family:var(--f-hand);font-weight:400;font-size:22px;color:#fff;margin-right:8px}
+@media (max-width:1000px){ .g3cards{grid-template-columns:repeat(2,minmax(0,1fr))} .g3tip ol{grid-template-columns:repeat(2,minmax(0,1fr))} .g3toggle{margin-left:0} }
+@media (max-width:700px){ .cam-view .ssvg{height:auto;max-height:52vh} .cam-main{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto auto} .cam-list{order:2;grid-template-columns:1fr 1fr} .cam-side{order:3;grid-auto-flow:column;align-items:center} .cam-view{order:1} }
+@media (max-width:520px){ .g3cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 10px} .g3d,.g3chips,.g3row,.g3c details{padding-left:0} .g3h b{font-size:15px} .g3d{font-size:12.5px} .g3tip ol{grid-template-columns:minmax(0,1fr)} .g3grids button{padding:6px 8px 4px} .g3grids svg{width:28px;height:28px} }
 .today{display:grid;gap:10px}
 .trow{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .tl{font-size:13px;font-weight:700;color:var(--ink-2);min-width:64px}
@@ -512,15 +581,23 @@ footer code{font-family:var(--f-mono);font-size:12px}
     </div>
   </section>
 
-  <section class="sheet" id="guide" aria-label="오늘 찍어 볼 컷">
+  <section class="sheet g3" id="guide" aria-labelledby="g3-title">
+    <div class="g3top">
+      <div><h2 class="g3title" id="g3-title">인물구도 <span id="g3-sitname"></span></h2><p class="g3sub">좋은 구도는 사진을 더 특별하게.</p></div>
+      <span class="g3count" id="g3-count"></span>
+    </div>
     <div class="today">
       <div class="trow"><span class="tl">오늘은</span><div class="tchips" id="g-sit" role="group" aria-label="오늘 갈 곳"></div></div>
       <div class="trow"><span class="tl">내 렌즈</span><div class="tchips" id="g-cam" role="group" aria-label="렌즈와 센서"></div></div>
       <div class="trow tsun" id="g-sun"></div>
     </div>
-    <div class="tbar"><b id="g-progress"></b><span class="tsp"></span><button class="btn" type="button" id="g-shuffle">다른 예시 사진</button><button class="btn solid" type="button" id="g-fieldall">현장에서 한 컷씩</button></div>
-    <div class="gshots" id="g-shots"></div>
-    <div class="tcheck"><span class="tl">셔터 누르기 전</span><ol id="g-check"></ol></div>
+    <div class="g3tools">
+      <div class="g3grids" id="g3-grids" role="group" aria-label="구도 가이드 격자"></div>
+      <label class="g3toggle"><input type="checkbox" id="g3-ovl"><span class="sw" aria-hidden="true"></span><span><b>구도 가이드 표시</b><small>사진 위에 구도를 겹쳐 보여 줍니다</small></span></label>
+    </div>
+    <div class="g3cards" id="g-shots"></div>
+    <details class="g3tip"><summary><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg><span><b>더 좋은 구도를 위한 팁!</b><small>셔터 누르기 전 5가지만 확인하세요</small></span></summary><ol id="g-check"></ol></details>
+    <div class="tbar"><span id="g-progress"></span><span class="tsp"></span><button class="btn" type="button" id="g-shuffle">다른 예시 사진</button><button class="btn solid" type="button" id="g-fieldall">카메라 화면으로 보기</button></div>
     <div class="tmore">
       <details><summary>찍히는 사람이 어색할 때</summary><ul class="gl" id="g-pose"></ul></details>
       <details><summary>카메라 기본 설정</summary><ul class="gl" id="g-phone"></ul></details>
@@ -530,10 +607,13 @@ footer code{font-family:var(--f-mono);font-size:12px}
     </div>
   </section>
 
-  <div class="field" id="field" hidden role="dialog" aria-modal="true" aria-label="현장 모드">
-    <div class="fbar"><span id="f-count"></span><button type="button" class="btn" id="f-close">닫기</button></div>
-    <div class="fbody" id="f-body"></div>
-    <div class="fnav"><button type="button" class="btn" id="f-prev">이전</button><button type="button" class="btn solid" id="f-next">다음 컷</button></div>
+  <div class="field" id="field" hidden role="dialog" aria-modal="true" aria-label="카메라 화면 보기">
+    <div class="cam">
+      <div class="cam-top"><span>3:4</span><span id="f-count"></span><button type="button" class="cam-x" id="f-close" aria-label="닫기">×</button></div>
+      <div class="cam-main"><ol class="cam-list" id="f-list"></ol><div class="cam-view" id="f-body"></div>
+        <div class="cam-side"><button type="button" class="cam-nav" id="f-prev" aria-label="이전 컷">‹</button><button type="button" class="cam-shutter" id="f-next" aria-label="다음 컷"></button><span class="cam-hint">다음 컷</span></div></div>
+      <div class="cam-cap" id="f-cap"></div>
+    </div>
   </div>
 
   <section class="sheet" id="wiz" aria-labelledby="h-wiz">
@@ -2324,7 +2404,8 @@ function camSpec(s){
   if (/실루엣/.test(s.t)) { ev = ' · 노출 보정 −1~−2 (하늘 기준)'; ap = 'f/8'; ss = '1/1000초'; }
   if (gSit === 'cafe' || /창|실내|카페|거울/.test(s.light + s.t)) ss = ss === '1/500초 이상' ? '1/500초' : '1/125초 이상, ISO 자동';
   if (gSit === 'self' && /인터벌|삼각대/.test(s.t)) ss = '1/250초 · 삼각대';
-  return {lensTx: lensTx + extra, dist, set: `${ap} · ${ss}${ev}`};
+  const mm = gCam.lens === 'zoom' ? `${want}mm` : `${gCam.lens}mm`;
+  return {lensTx: lensTx + extra, mm, warn: extra.replace(/^ · /, ''), dist, ap, ss, ev: ev.replace(/^ · /, ''), set: `${ap} · ${ss}${ev}`};
 }
 const TILT_TX = {up:'살짝 위로 기울이기', down:'아래로 내려다보기', level:'똑바로(수평)'};
 function pictoSVG(cx, fy, h, cls, view){
@@ -2396,22 +2477,105 @@ function renderGuide(){
     $('#g-sun').hidden = false;
     $('#g-sun').innerHTML = `오늘 <select id="g-city" aria-label="도시">${Object.entries(CITIES).map(([k, v]) => `<option value="${k}" ${k === gCity ? 'selected' : ''}>${v.ko}</option>`).join('')}</select> 골든아워 <b>${di.geS != null ? hhmm(di.geS) + '–' + hhmm(di.geE) : '-'}</b> · 일몰 <b>${di.set != null ? hhmm(di.set) : '-'}</b> · 한낮(${hhmm(di.noon)} 전후)엔 그늘에서 찍으세요`;
   } else $('#g-sun').hidden = true;
-  $('#g-check').innerHTML = CHECK3.map(([a, b]) => `<li><b>${a}</b><span>${b}</span></li>`).join('');
+  $('#g3-grids').innerHTML = GRIDS.map(([k, l]) => `<button type="button" data-g="${k}" aria-pressed="${gOverlay.grid === k}">${gridIcon(k)}<span>${l}</span></button>`).join('');
+  $('#g3-ovl').checked = !!gOverlay.on;
+  $('#g-check').innerHTML = CHECK3.map(([a, b], i) => `<li><b>${i + 1}. ${a}</b><span>${b}</span></li>`).join('');
   $('#g-pose').innerHTML = POSEFIX.map(([a, b]) => `<li><b>${a}</b><span>${b}</span></li>`).join('');
   $('#g-phone').innerHTML = PHONESET.map(([a, b]) => `<li><b>${a}</b><span>${b}</span></li>`).join('');
   $('#g-refs').innerHTML = (GREF[gSit] || []).map(([l, u]) => `<a href="${u}" target="_blank" rel="noopener">${l}</a>`).join('');
   const list = GSHOTS[gSit];
   const done = list.filter((s, i) => gDone[gSit + i]).length;
-  $('#g-progress').textContent = `오늘 찍어 볼 컷 ${list.length}개` + (done ? ` · ${done}개 찍음` : '');
-  $('#g-shots').innerHTML = list.map((s, i) => { const cs = camSpec(s), dn = !!gDone[gSit + i]; return `<article class="gc2${dn ? ' done' : ''}">
-    ${frameSVG(s)}
-    <div><h3><span class="cn">${i + 1}</span>${s.t}</h3><div class="why">${s.why}</div>
-      <ul class="kv"><li><b>렌즈</b><strong>${cs.lensTx}</strong> · ${cs.dist}</li><li><b>높이</b>${PH_TX[s.ph]}${s.tilt !== 'level' ? ' · ' + TILT_TX[s.tilt] : ''}</li><li><b>설정</b>${cs.set}</li></ul>
-      <div class="row"><label class="dn"><input type="checkbox" data-done="${i}" ${dn ? 'checked' : ''}> 찍었어요</label></div></div>
-    <details><summary>포즈 · 빛 · 팁 · 예시 사진</summary><div class="more"><ul class="gl"><li><b>찍히는 사람</b><span>${s.pose}</span></li><li><b>빛</b><span>${s.light}</span></li><li><b>팁</b><span>${s.tip}</span></li><li><b style="color:var(--warn)">흔한 실수</b><span>${s.miss}</span></li></ul>
-      <div class="side">${heightSVG(s)}<div class="gph">${figure(pick(s.cat, i + altSeed), '', 300)}</div></div></div></details>
+  $('#g3-sitname').textContent = SITU[gSit].ko;
+  $('#g3-count').textContent = `총 ${list.length}개 예시`;
+  $('#g-progress').textContent = done ? `${list.length}개 중 ${done}개 찍음` : '';
+  $('#g-shots').innerHTML = list.map((s, i) => { const cs = camSpec(s), dn = !!gDone[gSit + i]; return `<article class="g3c${dn ? ' done' : ''}">
+    ${sceneSVG(s)}
+    <div class="g3h"><span class="g3n">${i + 1}</span><b>${s.t}</b></div>
+    <p class="g3d">${shortLine(s, cs)}</p>
+    <div class="g3chips"><span>${cs.ap}</span><span>${cs.ss.replace(' 이상', '+').replace(', ISO 자동', '')}</span>${cs.ev ? `<span>${cs.ev.replace('노출 보정 ', '보정 ')}</span>` : ''}${cs.warn ? `<span class="w">${cs.warn.includes('망원') ? '더 뒤로' : cs.warn.includes('넓적') ? '넓게 찍고 자르기' : '더 앞으로'}</span>` : ''}</div>
+    <div class="g3row"><label class="dn"><input type="checkbox" data-done="${i}" ${dn ? 'checked' : ''}> 찍었어요</label></div>
+    <details><summary>포즈 · 빛 · 팁</summary><div class="more"><ul class="gl"><li><b>찍히는 사람</b><span>${s.pose}</span></li><li><b>빛</b><span>${s.light}</span></li><li><b>팁</b><span>${s.tip}</span></li><li><b style="color:var(--warn)">흔한 실수</b><span>${s.miss}</span></li>${cs.warn ? `<li><b>렌즈</b><span>${cs.lensTx}</span></li>` : ''}</ul>
+      <div class="gph">${figure(pick(s.cat, i + altSeed), '실제 사진 예시', 300)}</div></div></details>
   </article>`; }).join('');
 }
+/* ---------------- guide v3: scene illustration cards (photo-guide style) ---------------- */
+let gOverlay = (() => { try { const v = JSON.parse(localStorage.getItem('conti-govl') || 'null'); if (v) return v; } catch(e) {} return {on:true, grid:'thirds'}; })();
+const SCENE_OF = {travel:'park', cafe:'cafe', street:'street', nature:'lake', pair:'park', self:'park'};
+function sceneBG(kind, W, H, hz){
+  const id = 'g' + Math.random().toString(36).slice(2, 7);
+  if (kind === 'cafe') return `<defs><linearGradient id="${id}w" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F3E9DD"/><stop offset="1" stop-color="#E7D7C4"/></linearGradient></defs>
+    <rect width="${W}" height="${H}" fill="url(#${id}w)"/><rect x="${W*.06}" y="${H*.08}" width="${W*.36}" height="${H*.5}" rx="6" fill="#FFFFFF" opacity=".9"/><rect x="${W*.06}" y="${H*.08}" width="${W*.36}" height="${H*.5}" rx="6" fill="#CFE6F5" opacity=".55"/>
+    <line x1="${W*.24}" y1="${H*.08}" x2="${W*.24}" y2="${H*.58}" stroke="#FFFFFF" stroke-width="4"/><path d="M${W*.42} ${H*.1} L${W*.95} ${H*.42} L${W*.95} ${H*.78} L${W*.42} ${H*.6}Z" fill="#FFF8E8" opacity=".55"/>
+    <rect x="0" y="${H*.78}" width="${W}" height="${H*.22}" fill="#C9AE8E"/><circle cx="${W*.82}" cy="${H*.22}" r="${W*.07}" fill="#7DB46C" opacity=".8"/><rect x="${W*.8}" y="${H*.26}" width="${W*.04}" height="${H*.1}" fill="#9C7A55"/>`;
+  if (kind === 'street') return `<rect width="${W}" height="${H}" fill="#DCE8F6"/>
+    <rect x="${-W*.02}" y="${H*.16}" width="${W*.34}" height="${H*.62}" fill="#E9E4DD"/><rect x="${W*.3}" y="${H*.3}" width="${W*.3}" height="${H*.48}" fill="#D9D2C8"/><rect x="${W*.6}" y="${H*.1}" width="${W*.44}" height="${H*.68}" fill="#ECE7E0"/>
+    ${[0,1,2,3].map(r => [0,1].map(c => `<rect x="${W*(.05 + c*.13)}" y="${H*(.22 + r*.12)}" width="${W*.08}" height="${H*.07}" rx="2" fill="#C6D3E3"/>`).join('')).join('')}
+    ${[0,1,2,3,4].map(r => [0,1,2].map(c => `<rect x="${W*(.66 + c*.11)}" y="${H*(.15 + r*.11)}" width="${W*.07}" height="${H*.065}" rx="2" fill="#C6D3E3"/>`).join('')).join('')}
+    <rect x="0" y="${H*.78}" width="${W}" height="${H*.22}" fill="#BDB6AE"/><path d="M${W*.38} ${H} L${W*.47} ${H*.78} L${W*.53} ${H*.78} L${W*.62} ${H}Z" fill="#CFC8C0"/>`;
+  const sky = `<defs><linearGradient id="${id}s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#A9CCF0"/><stop offset="1" stop-color="#E4F0FB"/></linearGradient><linearGradient id="${id}g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9BC46F"/><stop offset="1" stop-color="#6FA44E"/></linearGradient></defs>
+    <rect width="${W}" height="${H}" fill="url(#${id}s)"/><ellipse cx="${W*.22}" cy="${H*.12}" rx="${W*.12}" ry="${H*.03}" fill="#FFFFFF" opacity=".8"/><ellipse cx="${W*.7}" cy="${H*.08}" rx="${W*.1}" ry="${H*.025}" fill="#FFFFFF" opacity=".7"/>`;
+  const y = H*hz;
+  const trees = [[.02,.18],[.13,.14],[.27,.2],[.75,.16],[.88,.21],[.98,.15]].map(([x, r]) => `<rect x="${W*x - 3}" y="${y - H*r*.4}" width="6" height="${H*r*.4}" fill="#7A5B3E"/><circle cx="${W*x}" cy="${y - H*r*.55}" r="${W*r*.55}" fill="#5E9E4C"/><circle cx="${W*x + W*r*.25}" cy="${y - H*r*.45}" r="${W*r*.4}" fill="#73B05C"/>`).join('');
+  const water = kind === 'lake' ? `<rect x="0" y="${y - H*.05}" width="${W}" height="${H*.05}" fill="#8FC1E3"/>` : '';
+  const path = kind === 'park' ? `<path d="M${W*.42} ${H} C ${W*.46} ${y + H*.15}, ${W*.6} ${y + H*.05}, ${W*.66} ${y}" stroke="#D8CBB8" stroke-width="${W*.07}" fill="none" stroke-linecap="round"/>` : '';
+  return sky + water + `<rect x="0" y="${y}" width="${W}" height="${H - y}" fill="url(#${id}g)"/>` + trees + path;
+}
+function personSVG(cx, fy, h, cls, W, H){
+  const id = 'tp' + Math.random().toString(36).slice(2, 7), t = Math.max(5, Math.min(13, h/26));
+  const rx = .07*h, ry = .086*h, top = fy - h, hcy = top + ry, nk = top + 2*ry - .012*h, sh = nk + .045*h, f = v => v.toFixed(1);
+  const rr = (x, y, w, hh, rad) => `<rect x="${f(x)}" y="${f(y)}" width="${f(Math.max(0, w))}" height="${f(Math.max(0, hh))}" rx="${f(rad)}"/>`;
+  const shapes = `<ellipse cx="${f(cx)}" cy="${f(hcy)}" rx="${f(rx)}" ry="${f(ry)}"/>` + rr(cx - .032*h, nk - .01*h, .064*h, .07*h, .02*h)
+    + `<path d="M${f(cx - .05*h)} ${f(sh - .012*h)} C${f(cx - .16*h)} ${f(sh - .01*h)} ${f(cx - .205*h)} ${f(sh + .005*h)} ${f(cx - .205*h)} ${f(sh + .07*h)} L${f(cx - .155*h)} ${f(fy - .47*h)} L${f(cx + .155*h)} ${f(fy - .47*h)} L${f(cx + .205*h)} ${f(sh + .07*h)} C${f(cx + .205*h)} ${f(sh + .005*h)} ${f(cx + .16*h)} ${f(sh - .01*h)} ${f(cx + .05*h)} ${f(sh - .012*h)}Z"/>`
+    + rr(cx - .232*h, sh + .045*h, .052*h, .37*h, .026*h) + rr(cx + .18*h, sh + .045*h, .052*h, .37*h, .026*h)
+    + rr(cx - .125*h, fy - .5*h, .108*h, .5*h, .045*h) + rr(cx + .017*h, fy - .5*h, .108*h, .5*h, .045*h);
+  return `<defs><pattern id="${id}" width="${f(t)}" height="${f(t)}" patternUnits="userSpaceOnUse" x="${f(cx % t)}" y="0"><rect width="${f(t)}" height="${f(t)}" fill="none" stroke="#FFFFFF" stroke-opacity=".33" stroke-width="${f(Math.max(.8, t*.11))}"/></pattern></defs><g class="${cls}">${shapes}</g><g fill="url(#${id})">${shapes}</g>`;
+}
+function sceneSVG(s, opt = {}){
+  const W = 300, H = 375, ov = opt.overlay ?? gOverlay;
+  const bgKind = SCENE_OF[gSit] || 'park';
+  const hz = s.horizon != null ? Math.min(.8, s.horizon) : (s.kind === 'wide' ? .66 : s.kind === 'full' ? .6 : .74);
+  let body = sceneBG(bgKind, W, H, hz);
+  let h, fy, sx = (s.sx ?? .5)*W, box;
+  if (s.kind === 'full'){ h = .74*H; fy = .95*H; }
+  else if (s.kind === 'knee'){ h = 1.26*H; fy = H + .27*h; }
+  else if (s.kind === 'waist'){ h = 1.73*H; fy = H + .48*h; }
+  else if (s.kind === 'bust'){ h = 2.8*H; fy = H + .68*h; }
+  else if (s.kind === 'face'){ h = 4.7*H; fy = H + .8*h; }
+  else if (s.kind === 'wide'){ h = .3*H; fy = Math.min(.92, hz + .2)*H; }
+  if (s.kind === 'detail' || s.kind === 'top'){
+    body += s.kind === 'top' ? `<ellipse cx="${W*.5}" cy="${H*.5}" rx="${W*.44}" ry="${H*.36}" fill="#EADBC8"/><circle cx="${W*.58}" cy="${H*.46}" r="${W*.13}" fill="#FFFFFF"/><circle cx="${W*.58}" cy="${H*.46}" r="${W*.09}" fill="#B98B5E"/><rect x="${W*.2}" y="${H*.58}" width="${W*.22}" height="${H*.16}" rx="8" fill="${'#8090E4'}" opacity=".85"/>`
+      : `<rect x="${W*.16}" y="${H*.56}" width="${W*.68}" height="${H*.5}" rx="44" fill="#8090E4" opacity=".55"/><rect x="${W*.38}" y="${H*.3}" width="${W*.24}" height="${H*.34}" rx="12" fill="#FFFFFF"/><rect x="${W*.41}" y="${H*.36}" width="${W*.18}" height="${H*.1}" rx="4" fill="#8090E4"/>`;
+    box = s.kind === 'top' ? [W*.12, H*.2, W*.76, H*.6] : [W*.28, H*.24, W*.44, H*.5];
+  } else {
+    if (s.ots){ body += personSVG(sx, fy, h, 'g-p', W, H); body += personSVG(-W*.05, H + .66*h*1.25, h*1.25, 'g-p g-blur', W, H); }
+    else if (s.pair){ const off = .2*h; body += personSVG(sx - off, fy, h, 'g-p', W, H) + personSVG(sx + off, fy + .02*h, h*.94, 'g-p g-p2', W, H); }
+    else body += personSVG(sx, fy, h, 'g-p', W, H);
+    const top = fy - h, bw = (s.pair ? .9 : .52)*h;
+    box = [sx - bw/2 - 8, top - 10, bw + 16, Math.min(fy, H) - top + 16];
+  }
+  const clampBox = ([x, y, w, hh]) => { const x0 = Math.max(10, x), y0 = Math.max(10, y), x1 = Math.min(W - 10, x + w), y1 = Math.min(H - 10, y + hh); return [x0, y0, x1 - x0, y1 - y0]; };
+  let ovl = '';
+  if (ov.on){
+    if (ov.grid === 'thirds') ovl += `<g class="s-grid"><line x1="${W/3}" y1="0" x2="${W/3}" y2="${H}"/><line x1="${2*W/3}" y1="0" x2="${2*W/3}" y2="${H}"/><line x1="0" y1="${H/3}" x2="${W}" y2="${H/3}"/><line x1="0" y1="${2*H/3}" x2="${W}" y2="${2*H/3}"/></g>`;
+    if (ov.grid === 'center') ovl += `<g class="s-grid"><circle cx="${W/2}" cy="${H/2}" r="${W*.18}" fill="none"/><circle cx="${W/2}" cy="${H/2}" r="4" class="s-dot"/></g>`;
+    if (ov.grid === 'diag') ovl += `<g class="s-grid"><line x1="0" y1="0" x2="${W}" y2="${H}"/><line x1="${W}" y1="0" x2="0" y2="${H}"/></g>`;
+    const [bx, by, bw2, bh2] = clampBox(box);
+    ovl += `<rect class="s-frame" x="${bx.toFixed(1)}" y="${by.toFixed(1)}" width="${bw2.toFixed(1)}" height="${bh2.toFixed(1)}" rx="16"/>`;
+  }
+  const cid = 'c' + Math.random().toString(36).slice(2, 7);
+  return `<svg class="ssvg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(s.t)} 구도 예시"><defs><clipPath id="${cid}"><rect width="${W}" height="${H}" rx="18"/></clipPath></defs><g clip-path="url(#${cid})">${body}${ovl}</g></svg>`;
+}
+const PH_SHORT = {floor:'바닥 높이', knee:'무릎 높이', waist:'허리 높이', chest:'가슴 높이', eye:'눈높이', eyeup:'눈보다 살짝 위', above:'머리 위'};
+function shortLine(s, cs){
+  if (s.kind === 'top') return `${PH_SHORT[s.ph]}에서 바로 아래로,\n${cs.mm}로 테이블 전체를`;
+  return `${PH_SHORT[s.ph]}에서 ${cs.mm}로,\n모델과 ${cs.dist.replace('약 ', '')} 떨어져${s.tilt === 'up' ? ' 살짝 올려 찍기' : s.tilt === 'down' ? ' 내려다보며' : ''}`;
+}
+const GRIDS = [['thirds', '삼등분 구도'], ['center', '중앙 구도'], ['diag', '대각선 구도'], ['none', '격자 없음']];
+const gridIcon = k => k === 'thirds' ? '<svg viewBox="0 0 40 40"><line x1="13" y1="4" x2="13" y2="36"/><line x1="27" y1="4" x2="27" y2="36"/><line x1="4" y1="13" x2="36" y2="13"/><line x1="4" y1="27" x2="36" y2="27"/><circle cx="27" cy="13" r="2.6" class="d"/></svg>'
+  : k === 'center' ? '<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="11"/><circle cx="20" cy="20" r="3" class="d"/></svg>'
+  : k === 'diag' ? '<svg viewBox="0 0 40 40"><line x1="4" y1="4" x2="36" y2="36"/><line x1="36" y1="4" x2="4" y2="36"/></svg>'
+  : '<svg viewBox="0 0 40 40"><rect x="9" y="5" width="22" height="30" rx="4"/></svg>';
+
 const FM = {i:0, lock:null};
 function openField(i){
   FM.i = i; $('#field').hidden = false; document.body.style.overflow = 'hidden'; drawField();
@@ -2420,11 +2584,12 @@ function openField(i){
 }
 function closeField(){ $('#field').hidden = true; document.body.style.overflow = ''; try { FM.lock && FM.lock.release(); } catch(e) {} FM.lock = null; }
 function drawField(){
-  const list = GSHOTS[gSit], s = list[FM.i];
+  const list = GSHOTS[gSit], s = list[FM.i], cs = camSpec(s);
   $('#f-count').textContent = `${SITU[gSit].ko} · ${FM.i + 1} / ${list.length}`;
-  const cs = camSpec(s);
-  $('#f-body').innerHTML = `<div class="fvis">${frameSVG(s)}</div><div class="ftxt"><h3>${s.t}</h3><p class="fbig"><strong>${cs.lensTx}</strong> · ${cs.dist}</p><p><b>카메라 높이</b> ${PH_TX[s.ph]} · ${TILT_TX[s.tilt]}</p><p><b>설정</b> ${cs.set}</p><p><b>찍히는 사람</b> ${s.pose}</p><p><b>빛</b> ${s.light}</p><p><b>팁</b> ${s.tip}</p></div>`;
-  $('#f-prev').disabled = FM.i === 0; $('#f-next').textContent = FM.i === list.length - 1 ? '처음으로' : '다음 컷';
+  $('#f-body').innerHTML = sceneSVG(s, {overlay: {on: true, grid: gOverlay.grid === 'none' ? 'thirds' : gOverlay.grid}});
+  $('#f-list').innerHTML = [['카메라 높이', `${PH_SHORT[s.ph]}${s.tilt !== 'level' ? ' · ' + TILT_TX[s.tilt] : ''}`], ['렌즈', cs.lensTx], ['거리', cs.dist], ['설정', cs.set], ['포즈', s.pose]].map(([a, b], j) => `<li><i>${j + 1}</i><span><b>${a}</b>${b}</span></li>`).join('');
+  $('#f-cap').innerHTML = `<b>${s.t}</b>${s.tip}`;
+  $('#f-prev').disabled = FM.i === 0;
 }
 function initGuide(){
   $('#g-sit').addEventListener('click', e => { const b = e.target.closest('[data-s]'); if (!b) return; gSit = b.dataset.s; try { localStorage.setItem('conti-gsit', gSit); } catch(er) {} renderGuide(); });
@@ -2432,6 +2597,9 @@ function initGuide(){
   $('#g-shots').addEventListener('change', e => { const i = e.target.dataset.done; if (i == null) return; gDone[gSit + i] = e.target.checked; try { localStorage.setItem('conti-gdone', JSON.stringify(gDone)); } catch(er) {} renderGuide(); });
   $('#g-sun').addEventListener('change', e => { if (e.target.id !== 'g-city') return; gCity = e.target.value; try { localStorage.setItem('conti-gcity', gCity); } catch(er) {} renderGuide(); });
   $('#g-shuffle').addEventListener('click', () => { altSeed++; renderGuide(); });
+  const saveOv = () => { try { localStorage.setItem('conti-govl', JSON.stringify(gOverlay)); } catch(er) {} };
+  $('#g3-grids').addEventListener('click', e => { const b = e.target.closest('[data-g]'); if (!b) return; gOverlay.grid = b.dataset.g; gOverlay.on = true; saveOv(); renderGuide(); });
+  $('#g3-ovl').addEventListener('change', e => { gOverlay.on = e.target.checked; saveOv(); renderGuide(); });
   $('#g-fieldall').addEventListener('click', () => openField(0));
   $('#f-close').addEventListener('click', closeField);
   $('#f-prev').addEventListener('click', () => { if (FM.i > 0){ FM.i--; drawField(); } });
