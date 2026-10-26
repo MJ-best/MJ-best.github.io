@@ -109,15 +109,56 @@ dl.spec dd{margin:0;color:var(--ink)}
 .gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:14px}
 #gal-tabs .chip span{font-size:13px;padding:4px 9px}
 .viewsw{display:flex;background:var(--tape);border-radius:999px;padding:4px;gap:4px;flex-basis:100%;justify-content:flex-end}
-.viewsw button{font:inherit;font-size:14px;font-weight:600;border:0;background:var(--sheet);color:var(--ink);padding:9px 14px;cursor:pointer;flex:1;white-space:nowrap}
+.viewsw button{font:inherit;font-size:14px;font-weight:600;border:0;background:var(--sheet);color:var(--ink);padding:9px 12px;cursor:pointer;flex:1;white-space:nowrap}
 .viewsw button{border-radius:999px;background:transparent}
 .viewsw button[aria-pressed="true"]{background:var(--sheet);color:var(--ink);box-shadow:0 1px 4px rgba(38,43,92,.15)}
 body.v-guide .wrap > section:not(#guide){display:none}
 body.v-guide .plan-only{display:none}
-body.v-plan #guide{display:none}
+body.v-plan #guide,body.v-purpose #guide{display:none}
+body.v-purpose .wrap > section:not(#purpose){display:none}
+body.v-purpose .plan-only{display:none}
+body:not(.v-purpose) #purpose{display:none}
+.purpose{display:grid;grid-template-columns:300px minmax(0,1fr);gap:18px;align-items:start}
+.pp-list{display:grid;gap:14px;position:sticky;top:12px}
+.pp-g > span{display:block;font-size:12px;font-weight:700;color:var(--ink-2);margin:0 0 6px 4px}
+.pp-g > div{display:grid;gap:6px}
+.pp-g button{font:inherit;text-align:left;border:1px solid var(--grid);background:var(--sheet);color:var(--ink);border-radius:14px;padding:9px 12px;cursor:pointer;display:grid;gap:1px;box-shadow:0 1px 2px rgba(38,43,92,.04)}
+.pp-g button b{font-size:14.5px}.pp-g button small{font-size:11.5px;color:var(--ink-2);line-height:1.35}
+.pp-g button[aria-pressed="true"]{border-color:var(--tile);background:var(--tape);box-shadow:0 0 0 2px var(--tape)}
+.pp-brief{background:var(--sheet);border:1px solid var(--grid);border-radius:20px;padding:22px clamp(16px,3vw,28px);box-shadow:0 1px 2px rgba(38,43,92,.04),0 6px 24px rgba(38,43,92,.05);display:grid;gap:22px;min-width:0}
+.pp-h h2{font-family:var(--f-hand);font-weight:400;font-size:clamp(28px,4vw,40px);margin:0;line-height:1.1}
+.pp-h p{margin:4px 0 0;color:var(--ink-2)}
+.pp-sec{display:grid;gap:10px}
+.pp-st{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15.5px}
+.pp-st small{font-weight:400;color:var(--ink-2);font-size:12.5px}
+.pp-n{display:grid;place-items:center;width:24px;height:24px;border-radius:7px;background:var(--tile);color:#fff;font-size:13px}
+.pp-q{display:grid;gap:6px;padding:10px 12px;border-radius:14px;background:var(--paper)}
+.pp-ql{font-size:13px;font-weight:600;color:var(--ink-2)}
+.pp-seg{display:flex;flex-wrap:wrap;gap:6px}
+.pp-seg button{font:inherit;font-size:13.5px;border:1px solid var(--scrib-2);background:var(--sheet);color:var(--ink);border-radius:999px;padding:5px 13px;cursor:pointer}
+.pp-seg button[aria-pressed="true"]{background:var(--tile);color:#fff;border-color:var(--tile)}
+.pp-tip{margin:0;font-size:13.5px;line-height:1.5}
+.pp-tip::before{content:"→ ";color:var(--tile);font-weight:700}
+.pp-think{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.pp-tc{border:1px solid var(--grid);border-radius:14px;padding:10px 12px;display:grid;gap:5px;align-content:start}
+.pp-tc b{font-size:13.5px}.pp-tc.warn b{color:var(--warn)}
+.pp-tc label{display:flex;gap:7px;align-items:flex-start;font-size:13px;line-height:1.45;cursor:pointer}
+.pp-tc input{accent-color:var(--tile);width:15px;height:15px;margin-top:2px;flex:none}
+.pp-tc label:has(input:checked){color:var(--ink-2);text-decoration:line-through;text-decoration-color:var(--scrib-2)}
+.pp-cuts{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+.pp-cut{display:grid;gap:5px;align-content:start;min-width:0}
+.pp-cut .ph .fr{border-radius:12px;border:0;box-shadow:0 2px 8px rgba(38,43,92,.12)}
+.pp-cut .ph figcaption{display:none}
+.pp-cut > div{display:flex;gap:7px;align-items:center}.pp-cut > div b{font-size:14px;line-height:1.25}
+.pp-cut .g3n{width:22px;height:22px;font-size:12px;border-radius:7px;background:#79B064}
+.pp-cut small{font-size:11.5px;color:var(--ink-2);padding-left:29px}
+.pp-act{display:flex;flex-wrap:wrap;gap:8px}
+@media (max-width:1000px){ .pp-think{grid-template-columns:repeat(2,minmax(0,1fr))} .pp-cuts{grid-template-columns:repeat(3,minmax(0,1fr))} }
+@media (max-width:900px){ .purpose{grid-template-columns:minmax(0,1fr)} .pp-list{position:static} .pp-g > div{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media (max-width:520px){ .pp-think{grid-template-columns:minmax(0,1fr)} .pp-cuts{grid-template-columns:repeat(2,minmax(0,1fr))} .pp-g button small{display:none} }
 body.v-board .wrap > section:not(#mboard){display:none}
 body.v-board .plan-only{display:none}
-body.v-plan #mboard,body.v-guide #mboard{display:none}
+body.v-plan #mboard,body.v-guide #mboard,body.v-purpose #mboard{display:none}
 .mboard{background:var(--sheet);border:1px solid var(--grid);border-radius:20px;box-shadow:0 1px 2px rgba(38,43,92,.04),0 6px 24px rgba(38,43,92,.05);overflow:hidden}
 .mb-bar{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--grid);background:var(--paper)}
 .mb-name{font:inherit;font-family:var(--f-hand);font-size:22px;border:0;background:transparent;color:var(--ink);min-width:0;width:16ch;padding:2px 4px;border-radius:6px}
@@ -570,12 +611,12 @@ footer code{font-family:var(--f-mono);font-size:12px}
 <div class="wrap">
   <header class="mast">
     <div>
-      <div class="brand"><img src="apple-touch-icon.png" alt="" width="72" height="72"><div><div class="eyebrow">찍기 전에 정리하는 무드보드</div>
+      <div class="brand"><img src="apple-touch-icon.png" alt="" width="72" height="72"><div><div class="eyebrow">목적 · 무드보드 · 현장 가이드</div>
       <h1>오늘 뭐 <span class="tape">찍지</span></h1></div></div>
-      <p class="lede">찍을 대상마다 레퍼런스 사진과 포즈 메모를 모으고, 의상·준비물을 한곳에 적어 두세요. 현장에서는 컷 가이드를 보면 됩니다.</p>
+      <p class="lede">어디에 쓸 사진인지부터 고르세요. 먼저 정할 것, 고민할 것, 꼭 찍을 컷이 나오고, 그대로 무드보드와 현장 가이드로 이어집니다.</p>
     </div>
     <div class="mast-actions">
-      <div class="viewsw" role="group" aria-label="보기 선택"><button type="button" data-v="board" aria-pressed="true">무드보드</button><button type="button" data-v="guide" aria-pressed="false">현장 컷 가이드</button><button type="button" data-v="plan" aria-pressed="false">스튜디오 도구</button></div>
+      <div class="viewsw" role="group" aria-label="보기 선택"><button type="button" data-v="purpose" aria-pressed="true">무엇을 찍나</button><button type="button" data-v="board" aria-pressed="false">무드보드</button><button type="button" data-v="guide" aria-pressed="false">현장 컷 가이드</button><button type="button" data-v="plan" aria-pressed="false">스튜디오</button></div>
       <button class="btn plan-only" id="reseed" type="button">다른 예시 사진 보기</button>
       <button class="btn solid plan-only" id="copy" type="button">컷 리스트 복사</button>
     </div>
@@ -586,6 +627,11 @@ footer code{font-family:var(--f-mono);font-size:12px}
   
 
   
+
+  <section class="purpose" id="purpose" aria-label="촬영 목적">
+    <div class="pp-list" id="pp-list"></div>
+    <div class="pp-brief" id="pp-brief"></div>
+  </section>
 
   <section class="mboard" id="mboard" aria-label="무드보드">
     <div class="mb-bar">
@@ -2702,10 +2748,10 @@ function initGuide(){
   let sx0 = null; $('#field').addEventListener('pointerdown', e => sx0 = e.clientX); $('#field').addEventListener('pointerup', e => { if (sx0 == null) return; const dx = e.clientX - sx0; sx0 = null; if (Math.abs(dx) > 60){ (dx < 0 ? $('#f-next') : $('#f-prev')).click(); } });
 }
 function setView(v){
-  if (!['board', 'guide', 'plan'].includes(v)) v = 'board';
-  document.body.classList.toggle('v-board', v === 'board'); document.body.classList.toggle('v-guide', v === 'guide'); document.body.classList.toggle('v-plan', v === 'plan');
+  if (!['purpose', 'board', 'guide', 'plan'].includes(v)) v = 'purpose';
+  document.body.classList.toggle('v-purpose', v === 'purpose'); document.body.classList.toggle('v-board', v === 'board'); document.body.classList.toggle('v-guide', v === 'guide'); document.body.classList.toggle('v-plan', v === 'plan');
   document.querySelectorAll('.viewsw button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === v)));
-  try { localStorage.setItem('conti-view-2', v); history.replaceState(null, '', '#' + v); } catch(e) {}
+  try { localStorage.setItem('conti-view-3', v); history.replaceState(null, '', '#' + v); } catch(e) {}
   if (v === 'plan' && sim) drawSim();
 }
 
@@ -2878,8 +2924,117 @@ const MB = (() => {
     render();
     if (!B.fitted){ B.fitted = true; requestAnimationFrame(fit); }
   }
-  return {init};
+  function create(b){ B = Object.assign(b, {zoom: B ? B.zoom || 1 : 1, fitted: false}); save(); render(); requestAnimationFrame(() => { B.fitted = true; fit(); }); }
+  return {init, create};
 })();
+
+/* ---------------- purposes: why are you shooting? ---------------- */
+const PG = {people:'사람을 찍어요', goods:'물건·공간을 찍어요', record:'순간을 기록해요'};
+const P2 = [
+  {id:'profile', g:'people', ko:'프로필·증명', one:'이력서·링크드인·사원증·명함에 쓸 얼굴', guide:'cafe',
+    q:[{q:'어디에 쓰나요?', o:[['이력서·사원증', '3:4 세로, 단색 배경, 정면에 가깝게. 정수리 위 여백은 손가락 한 마디.'], ['링크드인·메신저', '1:1 원형으로 잘려요. 얼굴을 화면 가운데에, 어깨까지만.'], ['회사 홈페이지', '팀 사진과 톤을 맞춰야 해요. 기존 사진의 배경·밝기를 먼저 확인.']]},
+       {q:'어떤 인상?', o:[['신뢰감', '정면, 은은한 미소, 밝고 고른 빛.'], ['친근함', '몸 45°, 활짝 웃는 표정, 따뜻한 색.'], ['전문성', '살짝 낮은 카메라, 차분한 표정, 어두운 배경도 OK.']]}],
+    think:{'쓰임':['잘리는 비율(3:4·1:1 원형)을 먼저 확인', '같은 사진을 여러 곳에 쓰면 여백을 넉넉히'], '메시지':['직무에 맞는 인상 한 가지만 고르기', '배경·의상 색은 2가지 이내'], '빛·시간':['창가 옆빛 또는 그늘, 정오 직사광 피하기', '얼굴 그림자는 약하게(명암비 2:1 이하)'], '사람':['찍기 전 5분 대화로 긴장 풀기', '턱 앞으로·어깨 내리기를 먼저 알려 주기'], '장비':['85mm 근처, f/2.8~4', '단색 벽·흰 반사판'], '함정':['안경 반사', '정수리 잘림', '1:1 원형에서 얼굴이 치우침']},
+    cuts:[{t:'정면 증명 컷', why:'이력서·사원증', fr:'MCU', f:85, cat:'frame_bust'}, {t:'3/4 각도 컷', why:'링크드인', fr:'MCU', f:85, cat:'loop'}, {t:'웃는 클로즈업', why:'팀 소개', fr:'CU', f:85, cat:'frame_cu'}, {t:'일하는 상반신', why:'보도자료·강연 소개', fr:'MS', f:50, cat:'frame_bust'}]},
+  {id:'sns', g:'people', ko:'SNS 인생샷', one:'인스타 피드·프로필에 올릴 분위기 있는 사진', guide:'travel',
+    q:[{q:'어떻게 올리나요?', o:[['캐러셀 여러 장', '첫 장은 전신·장소, 2~3장은 클로즈업·디테일, 마지막은 분위기 컷. 순서를 미리 정하기.'], ['한 장 대표', '가장 강한 한 컷에 집중. 전신 또는 반신 중 하나만.'], ['스토리·릴스', '세로 9:16. 동영상에서 캡처할 생각이면 4K로.']]},
+       {q:'피드 톤?', o:[['밝고 화사', '역광·하이키, 흰·파스텔 옷.'], ['차분·필름', '흐린 날·그늘, 채도 낮게, 베이지·브라운 옷.'], ['선명·도시', '정오 후 측광, 원색 포인트 하나.']]}],
+    think:{'쓰임':['피드는 4:5 세로, 스토리는 9:16', '기존 피드 색감과 맞추기'], '메시지':['이 장소에서 남길 한 장면을 정하기', '옷 색과 배경 색 대비'], '빛·시간':['골든아워(일몰 1시간 전) 또는 흐린 날', '인기 장소는 오전 일찍(인파)'], '사람':['포즈 3개를 미리 정해 가기', '걷기·돌아보기처럼 움직임으로 어색함 풀기'], '장비':['35mm(전신·장소), 85mm(반신)', '연사, 노출 보정'], '함정':['인물만 크고 장소가 안 보임', '머리 위로 솟는 전봇대', '모든 컷이 같은 포즈']},
+    cuts:[{t:'장소가 보이는 전신', why:'캐러셀 첫 장', fr:'WS', f:35, cat:'snap_city'}, {t:'다리 길어 보이는 전신', why:'착장', fr:'FS', f:35, cat:'frame_full'}, {t:'걷다 돌아보기', why:'자연스러운 컷', fr:'MS', f:85, cat:'snap_profile'}, {t:'배경 흐린 반신', why:'프로필', fr:'MCU', f:85, cat:'frame_bust'}, {t:'손·소품 디테일', why:'캐러셀 사이', fr:'ECU', f:50, cat:'topview'}]},
+  {id:'product', g:'goods', ko:'제품 상세·판매', one:'스마트스토어·쇼핑몰 썸네일과 상세 페이지', guide:'cafe',
+    q:[{q:'어디에 올리나요?', o:[['오픈마켓 썸네일', '1:1, 흰 배경, 제품이 화면의 80% 이상. 그림자 약하게.'], ['상세 페이지', '세로로 길게 이어져요. 같은 각도·밝기로 연속성 유지.'], ['SNS 광고', '사용 장면·사람 손이 들어가야 멈춰서 봐요. 4:5 또는 9:16.']]},
+       {q:'무엇을 보여 주나요?', o:[['생김새·색', '정면·측면·후면, 색이 정확해야 해요(화이트밸런스 고정).'], ['소재·디테일', '옆에서 비추는 빛으로 질감, 접사.'], ['쓰는 모습', '손·사람과 함께, 실제 크기가 느껴지게.']]}],
+    think:{'쓰임':['플랫폼 규격(1:1·흰 배경)부터 확인', '글자 넣을 여백 남기기'], '메시지':['고객이 궁금한 것 3가지를 컷으로', '경쟁 상품 썸네일과 차별점'], '빛·시간':['큰 창가 또는 소프트박스 하나 + 흰 반사판', '모든 컷 그림자 방향 같게'], '사람':['손 모델이면 손톱·소매 정리'], '장비':['삼각대 필수, f/8 이상', '흰 전지·폼보드, 먼지 천'], '함정':['실제와 다른 색', '먼지·지문', '컷마다 각도·밝기가 다름']},
+    cuts:[{t:'흰 배경 정면', why:'썸네일', fr:'MS', f:100, cat:'product'}, {t:'측면·후면', why:'생김새', fr:'MS', f:100, cat:'product'}, {t:'질감 접사', why:'소재', fr:'ECU', f:100, cat:'product'}, {t:'사용 장면', why:'쓰는 모습', fr:'WS', f:50, cat:'topview'}, {t:'크기 비교', why:'손이나 소품과 함께', fr:'MS', f:50, cat:'topview'}]},
+  {id:'lookbook', g:'goods', ko:'룩북·옷 판매', one:'옷의 핏과 분위기를 보여 주는 착장 사진', guide:'street',
+    q:[{q:'주목적은?', o:[['판매(핏 정보)', '정면·측면·후면을 같은 자리·같은 거리에서. 모델 키·사이즈 기록.'], ['브랜드 무드', '장소·움직임·표정 위주, 컷 수보다 분위기.']]},
+       {q:'장소?', o:[['스튜디오 단색', '옷 색이 정확, 그림자 정리 쉬움.'], ['거리·자연', '분위기는 좋지만 색이 배경에 물들어요. 화이트밸런스 고정.']]}],
+    think:{'쓰임':['상품마다 같은 구도로 찍어야 목록이 정돈돼요', '세로 3:4 또는 4:5'], '메시지':['착장 순서표(상의·하의·소품) 미리 작성'], '빛·시간':['옷 색이 정확한 고른 빛'], '사람':['모델 키·착용 사이즈 기록', '포즈는 3단계 반복(정면·측면·워킹)'], '장비':['50mm, 허리 높이 카메라', '스팀다리미·옷핀·보풀제거기'], '함정':['주름·보풀', '착장마다 조명이 달라 색이 다름', '카메라가 높아 다리가 짧아 보임']},
+    cuts:[{t:'정면 전신', why:'대표', fr:'FS', f:50, cat:'frame_full'}, {t:'측면·후면', why:'핏', fr:'FS', f:50, cat:'fashion'}, {t:'워킹', why:'움직임', fr:'FS', f:35, cat:'angle_low'}, {t:'상반신', why:'칼라·액세서리', fr:'MCU', f:85, cat:'fashion'}, {t:'원단 디테일', why:'소재', fr:'ECU', f:100, cat:'fashion'}]},
+  {id:'wedding', g:'people', ko:'웨딩·커플 스냅', one:'청첩장·모바일 청첩장·기념 액자', guide:'pair',
+    q:[{q:'어디에 쓰나요?', o:[['종이 청첩장', '가로·세로 비율을 디자인 시안에 맞추기, 글자 들어갈 하늘·여백.'], ['모바일 청첩장', '세로 사진 여러 장, 첫 장은 두 사람 얼굴이 크게.'], ['액자·앨범', '인쇄용이라 흔들림·노이즈에 민감, 해상도 넉넉히.']]},
+       {q:'분위기?', o:[['로맨틱·역광', '골든아워, 역광, 밝은 톤.'], ['클래식', '정면·대칭, 차분한 장소.'], ['장난스러움', '걷기·점프·웃음, 연사.']]}],
+    think:{'쓰임':['청첩장 시안의 사진 칸 비율 먼저 받기', '글자 넣을 여백 컷 따로'], '메시지':['두 사람 관계가 보이는 순간 하나'], '빛·시간':['일몰 1시간 전부터 실루엣까지', '장소 촬영 허가'], '사람':['드레스 정리할 보조 1명', '신랑 긴장 풀기 대화'], '장비':['85mm(얼굴), 35mm(장소), 반사판', '편한 신발·물·안전핀'], '함정':['한낮 직사광', '드레스 밑단 흙', '골든아워를 놓침']},
+    cuts:[{t:'걸어오는 두 사람', why:'청첩장 메인', fr:'FS', f:50, cat:'snap_wedding'}, {t:'역광 클로즈업', why:'모바일 표지', fr:'CU', f:85, cat:'snap_backlight'}, {t:'글자 여백 컷', why:'청첩장 디자인', fr:'WS', f:35, cat:'snap_golden'}, {t:'반지·손', why:'속지', fr:'ECU', f:100, cat:'couple'}, {t:'노을 실루엣', why:'엔딩', fr:'FS', f:35, cat:'snap_golden'}]},
+  {id:'family', g:'people', ko:'가족·아이', one:'가족 액자, 아이 성장 기록, 돌·생일', guide:'pair',
+    q:[{q:'누가 주인공?', o:[['아이', '아이 눈높이(무릎 꿇기), 30분 안에 핵심 컷.'], ['가족 전체', '단체 컷을 가장 먼저, f/8로 모두 선명하게.'], ['부모님', '두 분 투샷을 따로, 대화하며 자연스럽게.']]},
+       {q:'장소?', o:[['집', '창가 빛, 정리된 한쪽 벽만 쓰기.'], ['야외', '그늘 넓은 공원, 아이 동선 여유.']]}],
+    think:{'쓰임':['거실 액자면 가로, 앨범이면 세로 섞기'], '메시지':['가족이 서로 보는 순간 하나'], '빛·시간':['아이 낮잠 이후, 배부를 때', '오전 10~11시 또는 오후 4시'], '사람':['중요한 컷 먼저, 아이는 15분마다 쉬기', '장난감·간식·여벌옷'], '장비':['35mm·50mm, 연사, 셔터 1/250초 이상'], '함정':['키 순서로 일렬(딱딱함)', '눈 감은 사람 → 단체는 5장 이상', '아이가 지친 뒤 단체 컷']},
+    cuts:[{t:'가족 단체', why:'액자', fr:'FS', f:35, cat:'family'}, {t:'아이 눈높이', why:'성장 기록', fr:'MCU', f:85, cat:'family'}, {t:'함께 노는 모습', why:'자연스러움', fr:'MS', f:35, cat:'family'}, {t:'부모님 투샷', why:'선물', fr:'MCU', f:85, cat:'couple'}, {t:'포갠 손', why:'앨범 마지막', fr:'ECU', f:50, cat:'couple'}]},
+  {id:'pet', g:'people', ko:'반려동물', one:'우리 아이 프로필·굿즈·캘린더', guide:'self',
+    q:[{q:'어디에 쓰나요?', o:[['프로필·SNS', '눈높이 정면, 눈에 초점.'], ['굿즈·캘린더', '배경 단순, 여백 넉넉히, 해상도 높게.']]},
+       {q:'성격?', o:[['활발함', '달리는 컷, 셔터 1/1000초.'], ['얌전함', '창가 클로즈업, 털 질감.']]}],
+    think:{'쓰임':['굿즈면 배경 단색, 잘라 쓸 여백'], '메시지':['성격이 보이는 표정·행동 하나'], '빛·시간':['창가 자연광, 플래시 금지', '산책 후 에너지가 빠졌을 때'], '사람':['보호자가 이름 부르고 간식 담당', '10분마다 휴식'], '장비':['눈 인식 AF(동물), 연사', '간식·삑삑이 장난감'], '함정':['흔들림(셔터가 느림)', '초점이 코에 감', '30분 넘게 찍어 지침']},
+    cuts:[{t:'눈높이 정면', why:'프로필', fr:'FS', f:50, cat:'pet'}, {t:'얼굴 클로즈업', why:'굿즈', fr:'CU', f:85, cat:'pet'}, {t:'보호자 품에', why:'가족 액자', fr:'MCU', f:50, cat:'pet'}, {t:'뛰어오는 순간', why:'활발함', fr:'FS', f:35, cat:'pet'}]},
+  {id:'event', g:'record', ko:'행사·모임 기록', one:'생일·졸업·회사 행사·세미나', guide:'pair',
+    q:[{q:'무엇을 남기나요?', o:[['보도·보고용', '무대·발표자·청중·현수막이 한 장에. 가로 사진.'], ['추억용', '사람들 표정·건배·단체 컷 위주.']]},
+       {q:'장소 빛?', o:[['실내 어두움', 'ISO 3200~6400 허용, f/1.8 단렌즈, 무음 셔터.'], ['야외·밝음', '그늘 쪽에서, 역광이면 노출 보정.']]}],
+    think:{'쓰임':['보고서면 행사명·현수막이 보이는 컷 필수'], '메시지':['진행 순서표를 받아 결정적 순간 표시'], '빛·시간':['무대 조명은 색이 섞여 RAW로'], '사람':['단체 컷은 시작 직후(사람이 다 있을 때)', '발표자 동의·촬영 안내'], '장비':['24-70 줌 또는 35·85 단렌즈', '여분 배터리·메모리'], '함정':['결정적 순간(수상·건배)을 놓침', '단체 컷 때 사람이 이미 떠남', '플래시로 분위기 망침']},
+    cuts:[{t:'행사 전경', why:'현수막·장소', fr:'WS', f:24, cat:'snap_city'}, {t:'발표자', why:'주인공', fr:'MS', f:85, cat:'frame_bust'}, {t:'청중 반응', why:'분위기', fr:'MS', f:50, cat:'snap_couple'}, {t:'단체 사진', why:'기념', fr:'WS', f:35, cat:'family'}, {t:'디테일', why:'명찰·꽃·케이크', fr:'ECU', f:50, cat:'topview'}]},
+  {id:'travel', g:'record', ko:'여행 기록', one:'여행지와 나를 함께 남기는 사진', guide:'travel',
+    q:[{q:'혼자인가요?', o:[['혼자', '삼각대·앱 리모트, 인터벌. 사람 적은 시간.'], ['동행 있음', '서로 찍어 주기: 구도를 미리 보여 주고 부탁.']]},
+       {q:'장비 무게?', o:[['가볍게', '35mm 단렌즈 하나로 장소·인물 모두.'], ['제대로', '24-70 + 85mm, 골든아워 일정 넣기.']]}],
+    think:{'쓰임':['여행 앨범이면 장소 컷과 인물 컷 비율 반반'], '메시지':['도착·이동·식사·밤처럼 하루의 흐름'], '빛·시간':['일출·일몰 시각 미리 확인', '명소는 개장 직후'], '사람':['동행에게 원하는 구도 사진을 보여 주기'], '장비':['여분 배터리, 가벼운 삼각대'], '함정':['인물만 크고 장소가 안 보임', '인파 가득한 배경', '이동 중 렌즈 교체로 놓친 순간']},
+    cuts:[{t:'장소가 주인공', why:'어디 갔는지', fr:'WS', f:35, cat:'snap_city'}, {t:'전신 인생샷', why:'대표', fr:'FS', f:35, cat:'frame_full'}, {t:'걷는 뒷모습', why:'분위기', fr:'FS', f:35, cat:'snap_city'}, {t:'현지 음식·소품', why:'기억', fr:'ECU', f:50, cat:'topview'}, {t:'노을·야경', why:'하루의 끝', fr:'WS', f:24, cat:'snap_golden'}]},
+  {id:'food', g:'goods', ko:'음식·카페 리뷰', one:'블로그·리뷰·메뉴판 사진', guide:'cafe',
+    q:[{q:'어떤 음식?', o:[['납작한 것(피자·브런치)', '위에서 탑뷰.'], ['높이 있는 것(버거·음료)', '45° 또는 눈높이 옆에서.']]},
+       {q:'어디에 쓰나요?', o:[['블로그 리뷰', '외관·메뉴판·전체 상차림·한 입 컷 순서.'], ['메뉴판·배달앱', '흰 접시·단순 배경, 1:1.']]}],
+    think:{'쓰임':['배달앱은 1:1 정사각형'], '메시지':['가장 맛있어 보이는 한 면을 앞으로'], '빛·시간':['창가 자리, 뒤쪽 또는 옆에서 오는 빛', '김·거품은 나오자마자'], '사람':['손이 들어가면 생동감'], '장비':['50mm, f/2.8~4, 노출 +0.3'], '함정':['형광등 색이 섞여 음식이 누렇게', '식어서 윤기가 사라짐', '테이블 위 잡동사니']},
+    cuts:[{t:'매장 외관', why:'블로그 첫 장', fr:'WS', f:35, cat:'snap_city'}, {t:'전체 상차림 탑뷰', why:'메뉴', fr:'FS', f:35, cat:'topview'}, {t:'대표 메뉴 45°', why:'메인', fr:'MS', f:50, cat:'product'}, {t:'한 입 컷', why:'생동감', fr:'CU', f:50, cat:'topview'}]},
+  {id:'space', g:'goods', ko:'공간·인테리어', one:'숙소·매장·사무실 소개 사진', guide:'street',
+    q:[{q:'어디에 올리나요?', o:[['숙소 예약 사이트', '가로 3:2, 밝고 넓게, 방마다 2~3컷.'], ['매장 SNS', '세로 4:5, 분위기와 디테일 위주.']]},
+       {q:'공간 크기?', o:[['좁음', '16~24mm 광각, 모서리에서 대각선으로.'], ['넓음', '24~35mm, 사람 한 명을 넣어 크기감.']]}],
+    think:{'쓰임':['예약 사이트 사진 규격·순서 확인'], '메시지':['손님이 가장 궁금한 공간(침대·욕실·뷰) 먼저'], '빛·시간':['모든 조명 켜고 창빛과 섞기, 오전 밝을 때'], '사람':['사람 넣을 거면 뒷모습·흐리게'], '장비':['삼각대, 수평계, 카메라 높이 1.2~1.4 m'], '함정':['세로선이 기울어짐', '어둡고 좁아 보임', '정리 안 된 물건']},
+    cuts:[{t:'대표 전경', why:'첫 장', fr:'WS', f:24, cat:'snap_city'}, {t:'대각선 코너 컷', why:'넓어 보이게', fr:'WS', f:24, cat:'angle_dutch'}, {t:'창밖 뷰', why:'장점', fr:'WS', f:35, cat:'snap_golden'}, {t:'디테일 소품', why:'분위기', fr:'ECU', f:50, cat:'topview'}]}
+];
+const FR_KO = {ECU:'디테일', CU:'클로즈업', MCU:'바스트', MS:'반신', FS:'전신', WS:'와이드'};
+const THINK_ICON = {'쓰임':'🖼', '메시지':'💬', '빛·시간':'☀', '사람':'🙂', '장비':'📷', '함정':'⚠'};
+let pState = (() => { const d = {id:'profile', ans:{}, chk:{}}; try { const v = JSON.parse(localStorage.getItem('conti-purpose') || 'null'); if (v && P2.find(p => p.id === v.id)) return Object.assign(d, v); } catch(e) {} return d; })();
+const pSave = () => { try { localStorage.setItem('conti-purpose', JSON.stringify(pState)); } catch(e) {} };
+function renderPurpose(){
+  const P = P2.find(p => p.id === pState.id);
+  $('#pp-list').innerHTML = Object.entries(PG).map(([g, gl]) => `<div class="pp-g"><span>${gl}</span><div>${P2.filter(p => p.g === g).map(p => `<button type="button" data-p="${p.id}" aria-pressed="${p.id === P.id}"><b>${p.ko}</b><small>${p.one}</small></button>`).join('')}</div></div>`).join('');
+  const ans = pState.ans[P.id] || {};
+  $('#pp-brief').innerHTML = `<div class="pp-h"><h2>${P.ko}</h2><p>${P.one}</p></div>
+    <div class="pp-sec"><div class="pp-st"><span class="pp-n">1</span>먼저 정할 것</div>
+      ${P.q.map((q, qi) => { const sel = ans[qi] ?? 0; return `<div class="pp-q"><div class="pp-ql">${q.q}</div><div class="pp-seg" data-q="${qi}">${q.o.map(([l], oi) => `<button type="button" data-o="${oi}" aria-pressed="${oi === sel}">${l}</button>`).join('')}</div><p class="pp-tip">${q.o[sel][1]}</p></div>`; }).join('')}</div>
+    <div class="pp-sec"><div class="pp-st"><span class="pp-n">2</span>고민할 것 <small>생각해 본 것은 체크</small></div>
+      <div class="pp-think">${Object.entries(P.think).map(([h, arr]) => `<div class="pp-tc${h === '함정' ? ' warn' : ''}"><b>${h}</b>${arr.map((t, ti) => { const k = P.id + h + ti; return `<label><input type="checkbox" data-k="${esc(k)}" ${pState.chk[k] ? 'checked' : ''}> ${t}</label>`; }).join('')}</div>`).join('')}</div></div>
+    <div class="pp-sec"><div class="pp-st"><span class="pp-n">3</span>꼭 찍을 컷 <small>${P.cuts.length}컷</small></div>
+      <div class="pp-cuts">${P.cuts.map((c, i) => `<div class="pp-cut">${figure(pick(c.cat, i + altSeed), '', 300)}<div><span class="g3n">${i + 1}</span><b>${c.t}</b></div><small>${c.why} · ${FR_KO[c.fr]} · ${c.f}mm</small></div>`).join('')}</div></div>
+    <div class="pp-act"><button class="btn solid" type="button" id="pp-board">이 목적으로 무드보드 만들기</button><button class="btn" type="button" id="pp-guide">현장 컷 가이드 보기</button><button class="btn" type="button" id="pp-copy">브리프 복사</button></div>`;
+}
+function purposeBoard(P){
+  const ans = pState.ans[P.id] || {}, uid = () => Math.random().toString(36).slice(2, 9);
+  const dec = P.q.map((q, qi) => `${q.q.replace(/\?$/, '')}: ${q.o[ans[qi] ?? 0][0]}`).join('\n');
+  const tips = P.q.map((q, qi) => q.o[ans[qi] ?? 0][1]).join('\n');
+  const items = P.g === 'goods' && P.id !== 'food' && P.id !== 'space';
+  return {title: `${P.ko} 촬영`, cols:[
+    {id:uid(), type:'shoot', title: items ? '촬영할 제품' : P.ko, items:[], sub:P.one, intent:'→ ' + P.q.map((q, qi) => q.o[ans[qi] ?? 0][0]).join(' · '), need:P.cuts.length,
+      poses:P.cuts.map((c, i) => { const p = pick(c.cat, i); return {id:uid(), img: p ? {kind:'u', id:p.id, page:p.page, by:p.by, alt:p.alt} : null, cap:`${c.t} — ${c.why}\n${FR_KO[c.fr]} · ${c.f}mm`}; })},
+    {id:uid(), type:'notes', blocks:[{h:'정한 것', t:dec}, {h:'그래서', t:tips}, {h:'준비물', t:(P.think['장비'] || []).join('\n')}, {h:'조심할 것', t:(P.think['함정'] || []).join('\n')}, {h:'장소 · 시간', t:(P.think['빛·시간'] || []).join('\n')}]}]};
+}
+function briefText(P){
+  const ans = pState.ans[P.id] || {};
+  const L = [`[촬영 브리프] ${P.ko} — ${P.one}`, ''];
+  P.q.forEach((q, qi) => { const o = q.o[ans[qi] ?? 0]; L.push(`■ ${q.q} ${o[0]}`, `  → ${o[1]}`); });
+  L.push('');
+  Object.entries(P.think).forEach(([h, arr]) => { L.push(`■ ${h}`); arr.forEach(t => L.push(`  - ${t}`)); });
+  L.push('', '■ 꼭 찍을 컷'); P.cuts.forEach((c, i) => L.push(`  ${i + 1}. ${c.t} (${c.why}) · ${FR_KO[c.fr]} · ${c.f}mm`));
+  return L.join('\n');
+}
+function initPurpose(){
+  $('#pp-list').addEventListener('click', e => { const b = e.target.closest('[data-p]'); if (!b) return; pState.id = b.dataset.p; pSave(); renderPurpose(); if (innerWidth < 900) $('#pp-brief').scrollIntoView({block:'start', behavior:'smooth'}); });
+  $('#pp-brief').addEventListener('click', e => {
+    const P = P2.find(p => p.id === pState.id);
+    const ob = e.target.closest('[data-o]'); if (ob){ const qi = +ob.closest('[data-q]').dataset.q; (pState.ans[P.id] = pState.ans[P.id] || {})[qi] = +ob.dataset.o; pSave(); renderPurpose(); return; }
+    if (e.target.closest('#pp-board')){ if (!confirm('이 목적의 컷과 메모로 무드보드를 새로 만들까요? (지금 보드는 바뀝니다)')) return; MB.create(purposeBoard(P)); setView('board'); return; }
+    if (e.target.closest('#pp-guide')){ gSit = P.guide; try { localStorage.setItem('conti-gsit', gSit); } catch(er) {} renderGuide(); setView('guide'); scrollTo(0, 0); return; }
+    if (e.target.closest('#pp-copy')){ const t = briefText(P); try { navigator.clipboard.writeText(t).then(() => toast('브리프를 복사했어요'), () => toast('복사하지 못했어요')); } catch(er) {} }
+  });
+  $('#pp-brief').addEventListener('change', e => { const k = e.target.dataset.k; if (!k) return; pState.chk[k] = e.target.checked; pSave(); });
+  renderPurpose();
+}
 
 /* ---------------- main ---------------- */
 function rebuild(){
@@ -2909,7 +3064,8 @@ initWiz();
 rebuild();
 RB.init();
 MB.init();
-setView((() => { const h = location.hash.replace('#', ''); if (['plan', 'guide', 'board'].includes(h)) return h; if (['wiz','story','sim-sec'].includes(h)) return 'plan'; try { return localStorage.getItem('conti-view-2') || 'board'; } catch(e) { return 'board'; } })());
+initPurpose();
+setView((() => { const h = location.hash.replace('#', ''); if (['purpose', 'plan', 'guide', 'board'].includes(h)) return h; if (['wiz','story','sim-sec'].includes(h)) return 'plan'; try { return localStorage.getItem('conti-view-3') || 'purpose'; } catch(e) { return 'purpose'; } })());
 
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(redrawAll);
 try { document.fonts.load("20px 'Do Hyeon'").then(redrawAll); } catch(e) {}
