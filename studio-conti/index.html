@@ -109,12 +109,83 @@ dl.spec dd{margin:0;color:var(--ink)}
 .gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:14px}
 #gal-tabs .chip span{font-size:13px;padding:4px 9px}
 .viewsw{display:flex;background:var(--tape);border-radius:999px;padding:4px;gap:4px;flex-basis:100%;justify-content:flex-end}
-.viewsw button{font:inherit;font-size:14px;font-weight:600;border:0;background:var(--sheet);color:var(--ink);padding:9px 12px;cursor:pointer;flex:1;white-space:nowrap}
+.viewsw button{font:inherit;font-size:13.5px;font-weight:600;border:0;background:var(--sheet);color:var(--ink);padding:9px 10px;cursor:pointer;flex:1;white-space:nowrap}
 .viewsw button{border-radius:999px;background:transparent}
 .viewsw button[aria-pressed="true"]{background:var(--sheet);color:var(--ink);box-shadow:0 1px 4px rgba(38,43,92,.15)}
 body.v-guide .wrap > section:not(#guide){display:none}
 body.v-guide .plan-only{display:none}
 body.v-plan #guide,body.v-purpose #guide{display:none}
+body.v-film .wrap > section:not(#film){display:none}
+body.v-film .plan-only{display:none}
+body:not(.v-film) #film{display:none}
+body.v-film #mboard,body.v-film #guide{display:none}
+.film{background:var(--sheet);border:1px solid var(--grid);border-radius:20px;padding:22px clamp(16px,3vw,28px);box-shadow:0 1px 2px rgba(38,43,92,.04),0 6px 24px rgba(38,43,92,.05);display:grid;gap:16px}
+.fm-top{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.fm-styles{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.fm-styles button{font:inherit;text-align:left;border:1px solid var(--grid);background:var(--sheet);color:var(--ink);border-radius:14px;padding:8px 10px;cursor:pointer;display:grid;gap:3px}
+.fm-styles button[aria-pressed="true"]{border-color:var(--tile);background:var(--tape);box-shadow:0 0 0 2px var(--tape)}
+.fm-styles b{font-size:14px}.fm-styles small{font-size:11.5px;color:var(--ink-2);line-height:1.3}
+.fsw{display:flex;height:8px;border-radius:4px;overflow:hidden}.fsw i{flex:1}
+.fm-ratio{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.fg-head{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;align-items:start;background:#14151C;color:#EDEAE0;border-radius:16px;padding:20px}
+.fg-era{font-size:12px;color:#A9A598}
+.fg-head h3{font-family:var(--f-hand);font-weight:400;font-size:clamp(28px,4vw,40px);margin:2px 0 6px;line-height:1.1}
+.fg-log{font-size:16px;margin:0 0 6px}.fg-ref{font-size:12.5px;color:#A9A598;margin:0 0 10px}
+.fg-head .links a{border-color:#4A4C58;color:#EDEAE0;font-size:11.5px}
+.fg-pal{display:grid;gap:6px;min-width:150px}.fg-pal > div{display:flex;gap:8px;align-items:center;font-size:11.5px;color:#C9C6BA;line-height:1.3}
+.fg-pal i{width:30px;height:30px;border-radius:6px;flex:none}.fg-pal code{font-family:var(--f-mono);font-size:10.5px;color:#8D8A80}
+.fg-rt{font-size:12px;color:#C9C6BA;margin-top:4px}.fg-rt b{font-family:var(--f-mono);color:#fff}
+.fg-look{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.fg-look > div{border:1px solid var(--grid);border-radius:14px;padding:10px 12px;background:var(--paper)}
+.fg-look b{font-size:13px;color:var(--tile)}.fg-look p{margin:4px 0 0;font-size:13px;line-height:1.5}
+.fg-st{font-weight:700;font-size:15.5px}.fg-st small{font-weight:400;font-size:12.5px;color:var(--ink-2);margin-left:6px}
+.fg-shots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.fg-shot{display:grid;gap:5px;align-content:start;min-width:0}
+.ffsvg{width:100%;height:auto;display:block;background:#fff}
+.fg-shot .g3h b{font-size:15px}.fg-en{font-size:11px;color:var(--ink-2);font-family:var(--f-mono)}
+.fg-shot p{margin:0;font-size:13px;line-height:1.5;padding-left:35px}.fg-how{color:var(--ink-2)}
+.fg-mm{font-size:11.5px;font-family:var(--f-mono);background:var(--tape);border-radius:999px;padding:1px 8px;justify-self:start;margin-left:35px}
+.fg-trio,.fg-rules{border:1px solid var(--grid);border-radius:14px;padding:12px 14px;font-size:13.5px}
+.fg-trio{background:color-mix(in srgb,var(--key) 7%,var(--sheet));border-color:color-mix(in srgb,var(--key) 35%,var(--sheet))}
+.fg-trio p{margin:4px 0}.fg-trio ol,.fg-rules ol{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
+.fg-trio li b,.fg-rules li b{margin-right:6px}
+.fb-card{background:#14151C;color:#EDEAE0;border-radius:16px;padding:18px 20px;display:grid;gap:6px}
+.fb-pal{display:flex;gap:6px}.fb-pal i{width:26px;height:26px;border-radius:6px}
+.fb-title{font:inherit;font-family:var(--f-hand);font-size:clamp(26px,3.6vw,36px);border:0;background:transparent;color:#fff;padding:2px 0;width:100%}
+.fb-log{font:inherit;font-size:15px;border:0;background:transparent;color:#D8D5CA;resize:none;width:100%}
+.fb-title:focus,.fb-log:focus{outline:1px dashed #4A4C58}
+.fb-meta{font-size:12px;color:#8D8A80}
+.fb-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:20px}
+.fb-heads{display:grid;grid-template-columns:1fr 1fr;gap:16px;font-size:12px;font-weight:700;color:var(--ink-2);margin:4px 0 -10px}
+.fb-pair{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+.fb-sk .ffsvg{box-shadow:none;border-radius:0}
+.fb-fr{margin:0;display:grid;gap:6px;min-width:0}
+.fb-img{position:relative;overflow:hidden;background:#F1F1F1;border:3px solid #1C1C1C}
+.fb-img canvas{width:100%;height:auto;display:block}
+.fb-ill .ffsvg{border-radius:0;box-shadow:none;opacity:.55}
+.fb-drop{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:2px;color:var(--ink-2);cursor:pointer;text-align:center}
+.fb-drop b{font-size:30px;font-weight:400;line-height:1}.fb-drop span{font-size:13px;font-weight:600}.fb-drop small{font-size:11px;opacity:.8}
+.fb-drop:hover{background:var(--tape)}
+.fb-drop b{color:var(--tile)}
+.fb-img .mb-x{opacity:1}
+.fb-fr figcaption{display:flex;gap:8px;align-items:center}.fb-fr figcaption b{font-size:14px;flex:none}
+.fb-sub,.fb-note{font:inherit;font-size:13px;border:1px solid var(--grid);border-radius:8px;padding:4px 8px;background:var(--sheet);color:var(--ink);min-width:0;flex:1}
+.fb-note{color:var(--ink-2);font-size:12.5px}
+.fb-row{display:flex;gap:10px;align-items:center}.fb-row input[type=range]{flex:1;accent-color:var(--tile)}
+.fb-pick{display:flex;gap:5px;align-items:center;font-size:12.5px;cursor:pointer;white-space:nowrap}.fb-pick input{accent-color:var(--tile);width:15px;height:15px}
+.fb-tg{margin-left:0}
+.mk-wrap{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:18px;align-items:start}
+.mk-stage{position:relative;background:#000;border-radius:8px;overflow:hidden}
+.mk-stage canvas{width:100%;height:auto;display:block}
+.mk-drop{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:4px;color:#fff;cursor:pointer;text-align:center}
+.mk-drop b{font-size:40px;font-weight:400;line-height:1}.mk-drop span{font-size:15px;font-weight:600}.mk-drop small{opacity:.75}
+.mk-ctl{display:grid;gap:12px}
+.mk-ctl input[type=text]{font:inherit;font-size:14px;border:1.5px solid var(--scrib-2);border-radius:10px;padding:7px 10px;width:100%;background:var(--sheet);color:var(--ink)}
+.mk-ctl input[type=range]{accent-color:var(--tile)}
+.mk-sugs{display:flex;flex-wrap:wrap;gap:5px}.mk-sugs button{font:inherit;font-size:12px;border:1px dashed var(--scrib-2);background:transparent;color:var(--ink-2);border-radius:999px;padding:3px 10px;cursor:pointer}
+.mk-note{font-size:12px;color:var(--ink-2);margin:0}
+@media (max-width:1000px){ .fm-styles{grid-template-columns:repeat(3,minmax(0,1fr))} .fg-look{grid-template-columns:repeat(2,minmax(0,1fr))} .fg-shots{grid-template-columns:repeat(2,minmax(0,1fr))} .mk-wrap{grid-template-columns:minmax(0,1fr)} }
+@media (max-width:620px){ .viewsw{flex-wrap:wrap;border-radius:18px} .viewsw button{flex:1 1 30%;padding:8px 6px;font-size:12.5px} .fb-pair,.fb-heads{gap:8px} .fb-drop small{display:none} .fm-styles{grid-template-columns:repeat(2,minmax(0,1fr))} .fg-head{grid-template-columns:minmax(0,1fr)} .fg-pal{grid-template-columns:repeat(2,minmax(0,1fr))} .fg-look{grid-template-columns:minmax(0,1fr)} .fg-shots,.fb-grid{grid-template-columns:minmax(0,1fr)} .fg-shot p{padding-left:0} .fg-mm{margin-left:0} }
 body.v-purpose .wrap > section:not(#purpose){display:none}
 body.v-purpose .plan-only{display:none}
 body:not(.v-purpose) #purpose{display:none}
@@ -616,7 +687,7 @@ footer code{font-family:var(--f-mono);font-size:12px}
       <p class="lede">어디에 쓸 사진인지부터 고르세요. 먼저 정할 것, 고민할 것, 꼭 찍을 컷이 나오고, 그대로 무드보드와 현장 가이드로 이어집니다.</p>
     </div>
     <div class="mast-actions">
-      <div class="viewsw" role="group" aria-label="보기 선택"><button type="button" data-v="purpose" aria-pressed="true">무엇을 찍나</button><button type="button" data-v="board" aria-pressed="false">무드보드</button><button type="button" data-v="guide" aria-pressed="false">현장 컷 가이드</button><button type="button" data-v="plan" aria-pressed="false">스튜디오</button></div>
+      <div class="viewsw" role="group" aria-label="보기 선택"><button type="button" data-v="purpose" aria-pressed="true">무엇을 찍나</button><button type="button" data-v="film" aria-pressed="false">영화 스틸컷</button><button type="button" data-v="board" aria-pressed="false">무드보드</button><button type="button" data-v="guide" aria-pressed="false">현장 컷 가이드</button><button type="button" data-v="plan" aria-pressed="false">스튜디오</button></div>
       <button class="btn plan-only" id="reseed" type="button">다른 예시 사진 보기</button>
       <button class="btn solid plan-only" id="copy" type="button">컷 리스트 복사</button>
     </div>
@@ -631,6 +702,14 @@ footer code{font-family:var(--f-mono);font-size:12px}
   <section class="purpose" id="purpose" aria-label="촬영 목적">
     <div class="pp-list" id="pp-list"></div>
     <div class="pp-brief" id="pp-brief"></div>
+  </section>
+
+  <section class="film" id="film" aria-labelledby="fm-h">
+    <div class="fm-top"><div><h2 id="fm-h" class="g3title">영화 스틸컷</h2><p class="g3sub">영화의 한 장면처럼 찍고, 무드북으로 묶어 남기세요.</p></div>
+      <div class="cp-seg" id="fm-sub" role="group" aria-label="기능"><button type="button" data-sub="guide">촬영 가이드</button><button type="button" data-sub="book">무드북</button><button type="button" data-sub="maker">스틸 메이커</button></div></div>
+    <div class="fm-styles" id="fm-styles" role="group" aria-label="영화 스타일"></div>
+    <div class="fm-ratio"><span class="tl">화면비</span><div class="cp-f" id="fm-ratio"></div></div>
+    <div id="fm-guide"></div><div id="fm-book" hidden></div><div id="fm-maker" hidden></div>
   </section>
 
   <section class="mboard" id="mboard" aria-label="무드보드">
@@ -2748,8 +2827,8 @@ function initGuide(){
   let sx0 = null; $('#field').addEventListener('pointerdown', e => sx0 = e.clientX); $('#field').addEventListener('pointerup', e => { if (sx0 == null) return; const dx = e.clientX - sx0; sx0 = null; if (Math.abs(dx) > 60){ (dx < 0 ? $('#f-next') : $('#f-prev')).click(); } });
 }
 function setView(v){
-  if (!['purpose', 'board', 'guide', 'plan'].includes(v)) v = 'purpose';
-  document.body.classList.toggle('v-purpose', v === 'purpose'); document.body.classList.toggle('v-board', v === 'board'); document.body.classList.toggle('v-guide', v === 'guide'); document.body.classList.toggle('v-plan', v === 'plan');
+  if (!['purpose', 'film', 'board', 'guide', 'plan'].includes(v)) v = 'purpose';
+  document.body.classList.toggle('v-film', v === 'film'); document.body.classList.toggle('v-purpose', v === 'purpose'); document.body.classList.toggle('v-board', v === 'board'); document.body.classList.toggle('v-guide', v === 'guide'); document.body.classList.toggle('v-plan', v === 'plan');
   document.querySelectorAll('.viewsw button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === v)));
   try { localStorage.setItem('conti-view-3', v); history.replaceState(null, '', '#' + v); } catch(e) {}
   if (v === 'plan' && sim) drawSim();
@@ -3036,6 +3115,377 @@ function initPurpose(){
   renderPurpose();
 }
 
+/* ---------------- film still concept: guide · moodbook · still maker ---------------- */
+const FILM_STYLES = [
+  {id:'neon', ko:'네온 로맨스', era:'90년대 홍콩 멜로', ratio:1.85, refs:['In the Mood for Love', 'Chungking Express', 'Fallen Angels'], refKo:'「화양연화」「중경삼림」 같은 왕가위 감독풍',
+    pal:['#0E3B2E','#B3202C','#E8B04B','#1B1B2A'], palN:['딥그린','와인레드','앰버','밤'],
+    grade:{sat:1.25, con:1.15, exp:0, sh:[0,18,10], hi:[18,8,-10], fade:.06, grain:.10, vig:.35},
+    log:'좁은 복도, 스치는 두 사람. 말하지 않은 감정이 네온 빛에 번진다.',
+    look:{'빛':'네온 간판·형광등·백열 스탠드 같은 화면 속 광원만 쓰기. 얼굴 반은 어둡게.', '구도':'문틀·거울·창살로 화면을 한 겹 가리는 "더러운 프레임". 인물은 가장자리에.', '카메라':'24~35mm로 가까이, 셔터 1/8~1/15로 일부러 흔들림(드래그 셔터). ISO 1600도 OK.', '의상·소품':'꽃무늬 원피스·셔츠, 유선 전화, 커피잔, 비 오는 창.', '장소':'좁은 계단·복도, 편의점, 밤 골목, 낡은 식당.', '연기':'카메라를 보지 않기. 담배 대신 커피를 젓거나 창밖을 보는 "동작 중간".', '보정':'초록 그림자 + 따뜻한 하이라이트, 채도 올리고 입자감.'},
+    lines:['우린 그때 서로를 알아보지 못했다.', '유통기한이 없는 것은 없을까.', '그날 밤, 비가 오지 않았다면.']},
+  {id:'sym', ko:'대칭 파스텔', era:'동화 같은 코미디', ratio:1.85, refs:['The Grand Budapest Hotel', 'Moonrise Kingdom', 'Asteroid City'], refKo:'「그랜드 부다페스트 호텔」 같은 웨스 앤더슨 감독풍',
+    pal:['#F2B8C6','#F6D86B','#9ED3C3','#C0392B'], palN:['핑크','머스터드','민트','빨강 포인트'],
+    grade:{sat:1.1, con:.95, exp:.08, sh:[10,6,0], hi:[12,8,-4], fade:.1, grain:.03, vig:0},
+    log:'모든 것이 제자리에 있는 세계, 단 한 사람만 엉뚱하다.',
+    look:{'빛':'정면에서 고르게, 그림자 거의 없이(흐린 날·큰 창).', '구도':'완전한 좌우 대칭. 인물은 정중앙, 카메라는 정면·수평. 위에서 내려다보는 탑뷰 인서트.', '카메라':'35~40mm, 카메라 높이 = 인물 가슴, 수평계 필수. f/5.6으로 배경까지 선명.', '의상·소품':'유니폼·제복, 같은 색 모자, 여행가방, 손글씨 편지.', '장소':'대칭 구조의 건물 정면, 복도 끝, 계단, 단색 벽.', '연기':'무표정으로 정면 응시. 감정은 표정 대신 자세로.', '보정':'파스텔 톤, 따뜻하고 밝게, 대비 약하게.'},
+    lines:['예약하신 방은 맨 위층입니다.', '이건 계획에 없던 일이야.', '모두 제자리에.']},
+  {id:'noir', ko:'필름 누아르', era:'흑백 범죄극', ratio:1.37, refs:['The Third Man', 'Double Indemnity', 'Sin City'], refKo:'「제3의 사나이」 같은 고전 누아르',
+    pal:['#0B0B0B','#3A3A3A','#9A9A9A','#F2F2F2'], palN:['블랙','차콜','실버','하이라이트'],
+    grade:{bw:true, sat:0, con:1.4, exp:-.08, sh:[0,0,0], hi:[0,0,0], fade:0, grain:.12, vig:.45},
+    log:'모두가 무언가를 숨기고 있다. 빛은 진실의 반쪽만 비춘다.',
+    look:{'빛':'딱딱한 한 개의 빛(맨 전구·손전등·가로등). 블라인드 그림자를 얼굴에.', '구도':'로우 앵글, 긴 그림자, 기울어진 더치 앵글. 계단·골목의 대각선.', '카메라':'35~50mm, f/8, 노출은 밝은 곳에 맞춰 어둠을 깊게(−1).', '의상·소품':'트렌치코트, 페도라·모자, 담배 연기 대신 수증기·연기, 오래된 전화기.', '장소':'비 젖은 골목, 계단, 블라인드 있는 사무실, 지하도.', '연기':'눈만 빛에 드러나게. 뒤돌아보는 순간.', '보정':'흑백, 강한 대비, 거친 입자.'},
+    lines:['그녀가 문을 열기 전까지는 평범한 밤이었다.', '모두에게 가격은 있다.', '비가 모든 걸 씻어 주진 않아.']},
+  {id:'blockbuster', ko:'블록버스터', era:'할리우드 액션', ratio:2.39, refs:['Mad Max: Fury Road', 'Dune', 'Blade Runner 2049'], refKo:'「듄」「블레이드 러너 2049」 같은 대작 SF·액션',
+    pal:['#0F4C5C','#1E8A92','#E07A2B','#F4C27A'], palN:['딥틸','틸','오렌지','샌드'],
+    grade:{sat:1.1, con:1.2, exp:-.02, sh:[-12,6,18], hi:[22,8,-14], fade:.02, grain:.04, vig:.3},
+    log:'모래바람 너머 마지막 한 사람이 걸어 나온다.',
+    look:{'빛':'강한 역광·림 라이트, 연무(헤이즈)로 빛줄기. 골든아워나 해 질 녘.', '구도':'시네마스코프 가로. 인물은 아주 작게, 하늘·땅을 크게. 영웅 컷은 로우 앵글.', '카메라':'24mm(광활함)·85mm(얼굴), 렌즈 플레어를 일부러.', '의상·소품':'롱코트, 고글, 먼지 묻은 옷, 지도·무전기.', '장소':'사막·해변·공사장·옥상·주차장.', '연기':'멀리 바라보기, 걸어오기, 결심한 표정.', '보정':'틸(청록) 그림자 + 오렌지 피부, 대비 강하게.'},
+    lines:['여기서부터는 혼자 가야 해.', '아직 끝나지 않았어.', '우리가 마지막이야.']},
+  {id:'retrowed', ko:'레트로 필름 웨딩', era:'90년대 영화 같은 커플 스냅', ratio:1.85, refs:['Christmas in August', 'Happy Together', '90s film wedding photography'], refKo:'90년대 한국·홍콩 멜로 영화의 한 장면 같은 웨딩·커플 스냅',
+    pal:['#3E5A47','#7FA3A0','#C23B2E','#EADFC9'], palN:['들판 그린','바랜 청록','빨강 포인트','크림'],
+    grade:{sat:.92, con:1.06, exp:-.04, sh:[-6,10,8], hi:[16,8,-8], fade:.11, grain:.13, vig:.2},
+    log:'결혼식 날, 우리는 아무도 모르는 바다로 도망쳤다.',
+    look:{'빛':'흐린 날이나 오후 측광. 플래시 없이 자연광만. 하늘이 하얗게 날아가도 괜찮아요.', '구도':'두 사람을 화면 양 끝에 두고 가운데를 비우기. 서로 바라보지 않고 각자 딴짓하는 순간. 장소가 보이는 와이드 1장 필수.', '카메라':'35·50mm, 노출 −0.3으로 살짝 어둡게. 필름 카메라나 필름 시뮬레이션. 세로로 이어 붙일 거라 가로로 찍기.', '의상·소품':'턱시도·슬립 드레스·빨간 원피스·니트 카디건. 낡은 여행가방, 와인잔, 비눗방울, 꽃 한 송이.', '장소':'바닷가 바위, 시골 들판, 비포장 길, 버스 정류장.', '연기':'무심한 표정, 카메라를 절대 보지 않기. 마시기·비눗방울 불기·가방 들기처럼 손이 바쁜 동작.', '보정':'바랜 청록 그림자, 피부는 따뜻하게, 빨강만 살리고 입자감.'},
+    lines:['우리 이대로 그냥 가 버릴까.', '오늘 같은 날 바다라니.', '어디로 가는지는 묻지 마.']},
+  {id:'youth', ko:'일본 여름 청춘', era:'뭉게구름·교복·자전거', ratio:1.85, refs:['April Story', 'Our Little Sister', 'japanese summer film still'], refKo:'「4월 이야기」「바닷마을 다이어리」 같은 일본 여름 영화',
+    pal:['#4E8FC7','#F4F6F8','#4F7A4A','#1F2A44'], palN:['여름 하늘','뭉게구름','산 초록','교복 네이비'],
+    grade:{sat:1.12, con:1.05, exp:.06, sh:[-10,4,16], hi:[4,6,10], fade:.06, grain:.06, vig:.05},
+    log:'그 여름, 강가에서 너는 무언가를 적고 있었다.',
+    look:{'빛':'맑은 여름 오후, 뭉게구름이 큰 날. 인물은 옆이나 뒤에서 오는 해.', '구도':'로우 앵글로 하늘을 화면 절반 이상. 전경에 드럼통·자전거·난간을 걸쳐 깊이. 인물 둘은 멀리 작게.', '카메라':'35mm(와이드)·50mm(투샷), f/5.6로 하늘까지 선명. 카메라를 허리~무릎 높이로.', '의상·소품':'흰 셔츠·교복, 자전거, 클립보드·노트, 필름 카메라, 학생 가방.', '장소':'강가 돌밭, 다리 아래, 선착장, 시골 정류장, 산이 보이는 둑.', '연기':'멀리 보기, 머리카락 넘기기, 무언가 적기. 둘 사이에 한 걸음 거리.', '보정':'파란 하늘을 진하게, 그림자는 청록, 피부는 맑게.'},
+    lines:['내일도 여기 올 거야?', '여름이 끝나면 말할게.', '바람이 바뀌었다.']},
+  {id:'kthriller', ko:'한국 스릴러', era:'비·밤·형광등', ratio:2.39, refs:['Memories of Murder', 'The Chaser', 'The Wailing'], refKo:'「살인의 추억」「추격자」 같은 한국 스릴러',
+    pal:['#14212B','#2E4A55','#6B7F86','#C9B26B'], palN:['밤','청회색','젖은 회색','가로등'],
+    grade:{sat:.7, con:1.2, exp:-.12, sh:[-6,8,14], hi:[14,10,-6], fade:.04, grain:.08, vig:.4},
+    log:'비 오는 밤, 같은 골목에 세 번째로 돌아왔다.',
+    look:{'빛':'가로등·형광등·차 헤드라이트. 비에 반사된 빛.', '구도':'넓게 빈 공간 속 작은 인물, 오버 더 숄더로 쫓는 시선.', '카메라':'35mm, f/1.8, ISO 3200, 셔터 1/60. 비는 역광으로 보이게.', '의상·소품':'점퍼·후드, 우산, 손전등, 낡은 휴대폰.', '장소':'골목, 시장, 터널, 논두렁, 옥탑.', '연기':'숨을 고르는 순간, 뒤돌아보기, 손이 떨리는 인서트.', '보정':'저채도 청록, 노란 가로등만 남기기.'},
+    lines:['범인은 이 안에 있어.', '밥은 먹고 다니냐?', '아직 못 찾았어.']},
+  {id:'road', ko:'로드무비', era:'70년대 필름·골든아워', ratio:2.39, refs:['Paris, Texas', 'Thelma & Louise', 'Badlands'], refKo:'「파리, 텍사스」 같은 로드무비',
+    pal:['#C8692F','#E9B65C','#2F5E6E','#7A3B2E'], palN:['테라코타','골드','길 위 하늘','버건디'],
+    grade:{sat:1.05, con:1.05, exp:.02, sh:[10,4,-6], hi:[24,12,-14], fade:.12, grain:.14, vig:.25},
+    log:'지도에 없는 길, 해가 지기 전에 도착해야 한다.',
+    look:{'빛':'해 지기 전 30분, 낮은 측광·역광. 네온 모텔 간판.', '구도':'가로로 넓게, 수평선 낮게, 도로의 소실점.', '카메라':'35mm, 렌즈 플레어, 필름 느낌으로 노출 약간 부족.', '의상·소품':'데님, 선글라스, 오래된 차, 주유소, 지도.', '장소':'국도·주유소·모텔·휴게소.', '연기':'창밖을 보는 옆모습, 차에 기대기.', '보정':'따뜻한 앰버, 바랜 블랙, 굵은 입자.'},
+    lines:['어디로 가는지는 중요하지 않아.', '다음 주유소까지 80킬로.', '돌아갈 생각 없어.']},
+  {id:'arthouse', ko:'미니멀 아트하우스', era:'긴 침묵·자연광', ratio:1.85, refs:['Burning', 'Paterson', 'Drive My Car'], refKo:'「버닝」「드라이브 마이 카」 같은 정적인 영화',
+    pal:['#D9D4C7','#8A8F84','#3F4A4F','#B7A58A'], palN:['안개','세이지','먹','모래'],
+    grade:{sat:.75, con:.92, exp:0, sh:[0,4,6], hi:[6,4,0], fade:.08, grain:.05, vig:.15},
+    log:'아무 일도 일어나지 않는 오후, 그런데 모든 것이 바뀌었다.',
+    look:{'빛':'흐린 날 자연광, 해 진 직후 매직아워.', '구도':'인물을 작게, 화면의 2/3를 여백으로. 고정 카메라 롱테이크 느낌.', '카메라':'35~50mm, 삼각대, 수평, f/4.', '의상·소품':'무채색 니트, 담요, 종이컵, 오래된 차.', '장소':'들판, 빈 주차장, 창 넓은 거실, 새벽 거리.', '연기':'아무것도 하지 않기. 오래 바라보기.', '보정':'저채도, 부드러운 대비, 자연스러운 피부.'},
+    lines:['그냥, 거기 있었어.', '이상하게 오늘은 조용하다.', '말하지 않아도 알 것 같았다.']}
+];
+const FILM_SHOTS = [
+  {id:'est', ko:'설정 샷', en:'Establishing', why:'어디, 언제인지 알려 주는 첫 장면', how:'인물을 아주 작게. 장소와 시간대(빛)가 주인공.', f:24},
+  {id:'med', ko:'미디엄 샷', en:'Medium', why:'무엇을 하고 있는지', how:'허리 위, 동작 중간(걷기·마시기·전화). 카메라를 보지 않기.', f:35},
+  {id:'ots', ko:'오버 더 숄더', en:'Over the shoulder', why:'누군가 바라보는 관계·긴장', how:'앞사람 어깨를 화면 가장자리에 흐리게 걸치고 뒷사람 얼굴에 초점.', f:50},
+  {id:'cu', ko:'클로즈업', en:'Close-up', why:'감정이 터지는 순간', how:'얼굴만, 시선은 화면 밖. 눈에 빛 하나.', f:85},
+  {id:'ins', ko:'인서트', en:'Insert', why:'이야기의 단서가 되는 물건', how:'손·편지·열쇠·컵. 배경을 흐리게.', f:50},
+  {id:'end', ko:'엔딩 샷', en:'Ending', why:'여운을 남기는 마지막 장면', how:'뒷모습·실루엣·떠나는 모습. 여백을 크게.', f:35}
+];
+const FILM_RATIOS = [[2.39, '2.39:1 시네마스코프'], [1.85, '1.85:1 비스타'], [1.37, '1.37:1 아카데미'], [1.78, '16:9']];
+let FS = (() => { const d = {style:'neon', sub:'guide', ratio:null, mb:{title:'', log:'', frames:{}}, mk:{sub:'', y:.5, grain:true, bars:true, grade:true}}; try { const v = JSON.parse(localStorage.getItem('conti-film') || 'null'); if (v) return Object.assign(d, v, {mb:Object.assign(d.mb, v.mb || {}), mk:Object.assign(d.mk, v.mk || {})}); } catch(e) {} return d; })();
+const fsSave = () => { try { localStorage.setItem('conti-film', JSON.stringify(FS)); } catch(e) {} };
+const fStyle = () => FILM_STYLES.find(s => s.id === FS.style) || FILM_STYLES[0];
+const fRatio = () => FS.ratio || fStyle().ratio;
+let fdb = null;
+function fOpen(){ return new Promise((res, rej) => { try { const r = indexedDB.open('studio-conti-film', 1); r.onupgradeneeded = () => r.result.createObjectStore('img', {keyPath:'k'}); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); } catch(e){ rej(e); } }); }
+async function fPut(blob){ if (!fdb) throw new Error('저장소를 쓸 수 없어요'); const k = Math.random().toString(36).slice(2) + Date.now().toString(36); await new Promise((res, rej) => { const t = fdb.transaction('img', 'readwrite'); t.objectStore('img').put({k, blob}); t.oncomplete = res; t.onerror = () => rej(t.error); }); return k; }
+function fGet(k){ return new Promise(res => { if (!fdb || !k) return res(null); const r = fdb.transaction('img').objectStore('img').get(k); r.onsuccess = () => res(r.result ? r.result.blob : null); r.onerror = () => res(null); }); }
+const blobImg = b => new Promise((res, rej) => { const u = URL.createObjectURL(b), im = new Image(); im.onload = () => { URL.revokeObjectURL(u); res(im); }; im.onerror = () => { URL.revokeObjectURL(u); rej(new Error('이미지를 읽지 못했어요')); }; im.src = u; });
+/* grade + letterbox + subtitle onto a canvas */
+function drawStill(cv, img, o){
+  const ratio = o.ratio, W = o.w, bars = o.bars, outH = bars ? Math.round(W/1.78 > W/ratio ? W/1.78 : W/ratio) : Math.round(W/ratio);
+  const picH = Math.round(W/ratio), top = Math.round((outH - picH)/2);
+  cv.width = W; cv.height = outH;
+  const c = cv.getContext('2d', {willReadFrequently:true});
+  c.fillStyle = '#000'; c.fillRect(0, 0, W, outH);
+  if (img){
+    const s = Math.max(W/img.width, picH/img.height), sw = W/s, sh = picH/s, sx = (img.width - sw)/2, sy = (img.height - sh)*(o.y ?? .5);
+    c.drawImage(img, sx, sy, sw, sh, 0, top, W, picH);
+  } else { c.fillStyle = '#20222E'; c.fillRect(0, top, W, picH); }
+  if (img && o.grade){
+    const g = o.grade, id = c.getImageData(0, top, W, picH), d = id.data, cx = W/2, cy = picH/2, md = Math.hypot(cx, cy);
+    const ex = Math.pow(2, g.exp || 0);
+    for (let i = 0, p = 0; i < d.length; i += 4, p++){
+      let r = d[i]/255*ex, gg = d[i+1]/255*ex, b = d[i+2]/255*ex;
+      let l = .2126*r + .7152*gg + .0722*b;
+      if (g.bw){ r = gg = b = l; }
+      else { r = l + (r - l)*g.sat; gg = l + (gg - l)*g.sat; b = l + (b - l)*g.sat; }
+      r = (r - .5)*g.con + .5; gg = (gg - .5)*g.con + .5; b = (b - .5)*g.con + .5;
+      l = Math.min(1, Math.max(0, .2126*r + .7152*gg + .0722*b));
+      const sw = (1 - l)*(1 - l), hw = l*l;
+      r += (g.sh[0]*sw + g.hi[0]*hw)/255; gg += (g.sh[1]*sw + g.hi[1]*hw)/255; b += (g.sh[2]*sw + g.hi[2]*hw)/255;
+      if (g.fade){ r = g.fade + r*(1 - g.fade); gg = g.fade + gg*(1 - g.fade); b = g.fade + b*(1 - g.fade); }
+      if (g.vig){ const x = p % W, y = (p / W) | 0, v = 1 - g.vig*Math.pow(Math.hypot(x - cx, y - cy)/md, 2.2); r *= v; gg *= v; b *= v; }
+      if (o.grain && g.grain){ const n = (Math.random() - .5)*g.grain; r += n; gg += n; b += n; }
+      d[i] = Math.max(0, Math.min(255, r*255)); d[i+1] = Math.max(0, Math.min(255, gg*255)); d[i+2] = Math.max(0, Math.min(255, b*255));
+    }
+    c.putImageData(id, 0, top);
+  }
+  if (o.sub){
+    const fs = Math.max(12, Math.round(W*.032)), y = bars && outH - (top + picH) > fs*1.8 ? top + picH + (outH - top - picH)/2 : top + picH - fs*1.3;
+    c.font = `500 ${fs}px 'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif`; c.textAlign = 'center'; c.textBaseline = 'middle';
+    c.lineWidth = Math.max(2, fs*.18); c.strokeStyle = 'rgba(0,0,0,.75)'; c.strokeText(o.sub, W/2, y);
+    c.fillStyle = '#F6F2E2'; c.fillText(o.sub, W/2, y);
+  }
+  return cv;
+}
+/* ---------------- line-art storyboard panels ---------------- */
+const SB_INK = '#1C1C1C', SB_WASH = '#F6D46A', SB_ARROW = '#E07A8C';
+const SB_SET = {neon:'corridor', sym:'facade', noir:'blinds', blockbuster:'dunes', retrowed:'sea', youth:'clouds', kthriller:'alley', road:'road', arthouse:'plain'};
+const SB_PROP = {neon:'phone', sym:'suitcase', noir:'letter', blockbuster:'map', retrowed:'glass', youth:'book', kthriller:'light', road:'map', arthouse:'cup'};
+const SB_PAIR = {retrowed:true, youth:true, neon:true};
+function sbLimb(pts, w){ const d = 'M' + pts.map(p => p.map(v => v.toFixed(1)).join(' ')).join(' L'); return `<path d="${d}" fill="none" stroke="${SB_INK}" stroke-width="${(w + 3).toFixed(1)}" stroke-linecap="round" stroke-linejoin="round"/><path d="${d}" fill="none" stroke="#fff" stroke-width="${w.toFixed(1)}" stroke-linecap="round" stroke-linejoin="round"/>`; }
+function sbPerson(cx, fy, h, o = {}){
+  const top = fy - h, f = v => v.toFixed(1), ys = top + .165*h, hip = top + .5*h, lw = .065*h, aw = .045*h, dir = o.dir || 0;
+  let g = '';
+  if (o.sit){ g += sbLimb([[cx - .04*h, hip], [cx + .16*h*(dir || 1), hip - .02*h], [cx + .14*h*(dir || 1), fy]], lw) + sbLimb([[cx + .04*h, hip], [cx + .2*h*(dir || 1), hip + .02*h], [cx + .2*h*(dir || 1), fy]], lw); }
+  else if (o.walk){ g += sbLimb([[cx - .04*h, hip], [cx - .1*h, fy - .25*h], [cx - .13*h, fy]], lw) + sbLimb([[cx + .04*h, hip], [cx + .06*h, fy - .24*h], [cx + .12*h, fy - .02*h]], lw); }
+  else { g += sbLimb([[cx - .045*h, hip], [cx - .05*h, fy - .25*h], [cx - .055*h, fy]], lw) + sbLimb([[cx + .045*h, hip], [cx + .05*h, fy - .25*h], [cx + .055*h, fy]], lw); }
+  if (o.dress) g += `<path d="M${f(cx - .1*h)} ${f(top + .44*h)} L${f(cx - .2*h)} ${f(fy - .04*h)} Q${f(cx)} ${f(fy + .01*h)} ${f(cx + .2*h)} ${f(fy - .04*h)} L${f(cx + .1*h)} ${f(top + .44*h)}Z" fill="#fff" stroke="${SB_INK}" stroke-width="2"/>`;
+  g += `<path d="M${f(cx - .03*h)} ${f(ys - .012*h)} Q${f(cx - .12*h)} ${f(ys - .01*h)} ${f(cx - .115*h)} ${f(ys + .04*h)} L${f(cx - .1*h)} ${f(hip)} L${f(cx + .1*h)} ${f(hip)} L${f(cx + .115*h)} ${f(ys + .04*h)} Q${f(cx + .12*h)} ${f(ys - .01*h)} ${f(cx + .03*h)} ${f(ys - .012*h)}Z" fill="#fff" stroke="${SB_INK}" stroke-width="2" stroke-linejoin="round"/>`;
+  if (o.suit) g += `<path d="M${f(cx - .03*h)} ${f(ys)} L${f(cx)} ${f(ys + .12*h)} L${f(cx + .03*h)} ${f(ys)}" fill="none" stroke="${SB_INK}" stroke-width="1.6"/>`;
+  const armL = o.raise === 'L' ? [[cx - .1*h, ys + .03*h], [cx - .16*h, ys + .15*h], [cx - .05*h, top + .13*h]] : [[cx - .1*h, ys + .03*h], [cx - .135*h, ys + .17*h], [cx - .125*h, top + .5*h]];
+  const armR = o.raise === 'R' ? [[cx + .1*h, ys + .03*h], [cx + .16*h, ys + .15*h], [cx + .05*h, top + .13*h]] : o.hold ? [[cx + .1*h, ys + .03*h], [cx + .14*h, ys + .16*h], [cx + .2*h, ys + .26*h]] : [[cx + .1*h, ys + .03*h], [cx + .135*h, ys + .17*h], [cx + .125*h, top + .5*h]];
+  g += sbLimb(armL, aw) + sbLimb(armR, aw);
+  g += `<path d="M${f(cx - .02*h)} ${f(top + .12*h)} L${f(cx - .02*h)} ${f(ys)} M${f(cx + .02*h)} ${f(top + .12*h)} L${f(cx + .02*h)} ${f(ys)}" stroke="${SB_INK}" stroke-width="1.8"/>`;
+  const hx = cx + dir*.012*h, hy = top + .065*h, rx = .05*h, ry = .064*h;
+  g += `<ellipse cx="${f(hx)}" cy="${f(hy)}" rx="${f(rx)}" ry="${f(ry)}" fill="#fff" stroke="${SB_INK}" stroke-width="2"/>`;
+  const long = o.hair === 'long', back = o.back;
+  g += `<path d="M${f(hx - rx*1.08)} ${f(hy + (long ? ry*2 : ry*.55))} Q${f(hx - rx*1.25)} ${f(hy - ry*1.25)} ${f(hx)} ${f(hy - ry*1.12)} Q${f(hx + rx*1.25)} ${f(hy - ry*1.25)} ${f(hx + rx*1.08)} ${f(hy + (long ? ry*2 : ry*.55))}${back ? '' : ` M${f(hx - rx*.95)} ${f(hy - ry*.2)} Q${f(hx - rx*.2)} ${f(hy - ry*.75)} ${f(hx + rx*.9)} ${f(hy - ry*.35)}`}" fill="none" stroke="${SB_INK}" stroke-width="2" stroke-linecap="round"/>`;
+  if (back) g += `<path d="M${f(hx - rx*.9)} ${f(hy)} Q${f(hx)} ${f(hy + ry*.6)} ${f(hx + rx*.9)} ${f(hy)}" fill="none" stroke="${SB_INK}" stroke-width="1.4" opacity=".6"/>`;
+  return `<g>${g}</g>`;
+}
+function sbHead(cx, cy, s, o = {}){
+  const f = v => v.toFixed(1), rx = .62*s, ry = .8*s;
+  let g = `<path d="M${f(cx - 1.9*s)} ${f(cy + 3*s)} Q${f(cx - 1.6*s)} ${f(cy + 1.45*s)} ${f(cx - .35*s)} ${f(cy + 1.25*s)} L${f(cx + .35*s)} ${f(cy + 1.25*s)} Q${f(cx + 1.6*s)} ${f(cy + 1.45*s)} ${f(cx + 1.9*s)} ${f(cy + 3*s)}Z" fill="#fff" stroke="${SB_INK}" stroke-width="2.2"/>`;
+  g += `<path d="M${f(cx - .24*s)} ${f(cy + .55*s)} L${f(cx - .26*s)} ${f(cy + 1.3*s)} M${f(cx + .24*s)} ${f(cy + .55*s)} L${f(cx + .26*s)} ${f(cy + 1.3*s)}" stroke="${SB_INK}" stroke-width="2"/>`;
+  g += `<ellipse cx="${f(cx)}" cy="${f(cy)}" rx="${f(rx)}" ry="${f(ry)}" fill="#fff" stroke="${SB_INK}" stroke-width="2.2"/>`;
+  g += `<path d="M${f(cx - rx*1.1)} ${f(cy + (o.long ? ry*1.5 : ry*.5))} Q${f(cx - rx*1.3)} ${f(cy - ry*1.3)} ${f(cx + rx*.1)} ${f(cy - ry*1.12)} Q${f(cx + rx*1.3)} ${f(cy - ry*1.2)} ${f(cx + rx*1.1)} ${f(cy + (o.long ? ry*1.5 : ry*.5))} M${f(cx - rx*.95)} ${f(cy - ry*.15)} Q${f(cx - rx*.1)} ${f(cy - ry*.8)} ${f(cx + rx*.95)} ${f(cy - ry*.3)}" fill="none" stroke="${SB_INK}" stroke-width="2.2" stroke-linecap="round"/>`;
+  return g;
+}
+function sbProp(kind, x, y, s){
+  const f = v => v.toFixed(1), st = `fill="#fff" stroke="${SB_INK}" stroke-width="2" stroke-linejoin="round"`;
+  if (kind === 'glass') return `<path d="M${f(x - .5*s)} ${f(y - 1.6*s)} L${f(x + .5*s)} ${f(y - 1.6*s)} Q${f(x + .55*s)} ${f(y - .6*s)} ${f(x)} ${f(y - .45*s)} Q${f(x - .55*s)} ${f(y - .6*s)} ${f(x - .5*s)} ${f(y - 1.6*s)}Z" ${st}/><path d="M${f(x)} ${f(y - .45*s)} L${f(x)} ${f(y)} M${f(x - .35*s)} ${f(y)} L${f(x + .35*s)} ${f(y)}" stroke="${SB_INK}" stroke-width="2"/>`;
+  if (kind === 'cup') return `<path d="M${f(x - .6*s)} ${f(y - 1.1*s)} L${f(x + .6*s)} ${f(y - 1.1*s)} L${f(x + .5*s)} ${f(y)} L${f(x - .5*s)} ${f(y)}Z" ${st}/><path d="M${f(x + .58*s)} ${f(y - .85*s)} q${f(.45*s)} ${f(.1*s)} ${f(.05*s)} ${f(.55*s)}" fill="none" stroke="${SB_INK}" stroke-width="2"/>`;
+  if (kind === 'suitcase') return `<rect x="${f(x - s)}" y="${f(y - 1.3*s)}" width="${f(2*s)}" height="${f(1.3*s)}" rx="${f(.12*s)}" ${st}/><path d="M${f(x - .3*s)} ${f(y - 1.3*s)} v${f(-.25*s)} h${f(.6*s)} v${f(.25*s)} M${f(x - .7*s)} ${f(y - 1.3*s)} v${f(1.3*s)} M${f(x + .7*s)} ${f(y - 1.3*s)} v${f(1.3*s)}" fill="none" stroke="${SB_INK}" stroke-width="1.8"/>`;
+  if (kind === 'book') return `<rect x="${f(x - .9*s)}" y="${f(y - 1.2*s)}" width="${f(1.8*s)}" height="${f(1.2*s)}" rx="3" ${st}/><path d="M${f(x - .6*s)} ${f(y - .85*s)} h${f(1.2*s)} M${f(x - .6*s)} ${f(y - .55*s)} h${f(1.2*s)} M${f(x - .6*s)} ${f(y - .25*s)} h${f(.8*s)}" stroke="${SB_INK}" stroke-width="1.4"/>`;
+  if (kind === 'letter') return `<rect x="${f(x - s)}" y="${f(y - .9*s)}" width="${f(2*s)}" height="${f(.9*s)}" ${st}/><path d="M${f(x - s)} ${f(y - .9*s)} L${f(x)} ${f(y - .35*s)} L${f(x + s)} ${f(y - .9*s)}" fill="none" stroke="${SB_INK}" stroke-width="1.8"/>`;
+  if (kind === 'phone') return `<rect x="${f(x - .9*s)}" y="${f(y - .7*s)}" width="${f(1.8*s)}" height="${f(.7*s)}" rx="4" ${st}/><path d="M${f(x - 1.1*s)} ${f(y - .75*s)} Q${f(x)} ${f(y - 1.5*s)} ${f(x + 1.1*s)} ${f(y - .75*s)}" fill="none" stroke="${SB_INK}" stroke-width="5"/><path d="M${f(x - 1.1*s)} ${f(y - .75*s)} Q${f(x)} ${f(y - 1.5*s)} ${f(x + 1.1*s)} ${f(y - .75*s)}" fill="none" stroke="#fff" stroke-width="2"/>`;
+  if (kind === 'light') return `<rect x="${f(x - .25*s)}" y="${f(y - 1.4*s)}" width="${f(.5*s)}" height="${f(1.4*s)}" rx="4" ${st}/><path d="M${f(x - .25*s)} ${f(y - 1.4*s)} L${f(x - 1.2*s)} ${f(y - 2.6*s)} L${f(x + 1.2*s)} ${f(y - 2.6*s)} L${f(x + .25*s)} ${f(y - 1.4*s)}Z" fill="${SB_WASH}" opacity=".5"/>`;
+  return `<rect x="${f(x - s)}" y="${f(y - .8*s)}" width="${f(2*s)}" height="${f(.8*s)}" ${st}/><path d="M${f(x - .35*s)} ${f(y - .8*s)} v${f(.8*s)} M${f(x + .3*s)} ${f(y - .8*s)} v${f(.8*s)}" stroke="${SB_INK}" stroke-width="1.4"/>`;
+}
+function sbBG(set, W, H, wide){
+  const L = (d, w = 1.8, extra = '') => `<path d="${d}" fill="none" stroke="${SB_INK}" stroke-width="${w}" stroke-linecap="round" ${extra}/>`;
+  const hz = wide ? .5*H : .42*H;
+  if (set === 'sea') return L(`M0 ${hz} H${W}`) + [0,1,2,3].map(i => L(`M${W*(.08 + i*.22)} ${hz + 10 + i%2*8} h${W*.08}`, 1.2)) + L(`M0 ${H*.86} Q${W*.1} ${H*.68} ${W*.2} ${H*.78} Q${W*.26} ${H*.72} ${W*.32} ${H*.88}`, 1.8) + L(`M${W*.78} ${hz} q${W*.06} ${-H*.08} ${W*.14} ${-H*.06} q${W*.05} 0 ${W*.08} ${H*.06}`, 1.6);
+  if (set === 'clouds') return L(`M0 ${H*.62} L${W*.14} ${H*.44} L${W*.26} ${H*.56} L${W*.42} ${H*.36} L${W*.6} ${H*.58} L${W*.76} ${H*.42} L${W} ${H*.6}`) + L(`M${W*.06} ${H*.22} q${W*.04} ${-H*.1} ${W*.09} ${-H*.03} q${W*.05} ${-H*.08} ${W*.1} 0 q${W*.05} 0 ${W*.04} ${H*.05}`, 1.4) + L(`M${W*.62} ${H*.18} q${W*.05} ${-H*.12} ${W*.11} ${-H*.04} q${W*.06} ${-H*.06} ${W*.1} ${H*.02} q${W*.04} ${H*.02} ${W*.02} ${H*.06}`, 1.4) + L(`M0 ${H*.66} H${W}`, 1.2) + (wide ? L(`M${W*.05} ${H*.6} H${W*.95} M${W*.05} ${H*.64} H${W*.95}`, 1.6) + [.15,.38,.62,.85].map(x => L(`M${W*x} ${H*.64} V${H*.78}`, 4, `stroke-opacity=".85"`)).join('') : '');
+  if (set === 'corridor') return L(`M0 0 L${W*.4} ${H*.35} M${W} 0 L${W*.6} ${H*.35} M0 ${H} L${W*.4} ${H*.72} M${W} ${H} L${W*.6} ${H*.72}`) + L(`M${W*.4} ${H*.35} H${W*.6} V${H*.72} H${W*.4}Z`, 1.6) + L(`M${W*.12} ${H*.18} V${H*.88} M${W*.24} ${H*.27} V${H*.8}`, 1.4) + `<rect x="${W*.68}" y="${H*.12}" width="${W*.16}" height="${H*.1}" fill="${SB_WASH}" opacity=".6" stroke="${SB_INK}" stroke-width="1.6"/>`;
+  if (set === 'facade') return `<rect x="${W*.2}" y="${H*.12}" width="${W*.6}" height="${H*.7}" fill="none" stroke="${SB_INK}" stroke-width="1.8"/>` + L(`M${W*.44} ${H*.82} V${H*.5} H${W*.56} V${H*.82}`) + [.28,.38,.62,.72].map(x => `<rect x="${W*x - W*.035}" y="${H*.22}" width="${W*.07}" height="${H*.16}" fill="none" stroke="${SB_INK}" stroke-width="1.4"/>`).join('') + L(`M0 ${H*.82} H${W}`) + L(`M${W*.2} ${H*.12} L${W*.5} ${H*.03} L${W*.8} ${H*.12}`, 1.6);
+  if (set === 'blinds') return [0,1,2,3,4,5].map(i => `<path d="M${W*(.3 + i*.12)} 0 L${W*(.1 + i*.12)} ${H} L${W*(.15 + i*.12)} ${H} L${W*(.35 + i*.12)} 0Z" fill="${SB_INK}" opacity=".12"/>`).join('') + L(`M${W*.06} ${H*.1} V${H*.9} M${W*.94} ${H*.1} V${H*.9}`, 1.6) + L(`M0 ${H*.84} H${W}`);
+  if (set === 'dunes') return L(`M0 ${H*.66} Q${W*.25} ${H*.52} ${W*.45} ${H*.64} T${W} ${H*.58}`) + L(`M0 ${H*.8} Q${W*.3} ${H*.7} ${W*.6} ${H*.82} T${W} ${H*.78}`, 1.4) + `<circle cx="${W*.78}" cy="${H*.3}" r="${H*.1}" fill="${SB_WASH}" opacity=".7" stroke="${SB_INK}" stroke-width="1.6"/>`;
+  if (set === 'alley') return L(`M${W*.18} 0 L${W*.36} ${H*.7} M${W*.82} 0 L${W*.64} ${H*.7} M0 ${H*.9} L${W*.36} ${H*.7} H${W*.64} L${W} ${H*.9}`) + L(`M${W*.72} ${H*.08} V${H*.84}`, 3) + `<path d="M${W*.72} ${H*.1} L${W*.6} ${H*.6} L${W*.84} ${H*.6}Z" fill="${SB_WASH}" opacity=".45"/>` + Array.from({length:14}, (_, i) => L(`M${W*((i*.073) % 1)} ${H*(.05 + (i*.37 % .8))} l${-W*.015} ${H*.08}`, 1, `stroke-opacity=".45"`)).join('');
+  if (set === 'road') return L(`M0 ${H*.46} H${W}`) + L(`M${W*.47} ${H*.46} L${W*.1} ${H} M${W*.53} ${H*.46} L${W*.9} ${H}`) + L(`M${W*.5} ${H*.52} V${H*.6} M${W*.5} ${H*.7} V${H*.82}`, 2.4) + L(`M${W*.82} ${H*.2} V${H*.62}`, 2.4) + `<circle cx="${W*.2}" cy="${H*.4}" r="${H*.07}" fill="${SB_WASH}" opacity=".7"/>`;
+  return L(`M0 ${H*.64} H${W}`) + L(`M${W*.8} ${H*.64} V${H*.42}`, 2) + `<ellipse cx="${W*.8}" cy="${H*.36}" rx="${W*.05}" ry="${H*.09}" fill="none" stroke="${SB_INK}" stroke-width="1.6"/>`;
+}
+function sbArrow(x1, y1, x2, y2, bend = 30){
+  const mx = (x1 + x2)/2 + bend, my = (y1 + y2)/2 - bend*.4, a = Math.atan2(y2 - my, x2 - mx), s = 9;
+  return `<path d="M${x1} ${y1} Q${mx} ${my} ${x2} ${y2}" fill="none" stroke="${SB_ARROW}" stroke-width="3.2" stroke-linecap="round"/><path d="M${x2} ${y2} L${(x2 - s*Math.cos(a - .5)).toFixed(1)} ${(y2 - s*Math.sin(a - .5)).toFixed(1)} M${x2} ${y2} L${(x2 - s*Math.cos(a + .5)).toFixed(1)} ${(y2 - s*Math.sin(a + .5)).toFixed(1)}" stroke="${SB_ARROW}" stroke-width="3.2" stroke-linecap="round"/>`;
+}
+function filmFrameSVG(st, shot, ratio){
+  const W = 400, H = Math.round(W/ratio), set = SB_SET[st.id] || 'plain', pair = !!SB_PAIR[st.id], wed = st.id === 'retrowed';
+  const wash = (pts, op = .38) => st.id === 'noir' ? '' : `<polygon points="${pts}" fill="${SB_WASH}" opacity="${op}"/>`;
+  let g = '';
+  if (shot.id === 'est'){
+    g += wash(`${W*.55},0 ${W},0 ${W},${H*.5} ${W*.3},${H}`, .25) + sbBG(set, W, H, true);
+    const hh = H*.34, fy = H*.9;
+    if (pair){ g += sbPerson(W*.58, fy, hh, {hair:'long', dress:wed}) + sbPerson(W*.7, fy, hh*1.06, {suit:wed}); if (wed) g += sbProp('suitcase', W*.48, fy, H*.045); }
+    else g += sbPerson(W*.64, fy, hh, {});
+  } else if (shot.id === 'med'){
+    g += wash(`0,0 ${W*.45},0 ${W*.2},${H} 0,${H}`) + sbBG(set, W, H, false);
+    const hh = H*1.6, fy = H*.12 + hh;
+    if (pair){ g += sbPerson(W*.27, fy, hh, {raise:'R', suit:wed}) + sbPerson(W*.73, fy + H*.08, hh*.95, {raise:'L', hair:'long', dress:wed}); g += sbArrow(W*.3, H*.36, W*.4, H*.12, 18); }
+    else { g += sbPerson(W*.4, fy, hh, {raise:'R', hair:'long'}); g += sbArrow(W*.62, H*.5, W*.56, H*.14, 30); }
+  } else if (shot.id === 'ots'){
+    g += sbBG(set, W, H, false) + wash(`${W*.5},0 ${W},0 ${W},${H} ${W*.7},${H}`, .3);
+    g += sbPerson(W*.64, H*.1 + H*1.9, H*1.9, {hair:'long', dir:-1});
+    g += `<g opacity=".8">${sbHead(W*.1, H*.52, H*.3, {})}</g>`;
+  } else if (shot.id === 'cu'){
+    g += wash(`0,0 ${W*.5},0 ${W*.3},${H} 0,${H}`, .4) + `<path d="M0 ${H*.7} H${W*.28} M${W*.08} ${H*.2} V${H*.7}" stroke="${SB_INK}" stroke-width="1.4" fill="none" opacity=".5"/>`;
+    g += sbHead(W*.6, H*.5, H*.28, {long:true});
+    g += sbArrow(W*.92, H*.62, W*.86, H*.28, -14);
+  } else if (shot.id === 'ins'){
+    g += wash(`0,0 ${W*.6},0 ${W*.35},${H} 0,${H}`, .3) + `<path d="M0 ${H*.72} H${W}" stroke="${SB_INK}" stroke-width="2"/>`;
+    g += sbProp(SB_PROP[st.id] || 'cup', W*.5, H*.72, H*.2);
+    g += sbLimb([[W, H*.5], [W*.7, H*.58], [W*.6, H*.6]], H*.1);
+  } else {
+    g += sbBG(set, W, H, true) + wash(`${W*.6},0 ${W},0 ${W},${H*.6}`, .3);
+    const fy = H*.86, hh = H*.42;
+    if (pair){ g += sbPerson(W*.6, fy, hh, {back:true, walk:true, hair:'long', dress:wed}) + sbPerson(W*.74, fy - H*.02, hh*1.05, {back:true, walk:true, suit:wed}); if (wed) g += sbProp('suitcase', W*.82, fy, H*.05); }
+    else g += sbPerson(W*.7, fy, hh, {back:true, walk:true});
+    g += sbArrow(W*.5, H*.95, W*.86, H*.7, -10);
+  }
+  return `<svg class="ffsvg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${shot.ko} 콘티"><rect width="${W}" height="${H}" fill="#fff"/>${g}<rect x="1.5" y="1.5" width="${W - 3}" height="${H - 3}" fill="none" stroke="${SB_INK}" stroke-width="3"/><text x="${W - 10}" y="${H - 10}" text-anchor="end" font-size="13" fill="#777" font-family="IBM Plex Mono,monospace">${shot.f}mm</text></svg>`;
+}
+const filmSearch = q => [['FILMGRAB', `https://film-grab.com/?s=${encodeURIComponent(q)}`], ['Pinterest', `https://www.pinterest.com/search/pins/?q=${encodeURIComponent(q + ' film still')}`]];
+function renderFilm(){
+  const st = fStyle(), ratio = fRatio();
+  $('#fm-styles').innerHTML = FILM_STYLES.map(s => `<button type="button" data-st="${s.id}" aria-pressed="${s.id === st.id}"><span class="fsw">${s.pal.map(c => `<i style="background:${c}"></i>`).join('')}</span><b>${s.ko}</b><small>${s.era}</small></button>`).join('');
+  $('#fm-sub').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.sub === FS.sub)));
+  ['guide', 'book', 'maker'].forEach(k => $('#fm-' + k).hidden = FS.sub !== k);
+  $('#fm-ratio').innerHTML = FILM_RATIOS.map(([r, l]) => `<button type="button" data-r="${r}" aria-pressed="${r === ratio}">${l}${r === st.ratio ? ' · 추천' : ''}</button>`).join('');
+  if (FS.sub === 'guide') renderFilmGuide(st, ratio);
+  if (FS.sub === 'book') renderFilmBook(st, ratio);
+  if (FS.sub === 'maker') renderMaker();
+}
+function renderFilmGuide(st, ratio){
+  $('#fm-guide').innerHTML = `<div class="fg-head"><div><span class="fg-era">${st.era}</span><h3>${st.ko}</h3><p class="fg-log">“${st.log}”</p><p class="fg-ref">참고: ${st.refKo}</p>
+      <div class="links">${st.refs.flatMap(r => filmSearch(r).map(([l, u]) => `<a href="${u}" target="_blank" rel="noopener">${r} · ${l}</a>`)).join('')}</div></div>
+      <div class="fg-pal">${st.pal.map((c, i) => `<div><i style="background:${c}"></i><span>${st.palN[i]}<br><code>${c}</code></span></div>`).join('')}<div class="fg-rt">화면비 <b>${st.ratio}:1</b></div></div></div>
+    <div class="fg-look">${Object.entries(st.look).map(([h, t]) => `<div><b>${h}</b><p>${t}</p></div>`).join('')}</div>
+    <div class="fg-st">스틸컷 6장 콘티 <small>노란 칠은 빛이 오는 쪽, 분홍 화살표는 움직임이에요. 이 순서로 찍어 보세요</small></div>
+    <div class="fg-shots">${FILM_SHOTS.map((sh, i) => `<article class="fg-shot">${filmFrameSVG(st, sh, ratio)}<div class="g3h"><span class="g3n">${i + 1}</span><b>${sh.ko}</b><small class="fg-en">${sh.en}</small></div><p>${sh.why}</p><p class="fg-how">${sh.how}</p><span class="fg-mm">${sh.f}mm 근처</span></article>`).join('')}</div>
+    <div class="fg-trio"><b>세로 3컷으로 남기기</b><p>한 장면을 세 번 끊어 위아래로 이어 붙이면 영화 스틸 한 묶음이 됩니다. 이 순서가 가장 쉬워요.</p><ol><li><b>가까운 투샷</b> 둘이 각자 딴짓하는 순간 · 50mm · 허리 위</li><li><b>미디엄 액션</b> 소품을 쓰는 동작(마시기·비눗방울·적기) · 35~50mm</li><li><b>와이드 장소</b> 인물은 작게, 하늘·길·바다가 주인공 · 35mm 이하</li></ol><p class="fg-how">세 장 모두 같은 높이의 가로 비율로, 같은 시간대에 찍어야 색이 이어집니다. 무드북에서 '3컷에 넣기'를 고르고 <b>인스타 세로 3컷 저장</b>을 누르세요.</p></div>
+    <div class="fg-rules"><b>스틸컷처럼 보이게 하는 5가지</b><ol><li><b>카메라를 보지 않기</b> 시선은 화면 밖, 동작은 중간에서 멈춘 듯.</li><li><b>화면 속 광원</b> 스탠드·간판·창처럼 "이유 있는 빛" 하나.</li><li><b>가로 화면비</b> 2.39·1.85로 잘라 위아래를 비우기.</li><li><b>색은 2~3개</b> 의상·소품·배경을 팔레트 안에서.</li><li><b>자막 한 줄</b> 대사가 들어가면 장면이 됩니다.</li></ol></div>
+    <div class="pp-act"><button class="btn solid" type="button" id="fm-tobook">이 스타일로 무드북 만들기</button><button class="btn" type="button" id="fm-toboard">무드보드로 보내기</button><button class="btn" type="button" id="fm-copy">촬영 노트 복사</button></div>`;
+}
+async function renderFilmBook(st, ratio){
+  const mb = FS.mb;
+  $('#fm-book').innerHTML = `<div class="fb-card"><div class="fb-pal">${st.pal.map(c => `<i style="background:${c}"></i>`).join('')}</div>
+      <input class="fb-title" id="fb-title" value="${esc(mb.title || '')}" placeholder="영화 제목처럼 이름 짓기" aria-label="무드북 제목">
+      <textarea class="fb-log" id="fb-log" rows="2" placeholder="한 줄 줄거리(로그라인)" aria-label="로그라인">${esc(mb.log || st.log)}</textarea>
+      <div class="fb-meta">${st.ko} · ${st.era} · ${ratio}:1 · ${st.refKo}</div></div>
+    <div class="fb-heads"><span>콘티</span><span>내 사진</span></div>
+    <div class="fb-grid">${FILM_SHOTS.map((sh, i) => { const f = mb.frames[sh.id] || {}; return `<figure class="fb-fr" data-sh="${sh.id}">
+      <div class="fb-pair"><div class="fb-sk">${filmFrameSVG(st, sh, ratio)}</div>
+      <div class="fb-img" style="aspect-ratio:${ratio}"><canvas data-cv="${sh.id}" aria-label="${sh.ko} 스틸"></canvas>${f.k ? `<button type="button" class="mb-x" data-act="clr" aria-label="사진 빼기">×</button>` : `<label class="fb-drop" for="fb-f-${sh.id}"><b>+</b><span>${sh.ko} 사진 넣기</span><small>클릭·끌어놓기·붙여넣기</small></label>`}<input type="file" id="fb-f-${sh.id}" accept="image/*" hidden data-file="${sh.id}"></div></div>
+      <figcaption><span class="g3n">${i + 1}</span><b>${sh.ko}</b><input class="fb-sub" data-f="sub" value="${esc(f.sub ?? st.lines[i % st.lines.length])}" placeholder="자막(대사)" aria-label="${sh.ko} 자막"></figcaption>
+      <input class="fb-note" data-f="note" value="${esc(f.note || '')}" placeholder="${esc(sh.how)}" aria-label="${sh.ko} 메모">
+      ${f.k ? `<div class="fb-row"><input type="range" min="0" max="1" step=".02" value="${f.y ?? .5}" data-f="y" aria-label="위아래 위치"><label class="fb-pick"><input type="checkbox" data-f="pick" ${f.pick ? 'checked' : ''}> 3컷에 넣기</label></div>` : ''}</figure>`; }).join('')}</div>
+    <div class="pp-act"><label class="g3toggle fb-tg"><input type="checkbox" id="fb-grade" ${FS.mk.grade ? 'checked' : ''}><span class="sw" aria-hidden="true"></span><span><b>스타일 색보정 적용</b><small>넣은 사진에 ${st.ko} 톤을 입혀 미리 봅니다</small></span></label>
+      <button class="btn solid" type="button" id="fb-collage">인스타 세로 3컷 저장</button><label class="fb-pick"><input type="checkbox" id="fb-collsub" ${FS.mk.collSub ? 'checked' : ''}> 3컷에 자막 넣기</label><button class="btn" type="button" id="fb-export">무드북 전체 저장</button><button class="btn" type="button" id="fb-reset">비우기</button></div>
+    <p class="mb-foot" style="border-radius:12px">사진은 이 기기의 브라우저에만 저장됩니다. 넣은 사진은 비율에 맞게 잘리고, 아래 슬라이더로 위아래 위치를 맞출 수 있어요.</p>`;
+  for (const sh of FILM_SHOTS){
+    const f = mb.frames[sh.id] || {}, cv = document.querySelector(`[data-cv="${sh.id}"]`);
+    let img = null; if (f.k){ const b = await fGet(f.k); if (b) img = await blobImg(b).catch(() => null); }
+    if (img) drawStill(cv, img, {ratio, w:560, y:f.y ?? .5, grade: FS.mk.grade ? st.grade : null, grain:FS.mk.grade, bars:false, sub:f.sub ?? st.lines[FILM_SHOTS.indexOf(sh) % st.lines.length]});
+    else cv.remove();
+  }
+}
+async function fbAdd(shId, file){
+  try { const blob = await (async () => { const im = await blobImg(file); const k = Math.min(1, 1800/Math.max(im.width, im.height)); const c = document.createElement('canvas'); c.width = Math.round(im.width*k); c.height = Math.round(im.height*k); c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); return await new Promise(r => c.toBlob(r, 'image/jpeg', .9)); })();
+    const k = await fPut(blob); FS.mb.frames[shId] = Object.assign(FS.mb.frames[shId] || {}, {k, y:.5}); fsSave(); renderFilm();
+  } catch(e){ toast('사진을 넣지 못했어요: ' + e.message); }
+}
+async function fbCollage(){
+  const st = fStyle(), ratio = fRatio(), W = 1080, gap = 8, fh = Math.round(W/ratio);
+  const ids = FILM_SHOTS.filter(sh => (FS.mb.frames[sh.id] || {}).pick).map(sh => sh.id);
+  const pickIds = (ids.length ? ids : FILM_SHOTS.filter(sh => (FS.mb.frames[sh.id] || {}).k).map(sh => sh.id)).slice(0, 3);
+  if (pickIds.length < 2){ toast('사진을 2장 이상 넣어 주세요 (3장 추천)'); return; }
+  const cv = document.createElement('canvas'); cv.width = W; cv.height = pickIds.length*fh + (pickIds.length - 1)*gap; const c = cv.getContext('2d');
+  c.fillStyle = '#0B0B0B'; c.fillRect(0, 0, W, cv.height);
+  for (let i = 0; i < pickIds.length; i++){
+    const f = FS.mb.frames[pickIds[i]], b = await fGet(f.k), img = b ? await blobImg(b).catch(() => null) : null, tmp = document.createElement('canvas');
+    drawStill(tmp, img, {ratio, w:W, y:f.y ?? .5, grade: FS.mk.grade ? st.grade : null, grain:FS.mk.grade, bars:false, sub: FS.mk.collSub ? (f.sub ?? '') : ''});
+    c.drawImage(tmp, 0, i*(fh + gap));
+  }
+  cv.toBlob(b => { const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = `${(FS.mb.title || 'stills').replace(/[\\/:*?"<>|]/g, '')}-3cut.png`; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000); }, 'image/png');
+}
+async function fbExport(){
+  const st = fStyle(), ratio = fRatio(), W = 1800, pad = 60, gap = 36, colW = (W - pad*2 - gap)/2, fh = Math.round(colW/ratio), headH = 230, rowH = fh + 84;
+  const H = headH + FILM_SHOTS.length*rowH + pad;
+  const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const c = cv.getContext('2d');
+  c.fillStyle = '#FFFFFF'; c.fillRect(0, 0, W, H);
+  c.fillStyle = '#1C1C1C'; c.font = `64px 'Do Hyeon','IBM Plex Sans KR',sans-serif`; c.textBaseline = 'top'; c.fillText(FS.mb.title || '제목 없는 무드북', pad, pad);
+  c.font = `28px 'IBM Plex Sans KR',sans-serif`; c.fillStyle = '#555'; c.fillText(FS.mb.log || st.log, pad, pad + 84);
+  c.font = `22px 'IBM Plex Sans KR',sans-serif`; c.fillStyle = '#888'; c.fillText(`${st.ko} · ${st.era} · ${ratio}:1`, pad, pad + 128);
+  st.pal.forEach((col, i) => { c.fillStyle = col; c.fillRect(W - pad - (4 - i)*70, pad, 60, 60); });
+  const svgImg = svg => new Promise(r => { const m = new Image(); m.onload = () => r(m); m.onerror = () => r(null); m.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg.replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" ')); });
+  for (let i = 0; i < FILM_SHOTS.length; i++){
+    const sh = FILM_SHOTS[i], f = FS.mb.frames[sh.id] || {}, y = headH + i*rowH, x2 = pad + colW + gap;
+    const sk = await svgImg(filmFrameSVG(st, sh, ratio)); if (sk) c.drawImage(sk, pad, y, colW, fh);
+    let img = null; if (f.k){ const b = await fGet(f.k); if (b) img = await blobImg(b).catch(() => null); }
+    if (img){ const tmp = document.createElement('canvas'); drawStill(tmp, img, {ratio, w:Math.round(colW), y:f.y ?? .5, grade: FS.mk.grade ? st.grade : null, grain:FS.mk.grade, bars:false, sub:f.sub ?? st.lines[i % st.lines.length]}); c.drawImage(tmp, x2, y, colW, fh); }
+    else { c.fillStyle = '#F1F1F1'; c.fillRect(x2, y, colW, fh); c.fillStyle = '#AAA'; c.font = `24px 'IBM Plex Sans KR',sans-serif`; c.fillText('사진을 넣어 주세요', x2 + 24, y + 24); }
+    c.strokeStyle = '#1C1C1C'; c.lineWidth = 3; c.strokeRect(x2 + 1.5, y + 1.5, colW - 3, fh - 3);
+    c.fillStyle = '#1C1C1C'; c.font = `28px 'Do Hyeon','IBM Plex Sans KR',sans-serif`; c.fillText(`${i + 1}. ${sh.ko}`, pad, y + fh + 14);
+    c.fillStyle = '#777'; c.font = `20px 'IBM Plex Sans KR',sans-serif`; c.fillText((f.note || sh.how).slice(0, 80), pad + 190, y + fh + 20);
+  }
+  cv.toBlob(b => { const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = `${(FS.mb.title || 'moodbook').replace(/[\\/:*?"<>|]/g, '')}.png`; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000); }, 'image/png');
+}
+let mkImg = null;
+function renderMaker(){
+  const st = fStyle(), ratio = fRatio(), mk = FS.mk;
+  if (!$('#mk-cv')){
+    $('#fm-maker').innerHTML = `<div class="mk-wrap"><div class="mk-stage"><canvas id="mk-cv" aria-label="스틸컷 미리보기"></canvas><label class="mk-drop" id="mk-drop" for="mk-file"><b>+</b><span>사진을 올리면 스틸컷으로 바꿔 줍니다</span><small>클릭 · 끌어놓기 · 붙여넣기</small></label><input type="file" id="mk-file" accept="image/*" hidden></div>
+      <div class="mk-ctl"><div class="ctrl"><label for="mk-sub">자막(대사)</label><input type="text" id="mk-sub" placeholder="예) 그날 밤, 비가 오지 않았다면."></div><div class="mk-sugs" id="mk-sugs"></div>
+        <div class="ctrl"><label for="mk-y">위아래 위치</label><input type="range" id="mk-y" min="0" max="1" step=".02"></div>
+        <div class="toggles"><label><input type="checkbox" id="mk-grade"> 스타일 색보정</label><label><input type="checkbox" id="mk-grain"> 필름 입자</label><label><input type="checkbox" id="mk-bars"> 16:9 레터박스(검은 띠)</label></div>
+        <div class="pp-act"><button class="btn solid" type="button" id="mk-save">PNG로 저장</button><button class="btn" type="button" id="mk-tobook">무드북에 넣기</button><label class="btn" for="mk-file">다른 사진</label></div>
+        <p class="mk-note">원본 사진은 올라가지 않고 이 브라우저 안에서만 처리됩니다.</p></div></div>`;
+  }
+  $('#mk-sub').value = mk.sub; $('#mk-y').value = mk.y; $('#mk-grade').checked = mk.grade; $('#mk-grain').checked = mk.grain; $('#mk-bars').checked = mk.bars;
+  $('#mk-sugs').innerHTML = st.lines.map(l => `<button type="button" data-line="${esc(l)}">${esc(l)}</button>`).join('');
+  $('#mk-drop').hidden = !!mkImg;
+  drawStill($('#mk-cv'), mkImg, {ratio, w: mkImg ? Math.min(2400, Math.max(1200, mkImg.width)) : 1200, y:mk.y, grade: mk.grade ? st.grade : null, grain:mk.grain, bars:mk.bars, sub:mk.sub});
+}
+async function mkLoad(file){ try { const im = await blobImg(file); mkImg = im; mkImg._file = file; renderMaker(); } catch(e){ toast(e.message); } }
+function filmNote(st){
+  const L = [`[스틸컷 촬영 노트] ${st.ko} — ${st.era}`, `로그라인: ${FS.mb.log || st.log}`, `화면비: ${fRatio()}:1 · 팔레트: ${st.pal.map((c, i) => st.palN[i] + ' ' + c).join(', ')}`, `참고: ${st.refKo}`, ''];
+  Object.entries(st.look).forEach(([h, t]) => L.push(`■ ${h}: ${t}`));
+  L.push('', '■ 스틸컷 6장'); FILM_SHOTS.forEach((s, i) => L.push(`  ${i + 1}. ${s.ko} (${s.f}mm) — ${s.why}. ${s.how}`));
+  return L.join('\n');
+}
+function initFilm(){
+  fOpen().then(d => { fdb = d; if (FS.sub === 'book') renderFilm(); }).catch(() => {});
+  const root = $('#film');
+  root.addEventListener('click', async e => {
+    const t = e.target;
+    const sb = t.closest('[data-st]'); if (sb){ FS.style = sb.dataset.st; FS.ratio = null; fsSave(); renderFilm(); return; }
+    const sub = t.closest('[data-sub]'); if (sub){ FS.sub = sub.dataset.sub; fsSave(); renderFilm(); return; }
+    const rb = t.closest('[data-r]'); if (rb){ FS.ratio = +rb.dataset.r; fsSave(); renderFilm(); return; }
+    const st = fStyle();
+    if (t.closest('#fm-tobook')){ FS.sub = 'book'; if (!FS.mb.log) FS.mb.log = st.log; fsSave(); renderFilm(); return; }
+    if (t.closest('#fm-copy')){ try { navigator.clipboard.writeText(filmNote(st)).then(() => toast('촬영 노트를 복사했어요')); } catch(er) {} return; }
+    if (t.closest('#fm-toboard')){
+      if (!confirm('이 스타일로 무드보드를 새로 만들까요? (지금 보드는 바뀝니다)')) return;
+      const uid = () => Math.random().toString(36).slice(2, 9), cats = st.id === 'noir' ? ['lowkey', 'split', 'mood_chic'] : st.id === 'youth' ? ['highkey', 'snap_backlight', 'mood_dreamy'] : st.id === 'sym' ? ['mood_fresh', 'highkey', 'frame_full'] : ['mood_dramatic', 'mood_vintage', 'snap_golden'];
+      MB.create({title: `${st.ko} 스틸컷`, cols:[{id:uid(), type:'shoot', title:'스틸컷 6장', items:[], sub:st.log, intent:'→ ' + st.refKo, need:6, poses:FILM_SHOTS.map((s, i) => { const p = pick(cats[i % cats.length], i); return {id:uid(), img: p ? {kind:'u', id:p.id, page:p.page, by:p.by, alt:p.alt} : null, cap:`${s.ko} — ${s.why}\n${s.how}`}; })},
+        {id:uid(), type:'notes', blocks:Object.entries(st.look).map(([h, t2]) => ({h, t:t2})).concat([{h:'팔레트', t:st.pal.map((c, i) => `${st.palN[i]} ${c}`).join('\n')}])}]});
+      setView('board'); return;
+    }
+    if (t.closest('[data-act="clr"]')){ const sh = t.closest('[data-sh]').dataset.sh; if (FS.mb.frames[sh]) delete FS.mb.frames[sh].k; fsSave(); renderFilm(); return; }
+    if (t.closest('#fb-collage')){ toast('세로 3컷을 만드는 중…'); await fbCollage(); return; }
+    if (t.closest('#fb-export')){ toast('무드북 이미지를 만드는 중…'); await fbExport(); return; }
+    if (t.closest('#fb-reset')){ if (!confirm('무드북의 사진과 메모를 모두 비울까요?')) return; FS.mb = {title:'', log:'', frames:{}}; fsSave(); renderFilm(); return; }
+    const ln = t.closest('[data-line]'); if (ln){ FS.mk.sub = ln.dataset.line; fsSave(); renderMaker(); return; }
+    if (t.closest('#mk-save')){ $('#mk-cv').toBlob(b => { const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = `still-${st.id}.png`; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000); }, 'image/png'); return; }
+    if (t.closest('#mk-tobook')){ if (!mkImg) { toast('먼저 사진을 올려 주세요'); return; } const free = FILM_SHOTS.find(s => !(FS.mb.frames[s.id] || {}).k) || FILM_SHOTS[0]; await fbAdd(free.id, mkImg._file); FS.mb.frames[free.id].sub = FS.mk.sub || undefined; FS.mb.frames[free.id].y = FS.mk.y; FS.sub = 'book'; fsSave(); renderFilm(); toast(`무드북 "${free.ko}" 칸에 넣었어요`); return; }
+  });
+  root.addEventListener('input', e => {
+    const t = e.target;
+    if (t.id === 'fb-title'){ FS.mb.title = t.value; fsSave(); return; }
+    if (t.id === 'fb-log'){ FS.mb.log = t.value; fsSave(); return; }
+    const fr = t.closest('[data-sh]');
+    if (fr && t.dataset.f === 'pick') return;
+    if (fr && t.dataset.f){ const f = FS.mb.frames[fr.dataset.sh] = FS.mb.frames[fr.dataset.sh] || {}; f[t.dataset.f] = t.dataset.f === 'y' ? +t.value : t.value; fsSave(); clearTimeout(initFilm._t); initFilm._t = setTimeout(renderFilm, t.dataset.f === 'y' ? 60 : 500); return; }
+    if (t.id === 'mk-sub'){ FS.mk.sub = t.value; fsSave(); renderMaker(); return; }
+    if (t.id === 'mk-y'){ FS.mk.y = +t.value; fsSave(); renderMaker(); return; }
+  });
+  root.addEventListener('change', e => {
+    const t = e.target;
+    if (t.dataset.file && t.files[0]){ fbAdd(t.dataset.file, t.files[0]); t.value = ''; return; }
+    if (t.dataset.f === 'pick'){ const sh = t.closest('[data-sh]').dataset.sh; (FS.mb.frames[sh] = FS.mb.frames[sh] || {}).pick = t.checked; fsSave(); return; }
+    if (t.id === 'fb-collsub'){ FS.mk.collSub = t.checked; fsSave(); return; }
+    if (t.id === 'fb-grade'){ FS.mk.grade = t.checked; fsSave(); renderFilm(); return; }
+    if (t.id === 'mk-file' && t.files[0]){ mkLoad(t.files[0]); t.value = ''; return; }
+    if (['mk-grade', 'mk-grain', 'mk-bars'].includes(t.id)){ FS.mk[t.id.slice(3)] = t.checked; fsSave(); renderMaker(); }
+  });
+  root.addEventListener('dragover', e => { if (e.target.closest('.fb-img,.mk-stage')) e.preventDefault(); });
+  root.addEventListener('drop', e => { const fb = e.target.closest('[data-sh]'), mk = e.target.closest('.mk-stage'); const f = e.dataTransfer?.files?.[0]; if (!f) return; if (fb){ e.preventDefault(); fbAdd(fb.dataset.sh, f); } else if (mk){ e.preventDefault(); mkLoad(f); } });
+  document.addEventListener('paste', e => { if (!document.body.classList.contains('v-film')) return; if (/INPUT|TEXTAREA/.test(document.activeElement?.tagName || '')) return; const f = [...(e.clipboardData?.items || [])].find(i => i.type.startsWith('image/'))?.getAsFile(); if (!f) return; e.preventDefault(); e.stopImmediatePropagation();
+    if (FS.sub === 'maker') mkLoad(f); else { const free = FILM_SHOTS.find(s => !(FS.mb.frames[s.id] || {}).k) || FILM_SHOTS[0]; if (FS.sub !== 'book'){ FS.sub = 'book'; fsSave(); } fbAdd(free.id, f); } }, true);
+  renderFilm();
+}
+
 /* ---------------- main ---------------- */
 function rebuild(){
   shots = buildShots();
@@ -3065,7 +3515,8 @@ rebuild();
 RB.init();
 MB.init();
 initPurpose();
-setView((() => { const h = location.hash.replace('#', ''); if (['purpose', 'plan', 'guide', 'board'].includes(h)) return h; if (['wiz','story','sim-sec'].includes(h)) return 'plan'; try { return localStorage.getItem('conti-view-3') || 'purpose'; } catch(e) { return 'purpose'; } })());
+initFilm();
+setView((() => { const h = location.hash.replace('#', ''); if (['purpose', 'film', 'plan', 'guide', 'board'].includes(h)) return h; if (['wiz','story','sim-sec'].includes(h)) return 'plan'; try { return localStorage.getItem('conti-view-3') || 'purpose'; } catch(e) { return 'purpose'; } })());
 
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(redrawAll);
 try { document.fonts.load("20px 'Do Hyeon'").then(redrawAll); } catch(e) {}
