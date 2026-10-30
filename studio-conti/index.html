@@ -174,6 +174,27 @@ body.v-film #mboard,body.v-film #guide{display:none}
 .fb-row{display:flex;gap:10px;align-items:center}.fb-row input[type=range]{flex:1;accent-color:var(--tile)}
 .fb-pick{display:flex;gap:5px;align-items:center;font-size:12.5px;cursor:pointer;white-space:nowrap}.fb-pick input{accent-color:var(--tile);width:15px;height:15px}
 .fb-tg{margin-left:0}
+.sk-host{position:relative;background:#fff;overflow:hidden}
+.sk-host svg,.sk-host .sk-cv{width:100%;height:100%;display:block;object-fit:cover}
+.fg-shot .sk-host{border:3px solid #1C1C1C}
+.fb-sk .sk-host{border:3px solid #1C1C1C}
+.sk-src{position:absolute;right:6px;bottom:4px;font-size:10px;color:#666;background:rgba(255,255,255,.8);padding:0 4px;border-radius:3px}
+.fb-skbtn{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}.fb-skbtn .mb-ghost{font-size:12px;padding:3px 10px}
+.fg-note{font-size:12.5px;color:var(--ink-2);margin:0}
+.sk-wrap{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:18px;align-items:start}
+.sk-stage{position:relative;background:#fff;border:3px solid #1C1C1C;overflow:hidden;touch-action:none}
+.sk-stage canvas{position:absolute;inset:0;width:100%;height:100%}
+#sk-ovl{cursor:crosshair}
+.sk-stage .mk-drop{color:var(--ink-2);z-index:2}.sk-stage .mk-drop b{color:var(--tile)}
+.sk-ctl{display:grid;gap:12px}
+.sk-tools{display:flex;flex-wrap:wrap;gap:6px}
+.sk-tools button{font:inherit;font-size:13px;border:1px solid var(--scrib-2);background:var(--sheet);color:var(--ink);border-radius:999px;padding:5px 12px;cursor:pointer}
+.sk-tools button[aria-pressed="true"]{background:var(--tile);color:#fff;border-color:var(--tile)}
+.sk-row{display:flex;gap:6px;flex-wrap:wrap}
+.sk-find{border:1px solid var(--grid);border-radius:14px;padding:10px 12px;font-size:13px;display:grid;gap:6px;background:var(--paper)}
+.sk-find span{color:var(--ink-2);font-size:12px}.sk-find p{margin:0;font-size:12px;color:var(--ink-2)}
+@media (max-width:1000px){ .sk-wrap{grid-template-columns:minmax(0,1fr)} }
+@media (max-width:620px){ #fm-sub{display:grid;grid-template-columns:1fr 1fr;width:100%} #fm-sub button{white-space:nowrap} }
 .mk-wrap{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:18px;align-items:start}
 .mk-stage{position:relative;background:#000;border-radius:8px;overflow:hidden}
 .mk-stage canvas{width:100%;height:auto;display:block}
@@ -706,10 +727,10 @@ footer code{font-family:var(--f-mono);font-size:12px}
 
   <section class="film" id="film" aria-labelledby="fm-h">
     <div class="fm-top"><div><h2 id="fm-h" class="g3title">영화 스틸컷</h2><p class="g3sub">영화의 한 장면처럼 찍고, 무드북으로 묶어 남기세요.</p></div>
-      <div class="cp-seg" id="fm-sub" role="group" aria-label="기능"><button type="button" data-sub="guide">촬영 가이드</button><button type="button" data-sub="book">무드북</button><button type="button" data-sub="maker">스틸 메이커</button></div></div>
+      <div class="cp-seg" id="fm-sub" role="group" aria-label="기능"><button type="button" data-sub="guide">촬영 가이드</button><button type="button" data-sub="book">무드북</button><button type="button" data-sub="sketch">콘티 그리기</button><button type="button" data-sub="maker">스틸 메이커</button></div></div>
     <div class="fm-styles" id="fm-styles" role="group" aria-label="영화 스타일"></div>
     <div class="fm-ratio"><span class="tl">화면비</span><div class="cp-f" id="fm-ratio"></div></div>
-    <div id="fm-guide"></div><div id="fm-book" hidden></div><div id="fm-maker" hidden></div>
+    <div id="fm-guide"></div><div id="fm-book" hidden></div><div id="fm-sketch" hidden></div><div id="fm-maker" hidden></div>
   </section>
 
   <section class="mboard" id="mboard" aria-label="무드보드">
@@ -3115,6 +3136,140 @@ function initPurpose(){
   renderPurpose();
 }
 
+/* ---------------- pencil storyboard: photo → sketch, annotation ---------------- */
+function boxBlur(src, w, h, r){
+  const tmp = new Float32Array(src.length), out = new Float32Array(src.length);
+  for (let y = 0; y < h; y++){ let acc = 0; const o = y*w; for (let x = -r; x <= r; x++) acc += src[o + Math.min(w - 1, Math.max(0, x))];
+    for (let x = 0; x < w; x++){ tmp[o + x] = acc/(2*r + 1); acc += src[o + Math.min(w - 1, x + r + 1)] - src[o + Math.max(0, x - r)]; } }
+  for (let x = 0; x < w; x++){ let acc = 0; for (let y = -r; y <= r; y++) acc += tmp[Math.min(h - 1, Math.max(0, y))*w + x];
+    for (let y = 0; y < h; y++){ out[y*w + x] = acc/(2*r + 1); acc += tmp[Math.min(h - 1, y + r + 1)*w + x] - tmp[Math.max(0, y - r)*w + x]; } }
+  return out;
+}
+const blur3 = (a, w, h, r) => boxBlur(boxBlur(boxBlur(a, w, h, r), w, h, r), w, h, r);
+function pencilize(img, o = {}){
+  const ratio = o.ratio || img.width/img.height, W = o.w || 900, H = Math.round(W/ratio);
+  const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const c = cv.getContext('2d', {willReadFrequently:true});
+  const s = Math.max(W/img.width, H/img.height), sw = W/s, sh = H/s;
+  c.drawImage(img, (img.width - sw)/2, (img.height - sh)*(o.y ?? .5), sw, sh, 0, 0, W, H);
+  const id = c.getImageData(0, 0, W, H), d = id.data, n = W*H, g = new Float32Array(n);
+  for (let i = 0; i < n; i++) g[i] = (.299*d[i*4] + .587*d[i*4+1] + .114*d[i*4+2])/255;
+  const gs = boxBlur(g, W, H, 1), inv = new Float32Array(n); for (let i = 0; i < n; i++) inv[i] = 1 - gs[i];
+  const bi = blur3(inv, W, H, Math.max(2, Math.round(W/300*(o.soft || 2)))), L = o.wash === false ? null : blur3(gs, W, H, Math.round(W/110));
+  const gam = o.dark || 2.6;
+  for (let i = 0; i < n; i++){
+    let v = Math.min(1, gs[i]/Math.max(1 - bi[i], .001)); v = Math.pow(v, gam); v = Math.max(0, Math.min(1, (v - .08)/.9));
+    let r = v, gg = v, b = v;
+    if (L){ const hi = Math.max(0, Math.min(1, (L[i] - .68)/.25))*.5; r = v*(1 - hi) + v*.97*hi; gg = v*(1 - hi) + v*.84*hi; b = v*(1 - hi) + v*.45*hi; }
+    d[i*4] = r*255; d[i*4+1] = gg*255; d[i*4+2] = b*255; d[i*4+3] = 255;
+  }
+  c.putImageData(id, 0, 0);
+  return cv;
+}
+const usURL = (id, w, h) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&h=${h}&q=75`;
+const crossImg = url => new Promise((res, rej) => { const im = new Image(); im.crossOrigin = 'anonymous'; im.onload = () => res(im); im.onerror = () => rej(new Error('load')); im.src = url; });
+const FILM_CATS = {est:'snap_city', med:'snap_couple', ots:'couple', cu:'frame_cu', ins:'topview', end:'snap_backlight'};
+const FILM_CAT_OVR = {noir:{est:'lowkey', med:'lowkey', cu:'split', end:'silhouette'}, sym:{est:'highkey', med:'fashion', cu:'frame_bust', end:'frame_full'}, retrowed:{est:'snap_wedding', med:'snap_wedding', end:'snap_golden'}, youth:{est:'snap_profile', med:'snap_profile', cu:'snap_backlight'}, neon:{est:'mood_dramatic', cu:'mood_dramatic', end:'snap_city'}, kthriller:{est:'lowkey', cu:'rim'}, blockbuster:{est:'snap_golden', cu:'rim'}, road:{est:'snap_golden', med:'snap_city'}, arthouse:{est:'snap_profile', cu:'mood_chic'}};
+const skCache = new Map();
+function shotPhoto(st, sh, i){ const cat = (FILM_CAT_OVR[st.id] || {})[sh.id] || FILM_CATS[sh.id]; return pick(cat, i + altSeed); }
+async function shotSketch(st, sh, ratio, i){
+  const p = shotPhoto(st, sh, i); if (!p) return null;
+  const key = p.id + '@' + ratio; if (skCache.has(key)) return skCache.get(key);
+  const pr = crossImg(usURL(p.id, 900, Math.round(900/ratio))).then(im => { const cv = pencilize(im, {ratio, w:900}); cv.dataset.by = p.by; cv.dataset.page = p.page; return cv; }).catch(() => null);
+  skCache.set(key, pr); return pr;
+}
+function cloneCanvas(src, cls){ const c = document.createElement('canvas'); c.width = src.width; c.height = src.height; c.getContext('2d').drawImage(src, 0, 0); if (cls) c.className = cls; return c; }
+async function fillSketches(st, ratio, sel, mbMode){
+  for (let i = 0; i < FILM_SHOTS.length; i++){
+    const sh = FILM_SHOTS[i], host = document.querySelector(`${sel}[data-skh="${sh.id}"]`); if (!host) continue;
+    const f = mbMode ? (FS.mb.frames[sh.id] || {}) : {};
+    let cv = null;
+    if (f.skk){ const b = await fGet(f.skk); if (b){ const im = await blobImg(b).catch(() => null); if (im){ cv = document.createElement('canvas'); cv.width = im.width; cv.height = im.height; cv.getContext('2d').drawImage(im, 0, 0); } } }
+    if (!cv){ const s = await shotSketch(st, sh, ratio, i); if (s) cv = cloneCanvas(s); }
+    if (!cv || !host.isConnected) continue;
+    cv.className = 'sk-cv'; host.innerHTML = ''; host.appendChild(cv);
+    if (!f.skk && cv.width) host.insertAdjacentHTML('beforeend', `<span class="sk-src">예시 사진 변환</span>`);
+  }
+}
+/* ---- sketch editor ---- */
+const SK = {img:null, base:null, tool:'arrow', hist:[], target:'est', showOrig:false, dark:2.6, wash:true};
+function skRender(){
+  const st = fStyle(), ratio = fRatio();
+  $('#fm-sketch').innerHTML = `<div class="sk-wrap"><div class="sk-stage" id="sk-stage" style="aspect-ratio:${ratio}">
+      <canvas id="sk-base"></canvas><canvas id="sk-ovl"></canvas>
+      <label class="mk-drop" id="sk-drop" for="sk-file"><b>+</b><span>스틸·레퍼런스 캡쳐를 붙여넣거나 올리세요</span><small>연필 콘티로 바뀝니다 · 원본은 이 기기 밖으로 나가지 않아요</small></label><input type="file" id="sk-file" accept="image/*" hidden></div>
+    <div class="sk-ctl">
+      <div class="sk-tools" role="group" aria-label="그리기 도구">${[['arrow','➜ 움직임 화살표'],['light','빛 칠하기'],['pen','펜'],['erase','지우개']].map(([k, l]) => `<button type="button" data-tool="${k}" aria-pressed="${SK.tool === k}">${l}</button>`).join('')}</div>
+      <div class="sk-row"><button class="btn" type="button" id="sk-undo">되돌리기</button><button class="btn" type="button" id="sk-clear">그린 것 지우기</button></div>
+      <div class="ctrl"><label for="sk-dark">선 진하기 <output>${SK.dark.toFixed(1)}</output></label><input type="range" id="sk-dark" min="1.4" max="4.5" step=".1" value="${SK.dark}"></div>
+      <div class="toggles"><label><input type="checkbox" id="sk-wash" ${SK.wash ? 'checked' : ''}> 밝은 곳 노란 칠</label><label><input type="checkbox" id="sk-orig" ${SK.showOrig ? 'checked' : ''}> 원본 겹쳐 보기</label></div>
+      <div class="ctrl"><label for="sk-target">저장할 무드북 칸</label><select id="sk-target">${FILM_SHOTS.map((s, i) => `<option value="${s.id}" ${s.id === SK.target ? 'selected' : ''}>${i + 1}. ${s.ko}</option>`).join('')}</select></div>
+      <div class="pp-act"><button class="btn solid" type="button" id="sk-save">무드북 칸에 저장</button><button class="btn" type="button" id="sk-png">PNG로 저장</button><label class="btn" for="sk-file">다른 사진</label></div>
+      <div class="sk-find"><b>스틸 찾기</b><span>${st.ko} 참고 영화</span><div class="links">${st.refs.flatMap(r => filmSearch(r).map(([l, u]) => `<a href="${u}" target="_blank" rel="noopener">${r} · ${l}</a>`)).join('')}</div>
+        <p>캡쳐한 스틸은 콘티로 바꿔 <b>개인 기획용</b>으로만 쓰세요. 원본·콘티 모두 이 브라우저에만 저장되고 사이트에는 올라가지 않습니다.</p></div>
+    </div></div>`;
+  skDraw();
+}
+function skDraw(){
+  const base = $('#sk-base'), ovl = $('#sk-ovl'); if (!base) return;
+  $('#sk-drop').hidden = !!SK.img;
+  if (!SK.img){ base.width = 900; base.height = Math.round(900/fRatio()); const c = base.getContext('2d'); c.fillStyle = '#fff'; c.fillRect(0, 0, base.width, base.height); }
+  else { SK.base = pencilize(SK.img, {ratio:fRatio(), w:1200, dark:SK.dark, wash:SK.wash}); base.width = SK.base.width; base.height = SK.base.height; const c = base.getContext('2d'); c.drawImage(SK.base, 0, 0);
+    if (SK.showOrig){ c.globalAlpha = .35; const s = Math.max(base.width/SK.img.width, base.height/SK.img.height), sw = base.width/s, sh = base.height/s; c.drawImage(SK.img, (SK.img.width - sw)/2, (SK.img.height - sh)/2, sw, sh, 0, 0, base.width, base.height); c.globalAlpha = 1; } }
+  if (ovl.width !== base.width || ovl.height !== base.height){ ovl.width = base.width; ovl.height = base.height; SK.hist = []; }
+}
+function skArrow(c, x1, y1, x2, y2){
+  const w = c.canvas.width/120, a = Math.atan2(y2 - y1, x2 - x1), hl = w*4.5, mx = (x1 + x2)/2 - (y2 - y1)*.15, my = (y1 + y2)/2 + (x2 - x1)*.15, a2 = Math.atan2(y2 - my, x2 - mx);
+  c.save(); c.strokeStyle = '#E07A8C'; c.lineWidth = w; c.lineCap = 'round'; c.globalAlpha = .9;
+  c.beginPath(); c.moveTo(x1, y1); c.quadraticCurveTo(mx, my, x2, y2); c.stroke();
+  c.beginPath(); c.moveTo(x2, y2); c.lineTo(x2 - hl*Math.cos(a2 - .5), y2 - hl*Math.sin(a2 - .5)); c.moveTo(x2, y2); c.lineTo(x2 - hl*Math.cos(a2 + .5), y2 - hl*Math.sin(a2 + .5)); c.stroke(); c.restore();
+}
+function skInit(){
+  const root = $('#film'); let drawing = null;
+  const pos = (cv, e) => { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left)/r.width*cv.width, (e.clientY - r.top)/r.height*cv.height]; };
+  root.addEventListener('pointerdown', e => {
+    const ovl = e.target.closest('#sk-ovl'); if (!ovl || !SK.img) return;
+    e.preventDefault(); ovl.setPointerCapture(e.pointerId);
+    const c = ovl.getContext('2d'); SK.hist.push(c.getImageData(0, 0, ovl.width, ovl.height)); if (SK.hist.length > 25) SK.hist.shift();
+    const [x, y] = pos(ovl, e); drawing = {x, y, snap: SK.hist[SK.hist.length - 1]};
+    if (SK.tool !== 'arrow'){ c.beginPath(); c.moveTo(x, y); }
+  });
+  root.addEventListener('pointermove', e => {
+    if (!drawing) return; const ovl = $('#sk-ovl'), c = ovl.getContext('2d'), [x, y] = pos(ovl, e), u = ovl.width/120;
+    if (SK.tool === 'arrow'){ c.putImageData(drawing.snap, 0, 0); skArrow(c, drawing.x, drawing.y, x, y); return; }
+    c.save(); c.lineCap = c.lineJoin = 'round';
+    if (SK.tool === 'light'){ c.globalCompositeOperation = 'source-over'; c.strokeStyle = 'rgba(246,212,106,.08)'; c.lineWidth = u*7; }
+    else if (SK.tool === 'erase'){ c.globalCompositeOperation = 'destination-out'; c.lineWidth = u*4; c.strokeStyle = '#000'; }
+    else { c.strokeStyle = '#1C1C1C'; c.lineWidth = u*.5; }
+    c.lineTo(x, y); c.stroke(); c.restore(); c.beginPath(); c.moveTo(x, y);
+  });
+  const end = () => { drawing = null; }; root.addEventListener('pointerup', end); root.addEventListener('pointercancel', end);
+  root.addEventListener('click', async e => {
+    const t = e.target;
+    const tb = t.closest('[data-tool]'); if (tb){ SK.tool = tb.dataset.tool; document.querySelectorAll('[data-tool]').forEach(b => b.setAttribute('aria-pressed', String(b === tb))); return; }
+    if (t.closest('#sk-undo')){ const h = SK.hist.pop(); if (h) $('#sk-ovl').getContext('2d').putImageData(h, 0, 0); return; }
+    if (t.closest('#sk-clear')){ const o = $('#sk-ovl'); SK.hist.push(o.getContext('2d').getImageData(0, 0, o.width, o.height)); o.getContext('2d').clearRect(0, 0, o.width, o.height); return; }
+    if (t.closest('#sk-save') || t.closest('#sk-png')){
+      if (!SK.img){ toast('먼저 사진을 넣어 주세요'); return; }
+      const out = document.createElement('canvas'), b = $('#sk-base'); out.width = b.width; out.height = b.height; const c = out.getContext('2d'); c.drawImage(SK.base, 0, 0); c.drawImage($('#sk-ovl'), 0, 0);
+      const blob = await new Promise(r => out.toBlob(r, 'image/png'));
+      if (t.closest('#sk-png')){ const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `conti-${SK.target}.png`; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000); return; }
+      try { const k = await fPut(blob); (FS.mb.frames[SK.target] = FS.mb.frames[SK.target] || {}).skk = k; fsSave(); toast(`무드북 "${FILM_SHOTS.find(s => s.id === SK.target).ko}" 콘티로 저장했어요`); } catch(er){ toast('저장하지 못했어요'); }
+      return;
+    }
+    const dr = t.closest('[data-draw]'); if (dr){ SK.target = dr.dataset.draw; const f = FS.mb.frames[SK.target] || {}; if (f.k){ const b = await fGet(f.k); if (b) SK.img = await blobImg(b).catch(() => null); } FS.sub = 'sketch'; fsSave(); renderFilm(); return; }
+    const rs = t.closest('[data-skreset]'); if (rs){ const f = FS.mb.frames[rs.dataset.skreset]; if (f) delete f.skk; fsSave(); renderFilm(); return; }
+  });
+  root.addEventListener('input', e => { if (e.target.id === 'sk-dark'){ SK.dark = +e.target.value; e.target.previousElementSibling.querySelector('output').textContent = SK.dark.toFixed(1); clearTimeout(SK._t); SK._t = setTimeout(skDraw, 120); } });
+  root.addEventListener('change', async e => {
+    const t = e.target;
+    if (t.id === 'sk-file' && t.files[0]){ SK.img = await blobImg(t.files[0]).catch(() => null); t.value = ''; skDraw(); }
+    if (t.id === 'sk-wash'){ SK.wash = t.checked; skDraw(); }
+    if (t.id === 'sk-orig'){ SK.showOrig = t.checked; skDraw(); }
+    if (t.id === 'sk-target'){ SK.target = t.value; }
+  });
+  root.addEventListener('drop', async e => { if (!e.target.closest('#sk-stage')) return; const f = e.dataTransfer?.files?.[0]; if (!f) return; e.preventDefault(); SK.img = await blobImg(f).catch(() => null); skDraw(); });
+}
+
 /* ---------------- film still concept: guide · moodbook · still maker ---------------- */
 const FILM_STYLES = [
   {id:'neon', ko:'네온 로맨스', era:'90년대 홍콩 멜로', ratio:1.85, refs:['In the Mood for Love', 'Chungking Express', 'Fallen Angels'], refKo:'「화양연화」「중경삼림」 같은 왕가위 감독풍',
@@ -3330,24 +3485,28 @@ function renderFilm(){
   const st = fStyle(), ratio = fRatio();
   $('#fm-styles').innerHTML = FILM_STYLES.map(s => `<button type="button" data-st="${s.id}" aria-pressed="${s.id === st.id}"><span class="fsw">${s.pal.map(c => `<i style="background:${c}"></i>`).join('')}</span><b>${s.ko}</b><small>${s.era}</small></button>`).join('');
   $('#fm-sub').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.sub === FS.sub)));
-  ['guide', 'book', 'maker'].forEach(k => $('#fm-' + k).hidden = FS.sub !== k);
+  ['guide', 'book', 'sketch', 'maker'].forEach(k => $('#fm-' + k).hidden = FS.sub !== k);
   $('#fm-ratio').innerHTML = FILM_RATIOS.map(([r, l]) => `<button type="button" data-r="${r}" aria-pressed="${r === ratio}">${l}${r === st.ratio ? ' · 추천' : ''}</button>`).join('');
   if (FS.sub === 'guide') renderFilmGuide(st, ratio);
   if (FS.sub === 'book') renderFilmBook(st, ratio);
   if (FS.sub === 'maker') renderMaker();
+  if (FS.sub === 'sketch') skRender();
 }
 function renderFilmGuide(st, ratio){
+  setTimeout(() => fillSketches(st, ratio, '#fm-guide ', false), 0);
   $('#fm-guide').innerHTML = `<div class="fg-head"><div><span class="fg-era">${st.era}</span><h3>${st.ko}</h3><p class="fg-log">“${st.log}”</p><p class="fg-ref">참고: ${st.refKo}</p>
       <div class="links">${st.refs.flatMap(r => filmSearch(r).map(([l, u]) => `<a href="${u}" target="_blank" rel="noopener">${r} · ${l}</a>`)).join('')}</div></div>
       <div class="fg-pal">${st.pal.map((c, i) => `<div><i style="background:${c}"></i><span>${st.palN[i]}<br><code>${c}</code></span></div>`).join('')}<div class="fg-rt">화면비 <b>${st.ratio}:1</b></div></div></div>
     <div class="fg-look">${Object.entries(st.look).map(([h, t]) => `<div><b>${h}</b><p>${t}</p></div>`).join('')}</div>
     <div class="fg-st">스틸컷 6장 콘티 <small>노란 칠은 빛이 오는 쪽, 분홍 화살표는 움직임이에요. 이 순서로 찍어 보세요</small></div>
-    <div class="fg-shots">${FILM_SHOTS.map((sh, i) => `<article class="fg-shot">${filmFrameSVG(st, sh, ratio)}<div class="g3h"><span class="g3n">${i + 1}</span><b>${sh.ko}</b><small class="fg-en">${sh.en}</small></div><p>${sh.why}</p><p class="fg-how">${sh.how}</p><span class="fg-mm">${sh.f}mm 근처</span></article>`).join('')}</div>
+    <div class="fg-shots">${FILM_SHOTS.map((sh, i) => `<article class="fg-shot"><div class="sk-host" data-skh="${sh.id}" style="aspect-ratio:${ratio}">${filmFrameSVG(st, sh, ratio)}</div><div class="g3h"><span class="g3n">${i + 1}</span><b>${sh.ko}</b><small class="fg-en">${sh.en}</small></div><p>${sh.why}</p><p class="fg-how">${sh.how}</p><span class="fg-mm">${sh.f}mm 근처</span></article>`).join('')}</div>
+    <p class="fg-note">콘티는 무료 예시 사진(Unsplash)을 연필 콘티로 바꾼 것입니다. 마음에 드는 영화 스틸은 위 링크에서 찾아 <b>콘티 그리기</b>에 붙여 넣으면 내 콘티로 바뀝니다.</p>
     <div class="fg-trio"><b>세로 3컷으로 남기기</b><p>한 장면을 세 번 끊어 위아래로 이어 붙이면 영화 스틸 한 묶음이 됩니다. 이 순서가 가장 쉬워요.</p><ol><li><b>가까운 투샷</b> 둘이 각자 딴짓하는 순간 · 50mm · 허리 위</li><li><b>미디엄 액션</b> 소품을 쓰는 동작(마시기·비눗방울·적기) · 35~50mm</li><li><b>와이드 장소</b> 인물은 작게, 하늘·길·바다가 주인공 · 35mm 이하</li></ol><p class="fg-how">세 장 모두 같은 높이의 가로 비율로, 같은 시간대에 찍어야 색이 이어집니다. 무드북에서 '3컷에 넣기'를 고르고 <b>인스타 세로 3컷 저장</b>을 누르세요.</p></div>
     <div class="fg-rules"><b>스틸컷처럼 보이게 하는 5가지</b><ol><li><b>카메라를 보지 않기</b> 시선은 화면 밖, 동작은 중간에서 멈춘 듯.</li><li><b>화면 속 광원</b> 스탠드·간판·창처럼 "이유 있는 빛" 하나.</li><li><b>가로 화면비</b> 2.39·1.85로 잘라 위아래를 비우기.</li><li><b>색은 2~3개</b> 의상·소품·배경을 팔레트 안에서.</li><li><b>자막 한 줄</b> 대사가 들어가면 장면이 됩니다.</li></ol></div>
     <div class="pp-act"><button class="btn solid" type="button" id="fm-tobook">이 스타일로 무드북 만들기</button><button class="btn" type="button" id="fm-toboard">무드보드로 보내기</button><button class="btn" type="button" id="fm-copy">촬영 노트 복사</button></div>`;
 }
 async function renderFilmBook(st, ratio){
+  setTimeout(() => fillSketches(st, ratio, '#fm-book ', true), 0);
   const mb = FS.mb;
   $('#fm-book').innerHTML = `<div class="fb-card"><div class="fb-pal">${st.pal.map(c => `<i style="background:${c}"></i>`).join('')}</div>
       <input class="fb-title" id="fb-title" value="${esc(mb.title || '')}" placeholder="영화 제목처럼 이름 짓기" aria-label="무드북 제목">
@@ -3355,7 +3514,7 @@ async function renderFilmBook(st, ratio){
       <div class="fb-meta">${st.ko} · ${st.era} · ${ratio}:1 · ${st.refKo}</div></div>
     <div class="fb-heads"><span>콘티</span><span>내 사진</span></div>
     <div class="fb-grid">${FILM_SHOTS.map((sh, i) => { const f = mb.frames[sh.id] || {}; return `<figure class="fb-fr" data-sh="${sh.id}">
-      <div class="fb-pair"><div class="fb-sk">${filmFrameSVG(st, sh, ratio)}</div>
+      <div class="fb-pair"><div class="fb-sk"><div class="sk-host" data-skh="${sh.id}" style="aspect-ratio:${ratio}">${filmFrameSVG(st, sh, ratio)}</div><div class="fb-skbtn"><button type="button" class="mb-ghost" data-draw="${sh.id}">콘티 그리기</button>${f.skk ? `<button type="button" class="mb-ghost" data-skreset="${sh.id}">예시 콘티로</button>` : ''}</div></div>
       <div class="fb-img" style="aspect-ratio:${ratio}"><canvas data-cv="${sh.id}" aria-label="${sh.ko} 스틸"></canvas>${f.k ? `<button type="button" class="mb-x" data-act="clr" aria-label="사진 빼기">×</button>` : `<label class="fb-drop" for="fb-f-${sh.id}"><b>+</b><span>${sh.ko} 사진 넣기</span><small>클릭·끌어놓기·붙여넣기</small></label>`}<input type="file" id="fb-f-${sh.id}" accept="image/*" hidden data-file="${sh.id}"></div></div>
       <figcaption><span class="g3n">${i + 1}</span><b>${sh.ko}</b><input class="fb-sub" data-f="sub" value="${esc(f.sub ?? st.lines[i % st.lines.length])}" placeholder="자막(대사)" aria-label="${sh.ko} 자막"></figcaption>
       <input class="fb-note" data-f="note" value="${esc(f.note || '')}" placeholder="${esc(sh.how)}" aria-label="${sh.ko} 메모">
@@ -3401,7 +3560,10 @@ async function fbExport(){
   const svgImg = svg => new Promise(r => { const m = new Image(); m.onload = () => r(m); m.onerror = () => r(null); m.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg.replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" ')); });
   for (let i = 0; i < FILM_SHOTS.length; i++){
     const sh = FILM_SHOTS[i], f = FS.mb.frames[sh.id] || {}, y = headH + i*rowH, x2 = pad + colW + gap;
-    const sk = await svgImg(filmFrameSVG(st, sh, ratio)); if (sk) c.drawImage(sk, pad, y, colW, fh);
+    let sk = null; if (f.skk){ const bb = await fGet(f.skk); if (bb) sk = await blobImg(bb).catch(() => null); }
+    if (!sk) sk = await shotSketch(st, sh, ratio, i);
+    if (!sk) sk = await svgImg(filmFrameSVG(st, sh, ratio));
+    if (sk) c.drawImage(sk, pad, y, colW, fh); c.strokeStyle = '#1C1C1C'; c.lineWidth = 3; c.strokeRect(pad + 1.5, y + 1.5, colW - 3, fh - 3);
     let img = null; if (f.k){ const b = await fGet(f.k); if (b) img = await blobImg(b).catch(() => null); }
     if (img){ const tmp = document.createElement('canvas'); drawStill(tmp, img, {ratio, w:Math.round(colW), y:f.y ?? .5, grade: FS.mk.grade ? st.grade : null, grain:FS.mk.grade, bars:false, sub:f.sub ?? st.lines[i % st.lines.length]}); c.drawImage(tmp, x2, y, colW, fh); }
     else { c.fillStyle = '#F1F1F1'; c.fillRect(x2, y, colW, fh); c.fillStyle = '#AAA'; c.font = `24px 'IBM Plex Sans KR',sans-serif`; c.fillText('사진을 넣어 주세요', x2 + 24, y + 24); }
@@ -3482,6 +3644,7 @@ function initFilm(){
   root.addEventListener('dragover', e => { if (e.target.closest('.fb-img,.mk-stage')) e.preventDefault(); });
   root.addEventListener('drop', e => { const fb = e.target.closest('[data-sh]'), mk = e.target.closest('.mk-stage'); const f = e.dataTransfer?.files?.[0]; if (!f) return; if (fb){ e.preventDefault(); fbAdd(fb.dataset.sh, f); } else if (mk){ e.preventDefault(); mkLoad(f); } });
   document.addEventListener('paste', e => { if (!document.body.classList.contains('v-film')) return; if (/INPUT|TEXTAREA/.test(document.activeElement?.tagName || '')) return; const f = [...(e.clipboardData?.items || [])].find(i => i.type.startsWith('image/'))?.getAsFile(); if (!f) return; e.preventDefault(); e.stopImmediatePropagation();
+    if (FS.sub === 'sketch'){ blobImg(f).then(im => { SK.img = im; skDraw(); }); return; }
     if (FS.sub === 'maker') mkLoad(f); else { const free = FILM_SHOTS.find(s => !(FS.mb.frames[s.id] || {}).k) || FILM_SHOTS[0]; if (FS.sub !== 'book'){ FS.sub = 'book'; fsSave(); } fbAdd(free.id, f); } }, true);
   renderFilm();
 }
@@ -3516,6 +3679,7 @@ RB.init();
 MB.init();
 initPurpose();
 initFilm();
+skInit();
 setView((() => { const h = location.hash.replace('#', ''); if (['purpose', 'film', 'plan', 'guide', 'board'].includes(h)) return h; if (['wiz','story','sim-sec'].includes(h)) return 'plan'; try { return localStorage.getItem('conti-view-3') || 'purpose'; } catch(e) { return 'purpose'; } })());
 
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(redrawAll);
