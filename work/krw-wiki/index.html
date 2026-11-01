@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KRW 투자 위키 · MJ-best</title>
+<meta name="description" content="평일 저녁 클라우드에서 시장 자료와 계좌를 읽기 전용으로 모아 계산하고, 결과를 마크다운 노트로 저장소에 커밋하는 개인 투자 기록 파이프라인.">
+<meta name="naver-site-verification" content="d742928bf0bdbd59f1017ff8d26f2452638bb3cf">
+<link rel="canonical" href="https://mj-best.github.io/work/krw-wiki/">
+<meta property="og:type" content="website"><meta property="og:title" content="KRW 투자 위키 · MJ-best"><meta property="og:description" content="평일 저녁 클라우드에서 시장 자료와 계좌를 읽기 전용으로 모아 계산하고, 결과를 마크다운 노트로 저장소에 커밋하는 개인 투자 기록 파이프라인."><meta property="og:url" content="https://mj-best.github.io/work/krw-wiki/">
+<meta name="theme-color" content="#f5f3ee" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#141619" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/assets/portfolio.css">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+</head>
+<body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+<header class="top"><div class="wrap">
+<a class="logo" href="/"><i aria-hidden="true"></i>MJ-best</a>
+<nav aria-label="주 메뉴">
+<a href="/#projects">프로젝트</a><a class="hide-s" href="/#stack">구조</a><a class="hide-s" href="/#about">작업 방식</a><a href="https://github.com/MJ-best" rel="noopener">GitHub</a>
+<button class="theme-btn" type="button" aria-label="밝게/어둡게 전환" title="밝게/어둡게 전환"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg></button>
+</nav></div></header>
+<main id="main">
+<div class="wrap">
+<nav class="crumb" aria-label="위치"><a href="/#projects">← 전체 프로젝트</a></nav>
+<header class="d-head"><div>
+<p class="eyebrow" style="margin:0">자동화·에이전트</p>
+<h1>KRW 투자 위키</h1>
+<p>평일 저녁 클라우드에서 시장 자료와 계좌를 읽기 전용으로 모아 계산하고, 결과를 마크다운 노트로 저장소에 커밋하는 개인 투자 기록 파이프라인.</p>
+</div><div class="btns"></div></header>
+<div class="meta"><span><b>분야</b>자동화·에이전트</span><span><b>플랫폼</b>GitHub Actions · Vercel</span><span><b>기술</b>Python 3.12 · GitHub Actions · Vercel (Python 서버 함수) · JSON Schema · YAML 설정 · Obsidian Markdown · pytest</span><span><b>저장소</b>비공개</span></div>
+<section class="shots" aria-label="화면"><div class="cover-big"><svg viewBox="0 0 800 450" role="img" aria-label="KRW 투자 위키 구조 그림"><rect width="800" height="450" fill="var(--accent-soft)"/><rect x="30" y="175" width="124" height="100" rx="14" fill="var(--accent)" stroke="var(--accent)" stroke-width="2"/><text x="92.0" y="221" text-anchor="middle" font-family="IBM Plex Sans KR,sans-serif" font-weight="600" font-size="14" fill="var(--accent-ink)">GitHub Actions</text><text x="92.0" y="247" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--accent-ink)">평일 18:00 KST</text><path d="M160 225 H178" stroke="var(--accent)" stroke-width="2.5" fill="none" stroke-dasharray="2 7" stroke-linecap="round"/><path d="M170 218 L178 225 L170 232" stroke="var(--accent)" stroke-width="2.5" fill="none"/><rect x="184" y="175" width="124" height="100" rx="14" fill="var(--card)" stroke="var(--line-2)" stroke-width="2"/><text x="246.0" y="221" text-anchor="middle" font-family="IBM Plex Sans KR,sans-serif" font-weight="600" font-size="14" fill="var(--ink)">공개 시장 데이터</text><text x="246.0" y="247" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--ink-3)">거시 지표</text><path d="M314 225 H332" stroke="var(--accent)" stroke-width="2.5" fill="none" stroke-dasharray="2 7" stroke-linecap="round"/><path d="M324 218 L332 225 L324 232" stroke="var(--accent)" stroke-width="2.5" fill="none"/><rect x="338" y="175" width="124" height="100" rx="14" fill="var(--card)" stroke="var(--line-2)" stroke-width="2"/><text x="400.0" y="221" text-anchor="middle" font-family="IBM Plex Sans KR,sans-serif" font-weight="600" font-size="14" fill="var(--ink)">증권사 API</text><text x="400.0" y="247" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--ink-3)">읽기 전용 조회</text><path d="M468 225 H486" stroke="var(--accent)" stroke-width="2.5" fill="none" stroke-dasharray="2 7" stroke-linecap="round"/><path d="M478 218 L486 225 L478 232" stroke="var(--accent)" stroke-width="2.5" fill="none"/><rect x="492" y="175" width="124" height="100" rx="14" fill="var(--card)" stroke="var(--line-2)" stroke-width="2"/><text x="554.0" y="221" text-anchor="middle" font-family="IBM Plex Sans KR,sans-serif" font-weight="600" font-size="14" fill="var(--ink)">Python 계산</text><text x="554.0" y="247" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--ink-3)">스냅샷</text><path d="M622 225 H640" stroke="var(--accent)" stroke-width="2.5" fill="none" stroke-dasharray="2 7" stroke-linecap="round"/><path d="M632 218 L640 225 L632 232" stroke="var(--accent)" stroke-width="2.5" fill="none"/><rect x="646" y="175" width="124" height="100" rx="14" fill="var(--card)" stroke="var(--line-2)" stroke-width="2"/><text x="708.0" y="221" text-anchor="middle" font-family="IBM Plex Sans KR,sans-serif" font-weight="600" font-size="14" fill="var(--ink)">Git 저장소</text><text x="708.0" y="247" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--ink-3)">자료</text></svg></div><figcaption>개인 투자 기록이라 화면은 싣지 않고 구조만 소개합니다.</figcaption></section>
+<div class="d-grid">
+<aside class="toc" aria-label="이 페이지 목차"><ol>
+<li><a href="#why">왜 만들었나</a></li><li><a href="#features">주요 기능</a></li><li><a href="#flow">어떻게 동작하나</a></li><li><a href="#code">구조</a></li><li><a href="#hard">어려웠던 점</a></li></ol></aside>
+<article>
+<section class="d-sec" id="why"><h2>왜 만들었나</h2><p>여러 출처의 시장 지표와 계좌 상태를 매일 손으로 확인하고 정리하기 어려웠고, 시장 등락이 아니라 미리 정한 원칙대로 비율을 유지하는지 꾸준히 점검할 장치가 필요했다.</p></section>
+<section class="d-sec" id="features"><h2>주요 기능</h2><ul class="feat"><li>공개 경제·시장 데이터 수집과 하루치 스냅샷 검증(누락·오래됨·충돌 표시)</li><li>증권사 Open API 읽기 전용 조회(주문 기능 없음)</li><li>목표 비율 대비 리밸런싱 점검, 시나리오 추적·시뮬레이션, 가설 검증</li><li>추세·변동성·지지선 기반 시장 신호판</li><li>Obsidian 노트·한 장 요약 자동 생성, 비밀번호 보호 웹 대시보드</li></ul></section>
+<section class="d-sec"><h2>숫자로 보면</h2><div class="nums"><div>실행 주기: 평일 18:00 KST (cron 0 9 * * 1-5)</div><div>파이프라인 4단계(시장 자료 → 계좌 → 계산·노트 → 결과 기록)</div><div>pytest 테스트 274개(24개 파일) · 데이터 스키마 5종</div></div></section>
+<section class="d-sec" id="flow"><h2>어떻게 동작하나</h2><ol class="flow"><li><h3>시장 자료 수집</h3><p>거시 지표·국내외 시장·채권 시세 수집기가 원천 데이터를 날짜별 파일로 저장한다.</p><span class="file">프로그램/collect_fred.py</span></li><li><h3>스냅샷 생성·검증</h3><p>하루치 시장 스냅샷을 만들고 스키마로 검증해 누락·오래됨·충돌 상태를 표시한다.</p><span class="file">프로그램/build_daily_snapshot.py</span></li><li><h3>계좌 읽기 전용 동기화</h3><p>증권사 API에서 잔고를 조회해 거래 기록 원장을 갱신한다.</p><span class="file">프로그램/collect_kis_account.py</span></li><li><h3>모델·점검 계산</h3><p>전략·퀀트 모델, 리밸런싱 점검, 시나리오 추적을 계산하고 노트를 갱신한다.</p><span class="file">프로그램/run_portfolio_automation.py</span></li><li><h3>결과 기록과 요약</h3><p>단계별 실행 상태를 기록하고 폰에서 보는 한 장짜리 요약 페이지를 만든다.</p><span class="file">프로그램/today_summary.py</span></li><li><h3>커밋과 대시보드 배포</h3><p>워크플로가 결과를 커밋(충돌 시 rebase 후 재시도)하면 Vercel이 새 데이터로 대시보드를 다시 띄운다.</p><span class="file">.github/workflows/daily.yml</span></li></ol></section>
+<section class="d-sec" id="code"><h2>구조</h2><p class="backend">GitHub Actions 평일 cron이 수집·계산을 돌려 결과를 저장소에 커밋하고, Vercel이 커밋마다 재배포되어 저장소 데이터를 읽어 대시보드를 서빙한다(별도 DB 없음).</p><div class="arch"><div class="node first"><b>GitHub Actions</b><span>평일 18:00 KST</span></div><div class="edge" aria-hidden="true"><span>수집</span></div><div class="node"><b>공개 시장 데이터</b><span>거시 지표 · 시세</span></div><div class="edge" aria-hidden="true"><span></span></div><div class="node"><b>증권사 API</b><span>읽기 전용 조회</span></div><div class="edge" aria-hidden="true"><span>원장 갱신</span></div><div class="node"><b>Python 계산</b><span>스냅샷 · 모델 · 점검</span></div><div class="edge" aria-hidden="true"><span>커밋</span></div><div class="node"><b>Git 저장소</b><span>자료 · 마크다운 노트</span></div><div class="edge" aria-hidden="true"><span>커밋마다 재배포</span></div><div class="node"><b>Vercel 대시보드</b><span>비밀번호 로그인</span></div></div><ul class="arch-extra"><li>GitHub Actions → 증권사 API: 잔고 조회</li><li>공개 시장 데이터 → Python 계산: 스냅샷</li></ul><p class="code-cap">비공개 저장소라 소스 코드 링크와 코드 발췌는 싣지 않았습니다.</p></section>
+<section class="d-sec" id="hard"><h2>어려웠던 점</h2><div class="callout">같은 파이프라인이 맥과 클라우드 양쪽에서 돌기 때문에 실행 잠금, 기기 역할 구분, 맥이 그 사이 푸시한 입력 위로 데이터 커밋을 올리는 rebase 재시도를 넣어야 했다. 출처 하나가 일시적으로 실패해도 같은 날짜의 쓸 수 있는 데이터를 지우지 않도록 대체 경로를 두었다.</div></section>
+<nav class="pager" aria-label="다른 프로젝트">
+<a href="/work/photo-monitor/"><small>← 이전</small><b>Wireless Photo Monitor</b></a>
+<a class="next" href="/work/ccnp-encor/"><small>다음 →</small><b>ENCOR 랩북</b></a></nav>
+</article></div></div>
+</main>
+<footer><div class="wrap"><span>© 2026 MJ-best · 이 사이트와 모든 데모는 GitHub Pages에서 동작합니다.</span><a href="https://github.com/MJ-best">github.com/MJ-best</a></div></footer>
+<script src="/assets/portfolio.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agent Hub · MJ-best</title>
+<meta name="description" content="자연어 한 줄로 개인 AI 에이전트를 만들고, 맥미니와 GitHub Actions 러너가 구독 로그인된 Claude Code·Gemini CLI로 실행하는 Firebase 웹앱.">
+<meta name="naver-site-verification" content="d742928bf0bdbd59f1017ff8d26f2452638bb3cf">
+<link rel="canonical" href="https://mj-best.github.io/work/agent-hub/">
+<meta property="og:type" content="website"><meta property="og:title" content="Agent Hub · MJ-best"><meta property="og:description" content="자연어 한 줄로 개인 AI 에이전트를 만들고, 맥미니와 GitHub Actions 러너가 구독 로그인된 Claude Code·Gemini CLI로 실행하는 Firebase 웹앱."><meta property="og:url" content="https://mj-best.github.io/work/agent-hub/">
+<meta name="theme-color" content="#f5f3ee" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#141619" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/assets/portfolio.css">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+</head>
+<body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+<header class="top"><div class="wrap">
+<a class="logo" href="/"><i aria-hidden="true"></i>MJ-best</a>
+<nav aria-label="주 메뉴">
+<a href="/#projects">프로젝트</a><a class="hide-s" href="/#stack">구조</a><a class="hide-s" href="/#about">작업 방식</a><a href="https://github.com/MJ-best" rel="noopener">GitHub</a>
+<button class="theme-btn" type="button" aria-label="밝게/어둡게 전환" title="밝게/어둡게 전환"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg></button>
+</nav></div></header>
+<main id="main">
+<div class="wrap">
+<nav class="crumb" aria-label="위치"><a href="/#projects">← 전체 프로젝트</a></nav>
+<header class="d-head"><div>
+<p class="eyebrow" style="margin:0">자동화·에이전트</p>
+<h1>Agent Hub</h1>
+<p>자연어 한 줄로 개인 AI 에이전트를 만들고, 맥미니와 GitHub Actions 러너가 구독 로그인된 Claude Code·Gemini CLI로 실행하는 Firebase 웹앱.</p>
+</div><div class="btns"></div></header>
+<div class="meta"><span><b>분야</b>자동화·에이전트</span><span><b>플랫폼</b>Web · Mac mini · GitHub Actions</span><span><b>기술</b>Vanilla JS · Firebase Hosting · Firestore · Firebase Auth · Node.js · node-cron · Claude Code CLI · Gemini CLI · GitHub Actions · launchd</span><span><b>저장소</b>비공개</span></div>
+<section class="shots" aria-label="화면"><div class="cover-big"><svg viewBox="0 0 800 450" role="img" aria-label="Agent Hub 구조 그림"><rect width="800" height="450" fill="var(--accent-soft)"/><rect x="30" y="175" width="124" height="100" rx="14" fill="var(--accent)" stroke="var(--accent)" stroke-width="2"/><text x="92.0" y="221" text-anchor="middle" font-family="IBM Plex Sans KR,sans-serif" font-weight="600" font-size="14" fill="var(--accent-ink)">웹앱</text><text x="92.0" y="247" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--accent-ink)">Firebase Hosting</text><path d="M160 225 H178" stroke="var(--accent)" stroke-width="2.5" fill="none" stroke-dasharray="2 7" stroke-linecap="round"/><path d="M170 218 L178 225 L170 232" stroke="var(--accent)" stroke-width="2.5" fill="none"/><rect x="184" y="175" width="124" height="100" rx="14" fill="var(--card)" stroke="var(--line-2)" stroke-width="2"/><text x="246.0" y="221" text-anchor="middle" font-family="IBM Plex Sans KR,sans-serif" font-weight="600" font-size="14" fill="var(--ink)">Firestore</text><text x="246.0" y="247" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--ink-3)">agents</text><path d="M314 225 H332" stroke="var(--accent)" stroke-width="2.5" fill="none" stroke-dasharray="2 7" stroke-linecap="round"/><path d="M324 218 L332 225 L324 232" stroke="var(--accent)" stroke-width="2.5" fill="none"/><rect x="338" y="175" width="124" height="100" rx="14" fill="var(--card)" stroke="var(--line-2)" stroke-width="2"/><text x="400.0" y="221" text-anchor="middle" font-family="IBM Plex Sans KR,sans-serif" font-weight="600" font-size="14" fill="var(--ink)">맥미니 러너</text><text x="400.0" y="247" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--ink-3)">Node</text><path d="M468 225 H486" stroke="var(--accent)" stroke-width="2.5" fill="none" stroke-dasharray="2 7" stroke-linecap="round"/><path d="M478 218 L486 225 L478 232" stroke="var(--accent)" stroke-width="2.5" fill="none"/><rect x="492" y="175" width="124" height="100" rx="14" fill="var(--card)" stroke="var(--line-2)" stroke-width="2"/><text x="554.0" y="221" text-anchor="middle" font-family="IBM Plex Sans KR,sans-serif" font-weight="600" font-size="14" fill="var(--ink)">GitHub Actions</text><text x="554.0" y="247" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--ink-3)">30분마다 1회 처리</text><path d="M622 225 H640" stroke="var(--accent)" stroke-width="2.5" fill="none" stroke-dasharray="2 7" stroke-linecap="round"/><path d="M632 218 L640 225 L632 232" stroke="var(--accent)" stroke-width="2.5" fill="none"/><rect x="646" y="175" width="124" height="100" rx="14" fill="var(--card)" stroke="var(--line-2)" stroke-width="2"/><text x="708.0" y="221" text-anchor="middle" font-family="IBM Plex Sans KR,sans-serif" font-weight="600" font-size="14" fill="var(--ink)">Jev + 하네스</text><text x="708.0" y="247" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--ink-3)">판정</text></svg></div><figcaption>비공개 저장소라 실제 화면 대신 구조를 그림으로 보여 줍니다.</figcaption></section>
+<div class="d-grid">
+<aside class="toc" aria-label="이 페이지 목차"><ol>
+<li><a href="#why">왜 만들었나</a></li><li><a href="#features">주요 기능</a></li><li><a href="#flow">어떻게 동작하나</a></li><li><a href="#code">구조</a></li><li><a href="#hard">어려웠던 점</a></li></ol></aside>
+<article>
+<section class="d-sec" id="why"><h2>왜 만들었나</h2><p>정기 요약·조사 같은 개인 자동화를 매번 프롬프트와 스크립트로 짜기 번거롭고, API 키 과금 없이 구독 계정으로 안전하게 돌릴 방법이 필요했다. 발송·주문처럼 되돌리기 어려운 작업은 사람이 확인한 뒤에만 실행되어야 했다.</p></section>
+<section class="d-sec" id="features"><h2>주요 기능</h2><ul class="feat"><li>자연어 요청을 에이전트 스펙(역할·도구·스케줄·실행 위치)으로 자동 변환</li><li>LLM 없이 코드만으로 담당 에이전트·중요도(P0~P3)·모델을 정하는 판정기 Jev</li><li>발송·주문·예약이 들어간 작업은 계획 → 승인 → 실행 2단계</li><li>결과를 체크리스트로 검증하고 미달이면 같은 세션으로 1회 보완</li><li>사용 한도 초과 시 notBefore 이후 자동 재시도</li></ul></section>
+<section class="d-sec"><h2>숫자로 보면</h2><div class="nums"><div>GitHub Actions 러너 cron: 30분마다 (*/30 * * * *)</div><div>Jev 판정 파이프라인 8단계, 프롬프트 하네스 7개 레이어</div><div>Jev 평가 케이스 17개 · 시드 학습 데이터 64건 · 러너 테스트 22개</div></div></section>
+<section class="d-sec" id="flow"><h2>어떻게 동작하나</h2><ol class="flow"><li><h3>자연어로 에이전트 생성</h3><p>사용자 요청과 사용 가능한 도구·MCP 목록을 프롬프트로 묶어 에이전트 스펙 JSON으로 컴파일한다.</p><span class="file">runner/src/core/compiler.js</span></li><li><h3>태스크 큐 구독</h3><p>웹앱이 Firestore에 쌓은 queued 태스크를 러너가 구독해 자기 실행 위치(local/github) 담당분만 가져간다.</p><span class="file">runner/src/core/orchestrator.js</span></li><li><h3>Jev 판정</h3><p>route → rules → ml → agent → memory → capability → longInput → budget 단계를 거쳐 모델 등급과 우선순위를 정하고 이유를 trace로 남긴다.</p><span class="file">runner/src/core/jev.js</span></li><li><h3>프롬프트 조립</h3><p>역할·컨텍스트·장기 메모리·가드레일·단계·출력 형식·체크리스트 레이어를 쌓고 단계별 도구 권한을 나눈다.</p><span class="file">runner/src/core/harness.js</span></li><li><h3>CLI 실행과 검증</h3><p>claude -p / gemini -p를 자식 프로세스로 실행하고, 결과를 체크리스트로 검증해 미달이면 읽기 전용으로 1회 보완한다.</p><span class="file">runner/src/core/executor.js</span></li><li><h3>결과 기록과 학습</h3><p>결과와 판정·검증 이유를 저장하고, 쌓인 기록으로 로컬 분류기를 주기적으로 재학습한다.</p><span class="file">runner/src/core/jev-ml/train.js</span></li></ol></section>
+<section class="d-sec" id="code"><h2>구조</h2><p class="backend">Firestore가 에이전트·태스크 큐·러너 하트비트를 저장하고, 상시 실행되는 맥미니 Node 러너(launchd)와 30분마다 도는 GitHub Actions 러너가 큐를 처리한다.</p><div class="arch"><div class="node first"><b>웹앱</b><span>Firebase Hosting · 정적 JS</span></div><div class="edge" aria-hidden="true"><span>태스크 생성 · 승인</span></div><div class="node"><b>Firestore</b><span>agents · tasks 큐 · runners</span></div><div class="edge" aria-hidden="true"><span>큐 구독</span></div><div class="node"><b>맥미니 러너</b><span>Node · launchd 상시 실행</span></div><div class="edge" aria-hidden="true"><span></span></div><div class="node"><b>GitHub Actions 러너</b><span>30분마다 1회 처리</span></div><div class="edge" aria-hidden="true"><span>트리아지</span></div><div class="node"><b>Jev + 하네스</b><span>판정 · 프롬프트 조립 · 검증</span></div><div class="edge" aria-hidden="true"><span>claude -p / gemini -p</span></div><div class="node"><b>Claude Code / Gemini CLI</b><span>구독 로그인 실행</span></div></div><ul class="arch-extra"><li>Firestore → GitHub Actions 러너: 대기 태스크 조회</li><li>맥미니 러너 → Jev + 하네스: 트리아지</li><li>Claude Code / Gemini CLI → Firestore: 결과 기록</li></ul><p class="code-cap">비공개 저장소라 소스 코드 링크와 코드 발췌는 싣지 않았습니다.</p></section>
+<section class="d-sec" id="hard"><h2>어려웠던 점</h2><div class="callout">LLM을 부르지 않고 모델·우선순위를 정해야 해서, 의존성 없는 순수 JS 다중 헤드 소프트맥스 분류기를 직접 구현하고 확신도가 낮을 때는 규칙으로 되돌아가게 했다. 러너가 둘이라 GitHub 러너가 꺼져 있으면 로컬 러너가 그 태스크를 대신 맡도록 해 큐에 영원히 남는 일을 막았다.</div></section>
+<nav class="pager" aria-label="다른 프로젝트">
+<a href="/work/photo-monitor/"><small>← 이전</small><b>Wireless Photo Monitor</b></a>
+<a class="next" href="/work/ccnp-encor/"><small>다음 →</small><b>ENCOR 랩북</b></a></nav>
+</article></div></div>
+</main>
+<footer><div class="wrap"><span>© 2026 MJ-best · 이 사이트와 모든 데모는 GitHub Pages에서 동작합니다.</span><a href="https://github.com/MJ-best">github.com/MJ-best</a></div></footer>
+<script src="/assets/portfolio.js" defer></script>
+</body>
+</html>

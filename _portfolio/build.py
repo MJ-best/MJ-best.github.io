@@ -102,15 +102,15 @@ def arch_cover(p):
     n = len(nodes); W = 800; bw = min(150, (W - 60 - 30 * (n - 1)) // n); gap = (W - 60 - bw * n) // max(n - 1, 1)
     g = []
     for i, nd in enumerate(nodes):
-        x = 30 + i * (bw + gap); y = 200
+        x = 30 + i * (bw + gap); y = 175
         hl = i == 0
         g.append(f'<rect x="{x}" y="{y}" width="{bw}" height="100" rx="14" fill="{'var(--accent)' if hl else 'var(--card)'}" stroke="{'var(--accent)' if hl else 'var(--line-2)'}" stroke-width="2"/>')
-        g.append(f'<text x="{x + bw / 2}" y="{y + 46}" text-anchor="middle" font-family="IBM Plex Sans KR,sans-serif" font-weight="600" font-size="17" fill="{'var(--accent-ink)' if hl else 'var(--ink)'}">{e(nd["label"][:12])}</text>')
-        g.append(f'<text x="{x + bw / 2}" y="{y + 72}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="12" fill="{'var(--accent-ink)' if hl else 'var(--ink-3)'}">{e((nd.get("sub") or "")[:18])}</text>')
+        g.append(f'<text x="{x + bw / 2}" y="{y + 46}" text-anchor="middle" font-family="IBM Plex Sans KR,sans-serif" font-weight="600" font-size="14" fill="{'var(--accent-ink)' if hl else 'var(--ink)'}">{e(nd["label"].split(" ·")[0][:14])}</text>')
+        g.append(f'<text x="{x + bw / 2}" y="{y + 72}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="{'var(--accent-ink)' if hl else 'var(--ink-3)'}">{e((nd.get("sub") or "").split(" · ")[0][:16])}</text>')
         if i < n - 1:
             ax = x + bw + 6; bx = x + bw + gap - 6
-            g.append(f'<path d="M{ax} 250 H{bx}" stroke="var(--accent)" stroke-width="2.5" fill="none" stroke-dasharray="2 7" stroke-linecap="round"/><path d="M{bx - 8} 243 L{bx} 250 L{bx - 8} 257" stroke="var(--accent)" stroke-width="2.5" fill="none"/>')
-    return f'<svg viewBox="0 0 800 500" role="img" aria-label="{e(p["title"])} 구조 그림"><rect width="800" height="500" fill="var(--accent-soft)"/>{"".join(g)}</svg>'
+            g.append(f'<path d="M{ax} 225 H{bx}" stroke="var(--accent)" stroke-width="2.5" fill="none" stroke-dasharray="2 7" stroke-linecap="round"/><path d="M{bx - 8} 218 L{bx} 225 L{bx - 8} 232" stroke="var(--accent)" stroke-width="2.5" fill="none"/>')
+    return f'<svg viewBox="0 0 800 450" role="img" aria-label="{e(p["title"])} 구조 그림"><rect width="800" height="450" fill="var(--accent-soft)"/>{"".join(g)}</svg>'
 
 
 def cover_svg(p):
@@ -190,7 +190,7 @@ def build_index():
         cards.append(f"""<article class="card" data-cat="{p['cat']}">
 <div class="thumb">{thumb_html(p)}</div>
 <div class="body">
-<div class="kicker"><span class="dot" aria-hidden="true"></span>{e(CATS[p['cat']])} · {e(p['platform'])}{' · <span class="priv">비공개</span>' if p.get('private') else ''}</div>
+<div class="kicker"><span class="dot" aria-hidden="true"></span>{e(CATS[p['cat']])} · {e(p['platform'])}</div>{'<span class="priv">비공개 저장소</span>' if p.get('private') else ''}
 <h3><a href="/work/{p['slug']}/">{e(p['title'])}</a></h3>
 <p>{e(p['summary'])}</p>
 {demo_html}
@@ -245,13 +245,16 @@ def build_detail(i, p):
         main, rest = p["shots"][0], p["shots"][1:]
         def fig(s, cls=""):
             return f'<figure><a href="/assets/img/{s["img"]}.webp" aria-label="원본 크기로 보기: {e(s["caption"])}"><img src="/assets/img/{s["img"]}.webp" alt="{e(s["caption"])}" loading="lazy" decoding="async"></a><figcaption>{e(s["caption"])}</figcaption></figure>'
-        shots = f'<figure class="shot-main"><a href="/assets/img/{main["img"]}.webp"><img src="/assets/img/{main["img"]}.webp" alt="{e(main["caption"])}" decoding="async"></a></figure><figcaption style="margin-top:-6px">{e(main["caption"])}</figcaption>'
-        wide = [s for s in rest if not is_phone(s["img"])]
-        phones = [s for s in rest if is_phone(s["img"])]
-        if wide:
-            shots += '<div class="shot-row">' + "".join(fig(s) for s in wide) + "</div>"
-        if phones:
-            shots += '<div class="shot-row phones">' + "".join(fig(s) for s in phones) + "</div>"
+        if is_phone(main["img"]):
+            shots = '<div class="shot-row phones">' + "".join(fig(s) for s in p["shots"]) + "</div>"
+        else:
+          shots = f'<figure class="shot-main"><a href="/assets/img/{main["img"]}.webp"><img src="/assets/img/{main["img"]}.webp" alt="{e(main["caption"])}" decoding="async"></a></figure><figcaption style="margin-top:-6px">{e(main["caption"])}</figcaption>'
+          wide = [s for s in rest if not is_phone(s["img"])]
+          phones = [s for s in rest if is_phone(s["img"])]
+          if wide:
+              shots += '<div class="shot-row">' + "".join(fig(s) for s in wide) + "</div>"
+          if phones:
+              shots += '<div class="shot-row phones">' + "".join(fig(s) for s in phones) + "</div>"
     else:
         shots = f'<div class="cover-big">{cover_svg(p)}</div><figcaption>{e(p.get("cover_note", "저장소에 공개된 화면 이미지가 없어, 동작 원리를 그림으로 대신합니다."))}</figcaption>'
 

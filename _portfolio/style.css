@@ -66,7 +66,7 @@ img{max-width:100%;display:block}
 .card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;transition:transform .18s ease,box-shadow .18s ease,border-color .18s}
 .card:hover{transform:translateY(-2px);box-shadow:var(--shadow);border-color:var(--line-2)}
 .card[hidden]{display:none}
-.thumb{aspect-ratio:16/10;background:var(--line);overflow:hidden;border-bottom:1px solid var(--line)}
+.thumb{aspect-ratio:16/10;background:var(--accent-soft);overflow:hidden;border-bottom:1px solid var(--line)}
 .thumb img{width:100%;height:100%;object-fit:cover;object-position:top left}
 .thumb svg{width:100%;height:100%;display:block}
 .card .body{padding:18px 20px 20px;display:flex;flex-direction:column;gap:10px;flex:1}
@@ -122,7 +122,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 .shot-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
 .shot-row.phones{grid-template-columns:repeat(auto-fit,minmax(150px,220px))}
 .shot-row figure a{display:block;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--card)}
-.cover-big{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--card);aspect-ratio:16/8}
+.cover-big{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--accent-soft);aspect-ratio:16/8}
 .cover-big svg{width:100%;height:100%;display:block}
 
 .d-grid{display:grid;grid-template-columns:200px minmax(0,1fr);gap:48px;margin-top:56px}
@@ -186,7 +186,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 @media (max-width:640px){.shot-row.phones{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
 /* private badge */
-.priv{color:var(--mark)}
+.priv{position:absolute;top:12px;right:12px;z-index:1;font:500 11px/1 var(--mono);padding:6px 8px;border-radius:6px;background:var(--card);color:var(--mark);border:1px solid var(--line-2)}
 /* architecture chain (detail) */
 .backend{font-size:17px;margin:0 0 18px;color:var(--ink-2)}
 .arch{display:flex;flex-wrap:wrap;align-items:stretch;gap:0;row-gap:12px}
@@ -218,7 +218,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 .pipe small{font:500 11px/1 var(--mono);color:var(--accent);letter-spacing:.06em}
 .pipe b{display:block;font-size:16px;margin:8px 0 4px}
 .pipe span{font-size:13.5px;color:var(--ink-2);line-height:1.55;display:block}
-.patterns{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:16px}
+.patterns{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-top:16px}
 .pattern{border:1px solid var(--line);border-radius:14px;padding:16px 18px;background:var(--paper)}
 .pattern h3{font-size:15.5px;margin:0 0 4px}
 .pattern p{font-size:13.5px;color:var(--ink-3);margin:0 0 10px}
@@ -227,3 +227,5 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 .pattern a:hover{border-color:var(--accent);color:var(--accent)}
 .pattern.next{border-style:dashed}
 @media (max-width:860px){.pipe{grid-template-columns:1fr}.pipe div{border-left:0;border-top:1px solid var(--line)}.pipe div:first-child{border-top:0}}
+
+.shot-row.phones figure a img{aspect-ratio:auto}

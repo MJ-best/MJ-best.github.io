@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wireless Photo Monitor · MJ-best</title>
+<meta name="description" content="Nikon Zf의 라이브뷰와 방금 찍은 사진을 같은 네트워크의 어떤 기기 브라우저에서든 실시간으로 보여주는 파이썬 테더링 모니터.">
+<meta name="naver-site-verification" content="d742928bf0bdbd59f1017ff8d26f2452638bb3cf">
+<link rel="canonical" href="https://mj-best.github.io/work/photo-monitor/">
+<meta property="og:type" content="website"><meta property="og:title" content="Wireless Photo Monitor · MJ-best"><meta property="og:description" content="Nikon Zf의 라이브뷰와 방금 찍은 사진을 같은 네트워크의 어떤 기기 브라우저에서든 실시간으로 보여주는 파이썬 테더링 모니터."><meta property="og:url" content="https://mj-best.github.io/work/photo-monitor/"><meta property="og:image" content="https://mj-best.github.io/assets/img/wpm-split.webp">
+<meta name="theme-color" content="#f5f3ee" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#141619" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/assets/portfolio.css">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+</head>
+<body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+<header class="top"><div class="wrap">
+<a class="logo" href="/"><i aria-hidden="true"></i>MJ-best</a>
+<nav aria-label="주 메뉴">
+<a href="/#projects">프로젝트</a><a class="hide-s" href="/#stack">구조</a><a class="hide-s" href="/#about">작업 방식</a><a href="https://github.com/MJ-best" rel="noopener">GitHub</a>
+<button class="theme-btn" type="button" aria-label="밝게/어둡게 전환" title="밝게/어둡게 전환"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg></button>
+</nav></div></header>
+<main id="main">
+<div class="wrap">
+<nav class="crumb" aria-label="위치"><a href="/#projects">← 전체 프로젝트</a></nav>
+<header class="d-head"><div>
+<p class="eyebrow" style="margin:0">사진·카메라</p>
+<h1>Wireless Photo Monitor</h1>
+<p>Nikon Zf의 라이브뷰와 방금 찍은 사진을 같은 네트워크의 어떤 기기 브라우저에서든 실시간으로 보여주는 파이썬 테더링 모니터.</p>
+</div><div class="btns"></div></header>
+<div class="meta"><span><b>분야</b>사진·카메라</span><span><b>플랫폼</b>Python 로컬 서버 · LAN 브라우저</span><span><b>기술</b>Python 3.10+ · aiohttp · Pillow · pyusb · OpenCV · WebSocket · MJPEG · Vanilla JS · pytest</span><span><b>저장소</b>비공개</span></div>
+<section class="shots" aria-label="화면"><figure class="shot-main"><a href="/assets/img/wpm-split.webp"><img src="/assets/img/wpm-split.webp" alt="분할 보기: 왼쪽은 라이브뷰, 오른쪽은 방금 찍은 RAW+JPEG. 격자·4:5 크롭 가이드·히스토그램 오버레이(카메라 시뮬레이터 화면)." decoding="async"></a></figure><figcaption style="margin-top:-6px">분할 보기: 왼쪽은 라이브뷰, 오른쪽은 방금 찍은 RAW+JPEG. 격자·4:5 크롭 가이드·히스토그램 오버레이(카메라 시뮬레이터 화면).</figcaption><div class="shot-row phones"><figure><a href="/assets/img/wpm-portrait.webp" aria-label="원본 크기로 보기: 조작 버튼 없는 클라이언트 화면: 세로 사진을 자동으로 돌려 보여 줍니다."><img src="/assets/img/wpm-portrait.webp" alt="조작 버튼 없는 클라이언트 화면: 세로 사진을 자동으로 돌려 보여 줍니다." loading="lazy" decoding="async"></a><figcaption>조작 버튼 없는 클라이언트 화면: 세로 사진을 자동으로 돌려 보여 줍니다.</figcaption></figure></div></section>
+<div class="d-grid">
+<aside class="toc" aria-label="이 페이지 목차"><ol>
+<li><a href="#why">왜 만들었나</a></li><li><a href="#features">주요 기능</a></li><li><a href="#flow">어떻게 동작하나</a></li><li><a href="#code">구조</a></li><li><a href="#hard">어려웠던 점</a></li></ol></aside>
+<article>
+<section class="d-sec" id="why"><h2>왜 만들었나</h2><p>Capture One 같은 테더링 프로그램은 비싸고 한 컴퓨터 화면에 묶여 있어, 촬영 중 아이패드나 TV로 모델·아트디렉터에게 결과를 바로 보여주기 어려웠다.</p></section>
+<section class="d-sec" id="features"><h2>주요 기능</h2><ul class="feat"><li>USB(PTP)·Wi-Fi(PTP/IP)·HDMI 캡처카드·UVC·핫폴더 연결 지원</li><li>RAW(NEF) 내장 미리보기 추출, RAW+JPEG 묶음, 세로 사진 자동 회전</li><li>격자·크롭 가이드·RGB 히스토그램·하이라이트 클리핑 경고 오버레이</li><li>터치 AF·반셔터·원격 셔터, 조작 버튼 없는 클라이언트 화면</li><li>카메라 없이 테스트하는 PTP/IP 카메라 시뮬레이터</li></ul></section>
+<section class="d-sec"><h2>숫자로 보면</h2><div class="nums"><div>카메라 입력 방식 5가지(USB·Wi-Fi·HDMI·UVC·핫폴더)</div><div>HTTP/WebSocket 엔드포인트 6개</div><div>pytest 테스트 29개(6개 파일)</div></div></section>
+<section class="d-sec" id="flow"><h2>어떻게 동작하나</h2><ol class="flow"><li><h3>카메라 연결</h3><p>USB 벌크 전송 또는 PTP/IP 소켓 위에서 PTP 세션을 연다.</p><span class="file">photomonitor/ptp/session.py</span></li><li><h3>카메라 제어</h3><p>라이브뷰 프레임 요청, 셔터·AF 명령, Nikon 이벤트 폴링으로 새 촬영 객체를 감지한다.</p><span class="file">photomonitor/nikon.py</span></li><li><h3>최신 프레임 공유</h3><p>최신 라이브뷰 JPEG 하나만 보관해, 느린 뷰어도 쌓인 프레임 없이 최신 화면을 받게 한다.</p><span class="file">photomonitor/hub.py</span></li><li><h3>사진 다운로드·미리보기</h3><p>내려받은 원본을 날짜 폴더에 저장하고 RAW의 TIFF 구조에서 큰 미리보기 JPEG를 뽑는다.</p><span class="file">photomonitor/imaging.py</span></li><li><h3>브라우저 전송</h3><p>/stream.mjpg로 라이브뷰를, /ws로 새 사진·상태 이벤트를, /api/command로 원격 조작을 처리한다.</p><span class="file">photomonitor/server.py</span></li><li><h3>화면 표시</h3><p>라이브·사진·분할 보기, 필름스트립, 100% 확대와 오버레이를 그린다.</p><span class="file">photomonitor/web/app.js</span></li></ol></section>
+<section class="d-sec" id="code"><h2>구조</h2><p class="backend">촬영 컴퓨터에서 실행하는 aiohttp 로컬 서버가 카메라와 PTP로 통신하고, LAN의 브라우저에 MJPEG 스트림과 WebSocket 이벤트를 보낸다.</p><div class="arch"><div class="node first"><b>Nikon Zf</b><span>USB · Wi-Fi · HDMI</span></div><div class="edge" aria-hidden="true"><span>PTP 명령·이벤트</span></div><div class="node"><b>PTP 계층</b><span>USB / PTP/IP 전송</span></div><div class="edge" aria-hidden="true"><span>프레임·객체</span></div><div class="node"><b>카메라 소스</b><span>라이브뷰 · 촬영 감지</span></div><div class="edge" aria-hidden="true"><span>새 프레임·사진</span></div><div class="node"><b>FrameHub · 라이브러리</b><span>최신 프레임 · 미리보기</span></div><div class="edge" aria-hidden="true"><span>공유 상태</span></div><div class="node"><b>aiohttp 서버</b><span>MJPEG · WebSocket · API</span></div><div class="edge" aria-hidden="true"><span>스트림·이벤트</span></div><div class="node"><b>LAN 브라우저</b><span>iPad · TV · 모니터</span></div></div><p class="code-cap">비공개 저장소라 소스 코드 링크와 코드 발췌는 싣지 않았습니다.</p></section>
+<section class="d-sec" id="hard"><h2>어려웠던 점</h2><div class="callout">외부 라이브러리 없이 PTP와 PTP/IP 프로토콜, Nikon 전용 이벤트·라이브뷰 헤더를 직접 구현했다. Wi-Fi에서는 카메라가 지원 명령을 적게 보고하는 문제가 있어 목록을 믿지 않고 실제로 시도해 기능을 판별한다.</div></section>
+<nav class="pager" aria-label="다른 프로젝트">
+<a href="/work/photo-monitor/"><small>← 이전</small><b>Wireless Photo Monitor</b></a>
+<a class="next" href="/work/ccnp-encor/"><small>다음 →</small><b>ENCOR 랩북</b></a></nav>
+</article></div></div>
+</main>
+<footer><div class="wrap"><span>© 2026 MJ-best · 이 사이트와 모든 데모는 GitHub Pages에서 동작합니다.</span><a href="https://github.com/MJ-best">github.com/MJ-best</a></div></footer>
+<script src="/assets/portfolio.js" defer></script>
+</body>
+</html>
