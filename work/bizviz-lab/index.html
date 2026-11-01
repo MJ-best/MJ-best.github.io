@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>경영정보시각화 실기 랩 · MJ-best</title>
+<meta name="description" content="경영정보시각화능력 실기(Power BI) 응시자가 설치 없이 브라우저에서 DAX 식을 쓰고 바로 채점받는 연습 사이트입니다.">
+<meta name="naver-site-verification" content="d742928bf0bdbd59f1017ff8d26f2452638bb3cf">
+<link rel="canonical" href="https://mj-best.github.io/work/bizviz-lab/">
+<meta property="og:type" content="website"><meta property="og:title" content="경영정보시각화 실기 랩 · MJ-best"><meta property="og:description" content="경영정보시각화능력 실기(Power BI) 응시자가 설치 없이 브라우저에서 DAX 식을 쓰고 바로 채점받는 연습 사이트입니다."><meta property="og:url" content="https://mj-best.github.io/work/bizviz-lab/"><meta property="og:image" content="https://mj-best.github.io/assets/img/bizviz-lab.webp">
+<meta name="theme-color" content="#f5f3ee" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#141619" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/assets/portfolio.css">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+</head>
+<body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+<header class="top"><div class="wrap">
+<a class="logo" href="/"><i aria-hidden="true"></i>MJ-best</a>
+<nav aria-label="주 메뉴">
+<a href="/#projects">프로젝트</a><a class="hide-s" href="/#about">작업 방식</a><a href="https://github.com/MJ-best" rel="noopener">GitHub</a>
+<button class="theme-btn" type="button" aria-label="밝게/어둡게 전환" title="밝게/어둡게 전환"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg></button>
+</nav></div></header>
+<main id="main">
+<div class="wrap">
+<nav class="crumb" aria-label="위치"><a href="/#projects">← 전체 프로젝트</a></nav>
+<header class="d-head"><div>
+<p class="eyebrow" style="margin:0">학습·시험</p>
+<h1>경영정보시각화 실기 랩</h1>
+<p>경영정보시각화능력 실기(Power BI) 응시자가 설치 없이 브라우저에서 DAX 식을 쓰고 바로 채점받는 연습 사이트입니다.</p>
+</div><div class="btns"><a class="btn primary" href="/bizviz-lab/">데모 열기 ↗</a><a class="btn" href="https://github.com/MJ-best/MJ-best.github.io/tree/main/bizviz-lab" rel="noopener">코드 ↗</a></div></header>
+<div class="meta"><span><b>분야</b>학습·시험</span><span><b>플랫폼</b>Web</span><span><b>기술</b>Vanilla JS · 자체 DAX 렉서·파서·평가기 · 시드 고정 난수(mulberry32) · localStorage · GitHub Pages</span></div>
+<section class="shots" aria-label="화면"><figure class="shot-main"><a href="/assets/img/bizviz-lab.webp"><img src="/assets/img/bizviz-lab.webp" alt="DAX 랩: 식을 쓰고 실행하면 슬라이서 필터를 반영한 결과 표가 바로 계산됩니다." decoding="async"></a></figure><figcaption style="margin-top:-6px">DAX 랩: 식을 쓰고 실행하면 슬라이서 필터를 반영한 결과 표가 바로 계산됩니다.</figcaption><div class="shot-row"><figure><a href="/assets/img/bizviz-practice.webp" aria-label="원본 크기로 보기: 연습문제: 116문제를 풀고 Ctrl+Enter로 자동 채점합니다."><img src="/assets/img/bizviz-practice.webp" alt="연습문제: 116문제를 풀고 Ctrl+Enter로 자동 채점합니다." loading="lazy" decoding="async"></a><figcaption>연습문제: 116문제를 풀고 Ctrl+Enter로 자동 채점합니다.</figcaption></figure><figure><a href="/assets/img/bizviz.webp" aria-label="원본 크기로 보기: 퀴즈 홈: 주제별 진도와 오답 노트."><img src="/assets/img/bizviz.webp" alt="퀴즈 홈: 주제별 진도와 오답 노트." loading="lazy" decoding="async"></a><figcaption>퀴즈 홈: 주제별 진도와 오답 노트.</figcaption></figure></div></section>
+<div class="d-grid">
+<aside class="toc" aria-label="이 페이지 목차"><ol>
+<li><a href="#why">왜 만들었나</a></li><li><a href="#features">주요 기능</a></li><li><a href="#flow">어떻게 동작하나</a></li><li><a href="#code">핵심 코드</a></li><li><a href="#hard">어려웠던 점</a></li></ol></aside>
+<article>
+<section class="d-sec" id="why"><h2>왜 만들었나</h2><p>DAX를 연습하려면 Power BI Desktop과 연습 데이터가 필요하고, 내 식이 맞았는지 셀 단위로 확인하기 어렵습니다. 브라우저 안에 DAX 엔진과 데이터 모델을 두어 이 과정을 없앴습니다.</p></section>
+<section class="d-sec" id="features"><h2>주요 기능</h2><ul class="feat"><li>측정값·계산 열·계산 테이블 세 가지 모드로 DAX 식 실행</li><li>행렬 셀을 누르면 그 셀의 필터 컨텍스트와 보이는 판매 행 수 표시</li><li>정답식과 사용자식을 같은 조건에서 계산해 셀 단위로 차이를 보여 주는 채점</li><li>제한 시간이 있는 6문제 실전 세트, 패턴 모음, 객관식 퀴즈</li><li>자동완성·함수 시그니처 힌트가 있는 DAX 편집기, 진도는 localStorage에 저장</li></ul></section>
+<section class="d-sec"><h2>숫자로 보면</h2><div class="nums"><div>DAX 연습문제 116개(측정값 91·계산 열 15·계산 테이블 10)</div><div>구현된 DAX 함수 153개</div><div>객관식 퀴즈 136문항, DAX 패턴 48개</div></div></section>
+<section class="d-sec" id="flow"><h2>어떻게 동작하나</h2><ol class="flow"><li><h3>데이터 모델 생성</h3><p>고정 시드 난수로 판매·제품·거래처·날짜 4개 테이블과 관계 4개를 만들어 누구에게나 같은 값이 나오게 합니다.</p><a class="file" href="https://github.com/MJ-best/MJ-best.github.io/blob/main/bizviz-lab/data.js" rel="noopener">data.js</a></li><li><h3>렉싱·파싱</h3><p>입력한 DAX 문자열을 토큰으로 나누고 연산자 우선순위에 따라 AST로 만듭니다.</p><a class="file" href="https://github.com/MJ-best/MJ-best.github.io/blob/main/bizviz-lab/dax.js" rel="noopener">dax.js</a></li><li><h3>필터 컨텍스트 구성</h3><p>행렬의 행·열 머리글 값과 슬라이서를 열 필터로 바꿔 셀마다 Ctx 객체를 만듭니다.</p><a class="file" href="https://github.com/MJ-best/MJ-best.github.io/blob/main/bizviz-lab/grid.js" rel="noopener">grid.js</a></li><li><h3>평가와 컨텍스트 전환</h3><p>Engine이 AST를 재귀 평가하며, 행 컨텍스트에서 측정값이나 CALCULATE를 만나면 transition()으로 필터 컨텍스트로 바꿉니다.</p><a class="file" href="https://github.com/MJ-best/MJ-best.github.io/blob/main/bizviz-lab/dax.js" rel="noopener">dax.js</a></li><li><h3>채점</h3><p>정답식과 사용자식으로 같은 행렬(또는 열·테이블)을 각각 계산해 소계·총계까지 셀 단위로 비교합니다.</p><a class="file" href="https://github.com/MJ-best/MJ-best.github.io/blob/main/bizviz-lab/grid.js" rel="noopener">grid.js</a></li><li><h3>결과 표시·저장</h3><p>차이 목록과 셀별 컨텍스트 설명을 그리고, 작성 코드와 정답 기록을 localStorage에 남깁니다.</p><a class="file" href="https://github.com/MJ-best/MJ-best.github.io/blob/main/bizviz-lab/app.js" rel="noopener">app.js</a></li></ol></section>
+<section class="d-sec" id="code"><h2>핵심 코드</h2>
+<div class="code"><div class="code-bar"><span>dax.js</span><a href="https://github.com/MJ-best/MJ-best.github.io/blob/main/bizviz-lab/dax.js" rel="noopener">GitHub에서 보기 ↗</a></div><pre><code><span class="f">calcCtx</span>(filterArgs, env) {
+  <span class="c">// 1) 필터 인수는 원래 컨텍스트에서 평가</span>
+  <span class="k">const</span> mods = [], adds = [];
+  <span class="k">for</span> (<span class="k">const</span> a <span class="k">of</span> filterArgs) {
+    <span class="k">if</span> (a.type === <span class="s">&quot;empty&quot;</span>) <span class="k">continue</span>;
+    <span class="k">const</span> up = a.type === <span class="s">&quot;call&quot;</span> ? a.name : <span class="k">null</span>;
+    <span class="k">if</span> ([<span class="s">&quot;ALL&quot;</span>, <span class="s">&quot;REMOVEFILTERS&quot;</span>, <span class="s">&quot;ALLEXCEPT&quot;</span>, <span class="s">&quot;ALLSELECTED&quot;</span>, <span class="s">&quot;ALLNOBLANKROW&quot;</span>, <span class="s">&quot;USERELATIONSHIP&quot;</span>, <span class="s">&quot;CROSSFILTER&quot;</span>].<span class="f">includes</span>(up)) mods.<span class="f">push</span>(a);
+    <span class="k">else</span> <span class="k">if</span> (up === <span class="s">&quot;KEEPFILTERS&quot;</span>) adds.<span class="f">push</span>({ keep: <span class="k">true</span>, f: <span class="k">this</span>.<span class="f">filterFromArg</span>(a.args[<span class="n">0</span>], env) });
+    <span class="k">else</span> adds.<span class="f">push</span>({ keep: <span class="k">false</span>, f: <span class="k">this</span>.<span class="f">filterFromArg</span>(a, env) });
+  }
+  <span class="c">// 2) 컨텍스트 전환</span>
+  <span class="k">let</span> ctx = env.rows.length ? <span class="k">this</span>.<span class="f">transition</span>(env) : env.ctx;
+  <span class="k">let</span> filters = ctx.filters.<span class="f">slice</span>();
+  <span class="c">// …</span>
+  <span class="k">return</span> ctx.<span class="f">derive</span>(filters, { userel });</code></pre></div>
+<p class="code-cap">CALCULATE가 필터 인수를 원래 컨텍스트에서 먼저 평가하고, 그 뒤에 컨텍스트 전환을 거쳐 새 필터 컨텍스트를 만드는 부분입니다.</p></section>
+<section class="d-sec" id="hard"><h2>어려웠던 점</h2><div class="callout">CALCULATE의 평가 순서(필터 인수 평가 → 컨텍스트 전환 → ALL·ALLEXCEPT 같은 수정자 → 필터 덮어쓰기)와 관계를 따라 퍼지는 확장 테이블을 Power BI와 비슷하게 재현하는 부분입니다. 단계를 calcCtx 하나에 순서대로 두고, 확장 테이블은 관계 그래프 탐색(reach)으로 계산합니다.</div></section>
+<nav class="pager" aria-label="다른 프로젝트">
+<a href="/work/shutterlink/"><small>← 이전</small><b>셔터링크</b></a>
+<a class="next" href="/work/harness-lab/"><small>다음 →</small><b>하네스 엔지니어링 워크북</b></a></nav>
+</article></div></div>
+</main>
+<footer><div class="wrap"><span>© 2026 MJ-best · 이 사이트와 모든 데모는 GitHub Pages에서 동작합니다.</span><a href="https://github.com/MJ-best">github.com/MJ-best</a></div></footer>
+<script src="/assets/portfolio.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>하네스 엔지니어링 워크북 · MJ-best</title>
+<meta name="description" content="LLM 에이전트 하네스(대화 배열·도구·루프·컨텍스트 관리·RAG·온톨로지)를 직접 구현해 보는 파이썬 실습 워크북이며, 에이전트를 만드는 개발자를 위한 것입니다.">
+<meta name="naver-site-verification" content="d742928bf0bdbd59f1017ff8d26f2452638bb3cf">
+<link rel="canonical" href="https://mj-best.github.io/work/harness-lab/">
+<meta property="og:type" content="website"><meta property="og:title" content="하네스 엔지니어링 워크북 · MJ-best"><meta property="og:description" content="LLM 에이전트 하네스(대화 배열·도구·루프·컨텍스트 관리·RAG·온톨로지)를 직접 구현해 보는 파이썬 실습 워크북이며, 에이전트를 만드는 개발자를 위한 것입니다."><meta property="og:url" content="https://mj-best.github.io/work/harness-lab/"><meta property="og:image" content="https://mj-best.github.io/assets/img/harness.webp">
+<meta name="theme-color" content="#f5f3ee" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#141619" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/assets/portfolio.css">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+</head>
+<body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+<header class="top"><div class="wrap">
+<a class="logo" href="/"><i aria-hidden="true"></i>MJ-best</a>
+<nav aria-label="주 메뉴">
+<a href="/#projects">프로젝트</a><a class="hide-s" href="/#about">작업 방식</a><a href="https://github.com/MJ-best" rel="noopener">GitHub</a>
+<button class="theme-btn" type="button" aria-label="밝게/어둡게 전환" title="밝게/어둡게 전환"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg></button>
+</nav></div></header>
+<main id="main">
+<div class="wrap">
+<nav class="crumb" aria-label="위치"><a href="/#projects">← 전체 프로젝트</a></nav>
+<header class="d-head"><div>
+<p class="eyebrow" style="margin:0">학습·시험</p>
+<h1>하네스 엔지니어링 워크북</h1>
+<p>LLM 에이전트 하네스(대화 배열·도구·루프·컨텍스트 관리·RAG·온톨로지)를 직접 구현해 보는 파이썬 실습 워크북이며, 에이전트를 만드는 개발자를 위한 것입니다.</p>
+</div><div class="btns"><a class="btn primary" href="/harness-lab/">워크북 열기 ↗</a><a class="btn" href="https://github.com/MJ-best/MJ-best.github.io/tree/main/harness-lab/project" rel="noopener">코드 ↗</a></div></header>
+<div class="meta"><span><b>분야</b>학습·시험</span><span><b>플랫폼</b>Web</span><span><b>기술</b>Python 표준 라이브러리 · Pyodide · Vanilla JS · unittest · localStorage · 정적 사이트 빌더(Python)</span></div>
+<section class="shots" aria-label="화면"><figure class="shot-main"><a href="/assets/img/harness.webp"><img src="/assets/img/harness.webp" alt="11개 랩 목차: 개념 → 예제 → 퀴즈 → 코드 채우기 → 자동 채점 순서." decoding="async"></a></figure><figcaption style="margin-top:-6px">11개 랩 목차: 개념 → 예제 → 퀴즈 → 코드 채우기 → 자동 채점 순서.</figcaption><div class="shot-row"><figure><a href="/assets/img/harness-lab.webp" aria-label="원본 크기로 보기: Lab 03 에이전트 루프: 예제 코드를 브라우저에서 바로 실행하고 결과를 확인합니다."><img src="/assets/img/harness-lab.webp" alt="Lab 03 에이전트 루프: 예제 코드를 브라우저에서 바로 실행하고 결과를 확인합니다." loading="lazy" decoding="async"></a><figcaption>Lab 03 에이전트 루프: 예제 코드를 브라우저에서 바로 실행하고 결과를 확인합니다.</figcaption></figure></div></section>
+<div class="d-grid">
+<aside class="toc" aria-label="이 페이지 목차"><ol>
+<li><a href="#why">왜 만들었나</a></li><li><a href="#features">주요 기능</a></li><li><a href="#flow">어떻게 동작하나</a></li><li><a href="#code">핵심 코드</a></li><li><a href="#hard">어려웠던 점</a></li></ol></aside>
+<article>
+<section class="d-sec" id="why"><h2>왜 만들었나</h2><p>에이전트 프레임워크는 내부가 감춰져 있어 루프와 컨텍스트가 실제로 어떻게 움직이는지 알기 어렵고, 실습하려면 API 키와 로컬 환경이 필요합니다. 표준 라이브러리만 쓴 작은 하네스를 랩별로 직접 채우고 브라우저에서 바로 채점하게 했습니다.</p></section>
+<section class="d-sec" id="features"><h2>주요 기능</h2><ul class="feat"><li>11개 랩: 대화 배열, 도구, 에이전트 루프, 컨텍스트 예산, 서브에이전트, 조종, 가드레일, 디버깅, RAG, 온톨로지, 캡스톤</li><li>Pyodide로 브라우저 안에서 unittest 채점, 실패 원인을 짧은 힌트로 요약</li><li>API 키 없이 동작하는 FakeBrain·ScriptedBrain 두뇌</li><li>편집 중인 코드 자동 저장, 캡스톤에서 앞 랩의 내 코드를 조립</li><li>랩별 퀴즈와 바로 실행해 볼 수 있는 따라 해보기 예제</li></ul></section>
+<section class="d-sec"><h2>숫자로 보면</h2><div class="nums"><div>실습 랩 11개, 채점 테스트 56개</div><div>랩 퀴즈 22문항, 따라 해보기 예제 34개</div><div>RAG 실습용 구매 업무 문서 8개(BM25 검색)</div></div></section>
+<section class="d-sec" id="flow"><h2>어떻게 동작하나</h2><ol class="flow"><li><h3>사이트 빌드</h3><p>build_site.py가 랩별 마크다운을 HTML로 바꾸고 실습 파이썬 파일 전체를 assets/files.json 하나로 묶습니다.</p><a class="file" href="https://github.com/MJ-best/MJ-best.github.io/blob/main/harness-lab/project/scripts/build_site.py" rel="noopener">project/scripts/build_site.py</a></li><li><h3>Pyodide 준비</h3><p>채점을 처음 누르면 Pyodide를 내려받고 files.json의 파일을 가상 파일시스템 /harness-lab 아래에 씁니다.</p><a class="file" href="https://github.com/MJ-best/MJ-best.github.io/blob/main/harness-lab/assets/app.js" rel="noopener">assets/app.js</a></li><li><h3>내 코드 주입</h3><p>모든 랩의 exercise.py를 localStorage에 저장된 내 코드로 덮어쓰고, 캡스톤에서는 안 푼 랩을 정답으로 채웁니다.</p><a class="file" href="https://github.com/MJ-best/MJ-best.github.io/blob/main/harness-lab/assets/app.js" rel="noopener">assets/app.js</a></li><li><h3>환경 맞추기</h3><p>브라우저에 없는 subprocess.run을 echo·ls·cat·pwd만 흉내 내는 함수로 바꾸고 이전 실행의 모듈 캐시를 지웁니다.</p><a class="file" href="https://github.com/MJ-best/MJ-best.github.io/blob/main/harness-lab/assets/runner.py" rel="noopener">assets/runner.py</a></li><li><h3>테스트 실행</h3><p>랩의 test_lab.py를 unittest로 돌려 테스트별 통과 여부와 오류 내용을 JSON으로 돌려줍니다.</p><a class="file" href="https://github.com/MJ-best/MJ-best.github.io/blob/main/harness-lab/assets/runner.py" rel="noopener">assets/runner.py</a></li><li><h3>결과 표시</h3><p>통과 수와 실패 힌트를 그리고, 모두 통과하면 그 랩을 완료로 표시합니다.</p><a class="file" href="https://github.com/MJ-best/MJ-best.github.io/blob/main/harness-lab/assets/app.js" rel="noopener">assets/app.js</a></li></ol></section>
+<section class="d-sec" id="code"><h2>핵심 코드</h2>
+<div class="code"><div class="code-bar"><span>project/common/loop.py</span><a href="https://github.com/MJ-best/MJ-best.github.io/blob/main/harness-lab/project/common/loop.py" rel="noopener">GitHub에서 보기 ↗</a></div><pre><code><span class="k">for</span> _ <span class="k">in</span> <span class="f">range</span>(max_rounds):
+    response = <span class="f">brain</span>({<span class="s">&quot;system&quot;</span>: system, <span class="s">&quot;messages&quot;</span>: messages, <span class="s">&quot;tools&quot;</span>: tools})
+    messages.<span class="f">append</span>({<span class="s">&quot;role&quot;</span>: <span class="s">&quot;assistant&quot;</span>, <span class="s">&quot;content&quot;</span>: response[<span class="s">&quot;content&quot;</span>]})
+    <span class="k">for</span> b <span class="k">in</span> response[<span class="s">&quot;content&quot;</span>]:
+        <span class="k">if</span> b[<span class="s">&quot;type&quot;</span>] == <span class="s">&quot;text&quot;</span> <span class="k">and</span> b[<span class="s">&quot;text&quot;</span>].<span class="f">strip</span>():
+            <span class="f">emit</span>(<span class="s">&quot;text&quot;</span>, b[<span class="s">&quot;text&quot;</span>])
+    <span class="k">if</span> response.<span class="f">get</span>(<span class="s">&quot;stop_reason&quot;</span>) != <span class="s">&quot;tool_use&quot;</span>:
+        <span class="k">return</span> <span class="f">final_text</span>(response)
+
+    results = []
+    <span class="k">for</span> b <span class="k">in</span> response[<span class="s">&quot;content&quot;</span>]:
+        <span class="k">if</span> b[<span class="s">&quot;type&quot;</span>] == <span class="s">&quot;tool_use&quot;</span>:
+            <span class="f">emit</span>(<span class="s">&quot;tool&quot;</span>, b)
+            results.<span class="f">append</span>({<span class="s">&quot;type&quot;</span>: <span class="s">&quot;tool_result&quot;</span>, <span class="s">&quot;tool_use_id&quot;</span>: b[<span class="s">&quot;id&quot;</span>],
+                            <span class="s">&quot;content&quot;</span>: <span class="f">execute</span>(b[<span class="s">&quot;name&quot;</span>], b[<span class="s">&quot;input&quot;</span>])})
+    <span class="k">if</span> inject:
+        <span class="f">inject</span>(results)
+    messages.<span class="f">append</span>({<span class="s">&quot;role&quot;</span>: <span class="s">&quot;user&quot;</span>, <span class="s">&quot;content&quot;</span>: results})</code></pre></div>
+<p class="code-cap">모델 호출 → tool_use 실행 → tool_result를 배열에 덧붙이기를 stop_reason이 바뀔 때까지 반복하는 에이전트 루프의 참고 구현입니다.</p></section>
+<section class="d-sec" id="hard"><h2>어려웠던 점</h2><div class="callout">로컬 파이썬용으로 쓴 실습 코드를 브라우저(Pyodide)에서 그대로 채점하는 부분입니다. subprocess를 흉내 낸 함수로 바꾸고, 실행마다 sys.modules와 sys.path를 정리해 이전 코드가 남지 않게 했습니다.</div></section>
+<nav class="pager" aria-label="다른 프로젝트">
+<a href="/work/bizviz-lab/"><small>← 이전</small><b>경영정보시각화 실기 랩</b></a>
+<a class="next" href="/work/np3-lab/"><small>다음 →</small><b>NP3 Lab</b></a></nav>
+</article></div></div>
+</main>
+<footer><div class="wrap"><span>© 2026 MJ-best · 이 사이트와 모든 데모는 GitHub Pages에서 동작합니다.</span><a href="https://github.com/MJ-best">github.com/MJ-best</a></div></footer>
+<script src="/assets/portfolio.js" defer></script>
+</body>
+</html>

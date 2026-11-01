@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>셔터링크 · MJ-best</title>
+<meta name="description" content="아이폰이 소니·캐논·니콘 순정 블루투스 리모컨인 척 카메라에 붙어 셔터만 빠르게 누르는 iOS 앱.">
+<meta name="naver-site-verification" content="d742928bf0bdbd59f1017ff8d26f2452638bb3cf">
+<link rel="canonical" href="https://mj-best.github.io/work/shutterlink/">
+<meta property="og:type" content="website"><meta property="og:title" content="셔터링크 · MJ-best"><meta property="og:description" content="아이폰이 소니·캐논·니콘 순정 블루투스 리모컨인 척 카메라에 붙어 셔터만 빠르게 누르는 iOS 앱."><meta property="og:url" content="https://mj-best.github.io/work/shutterlink/">
+<meta name="theme-color" content="#f5f3ee" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#141619" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/assets/portfolio.css">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+</head>
+<body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+<header class="top"><div class="wrap">
+<a class="logo" href="/"><i aria-hidden="true"></i>MJ-best</a>
+<nav aria-label="주 메뉴">
+<a href="/#projects">프로젝트</a><a class="hide-s" href="/#about">작업 방식</a><a href="https://github.com/MJ-best" rel="noopener">GitHub</a>
+<button class="theme-btn" type="button" aria-label="밝게/어둡게 전환" title="밝게/어둡게 전환"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg></button>
+</nav></div></header>
+<main id="main">
+<div class="wrap">
+<nav class="crumb" aria-label="위치"><a href="/#projects">← 전체 프로젝트</a></nav>
+<header class="d-head"><div>
+<p class="eyebrow" style="margin:0">사진·카메라</p>
+<h1>셔터링크</h1>
+<p>아이폰이 소니·캐논·니콘 순정 블루투스 리모컨인 척 카메라에 붙어 셔터만 빠르게 누르는 iOS 앱.</p>
+</div><div class="btns"><a class="btn" href="https://github.com/MJ-best/ShutterLink" rel="noopener">GitHub ↗</a></div></header>
+<div class="meta"><span><b>분야</b>사진·카메라</span><span><b>플랫폼</b>iOS 17+</span><span><b>기술</b>Swift · SwiftUI · CoreBluetooth · Swift Concurrency (async/await) · UserDefaults</span></div>
+<section class="shots" aria-label="화면"><div class="cover-big"><svg viewBox="0 0 800 500" role="img" aria-label="아이폰이 블루투스로 카메라 셔터를 누르는 흐름 그림">
+<rect width="800" height="500" fill="var(--accent-soft)"/>
+<g fill="none" stroke="var(--ink)" stroke-width="3">
+<rect x="120" y="120" width="140" height="260" rx="26" fill="var(--card)"/>
+<rect x="500" y="170" width="200" height="140" rx="18" fill="var(--card)"/>
+<rect x="545" y="150" width="60" height="22" rx="5" fill="var(--card)"/>
+<circle cx="600" cy="240" r="42"/><circle cx="600" cy="240" r="24" stroke="var(--accent)"/></g>
+<circle cx="190" cy="300" r="34" fill="var(--accent)"/>
+<g stroke="var(--accent)" stroke-width="3" fill="none" stroke-linecap="round">
+<path d="M300 250 H460" stroke-dasharray="2 12"/><path d="M445 235 L462 250 L445 265"/>
+<path d="M330 205 q20 -25 40 0"/><path d="M318 190 q32 -42 64 0"/></g>
+<g font-family="IBM Plex Mono,monospace" font-size="15" fill="var(--ink-2)" text-anchor="middle">
+<text x="380" y="290">BLE GATT write</text><text x="190" y="420">iPhone · 리모컨 흉내</text><text x="600" y="350">Sony · Canon · Nikon</text></g>
+<text x="190" y="190" text-anchor="middle" font-family="IBM Plex Sans KR,sans-serif" font-weight="700" font-size="20" fill="var(--ink)">셔터</text></svg></div><figcaption>저장소에 공개된 화면 이미지가 없어, 동작 원리를 그림으로 대신합니다.</figcaption></section>
+<div class="d-grid">
+<aside class="toc" aria-label="이 페이지 목차"><ol>
+<li><a href="#why">왜 만들었나</a></li><li><a href="#features">주요 기능</a></li><li><a href="#flow">어떻게 동작하나</a></li><li><a href="#code">핵심 코드</a></li><li><a href="#hard">어려웠던 점</a></li></ol></aside>
+<article>
+<section class="d-sec" id="why"><h2>왜 만들었나</h2><p>브랜드 앱은 라이브뷰와 Wi-Fi 연결을 거쳐야 해서 셔터 한 번 누르기까지 오래 걸립니다. 카메라에 이미 있는 BLE 리모컨 프로토콜(RMT-P1BT, BR-E1, ML-L7)을 흉내 내 연결 시간을 줄였습니다.</p></section>
+<section class="d-sec" id="features"><h2>주요 기능</h2><ul class="feat"><li>광고 패킷의 제조사 데이터·서비스 UUID만으로 브랜드와 페어링 대기 상태 판별</li><li>누르는 순간 셔터 누름, 떼는 순간 뗌: 탭은 한 장, 길게 누르면 연사·벌브</li><li>등록한 여러 대를 동시에 촬영, 셀프타이머 2/5/10초</li><li>카메라 전원만 켜면 자동 재연결(백그라운드 블루투스, 상태 복원)</li><li>소니는 AF가 끝나 셔터가 실제로 열릴 때까지 버튼을 유지하고 촬영 시 진동</li></ul></section>
+<section class="d-sec"><h2>숫자로 보면</h2><div class="nums"><div>3개 브랜드, 드라이버 4종(소니 RMT-P1BT · 캐논 BR-E1 · 캐논 스마트폰 모드 · 니콘 ML-L7)</div><div>자동 재연결 최대 8회, 간격 3초→최대 300초 지수 백오프</div><div>Swift 파일 17개, 약 2,250줄</div></div></section>
+<section class="d-sec" id="flow"><h2>어떻게 동작하나</h2><ol class="flow"><li><h3>스캔·판별</h3><p>CBCentralManager로 스캔하며 회사 ID(0x012D·0x01A9·0x0399)와 서비스 UUID로 카메라 종류와 페어링 가능 여부를 가립니다.</p><a class="file" href="https://github.com/MJ-best/ShutterLink/blob/main/ShutterLink/Cameras/AdvertisementParser.swift" rel="noopener">ShutterLink/Cameras/AdvertisementParser.swift</a></li><li><h3>GATT 래핑</h3><p>서비스 검색·쓰기·알림 구독을 async/await와 타임아웃이 있는 OneShot으로 감싸 드라이버가 순차 코드로 쓰게 합니다.</p><a class="file" href="https://github.com/MJ-best/ShutterLink/blob/main/ShutterLink/BLE/PeripheralLink.swift" rel="noopener">ShutterLink/BLE/PeripheralLink.swift</a></li><li><h3>브랜드 핸드셰이크</h3><p>CameraDriver 프로토콜의 setUp에서 소니는 FF02 알림 구독, 캐논은 리모컨 이름 등록, 니콘은 4단계 인증을 수행합니다.</p><a class="file" href="https://github.com/MJ-best/ShutterLink/blob/main/ShutterLink/Cameras/NikonDriver.swift" rel="noopener">ShutterLink/Cameras/NikonDriver.swift</a></li><li><h3>셔터 명령 직렬화</h3><p>카메라마다 명령을 Task 체인에 쌓아 순서대로 보내고, 최소 유지 시간은 카메라가 누름을 받은 시점부터 잽니다.</p><a class="file" href="https://github.com/MJ-best/ShutterLink/blob/main/ShutterLink/BLE/CameraSession.swift" rel="noopener">ShutterLink/BLE/CameraSession.swift</a></li><li><h3>동시 촬영</h3><p>셔터 버튼을 누르면 체크된 채 준비된 세션 전체에 pressShutter를, 떼면 releaseShutter를 보냅니다.</p><a class="file" href="https://github.com/MJ-best/ShutterLink/blob/main/ShutterLink/BLE/BLEController.swift" rel="noopener">ShutterLink/BLE/BLEController.swift</a></li><li><h3>자동 재연결</h3><p>끊기면 3초부터 두 배씩 최대 300초 간격으로 최대 8회 다시 연결하고, 니콘은 재연결 광고를 받기 위해 스캔을 새로 시작합니다.</p><a class="file" href="https://github.com/MJ-best/ShutterLink/blob/main/ShutterLink/BLE/BLEController.swift" rel="noopener">ShutterLink/BLE/BLEController.swift</a></li></ol></section>
+<section class="d-sec" id="code"><h2>핵심 코드</h2>
+<div class="code"><div class="code-bar"><span>ShutterLink/Cameras/NikonDriver.swift</span><a href="https://github.com/MJ-best/ShutterLink/blob/main/ShutterLink/Cameras/NikonDriver.swift" rel="noopener">GitHub에서 보기 ↗</a></div><pre><code><span class="c">// Stage 1 → 2 (카메라가 stage 0을 보내면 stage 1을 한 번 다시 보낸다 — furble과 동일)</span>
+<span class="k">let</span> stage1: [UInt8] = [0x01] + [<span class="n">0</span>, <span class="n">0</span>, <span class="n">0</span>, <span class="n">0</span>, <span class="n">0</span>, <span class="n">0</span>, <span class="n">0</span>, 0x01] + identity
+<span class="k">var</span> r2 = try await <span class="f">exchange</span>(stage1, on: pair, link: link, label: <span class="s">&quot;니콘 인증 2단계&quot;</span>)
+<span class="k">if</span> r2.first == 0x00 {
+    r2 = try await <span class="f">exchange</span>(stage1, on: pair, link: link, label: <span class="s">&quot;니콘 인증 2단계&quot;</span>)
+}
+<span class="k">guard</span> r2.first == 0x02 <span class="k">else</span> {
+    throw BLEError.<span class="f">protocolError</span>(<span class="s">&quot;니콘 인증 2단계 응답이 예상과 다릅니다: \(r2.hex)&quot;</span>)
+}
+
+<span class="c">// Stage 3 → 4</span>
+<span class="k">let</span> stage3: [UInt8] = [0x03] + <span class="f">Array</span>(repeating: <span class="n">0</span>, count: <span class="n">16</span>)
+<span class="k">let</span> r4 = try await <span class="f">exchange</span>(stage3, on: pair, link: link, label: <span class="s">&quot;니콘 인증 4단계&quot;</span>)
+<span class="k">guard</span> r4.first == 0x04 <span class="k">else</span> {
+    throw BLEError.<span class="f">protocolError</span>(<span class="s">&quot;니콘 인증 4단계 응답이 예상과 다릅니다: \(r4.hex)&quot;</span>)
+}</code></pre></div>
+<p class="code-cap">니콘 ML-L7 리모컨 모드의 4단계 인증: 17바이트 메시지를 보내고 인디케이션 응답의 단계 바이트를 확인합니다.</p></section>
+<section class="d-sec" id="hard"><h2>어려웠던 점</h2><div class="callout">제조사 공개 문서가 없어 furble·freemote 등 역공학 자료를 바탕으로 브랜드마다 다른 순서(소니의 반누름→완전누름→완전뗌→반뗌, 니콘 인증 핸드셰이크)를 맞춰야 했습니다. 응답을 놓치지 않도록 쓰기 전에 응답 대기를 먼저 걸어 두는 방식으로 처리했습니다.</div></section>
+<nav class="pager" aria-label="다른 프로젝트">
+<a href="/work/nuance-graph/"><small>← 이전</small><b>Nuance Graph</b></a>
+<a class="next" href="/work/bizviz-lab/"><small>다음 →</small><b>경영정보시각화 실기 랩</b></a></nav>
+</article></div></div>
+</main>
+<footer><div class="wrap"><span>© 2026 MJ-best · 이 사이트와 모든 데모는 GitHub Pages에서 동작합니다.</span><a href="https://github.com/MJ-best">github.com/MJ-best</a></div></footer>
+<script src="/assets/portfolio.js" defer></script>
+</body>
+</html>

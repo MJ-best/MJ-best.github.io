@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AICE Pro 실전연습 스튜디오 · MJ-best</title>
+<meta name="description" content="AICE Pro 시험 준비생이 정형·자연어·이미지 실전 문제를 노트북 셀로 풀고 바로 자동 채점·실수 진단을 받는 연습 스튜디오입니다.">
+<meta name="naver-site-verification" content="d742928bf0bdbd59f1017ff8d26f2452638bb3cf">
+<link rel="canonical" href="https://mj-best.github.io/work/aice-pro/">
+<meta property="og:type" content="website"><meta property="og:title" content="AICE Pro 실전연습 스튜디오 · MJ-best"><meta property="og:description" content="AICE Pro 시험 준비생이 정형·자연어·이미지 실전 문제를 노트북 셀로 풀고 바로 자동 채점·실수 진단을 받는 연습 스튜디오입니다."><meta property="og:url" content="https://mj-best.github.io/work/aice-pro/"><meta property="og:image" content="https://mj-best.github.io/assets/img/aice2.webp">
+<meta name="theme-color" content="#f5f3ee" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#141619" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/assets/portfolio.css">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+</head>
+<body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+<header class="top"><div class="wrap">
+<a class="logo" href="/"><i aria-hidden="true"></i>MJ-best</a>
+<nav aria-label="주 메뉴">
+<a href="/#projects">프로젝트</a><a class="hide-s" href="/#about">작업 방식</a><a href="https://github.com/MJ-best" rel="noopener">GitHub</a>
+<button class="theme-btn" type="button" aria-label="밝게/어둡게 전환" title="밝게/어둡게 전환"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg></button>
+</nav></div></header>
+<main id="main">
+<div class="wrap">
+<nav class="crumb" aria-label="위치"><a href="/#projects">← 전체 프로젝트</a></nav>
+<header class="d-head"><div>
+<p class="eyebrow" style="margin:0">학습·시험</p>
+<h1>AICE Pro 실전연습 스튜디오</h1>
+<p>AICE Pro 시험 준비생이 정형·자연어·이미지 실전 문제를 노트북 셀로 풀고 바로 자동 채점·실수 진단을 받는 연습 스튜디오입니다.</p>
+</div><div class="btns"><a class="btn primary" href="https://mj-best.github.io/aice-pro/" rel="noopener">웹 스튜디오 ↗</a><a class="btn" href="https://github.com/MJ-best/aice-pro" rel="noopener">GitHub ↗</a></div></header>
+<div class="meta"><span><b>분야</b>학습·시험</span><span><b>플랫폼</b>Web + 로컬 Python 엔진</span><span><b>기술</b>Python 표준 라이브러리 (ThreadingHTTPServer, ast, re) · Vanilla JS · HTML/CSS · Jupyter (.ipynb) · GitHub Pages (docs/)</span></div>
+<section class="shots" aria-label="화면"><figure class="shot-main"><a href="/assets/img/aice2.webp"><img src="/assets/img/aice2.webp" alt="문제 패널과 노트북 셀: 단계별 코드를 실행하고 제출 파일을 채점합니다." decoding="async"></a></figure><figcaption style="margin-top:-6px">문제 패널과 노트북 셀: 단계별 코드를 실행하고 제출 파일을 채점합니다.</figcaption></section>
+<div class="d-grid">
+<aside class="toc" aria-label="이 페이지 목차"><ol>
+<li><a href="#why">왜 만들었나</a></li><li><a href="#features">주요 기능</a></li><li><a href="#flow">어떻게 동작하나</a></li><li><a href="#code">핵심 코드</a></li><li><a href="#hard">어려웠던 점</a></li></ol></aside>
+<article>
+<section class="d-sec" id="why"><h2>왜 만들었나</h2><p>실습 시험을 연습하려면 Jupyter 설치, 데이터 준비, 제출 파일 채점을 직접 해야 해서 정작 공부할 시간이 줄어듭니다. 문제 선택부터 코드 실행, 채점, 실수 피드백까지 한 화면에서 처리합니다.</p></section>
+<section class="d-sec" id="features"><h2>주요 기능</h2><ul class="feat"><li>Tabular 2·NLP 2·Image 2 총 6문제, 학습 모드와 타이머가 있는 시험 모드</li><li>브라우저 안 멀티셀 노트북 (상태가 이어지는 Python 커널)</li><li>제출 CSV 형식 검사와 지표 채점(Macro F1·RMSE·R²)</li><li>노트북 코드 정적 분석으로 데이터 누수·to_csv(index=False) 누락 등 진단</li><li>공식 라이브러리 API 즉시 검색, 오프라인 ZIP·단일 HTML 배포</li></ul></section>
+<section class="d-sec"><h2>숫자로 보면</h2><div class="nums"><div>실전 문제 6개(3개 유형 × 2), 문제마다 풀이 체크리스트 10단계</div><div>공식 API 즉시 검색 문서 9개 · 허용 공식 도메인 6개</div><div>pytest 테스트 6개</div></div></section>
+<section class="d-sec" id="flow"><h2>어떻게 동작하나</h2><ol class="flow"><li><h3>로컬 엔진 탐지</h3><p>페이지가 열리면 127.0.0.1:8765와 8000의 /api/catalog를 0.9초 제한으로 찔러 보고, 응답이 없으면 정적 번들 모드로 전환합니다.</p><a class="file" href="https://github.com/MJ-best/aice-pro/blob/main/docs/app.js" rel="noopener">docs/app.js</a></li><li><h3>정적 폴백</h3><p>handleStaticFallbackApi()가 catalog_bundle.js의 문제·문서 데이터로 API 응답을 흉내 내고, 셀 실행·채점 요청에는 로컬 엔진 설치 안내를 띄웁니다.</p><a class="file" href="https://github.com/MJ-best/aice-pro/blob/main/docs/app.js" rel="noopener">docs/app.js</a></li><li><h3>데이터셋 생성</h3><p>문제마다 시드 기반 난수로 train/test CSV와 PNG 이미지를 만들고, 정답은 workspace/.ground_truth에 따로 저장합니다.</p><a class="file" href="https://github.com/MJ-best/aice-pro/blob/main/aice_pro/dataset_generator.py" rel="noopener">aice_pro/dataset_generator.py</a></li><li><h3>셀 실행</h3><p>StatefulNotebookSession이 셀 코드를 ast로 파싱해 실행하고, 마지막 줄이 식이면 eval해 결과를 HTML 표로 돌려주며 네임스페이스를 셀 사이에 유지합니다.</p><a class="file" href="https://github.com/MJ-best/aice-pro/blob/main/aice_pro/kernel.py" rel="noopener">aice_pro/kernel.py</a></li><li><h3>코드 진단</h3><p>diagnose_notebook_code()가 주석을 뺀 코드에 정규식을 돌려 test/val에 fit 호출, test.dropna(), stratify 누락 같은 실수 패턴을 찾습니다.</p><a class="file" href="https://github.com/MJ-best/aice-pro/blob/main/aice_pro/evaluator.py" rel="noopener">aice_pro/evaluator.py</a></li><li><h3>제출 채점</h3><p>evaluate_submission()이 submission.csv의 형식을 검사한 뒤 숨겨 둔 정답과 비교해 문제별 지표를 계산합니다.</p><a class="file" href="https://github.com/MJ-best/aice-pro/blob/main/aice_pro/evaluator.py" rel="noopener">aice_pro/evaluator.py</a></li></ol></section>
+<section class="d-sec" id="code"><h2>핵심 코드</h2>
+<div class="code"><div class="code-bar"><span>aice_pro/kernel.py</span><a href="https://github.com/MJ-best/aice-pro/blob/main/aice_pro/kernel.py" rel="noopener">GitHub에서 보기 ↗</a></div><pre><code><span class="k">with</span> _EXEC_LOCK:
+    prev_cwd = Path.<span class="f">cwd</span>()
+    <span class="k">try</span>:
+        os.<span class="f">chdir</span>(self.problem_dir)
+        <span class="k">with</span> contextlib.<span class="f">redirect_stdout</span>(stdout_buf), contextlib.<span class="f">redirect_stderr</span>(stderr_buf):
+            tree = ast.<span class="f">parse</span>(raw_code, filename=f<span class="s">&quot;&lt;cell_{cell_index + 1}&gt;&quot;</span>, mode=<span class="s">&quot;exec&quot;</span>)
+            <span class="k">if</span> tree.body <span class="k">and</span> <span class="f">isinstance</span>(tree.body[-<span class="n">1</span>], ast.Expr):
+                last_expr = ast.<span class="f">Expression</span>(tree.body.<span class="f">pop</span>().value)
+                <span class="k">if</span> tree.body:
+                    <span class="f">exec</span>(<span class="f">compile</span>(tree, filename=f<span class="s">&quot;&lt;cell_{cell_index + 1}&gt;&quot;</span>, mode=<span class="s">&quot;exec&quot;</span>), self.namespace)
+                val = <span class="f">eval</span>(<span class="f">compile</span>(last_expr, filename=f<span class="s">&quot;&lt;cell_{cell_index + 1}&gt;&quot;</span>, mode=<span class="s">&quot;eval&quot;</span>), self.namespace)
+                fmt = <span class="f">_format_value_for_jupyter</span>(val)
+                result_html = fmt[<span class="s">&quot;html&quot;</span>]
+                result_text = fmt[<span class="s">&quot;text&quot;</span>]
+            <span class="k">else</span>:
+                <span class="f">exec</span>(<span class="f">compile</span>(tree, filename=f<span class="s">&quot;&lt;cell_{cell_index + 1}&gt;&quot;</span>, mode=<span class="s">&quot;exec&quot;</span>), self.namespace)</code></pre></div>
+<p class="code-cap">셀 코드를 AST로 나눠 앞부분은 exec, 마지막 식은 eval해서 Jupyter처럼 결과 값을 화면에 보여 주는 부분입니다.</p></section>
+<section class="d-sec" id="hard"><h2>어려웠던 점</h2><div class="callout">Jupyter 없이도 셀 사이 상태가 이어지고 마지막 식의 값이 출력되게 하려고, 셀마다 ast.parse로 마지막 Expr 노드를 떼어 eval하고 나머지는 같은 namespace에서 exec합니다. 작업 폴더 변경과 stdout 가로채기는 전역 상태라 잠금(_EXEC_LOCK) 안에서만 처리합니다.</div></section>
+<nav class="pager" aria-label="다른 프로젝트">
+<a href="/work/mostmed/"><small>← 이전</small><b>MostMed</b></a>
+<a class="next" href="/work/jjy-simulator/"><small>다음 →</small><b>JJY 시뮬레이터</b></a></nav>
+</article></div></div>
+</main>
+<footer><div class="wrap"><span>© 2026 MJ-best · 이 사이트와 모든 데모는 GitHub Pages에서 동작합니다.</span><a href="https://github.com/MJ-best">github.com/MJ-best</a></div></footer>
+<script src="/assets/portfolio.js" defer></script>
+</body>
+</html>

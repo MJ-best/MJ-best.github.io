@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MostMed · MJ-best</title>
+<meta name="description" content="러시아어권 환자가 한국의 수술·시술과 참고 가격을 보고, 고른 항목을 그대로 텔레그램·왓츠앱으로 문의하게 하는 의료관광 에이전시 홈페이지 데모입니다.">
+<meta name="naver-site-verification" content="d742928bf0bdbd59f1017ff8d26f2452638bb3cf">
+<link rel="canonical" href="https://mj-best.github.io/work/mostmed/">
+<meta property="og:type" content="website"><meta property="og:title" content="MostMed · MJ-best"><meta property="og:description" content="러시아어권 환자가 한국의 수술·시술과 참고 가격을 보고, 고른 항목을 그대로 텔레그램·왓츠앱으로 문의하게 하는 의료관광 에이전시 홈페이지 데모입니다."><meta property="og:url" content="https://mj-best.github.io/work/mostmed/"><meta property="og:image" content="https://mj-best.github.io/assets/img/mostmed.webp">
+<meta name="theme-color" content="#f5f3ee" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#141619" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/assets/portfolio.css">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+</head>
+<body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+<header class="top"><div class="wrap">
+<a class="logo" href="/"><i aria-hidden="true"></i>MJ-best</a>
+<nav aria-label="주 메뉴">
+<a href="/#projects">프로젝트</a><a class="hide-s" href="/#about">작업 방식</a><a href="https://github.com/MJ-best" rel="noopener">GitHub</a>
+<button class="theme-btn" type="button" aria-label="밝게/어둡게 전환" title="밝게/어둡게 전환"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg></button>
+</nav></div></header>
+<main id="main">
+<div class="wrap">
+<nav class="crumb" aria-label="위치"><a href="/#projects">← 전체 프로젝트</a></nav>
+<header class="d-head"><div>
+<p class="eyebrow" style="margin:0">서비스·생활</p>
+<h1>MostMed</h1>
+<p>러시아어권 환자가 한국의 수술·시술과 참고 가격을 보고, 고른 항목을 그대로 텔레그램·왓츠앱으로 문의하게 하는 의료관광 에이전시 홈페이지 데모입니다.</p>
+</div><div class="btns"><a class="btn primary" href="/mostmed/">사이트 열기 ↗</a><a class="btn" href="/mostmed/PLAN.md">기획서 ↗</a><a class="btn" href="https://github.com/MJ-best/MJ-best.github.io/tree/main/mostmed" rel="noopener">코드 ↗</a></div></header>
+<div class="meta"><span><b>분야</b>서비스·생활</span><span><b>플랫폼</b>Web (ru · ko · en)</span><span><b>기술</b>Vanilla JS (SPA, 해시 라우팅) · HTML/CSS · JSON 데이터 · localStorage · Supabase 스키마(SQL·RLS, v1 이관용) · GitHub Pages</span></div>
+<section class="shots" aria-label="화면"><figure class="shot-main"><a href="/assets/img/mostmed.webp"><img src="/assets/img/mostmed.webp" alt="러시아어 메인: 검색, 진료 분야, 코디네이터 연락." decoding="async"></a></figure><figcaption style="margin-top:-6px">러시아어 메인: 검색, 진료 분야, 코디네이터 연락.</figcaption><div class="shot-row phones"><figure><a href="/assets/img/mostmed-m.webp" aria-label="원본 크기로 보기: 모바일: 텔레그램·왓츠앱 문의 버튼이 항상 떠 있습니다."><img src="/assets/img/mostmed-m.webp" alt="모바일: 텔레그램·왓츠앱 문의 버튼이 항상 떠 있습니다." loading="lazy" decoding="async"></a><figcaption>모바일: 텔레그램·왓츠앱 문의 버튼이 항상 떠 있습니다.</figcaption></figure></div></section>
+<div class="d-grid">
+<aside class="toc" aria-label="이 페이지 목차"><ol>
+<li><a href="#why">왜 만들었나</a></li><li><a href="#features">주요 기능</a></li><li><a href="#flow">어떻게 동작하나</a></li><li><a href="#code">핵심 코드</a></li><li><a href="#hard">어려웠던 점</a></li></ol></aside>
+<article>
+<section class="d-sec" id="why"><h2>왜 만들었나</h2><p>러시아 환자는 한국 병원 정보를 자기 언어로 찾기 어렵고, 연락도 주로 메신저로 합니다. 회원가입 없이 시술을 담아 입력칸 몇 개만 채우면 문의가 끝나도록 만들었습니다.</p></section>
+<section class="d-sec" id="features"><h2>주요 기능</h2><ul class="feat"><li>러시아어·한국어·영어 전환 (브라우저 언어 자동 감지)</li><li>증상·시술 키워드 검색 (러/한/영 이름·설명·키워드 동시 검색)</li><li>&#x27;내 플랜&#x27;에 여러 시술 담기, 가격 범위 합계 표시</li><li>문의 내용을 메시지로 자동 작성해 Telegram·WhatsApp으로 연결</li><li>#/admin 문의 관리 화면 (상태 변경·CSV 내보내기)</li></ul></section>
+<section class="d-sec"><h2>숫자로 보면</h2><div class="nums"><div>진료 카테고리 9개 · 시술 40개 · 병원 11곳(협약 병원 1곳)</div><div>지원 언어 3개(ru·ko·en)</div><div>Supabase 테이블 4개 · RLS 정책 6개</div></div></section>
+<section class="d-sec" id="flow"><h2>어떻게 동작하나</h2><ol class="flow"><li><h3>데이터 로드</h3><p>categories·procedures·clinics JSON 세 개를 Promise.all로 불러와 DB 객체에 담고, 저장된 플랜에서 없는 시술 id를 걸러냅니다.</p><a class="file" href="https://github.com/MJ-best/MJ-best.github.io/blob/main/mostmed/assets/app.js" rel="noopener">assets/app.js</a></li><li><h3>해시 라우팅</h3><p>route()가 #/c/:id, #/clinic/:id, #/admin을 보고 카테고리·병원·관리 화면 중 하나를 그립니다.</p><a class="file" href="https://github.com/MJ-best/MJ-best.github.io/blob/main/mostmed/assets/app.js" rel="noopener">assets/app.js</a></li><li><h3>검색</h3><p>searchResults()가 시술의 러/한/영 이름·설명·카테고리명·키워드를 한 문자열로 합쳐, 입력한 단어가 모두 들어 있는 시술만 남깁니다.</p><a class="file" href="https://github.com/MJ-best/MJ-best.github.io/blob/main/mostmed/assets/app.js" rel="noopener">assets/app.js</a></li><li><h3>플랜 담기</h3><p>togglePlan()이 시술 id 배열을 localStorage에 저장하고, 화면의 모든 담기 버튼과 하단 플랜 바를 함께 갱신합니다.</p><a class="file" href="https://github.com/MJ-best/MJ-best.github.io/blob/main/mostmed/assets/app.js" rel="noopener">assets/app.js</a></li><li><h3>문의 제출</h3><p>submitLead()가 이름·연락처·동의를 확인한 뒤 leads 스키마와 같은 모양의 객체를 저장하고, buildMessage()로 만든 글을 wa.me 링크에 넣거나 텔레그램용으로 클립보드에 복사합니다.</p><a class="file" href="https://github.com/MJ-best/MJ-best.github.io/blob/main/mostmed/assets/app.js" rel="noopener">assets/app.js</a></li><li><h3>DB 이관 준비</h3><p>같은 필드 구조를 Postgres 테이블 4개로 정의하고, leads는 익명 insert만, 조회·수정은 인증 사용자만 허용하는 RLS 정책을 걸어 두었습니다.</p><a class="file" href="https://github.com/MJ-best/MJ-best.github.io/blob/main/mostmed/supabase/schema.sql" rel="noopener">supabase/schema.sql</a></li></ol></section>
+<section class="d-sec" id="code"><h2>핵심 코드</h2>
+<div class="code"><div class="code-bar"><span>assets/app.js</span><a href="https://github.com/MJ-best/MJ-best.github.io/blob/main/mostmed/assets/app.js" rel="noopener">GitHub에서 보기 ↗</a></div><pre><code><span class="k">function</span> <span class="f">buildMessage</span>(d, items) {
+  <span class="k">const</span> lines = [<span class="f">t</span>(<span class="s">&#x27;msg_head&#x27;</span>), <span class="s">&#x27;&#x27;</span>];
+  lines.<span class="f">push</span>(<span class="s">`${t(&#x27;msg_proc&#x27;)}: `</span> + (items.length ? <span class="s">&#x27;&#x27;</span> : <span class="f">t</span>(<span class="s">&#x27;msg_general&#x27;</span>)));
+  items.<span class="f">forEach</span>(p =&gt; { <span class="k">const</span> cl = p.clinic &amp;&amp; <span class="f">clinicById</span>(p.clinic); lines.<span class="f">push</span>(<span class="s">`• ${L(p.name)}${cl ? `</span> — ${cl.name}<span class="s">` : &#x27;&#x27;} (${priceShort(p)})`</span>); });
+  lines.<span class="f">push</span>(<span class="s">&#x27;&#x27;</span>, <span class="s">`${t(&#x27;msg_name&#x27;)}: ${d.name}`</span>);
+  <span class="k">if</span> (d.city) lines.<span class="f">push</span>(<span class="s">`${t(&#x27;msg_city&#x27;)}: ${d.city}`</span>);
+  lines.<span class="f">push</span>(<span class="s">`${t(&#x27;msg_contact&#x27;)}: ${d.channel} ${d.contact}`</span>);
+  <span class="k">if</span> (d.message) lines.<span class="f">push</span>(<span class="s">`${t(&#x27;msg_note&#x27;)}: ${d.message}`</span>);
+  <span class="k">return</span> lines.<span class="f">join</span>(<span class="s">&#x27;\n&#x27;</span>);
+}</code></pre></div>
+<p class="code-cap">플랜에 담은 시술과 입력값으로 메신저에 바로 보낼 문의 메시지를 현재 언어로 조립합니다.</p></section>
+<section class="d-sec" id="hard"><h2>어려웠던 점</h2><div class="callout">백엔드 없이 문의를 받아야 해서, 문의 객체를 Supabase leads 테이블과 같은 모양으로 localStorage에 쌓고 메시지는 WhatsApp은 URL 파라미터로, Telegram은 텍스트를 미리 채울 수 없어 클립보드 복사로 나눠 처리했습니다. 덕분에 v1에서는 저장 한 줄만 supabase insert로 바꾸면 됩니다.</div></section>
+<nav class="pager" aria-label="다른 프로젝트">
+<a href="/work/studio-conti/"><small>← 이전</small><b>스튜디오 콘티북</b></a>
+<a class="next" href="/work/aice-pro/"><small>다음 →</small><b>AICE Pro 실전연습 스튜디오</b></a></nav>
+</article></div></div>
+</main>
+<footer><div class="wrap"><span>© 2026 MJ-best · 이 사이트와 모든 데모는 GitHub Pages에서 동작합니다.</span><a href="https://github.com/MJ-best">github.com/MJ-best</a></div></footer>
+<script src="/assets/portfolio.js" defer></script>
+</body>
+</html>

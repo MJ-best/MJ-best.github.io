@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JJY 시뮬레이터 · MJ-best</title>
+<meta name="description" content="유선 이어폰으로 일본 표준전파 JJY를 흉내 내, 해외에서도 전파시계를 현지 시각으로 맞추게 해 주는 웹페이지입니다.">
+<meta name="naver-site-verification" content="d742928bf0bdbd59f1017ff8d26f2452638bb3cf">
+<link rel="canonical" href="https://mj-best.github.io/work/jjy-simulator/">
+<meta property="og:type" content="website"><meta property="og:title" content="JJY 시뮬레이터 · MJ-best"><meta property="og:description" content="유선 이어폰으로 일본 표준전파 JJY를 흉내 내, 해외에서도 전파시계를 현지 시각으로 맞추게 해 주는 웹페이지입니다."><meta property="og:url" content="https://mj-best.github.io/work/jjy-simulator/"><meta property="og:image" content="https://mj-best.github.io/assets/img/jjy.webp">
+<meta name="theme-color" content="#f5f3ee" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#141619" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/assets/portfolio.css">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+</head>
+<body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+<header class="top"><div class="wrap">
+<a class="logo" href="/"><i aria-hidden="true"></i>MJ-best</a>
+<nav aria-label="주 메뉴">
+<a href="/#projects">프로젝트</a><a class="hide-s" href="/#about">작업 방식</a><a href="https://github.com/MJ-best" rel="noopener">GitHub</a>
+<button class="theme-btn" type="button" aria-label="밝게/어둡게 전환" title="밝게/어둡게 전환"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg></button>
+</nav></div></header>
+<main id="main">
+<div class="wrap">
+<nav class="crumb" aria-label="위치"><a href="/#projects">← 전체 프로젝트</a></nav>
+<header class="d-head"><div>
+<p class="eyebrow" style="margin:0">서비스·생활</p>
+<h1>JJY 시뮬레이터</h1>
+<p>유선 이어폰으로 일본 표준전파 JJY를 흉내 내, 해외에서도 전파시계를 현지 시각으로 맞추게 해 주는 웹페이지입니다.</p>
+</div><div class="btns"><a class="btn primary" href="/JJY-simulator/ko/">데모 열기 ↗</a><a class="btn" href="https://github.com/MJ-best/JJY-simulator" rel="noopener">GitHub ↗</a></div></header>
+<div class="meta"><span><b>분야</b>서비스·생활</span><span><b>플랫폼</b>Web (ko · en · ja)</span><span><b>기술</b>Vanilla JS (ES 모듈) · Web Audio API · Intl.DateTimeFormat · SVG · d3-geo · topojson (지도) · Node 테스트(assert)</span></div>
+<section class="shots" aria-label="화면"><figure class="shot-main"><a href="/assets/img/jjy.webp"><img src="/assets/img/jjy.webp" alt="지도에서 도시를 고르면 그 현지 시각으로 타임코드를 만들어 송신합니다." decoding="async"></a></figure><figcaption style="margin-top:-6px">지도에서 도시를 고르면 그 현지 시각으로 타임코드를 만들어 송신합니다.</figcaption></section>
+<div class="d-grid">
+<aside class="toc" aria-label="이 페이지 목차"><ol>
+<li><a href="#why">왜 만들었나</a></li><li><a href="#features">주요 기능</a></li><li><a href="#flow">어떻게 동작하나</a></li><li><a href="#code">핵심 코드</a></li><li><a href="#hard">어려웠던 점</a></li></ol></aside>
+<article>
+<section class="d-sec" id="why"><h2>왜 만들었나</h2><p>JJY 전파시계는 일본 밖에서는 전파를 받지 못하고, 받더라도 무조건 일본 시각(JST)으로 해석합니다. 휴대폰 소리로 신호를 만들고, 고른 지역의 현지 시각을 JST 자리에 넣어 보내 이 문제를 풉니다.</p></section>
+<section class="d-sec" id="features"><h2>주요 기능</h2><ul class="feat"><li>지도를 눌러 가장 가까운 도시의 시간대 선택 (기본값은 기기 시간대)</li><li>40kHz / 60kHz 국 선택</li><li>60초 타임코드 막대와 현재 초 표시</li><li>송신 중 화면 꺼짐 방지(Wake Lock)</li><li>한국어·영어·일본어 페이지</li></ul></section>
+<section class="d-sec"><h2>숫자로 보면</h2><div class="nums"><div>1분 프레임 = 기호 60개</div><div>지도에 미리 넣은 도시 62곳</div><div>언어별 페이지 3개(en·ko·ja)</div></div></section>
+<section class="d-sec" id="flow"><h2>어떻게 동작하나</h2><ol class="flow"><li><h3>시간대 → 시각 필드</h3><p>fields()가 Intl.DateTimeFormat으로 선택한 IANA 시간대의 연·연중 일수·시·분·요일을 구해, 서머타임까지 자동 반영합니다.</p><a class="file" href="https://github.com/MJ-best/JJY-simulator/blob/main/jjy.js" rel="noopener">jjy.js</a></li><li><h3>1분 프레임 생성</h3><p>frame()이 분·시·연중 일수·연도·요일을 BCD로 바꾸고 마커와 패리티 비트를 넣어 0/1/M 기호 60개를 만듭니다.</p><a class="file" href="https://github.com/MJ-best/JJY-simulator/blob/main/jjy.js" rel="noopener">jjy.js</a></li><li><h3>기호 → 펄스 길이</h3><p>HIGH 표가 기호마다 매초 앞부분에서 신호를 켜 둘 시간(0은 0.8초, 1은 0.5초, M은 0.2초)을 정합니다.</p><a class="file" href="https://github.com/MJ-best/JJY-simulator/blob/main/jjy.js" rel="noopener">jjy.js</a></li><li><h3>오디오 예약</h3><p>schedule()이 50ms마다 돌며 앞으로 3초 분량의 펄스를 GainNode 값 변경으로 오디오 시계에 미리 예약하고, getOutputTimestamp로 출력 지연을 보정합니다.</p><a class="file" href="https://github.com/MJ-best/JJY-simulator/blob/main/app.js" rel="noopener">app.js</a></li><li><h3>배음 송신</h3><p>13.333kHz(또는 20kHz) 사인파를 켜고 끄면 이어폰 케이블에서 새는 3배음 40kHz(60kHz)를 시계 안테나가 받습니다.</p><a class="file" href="https://github.com/MJ-best/JJY-simulator/blob/main/app.js" rel="noopener">app.js</a></li><li><h3>화면 표시</h3><p>render()가 현지 시각, 60칸 비트 막대, 현재 초 램프를 매초 다시 그립니다.</p><a class="file" href="https://github.com/MJ-best/JJY-simulator/blob/main/app.js" rel="noopener">app.js</a></li></ol></section>
+<section class="d-sec" id="code"><h2>핵심 코드</h2>
+<div class="code"><div class="code-bar"><span>jjy.js</span><a href="https://github.com/MJ-best/JJY-simulator/blob/main/jjy.js" rel="noopener">GitHub에서 보기 ↗</a></div><pre><code><span class="k">export</span> <span class="k">function</span> <span class="f">frame</span>({ y, doy, h, m, wd }) {
+  <span class="k">const</span> bcd = (v, ...w) =&gt; w.<span class="f">map</span>(x =&gt; (v &gt;= x ? (v -= x, <span class="n">1</span>) : <span class="n">0</span>));
+  <span class="k">const</span> par = a =&gt; a.<span class="f">reduce</span>((s, x) =&gt; s ^ x, <span class="n">0</span>);
+  <span class="k">const</span> M = <span class="s">&#x27;M&#x27;</span>;
+  <span class="k">const</span> mi = <span class="f">bcd</span>(m, <span class="n">40</span>, <span class="n">20</span>, <span class="n">10</span>, <span class="n">8</span>, <span class="n">4</span>, <span class="n">2</span>, <span class="n">1</span>);
+  <span class="k">const</span> hr = <span class="f">bcd</span>(h, <span class="n">20</span>, <span class="n">10</span>, <span class="n">8</span>, <span class="n">4</span>, <span class="n">2</span>, <span class="n">1</span>);
+  <span class="k">const</span> d = <span class="f">bcd</span>(doy, <span class="n">200</span>, <span class="n">100</span>, <span class="n">80</span>, <span class="n">40</span>, <span class="n">20</span>, <span class="n">10</span>, <span class="n">8</span>, <span class="n">4</span>, <span class="n">2</span>, <span class="n">1</span>);
+  <span class="k">return</span> [
+    M, ...mi.<span class="f">slice</span>(<span class="n">0</span>, <span class="n">3</span>), <span class="n">0</span>, ...mi.<span class="f">slice</span>(<span class="n">3</span>), M,                 <span class="c">// 0-9   minute</span>
+    <span class="n">0</span>, <span class="n">0</span>, ...hr.<span class="f">slice</span>(<span class="n">0</span>, <span class="n">2</span>), <span class="n">0</span>, ...hr.<span class="f">slice</span>(<span class="n">2</span>), M,              <span class="c">// 10-19 hour</span>
+    <span class="n">0</span>, <span class="n">0</span>, ...d.<span class="f">slice</span>(<span class="n">0</span>, <span class="n">2</span>), <span class="n">0</span>, ...d.<span class="f">slice</span>(<span class="n">2</span>, <span class="n">6</span>), M,             <span class="c">// 20-29 day of year</span>
+    ...d.<span class="f">slice</span>(<span class="n">6</span>), <span class="n">0</span>, <span class="n">0</span>, <span class="f">par</span>(hr), <span class="f">par</span>(mi), <span class="n">0</span>, M,                <span class="c">// 30-39 doy, PA1, PA2, SU1</span>
+    <span class="n">0</span>, ...<span class="f">bcd</span>(y % <span class="n">100</span>, <span class="n">80</span>, <span class="n">40</span>, <span class="n">20</span>, <span class="n">10</span>, <span class="n">8</span>, <span class="n">4</span>, <span class="n">2</span>, <span class="n">1</span>), M,          <span class="c">// 40-49 SU2, year</span>
+    ...<span class="f">bcd</span>(wd, <span class="n">4</span>, <span class="n">2</span>, <span class="n">1</span>), <span class="n">0</span>, <span class="n">0</span>, <span class="n">0</span>, <span class="n">0</span>, <span class="n">0</span>, <span class="n">0</span>, M,                   <span class="c">// 50-59 weekday, LS1/2</span>
+  ];
+}</code></pre></div>
+<p class="code-cap">시각 필드를 JJY 규격의 60개 기호(0·1·마커)로 바꾸는 부분으로, BCD 변환과 패리티 계산이 들어 있습니다.</p></section>
+<section class="d-sec" id="hard"><h2>어려웠던 점</h2><div class="callout">setTimeout은 수십 ms씩 밀려서 펄스 경계가 흔들리기 때문에, 벽시계 시각을 오디오 컨텍스트 시각으로 바꿔 3초 앞까지 setValueAtTime으로 미리 예약합니다. 또 휴대폰은 40kHz를 낼 수 없어서, 그 1/3 주파수를 내보내고 3배음을 이용합니다.</div></section>
+<nav class="pager" aria-label="다른 프로젝트">
+<a href="/work/aice-pro/"><small>← 이전</small><b>AICE Pro 실전연습 스튜디오</b></a>
+<a class="next" href="/work/nuance-graph/"><small>다음 →</small><b>Nuance Graph</b></a></nav>
+</article></div></div>
+</main>
+<footer><div class="wrap"><span>© 2026 MJ-best · 이 사이트와 모든 데모는 GitHub Pages에서 동작합니다.</span><a href="https://github.com/MJ-best">github.com/MJ-best</a></div></footer>
+<script src="/assets/portfolio.js" defer></script>
+</body>
+</html>

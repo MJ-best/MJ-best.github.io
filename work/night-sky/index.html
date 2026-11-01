@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>밤하늘 촬영 플래너 · MJ-best</title>
+<meta name="description" content="은하수·달·별궤적·유성우·행성·도시 야경을 찍으려는 사람에게 그날 밤의 하늘, 카메라 방향, 카메라 설정을 한 화면에 보여 주는 촬영 플래너입니다.">
+<meta name="naver-site-verification" content="d742928bf0bdbd59f1017ff8d26f2452638bb3cf">
+<link rel="canonical" href="https://mj-best.github.io/work/night-sky/">
+<meta property="og:type" content="website"><meta property="og:title" content="밤하늘 촬영 플래너 · MJ-best"><meta property="og:description" content="은하수·달·별궤적·유성우·행성·도시 야경을 찍으려는 사람에게 그날 밤의 하늘, 카메라 방향, 카메라 설정을 한 화면에 보여 주는 촬영 플래너입니다."><meta property="og:url" content="https://mj-best.github.io/work/night-sky/"><meta property="og:image" content="https://mj-best.github.io/assets/img/night.webp">
+<meta name="theme-color" content="#f5f3ee" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#141619" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/assets/portfolio.css">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+</head>
+<body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+<header class="top"><div class="wrap">
+<a class="logo" href="/"><i aria-hidden="true"></i>MJ-best</a>
+<nav aria-label="주 메뉴">
+<a href="/#projects">프로젝트</a><a class="hide-s" href="/#about">작업 방식</a><a href="https://github.com/MJ-best" rel="noopener">GitHub</a>
+<button class="theme-btn" type="button" aria-label="밝게/어둡게 전환" title="밝게/어둡게 전환"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg></button>
+</nav></div></header>
+<main id="main">
+<div class="wrap">
+<nav class="crumb" aria-label="위치"><a href="/#projects">← 전체 프로젝트</a></nav>
+<header class="d-head"><div>
+<p class="eyebrow" style="margin:0">사진·카메라</p>
+<h1>밤하늘 촬영 플래너</h1>
+<p>은하수·달·별궤적·유성우·행성·도시 야경을 찍으려는 사람에게 그날 밤의 하늘, 카메라 방향, 카메라 설정을 한 화면에 보여 주는 촬영 플래너입니다.</p>
+</div><div class="btns"><a class="btn primary" href="https://mj-best.github.io/night-camera-setting/" rel="noopener">데모 열기 ↗</a><a class="btn" href="https://github.com/MJ-best/night-camera-setting" rel="noopener">GitHub ↗</a></div></header>
+<div class="meta"><span><b>분야</b>사진·카메라</span><span><b>플랫폼</b>Web (PWA)</span><span><b>기술</b>Vanilla JS (ES 모듈) · Astronomy Engine · Canvas · SVG · DeviceOrientation API · Open-Meteo API · Service Worker(PWA) · node:test · GitHub Actions → Pages</span></div>
+<section class="shots" aria-label="화면"><figure class="shot-main"><a href="/assets/img/night.webp"><img src="/assets/img/night.webp" alt="오늘 밤 은하수 촬영 가능 시간, 하늘 지도, 시간대별 고도 흐름." decoding="async"></a></figure><figcaption style="margin-top:-6px">오늘 밤 은하수 촬영 가능 시간, 하늘 지도, 시간대별 고도 흐름.</figcaption><div class="shot-row phones"><figure><a href="/assets/img/night-m.webp" aria-label="원본 크기로 보기: 모바일 화면: 현장에서 휴대폰으로 확인합니다."><img src="/assets/img/night-m.webp" alt="모바일 화면: 현장에서 휴대폰으로 확인합니다." loading="lazy" decoding="async"></a><figcaption>모바일 화면: 현장에서 휴대폰으로 확인합니다.</figcaption></figure></div></section>
+<div class="d-grid">
+<aside class="toc" aria-label="이 페이지 목차"><ol>
+<li><a href="#why">왜 만들었나</a></li><li><a href="#features">주요 기능</a></li><li><a href="#flow">어떻게 동작하나</a></li><li><a href="#code">핵심 코드</a></li><li><a href="#hard">어려웠던 점</a></li></ol></aside>
+<article>
+<section class="d-sec" id="why"><h2>왜 만들었나</h2><p>밤하늘 촬영은 달·박명·광해·은하수 고도를 따로 찾아보고 셔터·ISO를 감으로 정해야 해서 어렵습니다. 위치와 날짜, 장비 정보만 넣으면 시각별 하늘 상태로 설정값을 계산해 줍니다.</p></section>
+<section class="d-sec" id="features"><h2>주요 기능</h2><ul class="feat"><li>대상 6가지별 ISO·조리개·셔터 추천과 대안 설정</li><li>NPF 규칙·500 법칙으로 별이 점으로 남는 최대 노출 계산</li><li>하늘 지도(파노라마/전천 돔)와 화각 사각형, 밤 고도 차트</li><li>휴대폰 나침반으로 방향 안내(자기 편각 보정)</li><li>Open-Meteo 구름량 예보, 적색 모드, 오프라인 PWA</li></ul></section>
+<section class="d-sec"><h2>숫자로 보면</h2><div class="nums"><div>촬영 대상 6가지</div><div>밝은 별 145개 · 유성우 10개 · 은하수 영역 6곳 데이터</div><div>단위 테스트 25개</div></div></section>
+<section class="d-sec" id="flow"><h2>어떻게 동작하나</h2><ol class="flow"><li><h3>밤 단위 계산</h3><p>computeNight()가 일몰·박명·월출/월몰 시각을 찾고, 하룻밤을 5분 간격으로 나눠 해·달·행성·은하 중심·은하수 영역의 고도/방위를 샘플링합니다.</p><a class="file" href="https://github.com/MJ-best/night-camera-setting/blob/main/js/astro.js" rel="noopener">js/astro.js</a></li><li><h3>어두운 시간 구간</h3><p>intervals()로 해 고도 -18° 이하이면서 달빛 영향이 없는 구간을 뽑고, 천문박명이 없는 날은 -12° 기준으로 낮춥니다.</p><a class="file" href="https://github.com/MJ-best/night-camera-setting/blob/main/js/astro.js" rel="noopener">js/astro.js</a></li><li><h3>대상별 분석</h3><p>analyzeMilkyWay()가 샘플마다 영역 가중치 × 고도 점수 × 달빛 계수를 매겨 오늘 밤 가장 좋은 은하수 영역과 시각을 고릅니다.</p><a class="file" href="https://github.com/MJ-best/night-camera-setting/blob/main/js/astro.js" rel="noopener">js/astro.js</a></li><li><h3>장면 밝기</h3><p>sceneEV()가 보틀 등급별 어두운 하늘 EV에 달빛 EV와 박명 EV를 빛의 양(2^EV)으로 더해 목표 노출을 구합니다.</p><a class="file" href="https://github.com/MJ-best/night-camera-setting/blob/main/js/camera.js" rel="noopener">js/camera.js</a></li><li><h3>카메라 설정</h3><p>starfieldBase()가 화소 피치로 NPF 최대 셔터를 구하고, ISO = 100·N²/(t·2^EV) 식으로 ISO를 정해 표준 단계로 반올림합니다.</p><a class="file" href="https://github.com/MJ-best/night-camera-setting/blob/main/js/camera.js" rel="noopener">js/camera.js</a></li><li><h3>화면 갱신</h3><p>시간 막대를 움직이면 그 시각의 snapshot으로 설정·방향·하늘 지도를 다시 그립니다.</p><a class="file" href="https://github.com/MJ-best/night-camera-setting/blob/main/js/app.js" rel="noopener">js/app.js</a></li></ol></section>
+<section class="d-sec" id="code"><h2>핵심 코드</h2>
+<div class="code"><div class="code-bar"><span>js/camera.js</span><a href="https://github.com/MJ-best/night-camera-setting/blob/main/js/camera.js" rel="noopener">GitHub에서 보기 ↗</a></div><pre><code><span class="c">/** NPF 규칙 (간이식): 별이 점으로 남는 최대 노출 시간 */</span>
+<span class="k">export</span> <span class="k">function</span> <span class="f">npfSeconds</span>(aperture, pitchUm, focal) {
+  <span class="k">return</span> (<span class="n">35</span> * aperture + <span class="n">30</span> * pitchUm) / focal;
+}
+<span class="c">// …</span>
+<span class="k">function</span> <span class="f">starfieldBase</span>(ctx, { evShift = <span class="n">0</span>, maxT = <span class="n">30</span>, minT = <span class="n">0</span> } = {}) {
+  <span class="k">const</span> sensor = <span class="f">sensorOf</span>(ctx.gear.sensor);
+  <span class="k">const</span> pitch = <span class="f">pixelPitch</span>(sensor, ctx.gear.mp);
+  <span class="k">const</span> n = <span class="f">wideAperture</span>(ctx.gear.maxAperture);
+  <span class="k">const</span> npf = <span class="f">npfSeconds</span>(n, pitch, ctx.gear.focal);
+  <span class="k">const</span> r500 = <span class="f">rule500</span>(ctx.gear.focal, sensor.crop);
+  <span class="k">const</span> t = <span class="f">floorShutter</span>(Math.<span class="f">max</span>(minT, Math.<span class="f">min</span>(npf, maxT)));
+  <span class="k">const</span> ev = <span class="f">sceneEV</span>(ctx);
+  <span class="k">const</span> target = ev.value + evShift;
+  <span class="k">const</span> rawIso = <span class="f">isoFor</span>(n, t, target);
+  <span class="k">return</span> { sensor, pitch, n, npf, r500, t, ev, target, rawIso, iso: <span class="f">roundISO</span>(rawIso) };
+}</code></pre></div>
+<p class="code-cap">NPF 규칙으로 별이 점으로 남는 최대 셔터를 정하고, 장면 EV에서 필요한 ISO를 역산하는 핵심 계산입니다.</p></section>
+<section class="d-sec" id="hard"><h2>어려웠던 점</h2><div class="callout">달빛·박명·광해는 밝기 단위가 EV(로그)라 그냥 더할 수 없어서, 각각 2^EV로 바꿔 더한 뒤 다시 log2를 취해 합칩니다. 그 위에 밝은 렌즈는 코마 수차를 줄이려 한 스톱 조이고, NPF 결과를 30초 이하 표준 셔터 단계로 내림해 현장에서 바로 쓸 수 있는 값으로 만듭니다.</div></section>
+<nav class="pager" aria-label="다른 프로젝트">
+<a href="/work/np3-lab/"><small>← 이전</small><b>NP3 Lab</b></a>
+<a class="next" href="/work/ccnp-encor/"><small>다음 →</small><b>ENCOR 랩북</b></a></nav>
+</article></div></div>
+</main>
+<footer><div class="wrap"><span>© 2026 MJ-best · 이 사이트와 모든 데모는 GitHub Pages에서 동작합니다.</span><a href="https://github.com/MJ-best">github.com/MJ-best</a></div></footer>
+<script src="/assets/portfolio.js" defer></script>
+</body>
+</html>

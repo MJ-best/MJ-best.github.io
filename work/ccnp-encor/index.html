@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ENCOR 랩북 · MJ-best</title>
+<meta name="description" content="CCNP ENCOR(350-401) 수험자가 장비 없이 브라우저에서 IOS 명령을 입력하며 이론·랩·퀴즈로 공부하는 단일 페이지입니다.">
+<meta name="naver-site-verification" content="d742928bf0bdbd59f1017ff8d26f2452638bb3cf">
+<link rel="canonical" href="https://mj-best.github.io/work/ccnp-encor/">
+<meta property="og:type" content="website"><meta property="og:title" content="ENCOR 랩북 · MJ-best"><meta property="og:description" content="CCNP ENCOR(350-401) 수험자가 장비 없이 브라우저에서 IOS 명령을 입력하며 이론·랩·퀴즈로 공부하는 단일 페이지입니다."><meta property="og:url" content="https://mj-best.github.io/work/ccnp-encor/"><meta property="og:image" content="https://mj-best.github.io/assets/img/ccnp-lab.webp">
+<meta name="theme-color" content="#f5f3ee" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#141619" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/assets/portfolio.css">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+</head>
+<body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+<header class="top"><div class="wrap">
+<a class="logo" href="/"><i aria-hidden="true"></i>MJ-best</a>
+<nav aria-label="주 메뉴">
+<a href="/#projects">프로젝트</a><a class="hide-s" href="/#about">작업 방식</a><a href="https://github.com/MJ-best" rel="noopener">GitHub</a>
+<button class="theme-btn" type="button" aria-label="밝게/어둡게 전환" title="밝게/어둡게 전환"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg></button>
+</nav></div></header>
+<main id="main">
+<div class="wrap">
+<nav class="crumb" aria-label="위치"><a href="/#projects">← 전체 프로젝트</a></nav>
+<header class="d-head"><div>
+<p class="eyebrow" style="margin:0">학습·시험</p>
+<h1>ENCOR 랩북</h1>
+<p>CCNP ENCOR(350-401) 수험자가 장비 없이 브라우저에서 IOS 명령을 입력하며 이론·랩·퀴즈로 공부하는 단일 페이지입니다.</p>
+</div><div class="btns"><a class="btn primary" href="/ccnp-encor/">랩북 열기 ↗</a><a class="btn" href="https://github.com/MJ-best/MJ-best.github.io/tree/main/ccnp-encor" rel="noopener">코드 ↗</a></div></header>
+<div class="meta"><span><b>분야</b>학습·시험</span><span><b>플랫폼</b>Web</span><span><b>기술</b>Vanilla JS · 단일 HTML · 인라인 SVG(토폴로지) · 정규식 기반 CLI 파서 · localStorage</span></div>
+<section class="shots" aria-label="화면"><figure class="shot-main"><a href="/assets/img/ccnp-lab.webp"><img src="/assets/img/ccnp-lab.webp" alt="CLI 랩: 브라우저 콘솔에 IOS 명령을 치면 장비처럼 응답하고, 과제가 자동으로 체크됩니다." decoding="async"></a></figure><figcaption style="margin-top:-6px">CLI 랩: 브라우저 콘솔에 IOS 명령을 치면 장비처럼 응답하고, 과제가 자동으로 체크됩니다.</figcaption><div class="shot-row"><figure><a href="/assets/img/ccnp.webp" aria-label="원본 크기로 보기: 개요: 도메인 비중, 진도, 10주 학습 계획."><img src="/assets/img/ccnp.webp" alt="개요: 도메인 비중, 진도, 10주 학습 계획." loading="lazy" decoding="async"></a><figcaption>개요: 도메인 비중, 진도, 10주 학습 계획.</figcaption></figure></div></section>
+<div class="d-grid">
+<aside class="toc" aria-label="이 페이지 목차"><ol>
+<li><a href="#why">왜 만들었나</a></li><li><a href="#features">주요 기능</a></li><li><a href="#flow">어떻게 동작하나</a></li><li><a href="#code">핵심 코드</a></li><li><a href="#hard">어려웠던 점</a></li></ol></aside>
+<article>
+<section class="d-sec" id="why"><h2>왜 만들었나</h2><p>ENCOR 실습에는 라우터·스위치나 무거운 에뮬레이터가 필요해 짧게 반복 연습하기 어렵습니다. IOS CLI를 흉내 낸 엔진과 과제 자동 확인으로 브라우저만으로 설정 연습을 하게 했습니다.</p></section>
+<section class="d-sec" id="features"><h2>주요 기능</h2><ul class="feat"><li>OSPF·HSRP·EtherChannel·VRF·BGP·GRE·SSH·EEM 8개 CLI 랩과 과제 자동 체크</li><li>명령 줄임말 확장, Tab 자동완성, ? 도움말, ↑↓ 명령 기록</li><li>show run·show ip route 같은 show 명령과 | include/section 파이프 필터</li><li>서브넷·OSPF 비용 계산기, BGP 경로 선택 순서 맞추기, RESTCONF·JSON 도구</li><li>도메인별 이론과 퀴즈, 도메인별 정답률 기록</li></ul></section>
+<section class="d-sec"><h2>숫자로 보면</h2><div class="nums"><div>CLI 랩 8개, 자동 확인 과제 37개</div><div>이론 토픽 31개, 퀴즈 50문항</div><div>줄임말·자동완성용 IOS 키워드 111개</div></div></section>
+<section class="d-sec" id="flow"><h2>어떻게 동작하나</h2><ol class="flow"><li><h3>랩 상태 생성</h3><p>newState()가 랩의 초기 설정을 {text, kids} 트리로 만들고 모드를 user로 둡니다.</p><a class="file" href="https://github.com/MJ-best/MJ-best.github.io/blob/main/ccnp-encor/index.html" rel="noopener">index.html</a></li><li><h3>정규화</h3><p>normalize()가 입력을 토큰으로 나누고 줄임말을 키워드 목록(KW)과 별칭으로 확장하며 &#x27;gi 0/0&#x27; 같은 인터페이스 이름을 합칩니다.</p><a class="file" href="https://github.com/MJ-best/MJ-best.github.io/blob/main/ccnp-encor/index.html" rel="noopener">index.html</a></li><li><h3>모드별 분기</h3><p>run()이 user/priv 모드면 execCmd, 설정 모드면 cfgCmd로 보내고 설정 모드의 do 명령도 처리합니다.</p><a class="file" href="https://github.com/MJ-best/MJ-best.github.io/blob/main/ccnp-encor/index.html" rel="noopener">index.html</a></li><li><h3>설정 트리 갱신</h3><p>cfgCmd가 현재 하위 모드에 허용된 정규식 패턴(PAT)으로 명령을 검사하고, 같은 키의 줄은 바꾸고 no 명령은 지우는 식으로 트리를 고칩니다.</p><a class="file" href="https://github.com/MJ-best/MJ-best.github.io/blob/main/ccnp-encor/index.html" rel="noopener">index.html</a></li><li><h3>이벤트·show 출력</h3><p>설정 트리에서 OSPF 이웃·BGP·HSRP·터널 상태를 계산해 %OSPF-5-ADJCHG 같은 로그와 show 출력을 만들고 파이프 필터를 적용합니다.</p><a class="file" href="https://github.com/MJ-best/MJ-best.github.io/blob/main/ccnp-encor/index.html" rel="noopener">index.html</a></li><li><h3>과제 확인·복원</h3><p>입력할 때마다 과제 검사 함수를 다시 돌려 체크하고, 입력한 명령 기록을 저장해 다시 열면 재실행해 상태를 복원합니다.</p><a class="file" href="https://github.com/MJ-best/MJ-best.github.io/blob/main/ccnp-encor/index.html" rel="noopener">index.html</a></li></ol></section>
+<section class="d-sec" id="code"><h2>핵심 코드</h2>
+<div class="code"><div class="code-bar"><span>index.html</span><a href="https://github.com/MJ-best/MJ-best.github.io/blob/main/ccnp-encor/index.html" rel="noopener">GitHub에서 보기 ↗</a></div><pre><code><span class="k">function</span> <span class="f">expandTok</span>(tok,first,mode){
+  <span class="k">if</span>(tok.<span class="f">startsWith</span>(<span class="s">&#x27;&quot;&#x27;</span>))<span class="k">return</span> tok;
+  <span class="k">const</span> lo=tok.<span class="f">toLowerCase</span>();
+  <span class="k">if</span>(first&amp;&amp;(lo===<span class="s">&#x27;sh&#x27;</span>)&amp;&amp;mode!==<span class="s">&#x27;exec&#x27;</span>)<span class="k">return</span> <span class="s">&#x27;shutdown&#x27;</span>;
+  <span class="k">if</span>(ALIAS[lo])<span class="k">return</span> ALIAS[lo];
+  <span class="k">if</span>(KW.<span class="f">includes</span>(lo))<span class="k">return</span> lo;
+  <span class="k">if</span>(lo.length&gt;=<span class="n">2</span>&amp;&amp;/^[a-z-]+$/.<span class="f">test</span>(lo)){<span class="k">const</span> c=KW.<span class="f">filter</span>(k=&gt;k.<span class="f">startsWith</span>(lo));<span class="k">if</span>(c.length===<span class="n">1</span>)<span class="k">return</span> c[<span class="n">0</span>]}
+  <span class="k">return</span> tok}
+<span class="c">// …</span>
+<span class="k">function</span> <span class="f">exec</span>(st,raw){
+  <span class="k">const</span> mode=st.mode===<span class="s">&#x27;config&#x27;</span>?<span class="s">&#x27;config&#x27;</span>:<span class="s">&#x27;exec&#x27;</span>;
+  <span class="k">let</span> line=<span class="f">normalize</span>(raw,st.mode===<span class="s">&#x27;user&#x27;</span>||st.mode===<span class="s">&#x27;priv&#x27;</span>?<span class="s">&#x27;exec&#x27;</span>:<span class="s">&#x27;config&#x27;</span>);
+  <span class="k">if</span>(!line)<span class="k">return</span> <span class="s">&#x27;&#x27;</span>;
+  <span class="k">let</span> pipe=<span class="k">null</span>;<span class="k">const</span> pi=line.<span class="f">indexOf</span>(<span class="s">&#x27; | &#x27;</span>);<span class="k">if</span>(pi&gt;=<span class="n">0</span>){pipe=line.<span class="f">slice</span>(pi+<span class="n">3</span>);line=line.<span class="f">slice</span>(<span class="n">0</span>,pi)}
+  <span class="k">let</span> out=<span class="f">run</span>(st,line);
+  <span class="k">if</span>(pipe&amp;&amp;<span class="k">typeof</span> out===<span class="s">&#x27;string&#x27;</span>)out=<span class="f">applyPipe</span>(out,pipe);
+  <span class="k">return</span> out}</code></pre></div>
+<p class="code-cap">IOS식 줄임말을 키워드로 확장하는 함수와, 정규화·파이프 분리 후 명령을 실행하는 입구입니다.</p></section>
+<section class="d-sec" id="hard"><h2>어려웠던 점</h2><div class="callout">실제 IOS처럼 줄임말, 모드별로 허용되는 명령, 같은 항목 덮어쓰기와 no 명령 삭제를 동시에 맞추는 부분입니다. 하위 모드별 허용 패턴(PAT)과 덮어쓸 키 패턴(KEYED)을 정규식 표로 두고 설정을 트리로 관리해 처리합니다.</div></section>
+<nav class="pager" aria-label="다른 프로젝트">
+<a href="/work/night-sky/"><small>← 이전</small><b>밤하늘 촬영 플래너</b></a>
+<a class="next" href="/work/voice-reader/"><small>다음 →</small><b>보이스 리더</b></a></nav>
+</article></div></div>
+</main>
+<footer><div class="wrap"><span>© 2026 MJ-best · 이 사이트와 모든 데모는 GitHub Pages에서 동작합니다.</span><a href="https://github.com/MJ-best">github.com/MJ-best</a></div></footer>
+<script src="/assets/portfolio.js" defer></script>
+</body>
+</html>
