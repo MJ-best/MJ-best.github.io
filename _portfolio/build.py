@@ -15,6 +15,7 @@ SRC = Path(__file__).resolve().parent
 ROOT = SRC.parent
 P = json.loads((SRC / "projects.json").read_text("utf-8"))
 SITE = json.loads((SRC / "site.json").read_text("utf-8"))
+SITE["description"] = SITE["description"].replace("{n}", str(len(P)))
 CATS = SITE["categories"]
 BASE = "https://mj-best.github.io"
 e = lambda s: html.escape(str(s), quote=True)
@@ -177,6 +178,16 @@ def link_attrs(u):
     return ' rel="noopener"' if is_external(u) else ""
 
 
+def auto_stats():
+    """메인 숫자를 데이터에서 계산 (프로젝트가 늘면 자동으로 바뀜)."""
+    n = len(P)
+    demos = sum(1 for p in P if any(not l["url"].startswith("https://github.com") for l in p["links"]))
+    pats = {pt.get("key"): pt for pt in SITE["stack"]["patterns"]}
+    backend = pats.get("actions-backend", {})
+    nb = len(set(backend.get("projects", [])) | {p["id"] for p in P if p.get("pattern") == "actions-backend"})
+    return [[str(n), "프로젝트"], [str(demos), "바로 열어 보는 데모"], ["4", "플랫폼 · Web Android iOS macOS"], [str(nb), "Actions로 예약 실행되는 앱"]]
+
+
 # ---------- index ----------
 def build_index():
     counts = {k: sum(1 for p in P if p["cat"] == k) for k in CATS}
@@ -198,7 +209,7 @@ def build_index():
 </div></article>""")
     others = "".join(f'<a href="{e(o["url"])}" rel="noopener"><b>{e(o["title"])}</b><span>{e(o["desc"])}</span></a>' for o in SITE["others"])
     ways = "".join(f'<li><b>{e(w[0])}</b><span>{e(w[1])}</span></li>' for w in SITE["ways"])
-    stats = "".join(f'<div><b>{e(s[0])}</b><span>{e(s[1])}</span></div>' for s in SITE["stats"])
+    stats = "".join(f'<div><b>{e(s[0])}</b><span>{e(s[1])}</span></div>' for s in auto_stats())
     body = f"""<section class="hero"><div class="wrap">
 <p class="eyebrow">{e(SITE['eyebrow'])}</p>
 <h1>{SITE['headline']}</h1>
@@ -222,7 +233,8 @@ def stack_html():
     pipe = "".join(f'<div><small>{i + 1:02d}</small><b>{e(s[0])}</b><span>{e(s[1])}</span></div>' for i, s in enumerate(st["pipeline"]))
     pats = []
     for pt in st["patterns"]:
-        items = "".join(f'<li><a href="/work/{slug[i]["slug"]}/">{e(slug[i]["title"])}</a></li>' for i in pt.get("projects", []) if i in slug)
+        ids = list(pt.get("projects", [])) + [p["id"] for p in P if p.get("pattern") == pt.get("key") and p["id"] not in pt.get("projects", [])]
+        items = "".join(f'<li><a href="/work/{slug[i]["slug"]}/">{e(slug[i]["title"])}</a></li>' for i in ids if i in slug)
         pats.append(f'<div class="pattern{" next" if pt.get("next") else ""}"><h3>{e(pt["title"])}</h3><p>{e(pt["desc"])}</p>{"<ul>" + items + "</ul>" if items else ""}</div>')
     return f"""<section class="stack" id="stack" aria-labelledby="h-stack"><div class="section-head" style="margin-top:0"><h2 id="h-stack">{e(st['title'])}</h2></div>
 <p class="stack-lead">{e(st['lead'])}</p><div class="pipe">{pipe}</div><div class="patterns">{''.join(pats)}</div></section>"""

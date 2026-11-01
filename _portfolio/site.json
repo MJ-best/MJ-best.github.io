@@ -1,6 +1,6 @@
 {
  "title": "MJ-best · 프로젝트 포트폴리오",
- "description": "직접 쓰려고 만든 웹앱과 모바일 앱 모음. DAX 시뮬레이터, 에이전트 하네스 워크북, GitHub Actions로 도는 에이전트 허브, 니콘 레시피 관리 앱 등 16개 프로젝트의 화면·동작 흐름·핵심 코드.",
+ "description": "직접 쓰려고 만든 웹앱과 모바일 앱 모음. DAX 시뮬레이터, 에이전트 하네스 워크북, GitHub Actions로 도는 에이전트 허브, 니콘 레시피 관리 앱 등 {n}개 프로젝트의 화면·동작 흐름·핵심 코드.",
  "head_extra": "<meta name=\"naver-site-verification\" content=\"d742928bf0bdbd59f1017ff8d26f2452638bb3cf\">",
  "github": "https://github.com/MJ-best",
  "year": "2026",
@@ -55,27 +55,32 @@
   {
    "title": "샤쉬키 (러시아 체커)",
    "desc": "HTML 한 장으로 만든 러시아식 체커 게임",
-   "url": "https://github.com/MJ-best/shashiki-game"
+   "url": "https://github.com/MJ-best/shashiki-game",
+   "repo": "shashiki-game"
   },
   {
    "title": "EasyPub",
    "desc": "Flutter로 만든 간편 EPUB 제작기",
-   "url": "https://github.com/MJ-best/easy-epub"
+   "url": "https://github.com/MJ-best/easy-epub",
+   "repo": "easy-epub"
   },
   {
    "title": "MyMandart",
    "desc": "만다라트 목표 설정 Flutter 앱 기획·디자인",
-   "url": "https://github.com/MJ-best/mymandart"
+   "url": "https://github.com/MJ-best/mymandart",
+   "repo": "mymandart"
   },
   {
    "title": "Artifact Flow MVP",
    "desc": "목표 하나로 에이전트 5개가 산출물을 만드는 Flutter·Supabase MVP",
-   "url": "https://github.com/MJ-best/bible-pray-note"
+   "url": "https://github.com/MJ-best/bible-pray-note",
+   "repo": "bible-pray-note"
   },
   {
    "title": "English Reading Vault",
    "desc": "Codex와 Obsidian으로 운영하는 영어 독해 학습 위키",
-   "url": "https://github.com/MJ-best/english-reading"
+   "url": "https://github.com/MJ-best/english-reading",
+   "repo": "english-reading"
   },
   {
    "title": "이전 기록 (2023)",
@@ -126,7 +131,8 @@
      "studio-conti",
      "mostmed",
      "jjy"
-    ]
+    ],
+    "key": "static"
    },
    {
     "title": "Actions로 빌드·배포",
@@ -134,7 +140,8 @@
     "projects": [
      "night-sky",
      "aice-pro"
-    ]
+    ],
+    "key": "actions-build"
    },
    {
     "title": "Actions를 백엔드로",
@@ -142,7 +149,8 @@
     "projects": [
      "agent-hub",
      "krw-wiki"
-    ]
+    ],
+    "key": "actions-backend"
    },
    {
     "title": "외부 백엔드와 함께",
@@ -151,7 +159,8 @@
      "gym-grow-how",
      "np3-lab",
      "nuance-graph"
-    ]
+    ],
+    "key": "external-backend"
    },
    {
     "title": "내 컴퓨터가 서버",
@@ -160,8 +169,45 @@
      "photo-monitor",
      "agent-hub",
      "shutterlink"
-    ]
+    ],
+    "key": "local-server"
    }
+  ]
+ },
+ "ignore": {
+  "repos": [
+   "MJ-best.github.io",
+   "d4d-kim-s",
+   "research-paper-codex-workspace",
+   "obsidian",
+   "mandarart-journey",
+   "resume-master",
+   "word-weavers-hub",
+   "oscilloscope-calc",
+   "homebar-hacks",
+   "my-bar-mixology",
+   "transknowledge",
+   "precise-app-gen",
+   "todo",
+   "langchain_project",
+   "Plamsa_diagnosis_with_ML",
+   "coding_test_study",
+   "SKT_Fellowship_2023",
+   "Plasma_diagnosis_with_ML",
+   "Atmospheric_Plasma_Diagnosis",
+   "-DACON-AI-",
+   "StudyNote_TimeSerise_AnormalyDetection",
+   "Challenge_to_the_Competition",
+   "macro_finance",
+   "plasma-calc",
+   "plasma-lab",
+   "auto-ticket"
+  ],
+  "pages_dirs": [
+   "work",
+   "assets",
+   "_portfolio",
+   ".github"
   ]
  }
 }

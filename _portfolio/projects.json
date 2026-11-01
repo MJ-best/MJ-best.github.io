@@ -90,7 +90,10 @@
     "img": "bizviz",
     "caption": "퀴즈 홈: 주제별 진도와 오답 노트."
    }
-  ]
+  ],
+  "source": {
+   "pages_dir": "bizviz-lab"
+  }
  },
  {
   "id": "harness-lab",
@@ -180,7 +183,10 @@
     "img": "harness-lab",
     "caption": "Lab 03 에이전트 루프: 예제 코드를 브라우저에서 바로 실행하고 결과를 확인합니다."
    }
-  ]
+  ],
+  "source": {
+   "pages_dir": "harness-lab"
+  }
  },
  {
   "id": "agent-hub",
@@ -325,7 +331,10 @@
   "private": true,
   "year": "2026",
   "links": [],
-  "repo_base": ""
+  "repo_base": "",
+  "source": {
+   "repo": "agent-hub"
+  }
  },
  {
   "id": "np3-lab",
@@ -431,7 +440,10 @@
     "img": "np3-android",
     "caption": "안드로이드판 에디터: 컬러 블렌더와 컬러 그레이딩."
    }
-  ]
+  ],
+  "source": {
+   "repo": "np3-lab"
+  }
  },
  {
   "id": "photo-monitor",
@@ -578,7 +590,10 @@
   "private": true,
   "year": "2026",
   "links": [],
-  "repo_base": ""
+  "repo_base": "",
+  "source": {
+   "repo": "wireless-photo-monitor"
+  }
  },
  {
   "id": "night-sky",
@@ -670,7 +685,10 @@
     "img": "night-m",
     "caption": "모바일 화면: 현장에서 휴대폰으로 확인합니다."
    }
-  ]
+  ],
+  "source": {
+   "repo": "night-camera-setting"
+  }
  },
  {
   "id": "ccnp-encor",
@@ -759,7 +777,10 @@
     "img": "ccnp",
     "caption": "개요: 도메인 비중, 진도, 10주 학습 계획."
    }
-  ]
+  ],
+  "source": {
+   "pages_dir": "ccnp-encor"
+  }
  },
  {
   "id": "voice-reader",
@@ -862,7 +883,10 @@
     "img": "vr-voices",
     "caption": "목소리 고르기: 기기 음성, Supertonic 음성 팩, 직접 만든 목소리."
    }
-  ]
+  ],
+  "source": {
+   "repo": "voice-reader"
+  }
  },
  {
   "id": "gym-grow-how",
@@ -1009,7 +1033,10 @@
   "private": true,
   "year": "2026",
   "links": [],
-  "repo_base": ""
+  "repo_base": "",
+  "source": {
+   "repo": "gym-grow-how"
+  }
  },
  {
   "id": "studio-conti",
@@ -1103,7 +1130,10 @@
     "img": "conti-board",
     "caption": "무드보드: 컷 구성을 한 장에 모아 공유합니다."
    }
-  ]
+  ],
+  "source": {
+   "pages_dir": "studio-conti"
+  }
  },
  {
   "id": "mostmed",
@@ -1197,7 +1227,10 @@
     "img": "mostmed-m",
     "caption": "모바일: 텔레그램·왓츠앱 문의 버튼이 항상 떠 있습니다."
    }
-  ]
+  ],
+  "source": {
+   "pages_dir": "mostmed"
+  }
  },
  {
   "id": "aice-pro",
@@ -1282,7 +1315,10 @@
     "img": "aice2",
     "caption": "문제 패널과 노트북 셀: 단계별 코드를 실행하고 제출 파일을 채점합니다."
    }
-  ]
+  ],
+  "source": {
+   "repo": "aice-pro"
+  }
  },
  {
   "id": "krw-wiki",
@@ -1419,7 +1455,10 @@
   "private": true,
   "year": "2026",
   "links": [],
-  "repo_base": ""
+  "repo_base": "",
+  "source": {
+   "repo": "krw_codex_investment_agent"
+  }
  },
  {
   "id": "jjy",
@@ -1505,7 +1544,10 @@
     "img": "jjy",
     "caption": "지도에서 도시를 고르면 그 현지 시각으로 타임코드를 만들어 송신합니다."
    }
-  ]
+  ],
+  "source": {
+   "repo": "JJY-simulator"
+  }
  },
  {
   "id": "nuance-graph",
@@ -1588,7 +1630,10 @@
   "year": "2026",
   "cover": "nuance",
   "repo_base": "https://github.com/MJ-best/my-words-note-flutter/blob/main/",
-  "shots": []
+  "shots": [],
+  "source": {
+   "repo": "my-words-note-flutter"
+  }
  },
  {
   "id": "shutterlink",
@@ -1665,6 +1710,9 @@
   "year": "2026",
   "cover": "shutter",
   "repo_base": "https://github.com/MJ-best/ShutterLink/blob/main/",
-  "shots": []
+  "shots": [],
+  "source": {
+   "repo": "ShutterLink"
+  }
  }
 ]
