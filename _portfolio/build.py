@@ -29,6 +29,9 @@ KW = {
     "kotlin": "fun val var return if else for while in when class object private internal override null true false is as import package data enum",
     "swift": "func let var return if else for while in guard switch case class struct enum private static self nil true false import extension protocol default break",
 }
+KW["rust"] = "fn let mut pub use mod struct enum impl trait for in if else match return self Self crate super where async await move ref loop while break continue const static true false Some None Ok Err as dyn"
+KW["rs"] = KW["rust"]
+KW["go"] = "func package import var const type struct interface map chan go defer return if else for range switch case default break continue nil true false"
 KW["javascript"] = KW["js"]
 
 

@@ -43,8 +43,8 @@
 <section class="d-sec" id="flow"><h2>어떻게 동작하나</h2><ol class="flow"><li><h3>카드 스캔</h3><p>폴더를 순회해 미디어 파일을 찾고 RAW 하위 폴더까지 고려해 같은 이름끼리 묶은 뒤, rayon으로 EXIF를 병렬로 읽습니다.</p><a class="file" href="https://github.com/MJ-best/exif-photo-organize/blob/main/crates/core/src/import.rs" rel="noopener">crates/core/src/import.rs</a></li><li><h3>중복 판별</h3><p>파일명·크기·촬영 시각으로 만든 quick key를 카탈로그와 대조해 이미 가져온 파일을 표시합니다.</p><a class="file" href="https://github.com/MJ-best/exif-photo-organize/blob/main/crates/core/src/import.rs" rel="noopener">crates/core/src/import.rs</a></li><li><h3>경로 계획</h3><p>템플릿으로 목적지 폴더와 파일명을 만들고, 이름이 겹치면 _1, _2 접미사를 붙이되 RAW와 JPEG에는 같은 접미사를 씁니다.</p><a class="file" href="https://github.com/MJ-best/exif-photo-organize/blob/main/crates/core/src/template.rs" rel="noopener">crates/core/src/template.rs</a></li><li><h3>복사 파이프라인</h3><p>읽기 스레드가 4MB 청크를 bounded 채널로 보내고 쓰기 쪽이 해시 계산, fsync, 재읽기 검증 후 이름을 바꿉니다.</p><a class="file" href="https://github.com/MJ-best/exif-photo-organize/blob/main/crates/core/src/import.rs" rel="noopener">crates/core/src/import.rs</a></li><li><h3>카탈로그와 썸네일</h3><p>자동 태그와 함께 SQLite 카탈로그에 등록하고, 복사와 동시에 워커 풀이 RAW 내장 미리보기로 썸네일을 만듭니다.</p><a class="file" href="https://github.com/MJ-best/exif-photo-organize/blob/main/crates/core/src/catalog.rs" rel="noopener">crates/core/src/catalog.rs</a></li><li><h3>셀렉과 필터</h3><p>메모리 인덱스에서 필터와 패싯을 계산하고, 별점은 쓰기 전용 스레드가 XMP에 기록합니다.</p><a class="file" href="https://github.com/MJ-best/exif-photo-organize/blob/main/crates/core/src/filter.rs" rel="noopener">crates/core/src/filter.rs</a></li></ol></section>
 <section class="d-sec" id="code"><h2>핵심 코드</h2>
 <div class="code"><div class="code-bar"><span>crates/core/src/import.rs</span><a href="https://github.com/MJ-best/exif-photo-organize/blob/main/crates/core/src/import.rs" rel="noopener">GitHub에서 보기 ↗</a></div><pre><code><span class="k">let</span> file = out.<span class="f">into_inner</span>().<span class="f">map_err</span>(|e| e.<span class="f">into_error</span>())?;
-<span class="k">if</span> <span class="k">let</span> <span class="f">Some</span>(t) = pf.src.mtime {
-    <span class="k">let</span> _ = file.<span class="f">set_modified</span>(SystemTime::UNIX_EPOCH + Duration::<span class="f">from_secs</span>(t.<span class="f">max</span>(<span class="n">0</span>) as u64));
+<span class="k">if</span> <span class="k">let</span> <span class="k">Some</span>(t) = pf.src.mtime {
+    <span class="k">let</span> _ = file.<span class="f">set_modified</span>(SystemTime::UNIX_EPOCH + Duration::<span class="f">from_secs</span>(t.<span class="f">max</span>(<span class="n">0</span>) <span class="k">as</span> u64));
 }
 <span class="k">if</span> verify {
     file.<span class="f">sync_all</span>().<span class="f">context</span>(<span class="s">&quot;동기화 실패&quot;</span>)?;
@@ -55,7 +55,7 @@
     bail!(<span class="s">&quot;크기 불일치: {written} / {}&quot;</span>, pf.src.size);
 }
 <span class="k">if</span> verify {
-    <span class="k">let</span> check = <span class="f">hash_file</span>(&amp;tmp, None)?;
+    <span class="k">let</span> check = <span class="f">hash_file</span>(&amp;tmp, <span class="k">None</span>)?;
     <span class="k">if</span> check != hash {
         bail!(<span class="s">&quot;검증 실패: 체크섬이 다릅니다&quot;</span>);
     }
