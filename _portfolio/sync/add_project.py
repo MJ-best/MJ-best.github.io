@@ -68,6 +68,10 @@ def ask_claude(c, repo_dir, demo):
     out = repo_dir / ".portfolio_entry.json"
     if out.exists():
         out.unlink()
+    # 터미널에서 복사할 때 토큰 중간에 줄바꿈·공백이 섞이는 경우가 많아 제거한다 (토큰에는 공백이 없음)
+    tok = os.environ.get("CLAUDE_CODE_OAUTH_TOKEN", "")
+    if tok:
+        os.environ["CLAUDE_CODE_OAUTH_TOKEN"] = re.sub(r"\s+", "", tok)
     run(["claude", "-p", prompt, "--permission-mode", "acceptEdits",
          "--allowedTools", "Read,Glob,Grep,Write,Bash(python3 -c:*),Bash(ls:*),Bash(wc:*)",
          "--max-turns", "60"], cwd=repo_dir, timeout=1500)
