@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Photo Organize · MJ-best</title>
+<meta name="description" content="SD 카드를 꽂으면 EXIF 촬영일 기준 폴더로 복사하면서 정리하고, 별점으로 셀렉할 수 있는 Rust 데스크톱 앱입니다. 사진가를 대상으로 합니다.">
+<meta name="naver-site-verification" content="d742928bf0bdbd59f1017ff8d26f2452638bb3cf">
+<link rel="canonical" href="https://mj-best.github.io/work/photo-organize/">
+<meta property="og:type" content="website"><meta property="og:title" content="Photo Organize · MJ-best"><meta property="og:description" content="SD 카드를 꽂으면 EXIF 촬영일 기준 폴더로 복사하면서 정리하고, 별점으로 셀렉할 수 있는 Rust 데스크톱 앱입니다. 사진가를 대상으로 합니다."><meta property="og:url" content="https://mj-best.github.io/work/photo-organize/">
+<meta name="theme-color" content="#f5f3ee" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#141619" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/assets/portfolio.css">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+</head>
+<body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+<header class="top"><div class="wrap">
+<a class="logo" href="/"><i aria-hidden="true"></i>MJ-best</a>
+<nav aria-label="주 메뉴">
+<a href="/#projects">프로젝트</a><a class="hide-s" href="/#stack">구조</a><a class="hide-s" href="/#about">작업 방식</a><a href="https://github.com/MJ-best" rel="noopener">GitHub</a>
+<button class="theme-btn" type="button" aria-label="밝게/어둡게 전환" title="밝게/어둡게 전환"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg></button>
+</nav></div></header>
+<main id="main">
+<div class="wrap">
+<nav class="crumb" aria-label="위치"><a href="/#projects">← 전체 프로젝트</a></nav>
+<header class="d-head"><div>
+<p class="eyebrow" style="margin:0">사진·카메라</p>
+<h1>Photo Organize</h1>
+<p>SD 카드를 꽂으면 EXIF 촬영일 기준 폴더로 복사하면서 정리하고, 별점으로 셀렉할 수 있는 Rust 데스크톱 앱입니다. 사진가를 대상으로 합니다.</p>
+</div><div class="btns"><a class="btn" href="https://github.com/MJ-best/exif-photo-organize" rel="noopener">GitHub ↗</a></div></header>
+<div class="meta"><span><b>분야</b>사진·카메라</span><span><b>플랫폼</b>macOS · Windows · Linux</span><span><b>기술</b>Rust · egui/eframe · SQLite (rusqlite) · BLAKE3 · rayon · crossbeam-channel · kamadak-exif · GitHub Actions</span></div>
+<section class="shots" aria-label="화면"><div class="cover-big"><svg viewBox="0 0 800 450" role="img" aria-label="Photo Organize 구조 그림"><rect width="800" height="450" fill="var(--accent-soft)"/><rect x="30" y="175" width="124" height="100" rx="14" fill="var(--accent)" stroke="var(--accent)" stroke-width="2"/><text x="92.0" y="221" text-anchor="middle" font-family="IBM Plex Sans KR,sans-serif" font-weight="600" font-size="14" fill="var(--accent-ink)">SD 카드</text><text x="92.0" y="247" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--accent-ink)">DCIM 원본</text><path d="M160 225 H178" stroke="var(--accent)" stroke-width="2.5" fill="none" stroke-dasharray="2 7" stroke-linecap="round"/><path d="M170 218 L178 225 L170 232" stroke="var(--accent)" stroke-width="2.5" fill="none"/><rect x="184" y="175" width="124" height="100" rx="14" fill="var(--card)" stroke="var(--line-2)" stroke-width="2"/><text x="246.0" y="221" text-anchor="middle" font-family="IBM Plex Sans KR,sans-serif" font-weight="600" font-size="14" fill="var(--ink)">photoorg-core</text><text x="246.0" y="247" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--ink-3)">스캔·복사·EXIF</text><path d="M314 225 H332" stroke="var(--accent)" stroke-width="2.5" fill="none" stroke-dasharray="2 7" stroke-linecap="round"/><path d="M324 218 L332 225 L324 232" stroke="var(--accent)" stroke-width="2.5" fill="none"/><rect x="338" y="175" width="124" height="100" rx="14" fill="var(--card)" stroke="var(--line-2)" stroke-width="2"/><text x="400.0" y="221" text-anchor="middle" font-family="IBM Plex Sans KR,sans-serif" font-weight="600" font-size="14" fill="var(--ink)">라이브러리 폴더</text><text x="400.0" y="247" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--ink-3)">날짜별 폴더 + XMP</text><path d="M468 225 H486" stroke="var(--accent)" stroke-width="2.5" fill="none" stroke-dasharray="2 7" stroke-linecap="round"/><path d="M478 218 L486 225 L478 232" stroke="var(--accent)" stroke-width="2.5" fill="none"/><rect x="492" y="175" width="124" height="100" rx="14" fill="var(--card)" stroke="var(--line-2)" stroke-width="2"/><text x="554.0" y="221" text-anchor="middle" font-family="IBM Plex Sans KR,sans-serif" font-weight="600" font-size="14" fill="var(--ink)">SQLite</text><text x="554.0" y="247" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--ink-3)">카탈로그·썸네일</text><path d="M622 225 H640" stroke="var(--accent)" stroke-width="2.5" fill="none" stroke-dasharray="2 7" stroke-linecap="round"/><path d="M632 218 L640 225 L632 232" stroke="var(--accent)" stroke-width="2.5" fill="none"/><rect x="646" y="175" width="124" height="100" rx="14" fill="var(--card)" stroke="var(--line-2)" stroke-width="2"/><text x="708.0" y="221" text-anchor="middle" font-family="IBM Plex Sans KR,sans-serif" font-weight="600" font-size="14" fill="var(--ink)">egui 앱/CLI</text><text x="708.0" y="247" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--ink-3)">셀렉·필터</text></svg></div><figcaption>저장소에 공개된 화면 이미지가 없어, 동작 원리를 그림으로 대신합니다.</figcaption></section>
+<div class="d-grid">
+<aside class="toc" aria-label="이 페이지 목차"><ol>
+<li><a href="#why">왜 만들었나</a></li><li><a href="#features">주요 기능</a></li><li><a href="#flow">어떻게 동작하나</a></li><li><a href="#code">핵심 코드</a></li><li><a href="#hard">어려웠던 점</a></li></ol></aside>
+<article>
+<section class="d-sec" id="why"><h2>왜 만들었나</h2><p>SD 카드를 외장 하드에 통째로 복사해 두고 정리를 미루다 보면 중복 파일이 쌓이고 RAW와 JPEG의 짝이 흩어집니다. 가져오기, 날짜별 정리, 셀렉을 한 흐름으로 처리해 이 문제를 줄입니다.</p></section>
+<section class="d-sec" id="features"><h2>주요 기능</h2><ul class="feat"><li>EXIF 촬영 시각으로 폴더·파일 이름 템플릿에 맞춰 복사와 동시에 정리</li><li>같은 이름의 RAW와 JPEG를 한 장으로 묶고 듀얼 슬롯 카드도 병합</li><li>BLAKE3 체크섬 검증과 임시 파일 후 이름 변경 방식으로 안전하게 복사</li><li>F1~F5 별점을 카탈로그와 XMP 사이드카에 기록해 Lightroom과 호환</li><li>카메라·렌즈·ISO·초점거리 필터와 EXIF 자동 태그, CSV 내보내기</li></ul></section>
+<section class="d-sec"><h2>숫자로 보면</h2><div class="nums"><div>Cargo 워크스페이스 3개 크레이트(core, app, cli)</div><div>폴더 구조 프리셋 5개, 파일 이름 프리셋 3개</div><div>CLI 하위 명령 10개(volumes, scan, import, list, stats, rate, export-csv, thumbs, info 등)</div></div></section>
+<section class="d-sec" id="flow"><h2>어떻게 동작하나</h2><ol class="flow"><li><h3>카드 스캔</h3><p>폴더를 순회해 미디어 파일을 찾고 RAW 하위 폴더까지 고려해 같은 이름끼리 묶은 뒤, rayon으로 EXIF를 병렬로 읽습니다.</p><a class="file" href="https://github.com/MJ-best/exif-photo-organize/blob/main/crates/core/src/import.rs" rel="noopener">crates/core/src/import.rs</a></li><li><h3>중복 판별</h3><p>파일명·크기·촬영 시각으로 만든 quick key를 카탈로그와 대조해 이미 가져온 파일을 표시합니다.</p><a class="file" href="https://github.com/MJ-best/exif-photo-organize/blob/main/crates/core/src/import.rs" rel="noopener">crates/core/src/import.rs</a></li><li><h3>경로 계획</h3><p>템플릿으로 목적지 폴더와 파일명을 만들고, 이름이 겹치면 _1, _2 접미사를 붙이되 RAW와 JPEG에는 같은 접미사를 씁니다.</p><a class="file" href="https://github.com/MJ-best/exif-photo-organize/blob/main/crates/core/src/template.rs" rel="noopener">crates/core/src/template.rs</a></li><li><h3>복사 파이프라인</h3><p>읽기 스레드가 4MB 청크를 bounded 채널로 보내고 쓰기 쪽이 해시 계산, fsync, 재읽기 검증 후 이름을 바꿉니다.</p><a class="file" href="https://github.com/MJ-best/exif-photo-organize/blob/main/crates/core/src/import.rs" rel="noopener">crates/core/src/import.rs</a></li><li><h3>카탈로그와 썸네일</h3><p>자동 태그와 함께 SQLite 카탈로그에 등록하고, 복사와 동시에 워커 풀이 RAW 내장 미리보기로 썸네일을 만듭니다.</p><a class="file" href="https://github.com/MJ-best/exif-photo-organize/blob/main/crates/core/src/catalog.rs" rel="noopener">crates/core/src/catalog.rs</a></li><li><h3>셀렉과 필터</h3><p>메모리 인덱스에서 필터와 패싯을 계산하고, 별점은 쓰기 전용 스레드가 XMP에 기록합니다.</p><a class="file" href="https://github.com/MJ-best/exif-photo-organize/blob/main/crates/core/src/filter.rs" rel="noopener">crates/core/src/filter.rs</a></li></ol></section>
+<section class="d-sec" id="code"><h2>핵심 코드</h2>
+<div class="code"><div class="code-bar"><span>crates/core/src/import.rs</span><a href="https://github.com/MJ-best/exif-photo-organize/blob/main/crates/core/src/import.rs" rel="noopener">GitHub에서 보기 ↗</a></div><pre><code><span class="k">let</span> file = out.<span class="f">into_inner</span>().<span class="f">map_err</span>(|e| e.<span class="f">into_error</span>())?;
+<span class="k">if</span> <span class="k">let</span> <span class="f">Some</span>(t) = pf.src.mtime {
+    <span class="k">let</span> _ = file.<span class="f">set_modified</span>(SystemTime::UNIX_EPOCH + Duration::<span class="f">from_secs</span>(t.<span class="f">max</span>(<span class="n">0</span>) as u64));
+}
+<span class="k">if</span> verify {
+    file.<span class="f">sync_all</span>().<span class="f">context</span>(<span class="s">&quot;동기화 실패&quot;</span>)?;
+}
+<span class="f">drop</span>(file);
+<span class="k">let</span> hash = hasher.<span class="f">finalize</span>().<span class="f">to_hex</span>().<span class="f">to_string</span>();
+<span class="k">if</span> written != pf.src.size {
+    bail!(<span class="s">&quot;크기 불일치: {written} / {}&quot;</span>, pf.src.size);
+}
+<span class="k">if</span> verify {
+    <span class="k">let</span> check = <span class="f">hash_file</span>(&amp;tmp, None)?;
+    <span class="k">if</span> check != hash {
+        bail!(<span class="s">&quot;검증 실패: 체크섬이 다릅니다&quot;</span>);
+    }
+}</code></pre></div>
+<p class="code-cap">복사 중 임시 파일에 쓰며 해시를 계산하고, 크기와 체크섬 검증을 통과해야만 최종 이름으로 바꿉니다.</p></section>
+<section class="d-sec" id="hard"><h2>어려웠던 점</h2><div class="callout">카드 읽기와 외장 하드 쓰기를 겹치면서도 파일 단위 무결성을 지키는 부분입니다. Begin/Data/End 청크 프로토콜로 스트림을 나누고, 한 파일의 쓰기가 실패하면 남은 청크를 소비해 다음 파일이 어긋나지 않게 하며, 취소 시에는 반쯤 복사된 묶음을 지웁니다.</div></section>
+<nav class="pager" aria-label="다른 프로젝트">
+<a href="/work/shutterlink/"><small>← 이전</small><b>셔터링크</b></a>
+<a class="next" href="/work/bizviz-lab/"><small>다음 →</small><b>경영정보시각화 실기 랩</b></a></nav>
+</article></div></div>
+</main>
+<footer><div class="wrap"><span>© 2026 MJ-best · 이 사이트와 모든 데모는 GitHub Pages에서 동작합니다.</span><a href="https://github.com/MJ-best">github.com/MJ-best</a></div></footer>
+<script src="/assets/portfolio.js" defer></script>
+</body>
+</html>
