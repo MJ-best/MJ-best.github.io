@@ -72,9 +72,13 @@ def ask_claude(c, repo_dir, demo):
     tok = os.environ.get("CLAUDE_CODE_OAUTH_TOKEN", "")
     if tok:
         os.environ["CLAUDE_CODE_OAUTH_TOKEN"] = re.sub(r"\s+", "", tok)
-    run(["claude", "-p", prompt, "--permission-mode", "acceptEdits",
-         "--allowedTools", "Read,Glob,Grep,Write,Bash(python3 -c:*),Bash(ls:*),Bash(wc:*)",
-         "--max-turns", "60"], cwd=repo_dir, timeout=1500)
+    env = {k: v for k, v in os.environ.items() if k not in ("PORTFOLIO_READ_TOKEN", "GITHUB_TOKEN")}  # 분석 중엔 GitHub 토큰을 넘기지 않음
+    tools = ["--permission-mode", "acceptEdits", "--allowedTools", "Read,Glob,Grep,Write,Edit,Bash(python3 -c:*),Bash(ls:*),Bash(wc:*)"]
+    run(["claude", "-p", prompt, *tools, "--max-turns", "60"], cwd=repo_dir, timeout=1500, env=env)
+    if not out.exists():  # 스크립트로 쓰려다 막힌 경우 등 → 같은 대화를 이어서 직접 쓰게 한다
+        run(["claude", "-p", "Now create `.portfolio_entry.json` in the current directory directly with the Write tool, "
+             "using everything you have already found. Do not run any scripts.", "--continue", *tools, "--max-turns", "15"],
+            cwd=repo_dir, timeout=600, env=env)
     entry = json.loads(out.read_text("utf-8"))
     out.unlink()
     return entry

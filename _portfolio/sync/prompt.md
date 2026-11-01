@@ -5,7 +5,7 @@ Visibility: {{VISIBILITY}}
 GitHub description: {{DESCRIPTION}}
 Demo URL (may be empty): {{DEMO}}
 
-Write a single JSON object to the file `.portfolio_entry.json` in the current directory, and nothing else. All text in natural, concise Korean, ending sentences consistently with "~합니다", no marketing fluff, no emoji.
+Write a single JSON object to the file `.portfolio_entry.json` in the current directory, and nothing else. Create it directly with the Write tool. Do NOT write or run helper scripts, and do not write files anywhere else — only Read/Glob/Grep to study the code and Write/Edit for `.portfolio_entry.json` are allowed. For the snippet, copy the lines exactly as they appear in the file you read. All text in natural, concise Korean, ending sentences consistently with "~합니다", no marketing fluff, no emoji.
 
 Keys:
 - "id": short kebab-case id (e.g. "night-sky")
