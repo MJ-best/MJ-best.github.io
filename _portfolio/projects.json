@@ -1714,5 +1714,148 @@
   "source": {
    "repo": "ShutterLink"
   }
+ },
+ {
+  "id": "photo-organize",
+  "slug": "photo-organize",
+  "title": "Photo Organize",
+  "cat": "photo",
+  "pattern": "local-server",
+  "platform": "macOS · Windows · Linux",
+  "summary": "SD 카드를 꽂으면 EXIF 촬영일 기준 폴더로 복사하면서 정리하고, 별점으로 셀렉할 수 있는 Rust 데스크톱 앱입니다. 사진가를 대상으로 합니다.",
+  "problem": "SD 카드를 외장 하드에 통째로 복사해 두고 정리를 미루다 보면 중복 파일이 쌓이고 RAW와 JPEG의 짝이 흩어집니다. 가져오기, 날짜별 정리, 셀렉을 한 흐름으로 처리해 이 문제를 줄입니다.",
+  "features": [
+   "EXIF 촬영 시각으로 폴더·파일 이름 템플릿에 맞춰 복사와 동시에 정리",
+   "같은 이름의 RAW와 JPEG를 한 장으로 묶고 듀얼 슬롯 카드도 병합",
+   "BLAKE3 체크섬 검증과 임시 파일 후 이름 변경 방식으로 안전하게 복사",
+   "F1~F5 별점을 카탈로그와 XMP 사이드카에 기록해 Lightroom과 호환",
+   "카메라·렌즈·ISO·초점거리 필터와 EXIF 자동 태그, CSV 내보내기"
+  ],
+  "stack": [
+   "Rust",
+   "egui/eframe",
+   "SQLite (rusqlite)",
+   "BLAKE3",
+   "rayon",
+   "crossbeam-channel",
+   "kamadak-exif",
+   "GitHub Actions"
+  ],
+  "flow": [
+   {
+    "title": "카드 스캔",
+    "detail": "폴더를 순회해 미디어 파일을 찾고 RAW 하위 폴더까지 고려해 같은 이름끼리 묶은 뒤, rayon으로 EXIF를 병렬로 읽습니다.",
+    "file": "crates/core/src/import.rs"
+   },
+   {
+    "title": "중복 판별",
+    "detail": "파일명·크기·촬영 시각으로 만든 quick key를 카탈로그와 대조해 이미 가져온 파일을 표시합니다.",
+    "file": "crates/core/src/import.rs"
+   },
+   {
+    "title": "경로 계획",
+    "detail": "템플릿으로 목적지 폴더와 파일명을 만들고, 이름이 겹치면 _1, _2 접미사를 붙이되 RAW와 JPEG에는 같은 접미사를 씁니다.",
+    "file": "crates/core/src/template.rs"
+   },
+   {
+    "title": "복사 파이프라인",
+    "detail": "읽기 스레드가 4MB 청크를 bounded 채널로 보내고 쓰기 쪽이 해시 계산, fsync, 재읽기 검증 후 이름을 바꿉니다.",
+    "file": "crates/core/src/import.rs"
+   },
+   {
+    "title": "카탈로그와 썸네일",
+    "detail": "자동 태그와 함께 SQLite 카탈로그에 등록하고, 복사와 동시에 워커 풀이 RAW 내장 미리보기로 썸네일을 만듭니다.",
+    "file": "crates/core/src/catalog.rs"
+   },
+   {
+    "title": "셀렉과 필터",
+    "detail": "메모리 인덱스에서 필터와 패싯을 계산하고, 별점은 쓰기 전용 스레드가 XMP에 기록합니다.",
+    "file": "crates/core/src/filter.rs"
+   }
+  ],
+  "hard_part": "카드 읽기와 외장 하드 쓰기를 겹치면서도 파일 단위 무결성을 지키는 부분입니다. Begin/Data/End 청크 프로토콜로 스트림을 나누고, 한 파일의 쓰기가 실패하면 남은 청크를 소비해 다음 파일이 어긋나지 않게 하며, 취소 시에는 반쯤 복사된 묶음을 지웁니다.",
+  "numbers": [
+   "Cargo 워크스페이스 3개 크레이트(core, app, cli)",
+   "폴더 구조 프리셋 5개, 파일 이름 프리셋 3개",
+   "CLI 하위 명령 10개(volumes, scan, import, list, stats, rate, export-csv, thumbs, info 등)"
+  ],
+  "backend": "사용자의 PC에서 실행되는 네이티브 앱이며, 서버 없이 라이브러리 폴더 안의 SQLite 카탈로그와 썸네일 DB를 사용합니다.",
+  "arch": {
+   "nodes": [
+    {
+     "id": "card",
+     "label": "SD 카드",
+     "sub": "DCIM 원본"
+    },
+    {
+     "id": "core",
+     "label": "photoorg-core",
+     "sub": "스캔·복사·EXIF"
+    },
+    {
+     "id": "lib",
+     "label": "라이브러리 폴더",
+     "sub": "날짜별 폴더 + XMP"
+    },
+    {
+     "id": "db",
+     "label": "SQLite",
+     "sub": "카탈로그·썸네일"
+    },
+    {
+     "id": "ui",
+     "label": "egui 앱/CLI",
+     "sub": "셀렉·필터"
+    }
+   ],
+   "edges": [
+    {
+     "from": "card",
+     "to": "core",
+     "label": "4MB 청크"
+    },
+    {
+     "from": "core",
+     "to": "lib",
+     "label": "검증 후 복사"
+    },
+    {
+     "from": "core",
+     "to": "db",
+     "label": "메타데이터 등록"
+    },
+    {
+     "from": "db",
+     "to": "ui",
+     "label": "메모리 인덱스"
+    },
+    {
+     "from": "ui",
+     "to": "lib",
+     "label": "별점 XMP 기록"
+    }
+   ]
+  },
+  "snippet": {
+   "file": "crates/core/src/import.rs",
+   "lang": "rust",
+   "caption": "복사 중 임시 파일에 쓰며 해시를 계산하고, 크기와 체크섬 검증을 통과해야만 최종 이름으로 바꿉니다.",
+   "code": "        let file = out.into_inner().map_err(|e| e.into_error())?;\n        if let Some(t) = pf.src.mtime {\n            let _ = file.set_modified(SystemTime::UNIX_EPOCH + Duration::from_secs(t.max(0) as u64));\n        }\n        if verify {\n            file.sync_all().context(\"동기화 실패\")?;\n        }\n        drop(file);\n        let hash = hasher.finalize().to_hex().to_string();\n        if written != pf.src.size {\n            bail!(\"크기 불일치: {written} / {}\", pf.src.size);\n        }\n        if verify {\n            let check = hash_file(&tmp, None)?;\n            if check != hash {\n                bail!(\"검증 실패: 체크섬이 다릅니다\");\n            }\n        }"
+  },
+  "year": "2026",
+  "source": {
+   "repo": "exif-photo-organize"
+  },
+  "private": false,
+  "repo_base": "https://github.com/MJ-best/exif-photo-organize/blob/main/",
+  "links": [
+   {
+    "label": "GitHub",
+    "url": "https://github.com/MJ-best/exif-photo-organize"
+   }
+  ],
+  "shots": [],
+  "cover": "arch",
+  "auto_added": true
  }
 ]
