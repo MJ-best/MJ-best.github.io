@@ -97,9 +97,31 @@ COVERS = {
 }
 
 
+def arch_cover(p):
+    nodes = p["arch"]["nodes"][:5]
+    n = len(nodes); W = 800; bw = min(150, (W - 60 - 30 * (n - 1)) // n); gap = (W - 60 - bw * n) // max(n - 1, 1)
+    g = []
+    for i, nd in enumerate(nodes):
+        x = 30 + i * (bw + gap); y = 200
+        hl = i == 0
+        g.append(f'<rect x="{x}" y="{y}" width="{bw}" height="100" rx="14" fill="{'var(--accent)' if hl else 'var(--card)'}" stroke="{'var(--accent)' if hl else 'var(--line-2)'}" stroke-width="2"/>')
+        g.append(f'<text x="{x + bw / 2}" y="{y + 46}" text-anchor="middle" font-family="IBM Plex Sans KR,sans-serif" font-weight="600" font-size="17" fill="{'var(--accent-ink)' if hl else 'var(--ink)'}">{e(nd["label"][:12])}</text>')
+        g.append(f'<text x="{x + bw / 2}" y="{y + 72}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="12" fill="{'var(--accent-ink)' if hl else 'var(--ink-3)'}">{e((nd.get("sub") or "")[:18])}</text>')
+        if i < n - 1:
+            ax = x + bw + 6; bx = x + bw + gap - 6
+            g.append(f'<path d="M{ax} 250 H{bx}" stroke="var(--accent)" stroke-width="2.5" fill="none" stroke-dasharray="2 7" stroke-linecap="round"/><path d="M{bx - 8} 243 L{bx} 250 L{bx - 8} 257" stroke="var(--accent)" stroke-width="2.5" fill="none"/>')
+    return f'<svg viewBox="0 0 800 500" role="img" aria-label="{e(p["title"])} 구조 그림"><rect width="800" height="500" fill="var(--accent-soft)"/>{"".join(g)}</svg>'
+
+
+def cover_svg(p):
+    return COVERS[p["cover"]] if p["cover"] in COVERS else arch_cover(p)
+
+
 def thumb_html(p, big=False):
+    if p.get("thumb") and not big:
+        return f'<img src="/assets/img/{p["thumb"]}.webp" alt="{e(p["title"])} 화면" loading="lazy" decoding="async">'
     if p.get("cover"):
-        return COVERS[p["cover"]]
+        return cover_svg(p)
     s = p["shots"][0]
     name = s["img"] + ("" if big else "-t")
     return f'<img src="/assets/img/{name}.webp" alt="{e(p["title"])} 화면" loading="lazy" decoding="async">'
@@ -134,7 +156,7 @@ def shell(title, desc, path, body, og_img=None, extra_head=""):
 <header class="top"><div class="wrap">
 <a class="logo" href="/"><i aria-hidden="true"></i>MJ-best</a>
 <nav aria-label="주 메뉴">
-<a href="/#projects">프로젝트</a><a class="hide-s" href="/#about">작업 방식</a><a href="{SITE['github']}" rel="noopener">GitHub</a>
+<a href="/#projects">프로젝트</a><a class="hide-s" href="/#stack">구조</a><a class="hide-s" href="/#about">작업 방식</a><a href="{SITE['github']}" rel="noopener">GitHub</a>
 <button class="theme-btn" type="button" aria-label="밝게/어둡게 전환" title="밝게/어둡게 전환"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg></button>
 </nav></div></header>
 <main id="main">
@@ -168,7 +190,7 @@ def build_index():
         cards.append(f"""<article class="card" data-cat="{p['cat']}">
 <div class="thumb">{thumb_html(p)}</div>
 <div class="body">
-<div class="kicker"><span class="dot" aria-hidden="true"></span>{e(CATS[p['cat']])} · {e(p['platform'])}</div>
+<div class="kicker"><span class="dot" aria-hidden="true"></span>{e(CATS[p['cat']])} · {e(p['platform'])}{' · <span class="priv">비공개</span>' if p.get('private') else ''}</div>
 <h3><a href="/work/{p['slug']}/">{e(p['title'])}</a></h3>
 <p>{e(p['summary'])}</p>
 {demo_html}
@@ -188,9 +210,22 @@ def build_index():
 <div class="grid">{''.join(cards)}</div>
 <div class="section-head"><h2>그 밖의 작업</h2></div>
 <div class="others">{others}</div>
+{stack_html()}
 <div class="about" id="about"><div><h2>작업 방식</h2><p>{e(SITE['about'])}</p></div><ul>{ways}</ul></div>
 </section>"""
     (ROOT / "index.html").write_text(shell(SITE["title"], SITE["description"], "/", body, og_img=P[0]["shots"][0]["img"]), "utf-8")
+
+
+def stack_html():
+    st = SITE["stack"]
+    slug = {p["id"]: p for p in P}
+    pipe = "".join(f'<div><small>{i + 1:02d}</small><b>{e(s[0])}</b><span>{e(s[1])}</span></div>' for i, s in enumerate(st["pipeline"]))
+    pats = []
+    for pt in st["patterns"]:
+        items = "".join(f'<li><a href="/work/{slug[i]["slug"]}/">{e(slug[i]["title"])}</a></li>' for i in pt.get("projects", []) if i in slug)
+        pats.append(f'<div class="pattern{" next" if pt.get("next") else ""}"><h3>{e(pt["title"])}</h3><p>{e(pt["desc"])}</p>{"<ul>" + items + "</ul>" if items else ""}</div>')
+    return f"""<section class="stack" id="stack" aria-labelledby="h-stack"><div class="section-head" style="margin-top:0"><h2 id="h-stack">{e(st['title'])}</h2></div>
+<p class="stack-lead">{e(st['lead'])}</p><div class="pipe">{pipe}</div><div class="patterns">{''.join(pats)}</div></section>"""
 
 
 # ---------- detail ----------
@@ -204,6 +239,8 @@ def build_detail(i, p):
     # screenshots
     if p["shots"]:
         def is_phone(name):
+            if any(s.get("phone") for s in p["shots"] if s["img"] == name):
+                return True
             return any(k in name for k in ("-m", "vr-reading", "vr-fix", "vr-voices", "np3-android"))
         main, rest = p["shots"][0], p["shots"][1:]
         def fig(s, cls=""):
@@ -216,19 +253,38 @@ def build_detail(i, p):
         if phones:
             shots += '<div class="shot-row phones">' + "".join(fig(s) for s in phones) + "</div>"
     else:
-        shots = f'<div class="cover-big">{COVERS[p["cover"]]}</div><figcaption>저장소에 공개된 화면 이미지가 없어, 동작 원리를 그림으로 대신합니다.</figcaption>'
+        shots = f'<div class="cover-big">{cover_svg(p)}</div><figcaption>{e(p.get("cover_note", "저장소에 공개된 화면 이미지가 없어, 동작 원리를 그림으로 대신합니다."))}</figcaption>'
 
     feats = "".join(f"<li>{e(f)}</li>" for f in p["features"])
     nums = "".join(f"<div>{e(n)}</div>" for n in p["numbers"])
     flow = "".join(
-        f'<li><h3>{e(s["title"])}</h3><p>{e(s["detail"])}</p><a class="file" href="{e(base + s["file"])}" rel="noopener">{e(s["file"])}</a></li>'
+        (f'<li><h3>{e(s["title"])}</h3><p>{e(s["detail"])}</p><span class="file">{e(s["file"])}</span></li>' if p.get("private") else f'<li><h3>{e(s["title"])}</h3><p>{e(s["detail"])}</p><a class="file" href="{e(base + s["file"])}" rel="noopener">{e(s["file"])}</a></li>')
         for s in p["flow"]
     )
-    sn = p["snippet"]
-    code = highlight(textwrap.dedent(sn["code"].expandtabs(4)).strip("\n"), sn.get("lang"))
+    if p.get("private"):
+        nodes = p["arch"]["nodes"]; edges = p["arch"]["edges"]
+        lab = {(x["from"], x["to"]): x.get("label", "") for x in edges}
+        name = {nd["id"]: nd["label"] for nd in nodes}
+        parts = []
+        for i, nd in enumerate(nodes):
+            parts.append(f'<div class="node{" first" if i == 0 else ""}"><b>{e(nd["label"])}</b><span>{e(nd.get("sub", ""))}</span></div>')
+            if i < len(nodes) - 1:
+                l = lab.get((nd["id"], nodes[i + 1]["id"])) or lab.get((nodes[i + 1]["id"], nd["id"]), "")
+                parts.append(f'<div class="edge" aria-hidden="true"><span>{e(l)}</span></div>')
+        chain = {(nodes[i]["id"], nodes[i + 1]["id"]) for i in range(len(nodes) - 1)} | {(nodes[i + 1]["id"], nodes[i]["id"]) for i in range(len(nodes) - 1)}
+        extra = "".join(f'<li>{e(name.get(x["from"], x["from"]))} → {e(name.get(x["to"], x["to"]))}{": " + e(x["label"]) if x.get("label") else ""}</li>' for x in edges if (x["from"], x["to"]) not in chain)
+        code_sec = f"""<section class="d-sec" id="code"><h2>구조</h2><p class="backend">{e(p.get('backend', ''))}</p><div class="arch">{''.join(parts)}</div>{'<ul class="arch-extra">' + extra + '</ul>' if extra else ''}<p class="code-cap">비공개 저장소라 소스 코드 링크와 코드 발췌는 싣지 않았습니다.</p></section>"""
+        toc_code = "구조"
+    else:
+        sn = p["snippet"]
+        code = highlight(textwrap.dedent(sn["code"].expandtabs(4)).strip("\n"), sn.get("lang"))
+        code_sec = f"""<section class="d-sec" id="code"><h2>핵심 코드</h2>
+<div class="code"><div class="code-bar"><span>{e(sn['file'])}</span><a href="{e(base + sn['file'])}" rel="noopener">GitHub에서 보기 ↗</a></div><pre><code>{code}</code></pre></div>
+<p class="code-cap">{e(sn['caption'])}</p></section>"""
+        toc_code = "핵심 코드"
     prev_p, next_p = P[i - 1], P[(i + 1) % len(P)]
     gh = next((l["url"] for l in p["links"] if l["url"].startswith("https://github.com")), None)
-    meta = [("분야", CATS[p["cat"]]), ("플랫폼", p["platform"]), ("기술", " · ".join(p["stack"]))]
+    meta = [("분야", CATS[p["cat"]]), ("플랫폼", p["platform"]), ("기술", " · ".join(p["stack"]))] + ([("저장소", "비공개")] if p.get("private") else [])
     meta_html = "".join(f"<span><b>{k}</b>{e(v)}</span>" for k, v in meta)
 
     body = f"""<div class="wrap">
@@ -242,15 +298,13 @@ def build_detail(i, p):
 <section class="shots" aria-label="화면">{shots}</section>
 <div class="d-grid">
 <aside class="toc" aria-label="이 페이지 목차"><ol>
-<li><a href="#why">왜 만들었나</a></li><li><a href="#features">주요 기능</a></li><li><a href="#flow">어떻게 동작하나</a></li><li><a href="#code">핵심 코드</a></li><li><a href="#hard">어려웠던 점</a></li></ol></aside>
+<li><a href="#why">왜 만들었나</a></li><li><a href="#features">주요 기능</a></li><li><a href="#flow">어떻게 동작하나</a></li><li><a href="#code">{toc_code}</a></li><li><a href="#hard">어려웠던 점</a></li></ol></aside>
 <article>
 <section class="d-sec" id="why"><h2>왜 만들었나</h2><p>{e(p['problem'])}</p></section>
 <section class="d-sec" id="features"><h2>주요 기능</h2><ul class="feat">{feats}</ul></section>
 <section class="d-sec"><h2>숫자로 보면</h2><div class="nums">{nums}</div></section>
 <section class="d-sec" id="flow"><h2>어떻게 동작하나</h2><ol class="flow">{flow}</ol></section>
-<section class="d-sec" id="code"><h2>핵심 코드</h2>
-<div class="code"><div class="code-bar"><span>{e(sn['file'])}</span><a href="{e(base + sn['file'])}" rel="noopener">GitHub에서 보기 ↗</a></div><pre><code>{code}</code></pre></div>
-<p class="code-cap">{e(sn['caption'])}</p></section>
+{code_sec}
 <section class="d-sec" id="hard"><h2>어려웠던 점</h2><div class="callout">{e(p['hard_part'])}</div></section>
 <nav class="pager" aria-label="다른 프로젝트">
 <a href="/work/{prev_p['slug']}/"><small>← 이전</small><b>{e(prev_p['title'])}</b></a>
@@ -272,6 +326,8 @@ def build_assets():
     for p in P:
         for s in p["shots"]:
             used |= {s["img"], s["img"] + "-t"}
+        if p.get("thumb"):
+            used.add(p["thumb"])
     for f in (SRC / "img").glob("*.webp"):
         if f.stem in used:
             shutil.copy(f, a / "img" / f.name)
