@@ -17,6 +17,9 @@ on:
       - "assets/**"
       - "_portfolio/**"
       - ".github/**"
+      - ".gitignore"
+      - "robots.txt"
+      - ".nojekyll"
   workflow_dispatch:
     inputs:
       only:
