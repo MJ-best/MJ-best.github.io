@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DBD Plasma Diagnostics (dbd-diagnostics) · MJ-best</title>
+<meta name="description" content="대기압 유전체 장벽 방전(DBD) 플라즈마의 전압·전류 파형을 분석하고 유전체 표면 손상을 머신러닝으로 예측하는 석사 학위논문 코드의 재구성 패키지입니다.">
+<meta name="naver-site-verification" content="d742928bf0bdbd59f1017ff8d26f2452638bb3cf">
+<link rel="canonical" href="https://mj-best.github.io/work/dbd-plasma-diagnostics/">
+<meta property="og:type" content="website"><meta property="og:title" content="DBD Plasma Diagnostics (dbd-diagnostics) · MJ-best"><meta property="og:description" content="대기압 유전체 장벽 방전(DBD) 플라즈마의 전압·전류 파형을 분석하고 유전체 표면 손상을 머신러닝으로 예측하는 석사 학위논문 코드의 재구성 패키지입니다."><meta property="og:url" content="https://mj-best.github.io/work/dbd-plasma-diagnostics/">
+<meta name="theme-color" content="#f5f3ee" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#141619" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/assets/portfolio.css">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+</head>
+<body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+<header class="top"><div class="wrap">
+<a class="logo" href="/"><i aria-hidden="true"></i>MJ-best</a>
+<nav aria-label="주 메뉴">
+<a href="/#projects">프로젝트</a><a class="hide-s" href="/#stack">구조</a><a class="hide-s" href="/#about">작업 방식</a><a href="https://github.com/MJ-best" rel="noopener">GitHub</a>
+<button class="theme-btn" type="button" aria-label="밝게/어둡게 전환" title="밝게/어둡게 전환"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg></button>
+</nav></div></header>
+<main id="main">
+<div class="wrap">
+<nav class="crumb" aria-label="위치"><a href="/#projects">← 전체 프로젝트</a></nav>
+<header class="d-head"><div>
+<p class="eyebrow" style="margin:0">학습·시험</p>
+<h1>DBD Plasma Diagnostics (dbd-diagnostics)</h1>
+<p>대기압 유전체 장벽 방전(DBD) 플라즈마의 전압·전류 파형을 분석하고 유전체 표면 손상을 머신러닝으로 예측하는 석사 학위논문 코드의 재구성 패키지입니다.</p>
+</div><div class="btns"><a class="btn" href="https://github.com/MJ-best/ms-thesis-dbd-plasma-diagnostics" rel="noopener">GitHub ↗</a></div></header>
+<div class="meta"><span><b>분야</b>학습·시험</span><span><b>플랫폼</b>Python CLI · Streamlit</span><span><b>기술</b>Python · NumPy · SciPy · pandas · scikit-learn · joblib · Streamlit · Matplotlib · pytest · GitHub Actions</span></div>
+<section class="shots" aria-label="화면"><div class="cover-big"><svg viewBox="0 0 800 450" role="img" aria-label="DBD Plasma Diagnostics (dbd-diagnostics) 구조 그림"><rect width="800" height="450" fill="var(--accent-soft)"/><rect x="30" y="175" width="124" height="100" rx="14" fill="var(--accent)" stroke="var(--accent)" stroke-width="2"/><text x="92.0" y="221" text-anchor="middle" font-family="IBM Plex Sans KR,sans-serif" font-weight="600" font-size="14" fill="var(--accent-ink)">파형 CSV</text><text x="92.0" y="247" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--accent-ink)">V, I 캡처</text><path d="M160 225 H178" stroke="var(--accent)" stroke-width="2.5" fill="none" stroke-dasharray="2 7" stroke-linecap="round"/><path d="M170 218 L178 225 L170 232" stroke="var(--accent)" stroke-width="2.5" fill="none"/><rect x="184" y="175" width="124" height="100" rx="14" fill="var(--card)" stroke="var(--line-2)" stroke-width="2"/><text x="246.0" y="221" text-anchor="middle" font-family="IBM Plex Sans KR,sans-serif" font-weight="600" font-size="14" fill="var(--ink)">리사주 분석</text><text x="246.0" y="247" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--ink-3)">Manley 회로</text><path d="M314 225 H332" stroke="var(--accent)" stroke-width="2.5" fill="none" stroke-dasharray="2 7" stroke-linecap="round"/><path d="M324 218 L332 225 L324 232" stroke="var(--accent)" stroke-width="2.5" fill="none"/><rect x="338" y="175" width="124" height="100" rx="14" fill="var(--card)" stroke="var(--line-2)" stroke-width="2"/><text x="400.0" y="221" text-anchor="middle" font-family="IBM Plex Sans KR,sans-serif" font-weight="600" font-size="14" fill="var(--ink)">특징 추출</text><text x="400.0" y="247" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--ink-3)">14개 특징</text><path d="M468 225 H486" stroke="var(--accent)" stroke-width="2.5" fill="none" stroke-dasharray="2 7" stroke-linecap="round"/><path d="M478 218 L486 225 L478 232" stroke="var(--accent)" stroke-width="2.5" fill="none"/><rect x="492" y="175" width="124" height="100" rx="14" fill="var(--card)" stroke="var(--line-2)" stroke-width="2"/><text x="554.0" y="221" text-anchor="middle" font-family="IBM Plex Sans KR,sans-serif" font-weight="600" font-size="14" fill="var(--ink)">ML 분류</text><text x="554.0" y="247" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--ink-3)">장치 단위 평가</text><path d="M622 225 H640" stroke="var(--accent)" stroke-width="2.5" fill="none" stroke-dasharray="2 7" stroke-linecap="round"/><path d="M632 218 L640 225 L632 232" stroke="var(--accent)" stroke-width="2.5" fill="none"/><rect x="646" y="175" width="124" height="100" rx="14" fill="var(--card)" stroke="var(--line-2)" stroke-width="2"/><text x="708.0" y="221" text-anchor="middle" font-family="IBM Plex Sans KR,sans-serif" font-weight="600" font-size="14" fill="var(--ink)">CLI·Streamlit</text><text x="708.0" y="247" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--ink-3)">예측 출력</text></svg></div><figcaption>저장소에 공개된 화면 이미지가 없어, 동작 원리를 그림으로 대신합니다.</figcaption></section>
+<div class="d-grid">
+<aside class="toc" aria-label="이 페이지 목차"><ol>
+<li><a href="#why">왜 만들었나</a></li><li><a href="#features">주요 기능</a></li><li><a href="#flow">어떻게 동작하나</a></li><li><a href="#code">핵심 코드</a></li><li><a href="#hard">어려웠던 점</a></li></ol></aside>
+<article>
+<section class="d-sec" id="why"><h2>왜 만들었나</h2><p>논문 당시 노트북에 흩어져 있던 전기 진단과 분류 코드는 재현이 어렵고, 스케일링 누수와 지표 평균 방식 혼용 같은 문제가 있었습니다. 이를 검증 가능한 패키지로 정리해 다른 장치에서도 같은 방식으로 진단할 수 있게 했습니다.</p></section>
+<section class="d-sec" id="features"><h2>주요 기능</h2><ul class="feat"><li>V-I 파형 CSV(GW Instek 형식 포함)를 읽어 주기별 특징을 일괄 추출합니다</li><li>Manley 등가회로 기반 리사주(Q-V) 분석으로 C_d, C_g, 연소 전압, 주기당 에너지를 계산합니다</li><li>논문 표 4의 14개 특징으로 6종 분류기를 학습하고 장치 단위 hold-out으로 평가합니다</li><li>합성 파형 생성, 학습, 예측을 CLI와 Streamlit 앱으로 제공합니다</li></ul></section>
+<section class="d-sec"><h2>숫자로 보면</h2><div class="nums"><div>논문 표 4의 입력 특징 14개</div><div>비교 분류기 6종(LR, DT, RF, GB, SVM, kNN)</div><div>pytest 테스트 함수 27개, CLI 하위 명령 5개</div></div></section>
+<section class="d-sec" id="flow"><h2>어떻게 동작하나</h2><ol class="flow"><li><h3>파형 로드</h3><p>장비별 CSV를 파싱해 시간, 전압, 전류를 담은 Waveform 객체로 만듭니다.</p><a class="file" href="https://github.com/MJ-best/ms-thesis-dbd-plasma-diagnostics/blob/main/src/dbd_diagnostics/io.py" rel="noopener">src/dbd_diagnostics/io.py</a></li><li><h3>리사주 분석</h3><p>전압 극값으로 주기를 상승·하강 가지로 나누고 각각 두 직선으로 맞춰 C_total, C_dielectric, 연소 전압을 구합니다.</p><a class="file" href="https://github.com/MJ-best/ms-thesis-dbd-plasma-diagnostics/blob/main/src/dbd_diagnostics/lissajous.py" rel="noopener">src/dbd_diagnostics/lissajous.py</a></li><li><h3>방전 펄스 통계</h3><p>방전 전류에서 노이즈 기반 강건 피크 검출로 반주기별 방전 펄스를 셉니다.</p><a class="file" href="https://github.com/MJ-best/ms-thesis-dbd-plasma-diagnostics/blob/main/src/dbd_diagnostics/discharge.py" rel="noopener">src/dbd_diagnostics/discharge.py</a></li><li><h3>플라즈마 물리량 계산</h3><p>환산 전계, 전자 이동도, 전자 밀도, 전자 온도를 계산합니다.</p><a class="file" href="https://github.com/MJ-best/ms-thesis-dbd-plasma-diagnostics/blob/main/src/dbd_diagnostics/plasma.py" rel="noopener">src/dbd_diagnostics/plasma.py</a></li><li><h3>특징 추출</h3><p>주기별 전기량과 플라즈마 물리량을 한 행의 특징 벡터로 합칩니다.</p><a class="file" href="https://github.com/MJ-best/ms-thesis-dbd-plasma-diagnostics/blob/main/src/dbd_diagnostics/features.py" rel="noopener">src/dbd_diagnostics/features.py</a></li><li><h3>분류 및 평가</h3><p>스케일러를 파이프라인 안에 넣고 장치 단위 leave-one-group-out으로 평가한 뒤 모델 번들을 저장합니다.</p><a class="file" href="https://github.com/MJ-best/ms-thesis-dbd-plasma-diagnostics/blob/main/src/dbd_diagnostics/ml.py" rel="noopener">src/dbd_diagnostics/ml.py</a></li></ol></section>
+<section class="d-sec" id="code"><h2>핵심 코드</h2>
+<div class="code"><div class="code-bar"><span>src/dbd_diagnostics/lissajous.py</span><a href="https://github.com/MJ-best/ms-thesis-dbd-plasma-diagnostics/blob/main/src/dbd_diagnostics/lissajous.py" rel="noopener">GitHub에서 보기 ↗</a></div><pre><code><span class="k">def</span> <span class="f">sse_from</span>(c, k):
+    m, sx, sy, sxx, sxy, syy = (v[k] <span class="k">for</span> v <span class="k">in</span> c)
+    vx = sxx - sx * sx / m
+    <span class="k">if</span> vx &lt;= <span class="n">0</span>:
+        <span class="k">return</span> np.inf
+    cxy = sxy - sx * sy / m
+    vy = syy - sy * sy / m
+    <span class="k">return</span> vy - cxy * cxy / vx
+
+cf = <span class="f">cums</span>(x, y)
+cb = <span class="f">cums</span>(x[::-<span class="n">1</span>], y[::-<span class="n">1</span>])
+best, best_k = np.inf, lo
+<span class="k">for</span> k <span class="k">in</span> <span class="f">range</span>(lo, hi):
+    s = <span class="f">sse_from</span>(cf, k - <span class="n">1</span>) + <span class="f">sse_from</span>(cb, n - k - <span class="n">1</span>)
+    <span class="k">if</span> s &lt; best:
+        best, best_k = s, k
+<span class="k">return</span> best_k</code></pre></div>
+<p class="code-cap">누적합으로 모든 분할점의 두 직선 적합 오차를 O(n)에 계산해 방전 시작 지점을 찾습니다.</p></section>
+<section class="d-sec" id="hard"><h2>어려웠던 점</h2><div class="callout">방전이 시작되는 꺾임점을 안정적으로 찾는 것이 핵심이며, 누적합으로 모든 분할 지점의 SSE를 O(n)에 계산해 두 직선 적합이 최소가 되는 지점을 고릅니다. 논문의 V_breakdown 식이 항등적으로 최대 인가전압과 같아진다는 점도 코드와 문서에 경고로 명시하고 별도 함수로 보존했습니다.</div></section>
+<nav class="pager" aria-label="다른 프로젝트">
+<a href="/work/photo-organize/"><small>← 이전</small><b>Photo Organize</b></a>
+<a class="next" href="/work/bizviz-lab/"><small>다음 →</small><b>경영정보시각화 실기 랩</b></a></nav>
+</article></div></div>
+</main>
+<footer><div class="wrap"><span>© 2026 MJ-best · 이 사이트와 모든 데모는 GitHub Pages에서 동작합니다.</span><a href="https://github.com/MJ-best">github.com/MJ-best</a></div></footer>
+<script src="/assets/portfolio.js" defer></script>
+</body>
+</html>
