@@ -1857,5 +1857,144 @@
   "shots": [],
   "cover": "arch",
   "auto_added": true
+ },
+ {
+  "id": "ms-thesis-dbd-plasma-diagnostics",
+  "slug": "ms-thesis-dbd-plasma-diagnostics",
+  "title": "DBD Plasma Diagnostics",
+  "cat": "study",
+  "pattern": "local-server",
+  "platform": "Python 패키지 · CLI · Streamlit",
+  "summary": "대기압 유전체 장벽 방전(DBD) 플라즈마의 전압·전류 파형으로 전기적 진단 값을 계산하고, 유전체 표면 손상을 머신러닝으로 분류하는 석사 논문 재현용 파이썬 패키지입니다.",
+  "problem": "DBD 소자는 오래 쓰면 유전체 표면이 손상되지만, 파형만으로 상태를 판단할 기준이 없습니다. 논문의 노트북 코드는 데이터 누수와 지표 혼용 문제가 있어 이를 검증 가능한 형태로 다시 정리했습니다.",
+  "features": [
+   "오실로스코프 CSV(GW Instek 형식 포함)에서 RMS, 에너지, 전하, 방전 펄스 통계 추출",
+   "Manley 등가회로 기반 리사주 분석으로 C_total, C_dielectric, C_gas, 소화 전압 계산",
+   "Paschen 곡선, 환산 전기장, 전자 밀도·온도 추정",
+   "LR, DT, RF, GB, SVM, kNN 6종 분류기와 소자 단위 hold-out 평가",
+   "CLI와 Streamlit 앱으로 학습·예측 및 회로 시뮬레이터 제공"
+  ],
+  "stack": [
+   "Python",
+   "NumPy",
+   "SciPy",
+   "pandas",
+   "scikit-learn",
+   "joblib",
+   "Streamlit",
+   "pytest",
+   "GitHub Actions"
+  ],
+  "flow": [
+   {
+    "title": "파형 로드",
+    "detail": "CSV를 읽어 시간, 전압, 전류를 담은 Waveform 객체로 만듭니다.",
+    "file": "src/dbd_diagnostics/io.py"
+   },
+   {
+    "title": "전기량 계산",
+    "detail": "전류의 오프셋을 제거하고 적분해 전하와 RMS, 주기당 에너지를 구합니다.",
+    "file": "src/dbd_diagnostics/electrical.py"
+   },
+   {
+    "title": "리사주 분석",
+    "detail": "전압 상승·하강 구간마다 두 직선 구간을 맞춰 방전 전후의 기울기(정전용량)와 점화 지점을 찾습니다.",
+    "file": "src/dbd_diagnostics/lissajous.py"
+   },
+   {
+    "title": "방전·플라즈마 변수",
+    "detail": "방전 펄스를 검출하고 전자 밀도와 전자 온도를 추정합니다.",
+    "file": "src/dbd_diagnostics/discharge.py"
+   },
+   {
+    "title": "특징 벡터 생성",
+    "detail": "주기별로 논문 표 4의 14개 특징을 한 행으로 모읍니다.",
+    "file": "src/dbd_diagnostics/features.py"
+   },
+   {
+    "title": "누수 없는 분류",
+    "detail": "스케일링을 파이프라인 안에 두고 소자 하나를 빼고 학습해 그 소자로 평가합니다.",
+    "file": "src/dbd_diagnostics/ml.py"
+   }
+  ],
+  "hard_part": "리사주 평행사변형에서 방전이 시작되는 지점은 점진적으로 나타나 직선 교점이 불안정합니다. 모든 분기점 후보에 대해 누적합으로 두 직선의 잔차를 O(n)에 계산해 최적 분기점을 고르고, 그 데이터 점을 점화 지점으로 사용합니다.",
+  "numbers": [
+   "분류 모델 6종(LR, DT, RF, GB, SVM, kNN), 입력 특징 14개",
+   "src 모듈 11개, 약 1,500줄의 파이썬 코드",
+   "pytest 테스트 함수 27개, Python 3.10과 3.13에서 CI 실행"
+  ],
+  "backend": "별도 서버 없이 사용자의 컴퓨터에서 파이썬 패키지, CLI, Streamlit 앱으로 실행하며 GitHub Actions는 테스트만 돌립니다.",
+  "arch": {
+   "nodes": [
+    {
+     "id": "csv",
+     "label": "파형 CSV",
+     "sub": "전압·전류"
+    },
+    {
+     "id": "elec",
+     "label": "전기량·리사주",
+     "sub": "C, E, U_b"
+    },
+    {
+     "id": "feat",
+     "label": "특징 추출",
+     "sub": "14개 특징"
+    },
+    {
+     "id": "ml",
+     "label": "분류 모델",
+     "sub": "소자 단위 평가"
+    },
+    {
+     "id": "ui",
+     "label": "CLI·Streamlit",
+     "sub": "학습·예측"
+    }
+   ],
+   "edges": [
+    {
+     "from": "csv",
+     "to": "elec",
+     "label": "load_csv"
+    },
+    {
+     "from": "elec",
+     "to": "feat",
+     "label": "analyse"
+    },
+    {
+     "from": "feat",
+     "to": "ml",
+     "label": "train"
+    },
+    {
+     "from": "ml",
+     "to": "ui",
+     "label": "bundle"
+    }
+   ]
+  },
+  "snippet": {
+   "file": "src/dbd_diagnostics/lissajous.py",
+   "lang": "python",
+   "caption": "누적합으로 모든 분기점의 두 직선 잔차를 O(n)에 계산해 비방전·방전 구간의 경계를 찾습니다.",
+   "code": "    def sse_from(c, k):\n        m, sx, sy, sxx, sxy, syy = (v[k] for v in c)\n        vx = sxx - sx * sx / m\n        if vx <= 0:\n            return np.inf\n        cxy = sxy - sx * sy / m\n        vy = syy - sy * sy / m\n        return vy - cxy * cxy / vx\n\n    cf = cums(x, y)\n    cb = cums(x[::-1], y[::-1])\n    best, best_k = np.inf, lo\n    for k in range(lo, hi):\n        s = sse_from(cf, k - 1) + sse_from(cb, n - k - 1)\n        if s < best:\n            best, best_k = s, k\n    return best_k"
+  },
+  "year": "2026",
+  "source": {
+   "repo": "ms-thesis-dbd-plasma-diagnostics"
+  },
+  "private": false,
+  "repo_base": "https://github.com/MJ-best/ms-thesis-dbd-plasma-diagnostics/blob/main/",
+  "links": [
+   {
+    "label": "GitHub",
+    "url": "https://github.com/MJ-best/ms-thesis-dbd-plasma-diagnostics"
+   }
+  ],
+  "shots": [],
+  "cover": "arch",
+  "auto_added": true
  }
 ]
