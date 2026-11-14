@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DBD Plasma Diagnostics · MJ-best</title>
+<meta name="description" content="대기압 유전체 장벽 방전(DBD) 플라즈마의 전압·전류 파형으로 전기적 진단 값을 계산하고, 유전체 표면 손상을 머신러닝으로 분류하는 석사 논문 재현용 파이썬 패키지입니다.">
+<meta name="naver-site-verification" content="d742928bf0bdbd59f1017ff8d26f2452638bb3cf">
+<link rel="canonical" href="https://mj-best.github.io/work/ms-thesis-dbd-plasma-diagnostics/">
+<meta property="og:type" content="website"><meta property="og:title" content="DBD Plasma Diagnostics · MJ-best"><meta property="og:description" content="대기압 유전체 장벽 방전(DBD) 플라즈마의 전압·전류 파형으로 전기적 진단 값을 계산하고, 유전체 표면 손상을 머신러닝으로 분류하는 석사 논문 재현용 파이썬 패키지입니다."><meta property="og:url" content="https://mj-best.github.io/work/ms-thesis-dbd-plasma-diagnostics/">
+<meta name="theme-color" content="#f5f3ee" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#141619" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/assets/portfolio.css">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+</head>
+<body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+<header class="top"><div class="wrap">
+<a class="logo" href="/"><i aria-hidden="true"></i>MJ-best</a>
+<nav aria-label="주 메뉴">
+<a href="/#projects">프로젝트</a><a class="hide-s" href="/#stack">구조</a><a class="hide-s" href="/#about">작업 방식</a><a href="https://github.com/MJ-best" rel="noopener">GitHub</a>
+<button class="theme-btn" type="button" aria-label="밝게/어둡게 전환" title="밝게/어둡게 전환"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg></button>
+</nav></div></header>
+<main id="main">
+<div class="wrap">
+<nav class="crumb" aria-label="위치"><a href="/#projects">← 전체 프로젝트</a></nav>
+<header class="d-head"><div>
+<p class="eyebrow" style="margin:0">학습·시험</p>
+<h1>DBD Plasma Diagnostics</h1>
+<p>대기압 유전체 장벽 방전(DBD) 플라즈마의 전압·전류 파형으로 전기적 진단 값을 계산하고, 유전체 표면 손상을 머신러닝으로 분류하는 석사 논문 재현용 파이썬 패키지입니다.</p>
+</div><div class="btns"><a class="btn" href="https://github.com/MJ-best/ms-thesis-dbd-plasma-diagnostics" rel="noopener">GitHub ↗</a></div></header>
+<div class="meta"><span><b>분야</b>학습·시험</span><span><b>플랫폼</b>Python 패키지 · CLI · Streamlit</span><span><b>기술</b>Python · NumPy · SciPy · pandas · scikit-learn · joblib · Streamlit · pytest · GitHub Actions</span></div>
+<section class="shots" aria-label="화면"><div class="cover-big"><svg viewBox="0 0 800 450" role="img" aria-label="DBD Plasma Diagnostics 구조 그림"><rect width="800" height="450" fill="var(--accent-soft)"/><rect x="30" y="175" width="124" height="100" rx="14" fill="var(--accent)" stroke="var(--accent)" stroke-width="2"/><text x="92.0" y="221" text-anchor="middle" font-family="IBM Plex Sans KR,sans-serif" font-weight="600" font-size="14" fill="var(--accent-ink)">파형 CSV</text><text x="92.0" y="247" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--accent-ink)">전압·전류</text><path d="M160 225 H178" stroke="var(--accent)" stroke-width="2.5" fill="none" stroke-dasharray="2 7" stroke-linecap="round"/><path d="M170 218 L178 225 L170 232" stroke="var(--accent)" stroke-width="2.5" fill="none"/><rect x="184" y="175" width="124" height="100" rx="14" fill="var(--card)" stroke="var(--line-2)" stroke-width="2"/><text x="246.0" y="221" text-anchor="middle" font-family="IBM Plex Sans KR,sans-serif" font-weight="600" font-size="14" fill="var(--ink)">전기량·리사주</text><text x="246.0" y="247" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--ink-3)">C, E, U_b</text><path d="M314 225 H332" stroke="var(--accent)" stroke-width="2.5" fill="none" stroke-dasharray="2 7" stroke-linecap="round"/><path d="M324 218 L332 225 L324 232" stroke="var(--accent)" stroke-width="2.5" fill="none"/><rect x="338" y="175" width="124" height="100" rx="14" fill="var(--card)" stroke="var(--line-2)" stroke-width="2"/><text x="400.0" y="221" text-anchor="middle" font-family="IBM Plex Sans KR,sans-serif" font-weight="600" font-size="14" fill="var(--ink)">특징 추출</text><text x="400.0" y="247" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--ink-3)">14개 특징</text><path d="M468 225 H486" stroke="var(--accent)" stroke-width="2.5" fill="none" stroke-dasharray="2 7" stroke-linecap="round"/><path d="M478 218 L486 225 L478 232" stroke="var(--accent)" stroke-width="2.5" fill="none"/><rect x="492" y="175" width="124" height="100" rx="14" fill="var(--card)" stroke="var(--line-2)" stroke-width="2"/><text x="554.0" y="221" text-anchor="middle" font-family="IBM Plex Sans KR,sans-serif" font-weight="600" font-size="14" fill="var(--ink)">분류 모델</text><text x="554.0" y="247" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--ink-3)">소자 단위 평가</text><path d="M622 225 H640" stroke="var(--accent)" stroke-width="2.5" fill="none" stroke-dasharray="2 7" stroke-linecap="round"/><path d="M632 218 L640 225 L632 232" stroke="var(--accent)" stroke-width="2.5" fill="none"/><rect x="646" y="175" width="124" height="100" rx="14" fill="var(--card)" stroke="var(--line-2)" stroke-width="2"/><text x="708.0" y="221" text-anchor="middle" font-family="IBM Plex Sans KR,sans-serif" font-weight="600" font-size="14" fill="var(--ink)">CLI·Streamlit</text><text x="708.0" y="247" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--ink-3)">학습·예측</text></svg></div><figcaption>저장소에 공개된 화면 이미지가 없어, 동작 원리를 그림으로 대신합니다.</figcaption></section>
+<div class="d-grid">
+<aside class="toc" aria-label="이 페이지 목차"><ol>
+<li><a href="#why">왜 만들었나</a></li><li><a href="#features">주요 기능</a></li><li><a href="#flow">어떻게 동작하나</a></li><li><a href="#code">핵심 코드</a></li><li><a href="#hard">어려웠던 점</a></li></ol></aside>
+<article>
+<section class="d-sec" id="why"><h2>왜 만들었나</h2><p>DBD 소자는 오래 쓰면 유전체 표면이 손상되지만, 파형만으로 상태를 판단할 기준이 없습니다. 논문의 노트북 코드는 데이터 누수와 지표 혼용 문제가 있어 이를 검증 가능한 형태로 다시 정리했습니다.</p></section>
+<section class="d-sec" id="features"><h2>주요 기능</h2><ul class="feat"><li>오실로스코프 CSV(GW Instek 형식 포함)에서 RMS, 에너지, 전하, 방전 펄스 통계 추출</li><li>Manley 등가회로 기반 리사주 분석으로 C_total, C_dielectric, C_gas, 소화 전압 계산</li><li>Paschen 곡선, 환산 전기장, 전자 밀도·온도 추정</li><li>LR, DT, RF, GB, SVM, kNN 6종 분류기와 소자 단위 hold-out 평가</li><li>CLI와 Streamlit 앱으로 학습·예측 및 회로 시뮬레이터 제공</li></ul></section>
+<section class="d-sec"><h2>숫자로 보면</h2><div class="nums"><div>분류 모델 6종(LR, DT, RF, GB, SVM, kNN), 입력 특징 14개</div><div>src 모듈 11개, 약 1,500줄의 파이썬 코드</div><div>pytest 테스트 함수 27개, Python 3.10과 3.13에서 CI 실행</div></div></section>
+<section class="d-sec" id="flow"><h2>어떻게 동작하나</h2><ol class="flow"><li><h3>파형 로드</h3><p>CSV를 읽어 시간, 전압, 전류를 담은 Waveform 객체로 만듭니다.</p><a class="file" href="https://github.com/MJ-best/ms-thesis-dbd-plasma-diagnostics/blob/main/src/dbd_diagnostics/io.py" rel="noopener">src/dbd_diagnostics/io.py</a></li><li><h3>전기량 계산</h3><p>전류의 오프셋을 제거하고 적분해 전하와 RMS, 주기당 에너지를 구합니다.</p><a class="file" href="https://github.com/MJ-best/ms-thesis-dbd-plasma-diagnostics/blob/main/src/dbd_diagnostics/electrical.py" rel="noopener">src/dbd_diagnostics/electrical.py</a></li><li><h3>리사주 분석</h3><p>전압 상승·하강 구간마다 두 직선 구간을 맞춰 방전 전후의 기울기(정전용량)와 점화 지점을 찾습니다.</p><a class="file" href="https://github.com/MJ-best/ms-thesis-dbd-plasma-diagnostics/blob/main/src/dbd_diagnostics/lissajous.py" rel="noopener">src/dbd_diagnostics/lissajous.py</a></li><li><h3>방전·플라즈마 변수</h3><p>방전 펄스를 검출하고 전자 밀도와 전자 온도를 추정합니다.</p><a class="file" href="https://github.com/MJ-best/ms-thesis-dbd-plasma-diagnostics/blob/main/src/dbd_diagnostics/discharge.py" rel="noopener">src/dbd_diagnostics/discharge.py</a></li><li><h3>특징 벡터 생성</h3><p>주기별로 논문 표 4의 14개 특징을 한 행으로 모읍니다.</p><a class="file" href="https://github.com/MJ-best/ms-thesis-dbd-plasma-diagnostics/blob/main/src/dbd_diagnostics/features.py" rel="noopener">src/dbd_diagnostics/features.py</a></li><li><h3>누수 없는 분류</h3><p>스케일링을 파이프라인 안에 두고 소자 하나를 빼고 학습해 그 소자로 평가합니다.</p><a class="file" href="https://github.com/MJ-best/ms-thesis-dbd-plasma-diagnostics/blob/main/src/dbd_diagnostics/ml.py" rel="noopener">src/dbd_diagnostics/ml.py</a></li></ol></section>
+<section class="d-sec" id="code"><h2>핵심 코드</h2>
+<div class="code"><div class="code-bar"><span>src/dbd_diagnostics/lissajous.py</span><a href="https://github.com/MJ-best/ms-thesis-dbd-plasma-diagnostics/blob/main/src/dbd_diagnostics/lissajous.py" rel="noopener">GitHub에서 보기 ↗</a></div><pre><code><span class="k">def</span> <span class="f">sse_from</span>(c, k):
+    m, sx, sy, sxx, sxy, syy = (v[k] <span class="k">for</span> v <span class="k">in</span> c)
+    vx = sxx - sx * sx / m
+    <span class="k">if</span> vx &lt;= <span class="n">0</span>:
+        <span class="k">return</span> np.inf
+    cxy = sxy - sx * sy / m
+    vy = syy - sy * sy / m
+    <span class="k">return</span> vy - cxy * cxy / vx
+
+cf = <span class="f">cums</span>(x, y)
+cb = <span class="f">cums</span>(x[::-<span class="n">1</span>], y[::-<span class="n">1</span>])
+best, best_k = np.inf, lo
+<span class="k">for</span> k <span class="k">in</span> <span class="f">range</span>(lo, hi):
+    s = <span class="f">sse_from</span>(cf, k - <span class="n">1</span>) + <span class="f">sse_from</span>(cb, n - k - <span class="n">1</span>)
+    <span class="k">if</span> s &lt; best:
+        best, best_k = s, k
+<span class="k">return</span> best_k</code></pre></div>
+<p class="code-cap">누적합으로 모든 분기점의 두 직선 잔차를 O(n)에 계산해 비방전·방전 구간의 경계를 찾습니다.</p></section>
+<section class="d-sec" id="hard"><h2>어려웠던 점</h2><div class="callout">리사주 평행사변형에서 방전이 시작되는 지점은 점진적으로 나타나 직선 교점이 불안정합니다. 모든 분기점 후보에 대해 누적합으로 두 직선의 잔차를 O(n)에 계산해 최적 분기점을 고르고, 그 데이터 점을 점화 지점으로 사용합니다.</div></section>
+<nav class="pager" aria-label="다른 프로젝트">
+<a href="/work/photo-organize/"><small>← 이전</small><b>Photo Organize</b></a>
+<a class="next" href="/work/bizviz-lab/"><small>다음 →</small><b>경영정보시각화 실기 랩</b></a></nav>
+</article></div></div>
+</main>
+<footer><div class="wrap"><span>© 2026 MJ-best · 이 사이트와 모든 데모는 GitHub Pages에서 동작합니다.</span><a href="https://github.com/MJ-best">github.com/MJ-best</a></div></footer>
+<script src="/assets/portfolio.js" defer></script>
+</body>
+</html>
