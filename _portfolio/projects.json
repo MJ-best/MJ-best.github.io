@@ -1857,5 +1857,289 @@
   "shots": [],
   "cover": "arch",
   "auto_added": true
+ },
+ {
+  "id": "dbd-plasma-diagnostics",
+  "slug": "dbd-plasma-diagnostics",
+  "title": "DBD Plasma Diagnostics (석사학위 논문 코드)",
+  "cat": "study",
+  "pattern": "local-server",
+  "platform": "Python CLI · Streamlit",
+  "summary": "대기압 유전체장벽방전(DBD) 플라즈마의 전압·전류 파형으로 유전체 표면 손상을 진단하고 머신러닝으로 예측하는 석사 논문 재현용 Python 패키지입니다.",
+  "problem": "DBD 장치의 유전체 표면 손상은 눈으로 확인하기 전에는 알기 어렵고, 논문의 원본 노트북은 데이터 누수와 지표 혼용 문제가 있었습니다. 전기 신호만으로 손상 여부를 진단하고 재현 가능한 평가 방식을 제공합니다.",
+  "features": [
+   "오실로스코프 CSV(GW Instek 형식 포함)에서 주기 단위로 특징량 추출",
+   "Manley 등가회로 기반 리사주(Q-V) 분석으로 C_total, C_dielectric, C_gas, 연소전압, 주기당 에너지 계산",
+   "14개 특징량으로 6종 분류기를 학습하고 장치 단위 hold-out으로 평가",
+   "dbd-diag CLI(extract, simulate, analyse, train, predict)와 Streamlit 앱 제공"
+  ],
+  "stack": [
+   "Python",
+   "NumPy",
+   "SciPy",
+   "pandas",
+   "scikit-learn",
+   "Streamlit",
+   "matplotlib",
+   "pytest",
+   "GitHub Actions"
+  ],
+  "flow": [
+   {
+    "title": "파형 로드",
+    "detail": "오실로스코프 CSV를 읽어 Waveform 객체로 변환하고 GW Instek 형식을 자동 감지합니다.",
+    "file": "src/dbd_diagnostics/io.py"
+   },
+   {
+    "title": "주기 분할",
+    "detail": "상승 영점 교차로 주기를 찾아 정수 주기 구간으로 자릅니다.",
+    "file": "src/dbd_diagnostics/waveform.py"
+   },
+   {
+    "title": "리사주 분석",
+    "detail": "Q-V 곡선의 상승·하강 분기를 각각 두 직선으로 맞춰 방전 전후 기울기와 개시 지점을 구합니다.",
+    "file": "src/dbd_diagnostics/lissajous.py"
+   },
+   {
+    "title": "플라즈마 물리량",
+    "detail": "환산 전계, 전자 밀도, 전자 온도를 Townsend·Paschen 관계와 표 보간으로 계산합니다.",
+    "file": "src/dbd_diagnostics/plasma.py"
+   },
+   {
+    "title": "특징량 추출",
+    "detail": "주기별로 논문 Table 4의 14개 특징량을 한 행으로 모읍니다.",
+    "file": "src/dbd_diagnostics/features.py"
+   },
+   {
+    "title": "분류 및 평가",
+    "detail": "스케일러를 파이프라인 안에 넣고 장치 단위 leave-one-group-out으로 손상 여부를 평가합니다.",
+    "file": "src/dbd_diagnostics/ml.py"
+   }
+  ],
+  "hard_part": "논문의 파괴전압 식은 대입하면 인가 전압 최댓값과 항등적으로 같아져 가스 방전 전압이 아닙니다. 이를 등가회로로 증명하고 연소전압을 별도 계산하며, 원 식은 재현용 함수로만 남겼습니다. 같은 장치의 캡처는 상관이 강해 무작위 분할이 낙관적이므로 장치 단위 평가를 사용합니다.",
+  "numbers": [
+   "분류 입력 특징량 14개, 비교 모델 6종(LR, DT, RF, GB, SVM, kNN)",
+   "pytest 테스트 함수 27개(6개 파일)",
+   "CLI 하위 명령 5개(extract, simulate, analyse, train, predict)"
+  ],
+  "backend": "별도 서버 없이 사용자 PC에서 Python 패키지와 CLI, Streamlit 앱으로 로컬 실행하며 모델은 joblib 파일로 저장합니다.",
+  "arch": {
+   "nodes": [
+    {
+     "id": "csv",
+     "label": "측정 CSV",
+     "sub": "V·I 파형"
+    },
+    {
+     "id": "wave",
+     "label": "파형 처리",
+     "sub": "주기 분할"
+    },
+    {
+     "id": "liss",
+     "label": "리사주 분석",
+     "sub": "Manley 회로"
+    },
+    {
+     "id": "feat",
+     "label": "특징량",
+     "sub": "14개 입력"
+    },
+    {
+     "id": "ml",
+     "label": "ML 분류",
+     "sub": "장치 단위 평가"
+    },
+    {
+     "id": "ui",
+     "label": "CLI·Streamlit",
+     "sub": "로컬 실행"
+    }
+   ],
+   "edges": [
+    {
+     "from": "csv",
+     "to": "wave",
+     "label": "load"
+    },
+    {
+     "from": "wave",
+     "to": "liss",
+     "label": "1주기"
+    },
+    {
+     "from": "liss",
+     "to": "feat",
+     "label": "C, U_b, E"
+    },
+    {
+     "from": "feat",
+     "to": "ml",
+     "label": "학습"
+    },
+    {
+     "from": "ml",
+     "to": "ui",
+     "label": "predict"
+    }
+   ]
+  },
+  "snippet": {
+   "file": "src/dbd_diagnostics/ml.py",
+   "lang": "python",
+   "caption": "장치별 건강 구간 중앙값으로 특징량을 나누어 장치 간 오프셋을 제거하는 기준선 정규화입니다.",
+   "code": "def baseline_normalize(df: pd.DataFrame, features: list[str], group: str, reference: pd.Series) -> pd.DataFrame:\n    \"\"\"Divide each feature by its per-group median over ``reference`` rows.\n\n    ``reference`` must select captures known to be healthy *at deployment\n    time* (e.g. the first hours of operation of each device), never rows chosen\n    with knowledge of the label.\n    \"\"\"\n    out = df.copy()\n    for g, idx in df.groupby(group).groups.items():\n        ref = df.loc[idx][reference.loc[idx]]\n        if ref.empty:\n            raise ValueError(f\"group {g!r} has no reference rows\")\n        med = ref[features].median()\n        out.loc[idx, features] = df.loc[idx, features] / med.replace(0, np.nan)\n    return out"
+  },
+  "year": "2026",
+  "source": {
+   "repo": "ms-thesis-dbd-plasma-diagnostics"
+  },
+  "private": false,
+  "repo_base": "https://github.com/MJ-best/ms-thesis-dbd-plasma-diagnostics/blob/main/",
+  "links": [
+   {
+    "label": "GitHub",
+    "url": "https://github.com/MJ-best/ms-thesis-dbd-plasma-diagnostics"
+   }
+  ],
+  "shots": [],
+  "cover": "arch",
+  "auto_added": true
+ },
+ {
+  "id": "who-scratch-my-car-privacy",
+  "slug": "who-scratch-my-car-privacy",
+  "title": "Who Scratch My Car 개인정보 처리방침",
+  "cat": "service",
+  "pattern": "static",
+  "platform": "Web",
+  "summary": "macOS·iPadOS 앱 Who Scratch My Car의 개인정보 처리방침을 GitHub Pages로 공개하는 단일 정적 페이지입니다.",
+  "problem": "앱 스토어 심사와 사용자 신뢰를 위해 공개 URL의 개인정보 처리방침이 필요합니다. 기기 내 처리되는 앱 데이터와 웹사이트가 수집하는 데이터를 구분해 명확히 알려야 합니다.",
+  "features": [
+   "앱은 계정 없이 동작하며 사진, 영상, 음성, 번호판 판독 결과를 기기에서만 처리한다고 명시",
+   "앱과 별개인 배포 웹사이트의 Firebase 수집 항목(이메일, 기기 정보, 문의 내용)을 분리해 안내",
+   "보관 기간과 열람·삭제 요청 경로를 고객 지원 문의 양식 링크로 제공",
+   "한국어 본문과 영어 요약을 함께 제공",
+   "다크 모드를 지원하는 외부 의존성 없는 단일 HTML"
+  ],
+  "stack": [
+   "HTML",
+   "CSS",
+   "GitHub Pages"
+  ],
+  "flow": [
+   {
+    "title": "앱 데이터 범위 명시",
+    "detail": "계정과 분석 수집이 없고 사진·영상·음성·번호판 결과가 기기에서 처리됨을 1항에 서술합니다.",
+    "file": "index.html"
+   },
+   {
+    "title": "웹사이트 수집 분리",
+    "detail": "배포 웹사이트의 출시 알림과 문의 정보가 Google Firebase에 저장된다고 2항에 구분해 적습니다.",
+    "file": "index.html"
+   },
+   {
+    "title": "보관·삭제 안내",
+    "detail": "필요한 범위에서만 보관하며 삭제 요청은 공식 지원 문의 양식으로 받도록 3항에 안내합니다.",
+    "file": "index.html"
+   },
+   {
+    "title": "영어 요약",
+    "detail": "lang=en 섹션에 같은 내용을 요약해 해외 사용자와 심사자도 읽을 수 있게 합니다.",
+    "file": "index.html"
+   },
+   {
+    "title": "정적 배포",
+    "detail": "GitHub Pages가 index.html을 그대로 서빙하여 앱 스토어 제출용 공개 URL이 됩니다.",
+    "file": "index.html"
+   }
+  ],
+  "hard_part": "앱 자체는 데이터를 수집하지 않지만 배포 웹사이트는 Firebase로 정보를 수집하므로, 두 범위를 혼동 없이 나눠 서술하는 것이 핵심입니다. 문의 양식에 번호판이나 영상을 제출하지 말라는 경고도 함께 넣었습니다.",
+  "numbers": [
+   "본문 조항 3개(앱, 웹사이트, 보관·삭제)",
+   "언어 2개(한국어 본문, 영어 요약)",
+   "파일 1개(index.html)로 구성된 외부 의존성 0개 페이지"
+  ],
+  "backend": "별도 백엔드 없이 GitHub Pages가 정적 HTML을 서빙하며, 문의 접수는 별도 사이트의 Firebase가 담당합니다.",
+  "arch": {
+   "nodes": [
+    {
+     "id": "policy",
+     "label": "index.html",
+     "sub": "한국어 본문 + 영어 요약"
+    },
+    {
+     "id": "pages",
+     "label": "GitHub Pages",
+     "sub": "정적 호스팅"
+    },
+    {
+     "id": "store",
+     "label": "앱 스토어 심사",
+     "sub": "공개 URL 제출"
+    },
+    {
+     "id": "site",
+     "label": "배포 웹사이트",
+     "sub": "Vercel, 지원 폼"
+    },
+    {
+     "id": "fb",
+     "label": "Firebase",
+     "sub": "신청·문의 저장"
+    }
+   ],
+   "edges": [
+    {
+     "from": "policy",
+     "to": "pages",
+     "label": "배포"
+    },
+    {
+     "from": "pages",
+     "to": "store",
+     "label": "URL 제공"
+    },
+    {
+     "from": "policy",
+     "to": "site",
+     "label": "문의 링크"
+    },
+    {
+     "from": "site",
+     "to": "fb",
+     "label": "저장"
+    }
+   ]
+  },
+  "snippet": {
+   "file": "index.html",
+   "lang": "html",
+   "caption": "앱의 기기 내 처리 범위와 웹사이트 수집 범위를 별도 조항으로 나눈 핵심 본문입니다.",
+   "code": "<h2>1. Mac 및 iPad 앱</h2><p>앱에는 계정이나 로그인이 필요하지 않으며, 개발자는 앱에서 개인정보나 이용 분석 데이터를 수집하지 않습니다. 사용자가 선택한 차량 파손 사진, 블랙박스 영상, 음성 및 번호판 판독 결과는 기기에서 처리되며 개발자나 외부 서버로 전송되지 않습니다. 임시 분석 파일은 기기에 저장되고, 사용자가 내보낸 리포트와 클립은 사용자가 선택한 위치에 저장됩니다. 내보낸 파일은 사용자가 직접 삭제할 수 있습니다.</p>\n<h2>2. 공식 배포 웹사이트</h2><p>배포 웹사이트는 앱과 별개입니다. 출시 알림 신청이나 고객 문의를 제출하면 입력한 이메일 주소, 기기 및 블랙박스 정보, 문의 유형과 내용을 Google Firebase에 저장하여 알림을 보내거나 문의에 답하는 데 사용합니다. 사이트 이용 통계가 활성화된 경우 웹페이지 방문과 양식 이용 등의 이벤트를 집계합니다. 앱에서 분석한 사진이나 영상은 웹사이트에 전송되지 않습니다. 문의 양식에는 번호판, 영상 또는 민감한 정보를 제출하지 마세요.</p>\n<h2>3. 보관 및 삭제 요청</h2><p>신청 및 문의 정보는 알림 발송, 문의 처리 또는 법적 의무에 필요한 범위에서 보관합니다. 열람이나 삭제를 요청하려면 <a href=\"https://who-scratch-my-car.vercel.app/#faq\">공식 고객 지원 문의 양식</a>을 이용해 주세요.</p>"
+  },
+  "year": "2026",
+  "source": {
+   "repo": "who-scratch-my-car-privacy"
+  },
+  "private": false,
+  "repo_base": "https://github.com/MJ-best/who-scratch-my-car-privacy/blob/main/",
+  "links": [
+   {
+    "label": "데모 열기",
+    "url": "https://mj-best.github.io/who-scratch-my-car-privacy/"
+   },
+   {
+    "label": "GitHub",
+    "url": "https://github.com/MJ-best/who-scratch-my-car-privacy"
+   }
+  ],
+  "shots": [
+   {
+    "img": "who-scratch-my-car-privacy",
+    "caption": "Who Scratch My Car 개인정보 처리방침 첫 화면."
+   }
+  ],
+  "auto_added": true
  }
 ]
